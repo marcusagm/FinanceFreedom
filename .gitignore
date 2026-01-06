@@ -52,5 +52,8 @@ coverage/
 *.local
 
 # Monorepo and specific app ignores
-apps/api/generated/prisma
+# Monorepo and specific app ignores
+apps/api/src/generated
+.turbo
+
 
