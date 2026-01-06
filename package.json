@@ -1,0 +1,21 @@
+{
+    "name": "finance-freedom",
+    "version": "0.0.0",
+    "private": true,
+    "workspaces": [
+        "apps/*",
+        "packages/*"
+    ],
+    "scripts": {
+        "build": "turbo run build",
+        "dev": "turbo run dev",
+        "lint": "turbo run lint",
+        "format": "biome format --write .",
+        "check": "biome check --apply ."
+    },
+    "devDependencies": {
+        "turbo": "^2.0.0",
+        "@biomejs/biome": "^1.8.0"
+    },
+    "packageManager": "npm@10.8.1"
+}

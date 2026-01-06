@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+    api:
+        build:
+            context: ./apps/api
+            dockerfile: Dockerfile
+        volumes:
+            - ./apps/api/src:/usr/src/app/src
+            - ./apps/api/prisma:/usr/src/app/prisma
+            - /usr/src/app/node_modules
+        ports:
+            - "3001:3000"
+        environment:
+            - DATABASE_URL=file:./dev.db
+        command: sh -c "npm install && npx prisma generate && npm run start:dev"
+
+    web:
+        build:
+            context: ./apps/web
+            dockerfile: Dockerfile
+        volumes:
+            - ./apps/web/src:/app/src
+            - /app/node_modules
+        ports:
+            - "3000:5173"
+        environment:
+            - VITE_API_URL=http://localhost:3001
+        depends_on:
+            - api

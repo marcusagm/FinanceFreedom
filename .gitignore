@@ -1,0 +1,56 @@
+node_modules
+# Build and distribution
+dist/
+build/
+out/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+.history/
+*.swp
+*.swo
+
+# Testing
+coverage/
+.nyc_output/
+
+# Caches
+.cache/
+.eslintcache
+.stylelintcache
+
+
+# Local configuration
+*.local
+
+# Monorepo and specific app ignores
+apps/api/generated/prisma
+

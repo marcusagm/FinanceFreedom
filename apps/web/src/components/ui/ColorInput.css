@@ -1,0 +1,63 @@
+@layer components {
+    .color-input-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.375rem;
+        width: 100%;
+    }
+
+    .color-input-label {
+        font-size: 0.875rem;
+        font-weight: 500;
+        line-height: 1.25rem;
+        color: hsl(var(--foreground));
+        text-align: left;
+        width: 100%;
+    }
+
+    .color-input-container {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        width: 100%;
+    }
+
+    .color-input-native {
+        height: 2.5rem;
+        width: 3rem;
+        padding: 0;
+        border: none;
+        background: none;
+        cursor: pointer;
+        border-radius: 0.375rem;
+        overflow: hidden;
+    }
+
+    .color-input-native::-webkit-color-swatch-wrapper {
+        padding: 0;
+    }
+
+    .color-input-native::-webkit-color-swatch {
+        border: 1px solid hsl(var(--input));
+        border-radius: 0.375rem;
+    }
+
+    .color-input-hex {
+        flex: 1;
+        text-transform: uppercase;
+        height: 2.5rem;
+        border-radius: 0.375rem;
+        border: 1px solid hsl(var(--input));
+        background-color: hsl(var(--background));
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+        color: hsl(var(--foreground));
+    }
+
+    .color-input-hex:focus {
+        outline: none;
+        border-color: hsl(var(--ring));
+        box-shadow: 0 0 0 1px hsl(var(--ring));
+    }
+}
