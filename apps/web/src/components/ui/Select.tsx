@@ -19,6 +19,7 @@ interface SelectProps {
     options: Option[];
     onChange: (value: string) => void;
     className?: string;
+    placeholder?: string;
 }
 
 export function Select({
@@ -27,6 +28,7 @@ export function Select({
     options,
     onChange,
     className,
+    placeholder,
 }: SelectProps) {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -57,7 +59,7 @@ export function Select({
                     className="select-trigger"
                     onClick={() => setIsOpen(!isOpen)}
                 >
-                    <span>{currentLabel}</span>
+                    <span>{currentLabel || placeholder}</span>
                     <ChevronDown className="w-4 h-4 opacity-50" />
                 </button>
 

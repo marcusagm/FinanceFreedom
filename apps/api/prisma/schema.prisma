@@ -20,6 +20,20 @@ model Account {
   type      String   // e.g., "WALLET", "BANK", "INVESTMENT"
   balance   Decimal  @default(0.0)
   color     String?  // Hex code for UI
+  transactions Transaction[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Transaction {
+  id          String   @id @default(uuid())
+  amount      Decimal  // Using Decimal to avoid floating point errors
+  date        DateTime @default(now())
+  description String
+  type        String   // INCOME, EXPENSE
+  category    String?
+  accountId   String
+  account     Account  @relation(fields: [accountId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

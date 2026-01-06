@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Link, Navigate } from "react-router-dom";
 import { Accounts } from "./pages/Accounts";
+import { Transactions } from "./pages/Transactions";
 import "./App.css";
 
 function Layout({ children }: { children: React.ReactNode }) {
@@ -18,6 +19,12 @@ function Layout({ children }: { children: React.ReactNode }) {
                                 className="text-sm font-medium hover:text-primary transition-colors"
                             >
                                 Contas
+                            </Link>
+                            <Link
+                                to="/transactions"
+                                className="text-sm font-medium hover:text-primary transition-colors"
+                            >
+                                Transações
                             </Link>
                         </nav>
                     </div>
@@ -38,6 +45,7 @@ function App() {
                         element={<Navigate to="/accounts" replace />}
                     />
                     <Route path="/accounts" element={<Accounts />} />
+                    <Route path="/transactions" element={<Transactions />} />
                 </Routes>
             </Layout>
         </BrowserRouter>
