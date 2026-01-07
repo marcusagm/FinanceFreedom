@@ -4,6 +4,7 @@ import { Accounts } from "./pages/Accounts";
 
 import { Transactions } from "./pages/Transactions";
 import { ImportPage } from "./pages/ImportPage";
+import { ImapConfigPage } from "./pages/ImapConfigPage";
 import "./App.css";
 
 function Layout({ children }: { children: React.ReactNode }) {
@@ -56,6 +57,7 @@ function App() {
                     <Route path="/accounts" element={<Accounts />} />
                     <Route path="/transactions" element={<Transactions />} />
                     <Route path="/import" element={<ImportPage />} />
+                    <Route path="/import/config" element={<ImapConfigPage />} />
                 </Routes>
             </Layout>
         </BrowserRouter>

@@ -92,6 +92,34 @@ export class ImapService {
         return attachments;
     }
 
+    async testConnection(credential: {
+        host: string;
+        port: number;
+        secure: boolean;
+        email: string;
+        password: string;
+    }): Promise<{ success: boolean; message?: string }> {
+        const client = new ImapFlow({
+            host: credential.host,
+            port: credential.port,
+            secure: credential.secure,
+            auth: {
+                user: credential.email,
+                pass: credential.password,
+            },
+            logger: false,
+        });
+
+        try {
+            await client.connect();
+            await client.logout();
+            return { success: true };
+        } catch (err) {
+            this.logger.error("IMAP Test Error", err);
+            return { success: false, message: err.message };
+        }
+    }
+
     private async streamToBuffer(stream: any): Promise<Buffer> {
         const chunks = [];
         for await (const chunk of stream) {

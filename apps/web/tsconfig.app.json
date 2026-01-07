@@ -23,10 +23,11 @@
         "noFallthroughCasesInSwitch": true,
         "incremental": true,
         "baseUrl": ".",
-        "ignoreDeprecations": "6.0",
+        "baseUrl": ".",
         "paths": {
             "@/*": ["./src/*"]
         }
     },
-    "include": ["src"]
+    "include": ["src"],
+    "exclude": ["**/*.spec.tsx", "**/*.test.tsx"]
 }

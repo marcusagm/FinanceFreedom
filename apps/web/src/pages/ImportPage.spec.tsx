@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { ImportPage } from "./ImportPage";
 import { api } from "../lib/api";
 import { ImportService } from "../services/import.service";
+import { BrowserRouter } from "react-router-dom";
 
 // Mock dependencies
 vi.mock("../lib/api");
@@ -35,6 +36,10 @@ vi.mock("react-dropzone", () => ({
     }),
 }));
 
+const renderWithRouter = (ui: React.ReactElement) => {
+    return render(<BrowserRouter>{ui}</BrowserRouter>);
+};
+
 describe("ImportPage", () => {
     beforeEach(() => {
         vi.clearAllMocks();
@@ -42,7 +47,7 @@ describe("ImportPage", () => {
     });
 
     it("renders the title", async () => {
-        render(<ImportPage />);
+        renderWithRouter(<ImportPage />);
         expect(screen.getByText("Smart Import")).toBeInTheDocument();
     });
 
@@ -54,7 +59,7 @@ describe("ImportPage", () => {
             ],
         });
 
-        render(<ImportPage />);
+        renderWithRouter(<ImportPage />);
 
         await waitFor(() => {
             expect(api.get).toHaveBeenCalledWith("/accounts");
@@ -69,7 +74,7 @@ describe("ImportPage", () => {
         // Mock no accounts response so selectedAccount is empty
         (api.get as any).mockResolvedValue({ data: [] });
 
-        render(<ImportPage />);
+        renderWithRouter(<ImportPage />);
 
         // Find the dropzone text and click it to trigger our mocked onDrop
         const dropText = screen.getByText("Drag & drop an OFX file here");

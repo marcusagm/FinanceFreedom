@@ -52,6 +52,7 @@ export const ImportZone: React.FC<ImportZoneProps> = ({
 
     return (
         <div
+            data-testid="import-zone-container"
             {...getRootProps()}
             className={`
                 border-2 border-dashed rounded-lg p-10 text-center cursor-pointer transition-colors
