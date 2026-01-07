@@ -1,23 +1,23 @@
 FROM node:20-slim AS development
 
-WORKDIR /usr/src/app
+WORKDIR /app
 RUN apt-get update -y && apt-get install -y openssl procps
 
-COPY package*.json ./
-COPY tsconfig*.json ./
-COPY nest-cli.json ./
-COPY prisma.config.ts ./
-COPY src ./src
-COPY prisma ./prisma
+# Copy root config
+COPY package.json package-lock.json ./
+# Copy app specific config
+COPY apps/api/package.json ./apps/api/
 
+# Install dependencies
 RUN npm install
 
+# Copy source
+COPY apps/api ./apps/api
 
-# Generate Prisma client for build
-RUN rm -rf node_modules/@prisma/client
+# Set working directory to api
+WORKDIR /app/apps/api
+
+# Generate Prisma client
 RUN npx prisma generate
 
-# Build the application
-# RUN npm run build
-
-CMD ["npm", "run", "start:prod"]
+CMD ["npm", "run", "start:dev"]

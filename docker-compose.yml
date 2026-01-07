@@ -1,29 +1,25 @@
-version: "3.8"
-
 services:
     api:
         build:
-            context: ./apps/api
-            dockerfile: Dockerfile
+            context: .
+            dockerfile: apps/api/Dockerfile
         volumes:
-            - ./apps/api/src:/usr/src/app/src
-            - ./apps/api/prisma:/usr/src/app/prisma
-            - /usr/src/app/node_modules
+            - ./apps/api/src:/app/apps/api/src
+            - ./apps/api/prisma:/app/apps/api/prisma
         ports:
             - "3001:3000"
         environment:
             - DATABASE_URL=file:./dev.db
             - REDIS_HOST=redis
             - REDIS_PORT=6379
-        command: sh -c "npm install && npx prisma generate && npm run start:dev"
+        command: sh -c "npx prisma generate && npm run start:dev"
 
     web:
         build:
-            context: ./apps/web
-            dockerfile: Dockerfile
+            context: .
+            dockerfile: apps/web/Dockerfile
         volumes:
-            - ./apps/web/src:/app/src
-            - /app/node_modules
+            - ./apps/web/src:/app/apps/web/src
         ports:
             - "3000:5173"
         environment:
@@ -35,4 +31,3 @@ services:
         image: redis:alpine
         ports:
             - "6379:6379"
-

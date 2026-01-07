@@ -6,6 +6,7 @@ import { PrismaModule } from "./prisma/prisma.module";
 import { AccountModule } from "./modules/account/account.module";
 import { TransactionModule } from "./modules/transaction/transaction.module";
 import { ImportModule } from "./modules/import/import.module";
+import { DashboardModule } from "./modules/dashboard/dashboard.module";
 
 @Module({
     imports: [
@@ -13,6 +14,7 @@ import { ImportModule } from "./modules/import/import.module";
         AccountModule,
         TransactionModule,
         ImportModule,
+        DashboardModule,
         BullModule.forRoot({
             connection: {
                 host: process.env.REDIS_HOST || "localhost",

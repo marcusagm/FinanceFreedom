@@ -1,10 +1,11 @@
 import React from "react";
-import { BrowserRouter, Routes, Route, Link, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { Accounts } from "./pages/Accounts";
 
 import { Transactions } from "./pages/Transactions";
 import { ImportPage } from "./pages/ImportPage";
 import { ImapConfigPage } from "./pages/ImapConfigPage";
+import Dashboard from "./pages/Dashboard";
 import "./App.css";
 
 function Layout({ children }: { children: React.ReactNode }) {
@@ -17,6 +18,12 @@ function Layout({ children }: { children: React.ReactNode }) {
                             FinanceFreedom
                         </Link>
                         <nav className="flex gap-4">
+                            <Link
+                                to="/"
+                                className="text-sm font-medium hover:text-primary transition-colors"
+                            >
+                                Dashboard
+                            </Link>
                             <Link
                                 to="/accounts"
                                 className="text-sm font-medium hover:text-primary transition-colors"
@@ -50,10 +57,7 @@ function App() {
         <BrowserRouter>
             <Layout>
                 <Routes>
-                    <Route
-                        path="/"
-                        element={<Navigate to="/accounts" replace />}
-                    />
+                    <Route path="/" element={<Dashboard />} />
                     <Route path="/accounts" element={<Accounts />} />
                     <Route path="/transactions" element={<Transactions />} />
                     <Route path="/import" element={<ImportPage />} />

@@ -10,4 +10,18 @@ export default defineConfig({
             "@": path.resolve(__dirname, "./src"),
         },
     },
+    server: {
+        host: true,
+        port: 5173,
+        watch: {
+            usePolling: true,
+        },
+        proxy: {
+            "/api": {
+                target: "http://api:3000",
+                changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/api/, ""),
+            },
+        },
+    },
 });

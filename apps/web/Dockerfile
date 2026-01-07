@@ -2,17 +2,18 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-COPY package*.json ./
-COPY index.html ./
-COPY tsconfig*.json ./
-COPY vite.config.ts ./
-COPY src ./src
-COPY public ./public
-COPY tailwind.config.js ./
-COPY postcss.config.js ./
-COPY components.json ./
+# Copy root config
+COPY package.json package-lock.json ./
+# Copy app specific config
+COPY apps/web/package.json ./apps/web/
 
-# Install defaults if missing
+# Install dependencies
 RUN npm install
+
+# Copy source
+COPY apps/web ./apps/web
+
+# Set working directory to web
+WORKDIR /app/apps/web
 
 CMD ["npm", "run", "dev", "--", "--host"]
