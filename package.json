@@ -11,7 +11,8 @@
         "dev": "turbo run dev",
         "lint": "turbo run lint",
         "format": "biome format --write .",
-        "check": "biome check --apply ."
+        "check": "biome check --apply .",
+        "test": "turbo run test"
     },
     "devDependencies": {
         "turbo": "^2.0.0",
