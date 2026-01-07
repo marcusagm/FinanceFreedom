@@ -4,6 +4,7 @@ import { Button } from "../components/ui/Button";
 import { DebtForm, type Debt } from "../components/debt/DebtForm";
 import { DebtCard } from "../components/debt/DebtCard";
 import { DeleteDebtDialog } from "../components/debt/DeleteDebtDialog";
+import { StrategyComparison } from "../components/debt/StrategyComparison";
 
 export default function Debts() {
     const [debts, setDebts] = useState<Debt[]>([]);
@@ -11,6 +12,7 @@ export default function Debts() {
     const [debtToEdit, setDebtToEdit] = useState<Debt | null>(null);
     const [debtToDelete, setDebtToDelete] = useState<Debt | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [viewMode, setViewMode] = useState<"LIST" | "STRATEGY">("LIST");
 
     const fetchDebts = async () => {
         try {
@@ -57,32 +59,59 @@ export default function Debts() {
     return (
         <div className="space-y-4 p-8 pt-6">
             <div className="flex items-center justify-between">
-                <h2 className="text-3xl font-bold tracking-tight">Dívidas</h2>
+                <div>
+                    <h2 className="text-3xl font-bold tracking-tight">
+                        Dívidas
+                    </h2>
+                    <p className="text-muted-foreground">
+                        Gerencie suas dívidas e escolha a melhor estratégia para
+                        quitá-las.
+                    </p>
+                </div>
                 <Button onClick={handleCreate}>Nova Dívida</Button>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {debts.map((debt) => (
-                    <DebtCard
-                        key={debt.id}
-                        id={debt.id}
-                        name={debt.name}
-                        totalAmount={debt.totalAmount}
-                        interestRate={debt.interestRate}
-                        minimumPayment={debt.minimumPayment}
-                        dueDate={debt.dueDate}
-                        onEdit={() => handleEdit(debt)}
-                        onDelete={() => handleDeleteClick(debt)}
-                    />
-                ))}
-
-                {debts.length === 0 && (
-                    <div className="col-span-full text-center py-10 text-muted-foreground">
-                        Nenhuma dívida cadastrada. Parabéns (ou cadastre uma
-                        agora)!
-                    </div>
-                )}
+            <div className="flex gap-2 border-b border-border pb-2">
+                <Button
+                    variant={viewMode === "LIST" ? "secondary" : "ghost"}
+                    onClick={() => setViewMode("LIST")}
+                >
+                    Minhas Dívidas
+                </Button>
+                <Button
+                    variant={viewMode === "STRATEGY" ? "secondary" : "ghost"}
+                    onClick={() => setViewMode("STRATEGY")}
+                >
+                    Estratégias de Pagamento
+                </Button>
             </div>
+
+            {viewMode === "LIST" ? (
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    {debts.map((debt) => (
+                        <DebtCard
+                            key={debt.id}
+                            id={debt.id}
+                            name={debt.name}
+                            totalAmount={debt.totalAmount}
+                            interestRate={debt.interestRate}
+                            minimumPayment={debt.minimumPayment}
+                            dueDate={debt.dueDate}
+                            onEdit={() => handleEdit(debt)}
+                            onDelete={() => handleDeleteClick(debt)}
+                        />
+                    ))}
+
+                    {debts.length === 0 && (
+                        <div className="col-span-full text-center py-10 text-muted-foreground">
+                            Nenhuma dívida cadastrada. Parabéns (ou cadastre uma
+                            agora)!
+                        </div>
+                    )}
+                </div>
+            ) : (
+                <StrategyComparison />
+            )}
 
             <DebtForm
                 isOpen={isFormOpen}

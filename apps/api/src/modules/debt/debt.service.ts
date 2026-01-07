@@ -2,6 +2,8 @@ import { Injectable } from "@nestjs/common";
 import { CreateDebtDto } from "./dto/create-debt.dto";
 import { UpdateDebtDto } from "./dto/update-debt.dto";
 import { PrismaService } from "../../prisma/prisma.service";
+import { SnowballStrategy } from "./strategies/snowball.strategy";
+import { AvalancheStrategy } from "./strategies/avalanche.strategy";
 
 @Injectable()
 export class DebtService {
@@ -36,5 +38,14 @@ export class DebtService {
         return this.prisma.debt.delete({
             where: { id },
         });
+    }
+    async getSortedDebts(strategyType: "SNOWBALL" | "AVALANCHE") {
+        const debts = await this.findAll();
+        const strategy =
+            strategyType === "SNOWBALL"
+                ? new SnowballStrategy()
+                : new AvalancheStrategy();
+
+        return strategy.sort(debts);
     }
 }

@@ -6,6 +6,7 @@ import {
     Patch,
     Param,
     Delete,
+    Query,
 } from "@nestjs/common";
 import { DebtService } from "./debt.service";
 import { CreateDebtDto } from "./dto/create-debt.dto";
@@ -23,6 +24,11 @@ export class DebtController {
     @Get()
     findAll() {
         return this.debtService.findAll();
+    }
+
+    @Get("strategy")
+    getStrategy(@Query("type") type: "SNOWBALL" | "AVALANCHE") {
+        return this.debtService.getSortedDebts(type);
     }
 
     @Get(":id")

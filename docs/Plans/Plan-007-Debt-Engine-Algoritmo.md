@@ -13,20 +13,26 @@ Implementar a inteligência que ordena as dívidas. O sistema deve sugerir qual 
 
 ### 1. Backend: Lógica de Ordenação
 
--   [ ] Criar Pattern Strategy no Backend.
+-   [x] Criar Pattern Strategy no Backend.
     -   Interface `DebtStrategy`: método `sort(debts: Debt[]): Debt[]`.
     -   Implementação `SnowballStrategy`: Ordena por `totalAmount` ASC.
     -   Implementação `AvalancheStrategy`: Ordena por `interestRate` DESC.
--   [ ] Criar endpoint `GET /debts/strategy`: Recebe `type=SNOWBALL|AVALANCHE` e retorna lista ordenada + projeção de tempo.
+-   [x] Criar endpoint `GET /debts/strategy`: Recebe `type=SNOWBALL|AVALANCHE` e retorna lista ordenada.
 
 ### 2. Frontend: Comparador
 
--   [ ] Criar componente `StrategyComparison`.
+-   [x] Criar componente `StrategyComparison`.
     -   Abas "Matemático" vs "Psicológico".
     -   Exibir lista ordenada conforme a aba selecionada.
     -   Destacar a "Dívida Foco" (A primeira da lista).
 
 ## Verificação
+
+### Testes Automatizados
+
+-   [x] Backend Unit Tests (`debt.strategy.spec.ts`): Passou (100% de sucesso).
+
+### Verificação Manual (Browser)
 
 -   Cadastrar Dívida A: R$ 1.000 (10% juros).
 -   Cadastrar Dívida B: R$ 500 (2% juros).
