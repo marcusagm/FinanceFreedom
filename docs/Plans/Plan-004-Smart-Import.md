@@ -13,25 +13,25 @@ Implementar o sistema de ingestão de dados sem custo. Substitui a integração 
 
 ### 1. Backend: Parsers
 
--   [ ] Instalar `xml2js` (ou lib específica de OFX).
--   [ ] Criar `OfxParserService`: Input -> Buffer, Output -> `TransactionDTO[]`.
--   [ ] Criar `SmartMerger`: Lógica para checar se a transação `hash(data+valor+desc)` já existe no banco antes de salvar.
+-   [x] Instalar `xml2js` (ou lib específica de OFX).
+-   [x] Criar `OfxParserService`: Input -> Buffer, Output -> `TransactionDTO[]`.
+-   [x] Criar `SmartMerger`: Lógica para checar se a transação `hash(data+valor+desc)` já existe no banco antes de salvar.
 
 ### 2. Backend: IMAP Service
 
--   [ ] Instalar `imapflow`.
--   [ ] Criar `ImapService`: `connect`, `fetchUnseen`, `downloadAttachment`.
--   [ ] Criar Entidade `EmailCredential` no banco (com senha encriptada).
+-   [x] Instalar `imapflow`.
+-   [x] Criar `ImapService`: `connect`, `fetchUnseen`, `downloadAttachment`.
+-   [x] Criar Entidade `EmailCredential` no banco (com senha encriptada).
 
 ### 3. Frontend: Upload Manual
 
--   [ ] Criar componente `ImportZone` (Area de Drop).
--   [ ] Tela de "Revisão de Importação": Mostra lista de transações encontradas no arquivo antes de confirmar.
+-   [x] Criar componente `ImportZone` (Area de Drop).
+-   [x] Tela de "Revisão de Importação": Mostra lista de transações encontradas no arquivo antes de confirmar.
 
 ### 4. Job de Background
 
--   [ ] Configurar fila `import-queue` no BullMQ.
--   [ ] Criar Processor que roda a cada 1h para checar e-mails configurados.
+-   [x] Configurar fila `import-queue` no BullMQ.
+-   [x] Criar Processor que roda a cada 1h para checar e-mails configurados.
 
 ## Verificação
 

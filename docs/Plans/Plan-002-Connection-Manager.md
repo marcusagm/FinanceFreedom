@@ -14,16 +14,16 @@ Implementar a estrutura de dados base (`Account`) e permitir que o usuário crie
 
 ### 1. Backend: Modelagem & CRUD
 
--   [ ] Definir modelo `Account` no Prisma (id, name, type, balance, color).
--   [ ] Criar migração SQL.
--   [ ] Implementar `AccountService`: `create`, `findAll`, `update`.
--   [ ] Implementar `AccountController` com validação de DTO.
+-   [x] Definir modelo `Account` no Prisma (id, name, type, balance, color).
+-   [x] Criar migração SQL.
+-   [x] Implementar `AccountService`: `create`, `findAll`, `update`.
+-   [x] Implementar `AccountController` com validação de DTO.
 
 ### 2. Frontend: Tela de Contas
 
--   [ ] Criar componente `AccountCard` (exibe saldo e nome).
--   [ ] Criar modal `CreateAccountDialog` (Formulário com shadcn/ui).
--   [ ] Conectar com API (Axios/React Query) para listar e criar.
+-   [x] Criar componente `AccountCard` (exibe saldo e nome).
+-   [x] Criar modal `CreateAccountDialog` (Formulário com shadcn/ui).
+-   [x] Conectar com API (Axios/React Query) para listar e criar.
 
 ## Verificação
 

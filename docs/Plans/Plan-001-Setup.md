@@ -15,28 +15,28 @@ Inicializar o repositório Monorepo, configurar o Docker com Node.js + SQLite, i
 
 ### 1. Inicialização do Monorepo
 
--   [ ] Iniciar projeto com TurboRepo ou NPM Workspaces.
--   [ ] Configurar `package.json` raiz.
--   [ ] Configurar `biome.json` para linting global.
+-   [x] Iniciar projeto com TurboRepo ou NPM Workspaces.
+-   [x] Configurar `package.json` raiz.
+-   [x] Configurar `biome.json` para linting global.
 
 ### 2. Configuração do Backend (API)
 
--   [ ] Criar app NestJS em `apps/api`.
--   [ ] Instalar Prisma e inicializar SQLite (`prisma init`).
--   [ ] Criar Dockerfile para API (Dev e Prod).
+-   [x] Criar app NestJS em `apps/api`.
+-   [x] Instalar Prisma e inicializar SQLite (`prisma init`).
+-   [x] Criar Dockerfile para API (Dev e Prod).
 
 ### 3. Configuração do Frontend (Web)
 
--   [ ] Criar app React+Vite em `apps/web`.
--   [ ] Instalar TailwindCSS e configurar `postcss`.
--   [ ] Inicializar `shadcn/ui`.
--   [ ] Criar Dockerfile para Web.
+-   [x] Criar app React+Vite em `apps/web`.
+-   [x] Instalar TailwindCSS e configurar `postcss`.
+-   [x] Inicializar `shadcn/ui`.
+-   [x] Criar Dockerfile para Web.
 
 ### 4. Orquestração (Docker Compose)
 
--   [ ] Criar `docker-compose.yml` na raiz.
--   [ ] Definir serviços `api` e `web` com hot-reload (volumes).
--   [ ] Testar subida dos containers.
+-   [x] Criar `docker-compose.yml` na raiz.
+-   [x] Definir serviços `api` e `web` com hot-reload (volumes).
+-   [x] Testar subida dos containers.
 
 ## Verificação
 

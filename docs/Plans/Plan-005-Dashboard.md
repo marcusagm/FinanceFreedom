@@ -13,14 +13,14 @@ Consolidar os dados das contas (F02) e transações (F05) em uma tela inicial de
 
 ### 1. Backend: Agregação
 
--   [ ] Criar endpoint `GET /dashboard/summary`: Retorna Saldo Total, Receitas Mês, Despesas Mês.
--   [ ] Otimizar query SQL para agregar sem pesar o banco.
+-   [x] Criar endpoint `GET /dashboard/summary`: Retorna Saldo Total, Receitas Mês, Despesas Mês.
+-   [x] Otimizar query SQL para agregar sem pesar o banco.
 
 ### 2. Frontend: UI
 
--   [ ] Criar Cards de Topo (Saldo Total, Entradas, Saídas).
--   [ ] Criar Gráfico de Linha (Evolução do Saldo - 30 dias).
--   [ ] Montar layout responsivo (Grid).
+-   [x] Criar Cards de Topo (Saldo Total, Entradas, Saídas).
+-   [x] Criar Gráfico de Linha (Evolução do Saldo - 30 dias).
+-   [x] Montar layout responsivo (Grid).
 
 ## Verificação
 

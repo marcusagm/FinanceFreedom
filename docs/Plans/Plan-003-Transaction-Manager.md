@@ -14,14 +14,14 @@ Permitir o lançamento de despesas e receitas manuais, afetando o saldo das cont
 
 ### 1. Backend: Transações
 
--   [ ] Definir modelo `Transaction` no Prisma (amount, date, description, type, category, accountId).
--   [ ] Implementar lógica de atualização de saldo: Criar transação -> Atualizar `Account.balance`. (Transaction Atomic).
--   [ ] Criar endpoints `POST /transactions` e `GET /transactions`.
+-   [x] Definir modelo `Transaction` no Prisma (amount, date, description, type, category, accountId).
+-   [x] Implementar lógica de atualização de saldo: Criar transação -> Atualizar `Account.balance`. (Transaction Atomic).
+-   [x] Criar endpoints `POST /transactions` e `GET /transactions`.
 
 ### 2. Frontend: Lista e Cadastro
 
--   [ ] Criar componente `TransactionList` (Tabela simples).
--   [ ] Criar modal `NewTransactionDialog`.
+-   [x] Criar componente `TransactionList` (Tabela simples).
+-   [x] Criar modal `NewTransactionDialog`.
     -   Select de Conta (busca do Plan 002).
     -   Input de Valor e Data.
     -   Radio Income/Expense.
