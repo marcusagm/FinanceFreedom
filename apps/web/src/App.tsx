@@ -1,7 +1,9 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Link, Navigate } from "react-router-dom";
 import { Accounts } from "./pages/Accounts";
+
 import { Transactions } from "./pages/Transactions";
+import { ImportPage } from "./pages/ImportPage";
 import "./App.css";
 
 function Layout({ children }: { children: React.ReactNode }) {
@@ -26,6 +28,12 @@ function Layout({ children }: { children: React.ReactNode }) {
                             >
                                 Transações
                             </Link>
+                            <Link
+                                to="/import"
+                                className="text-sm font-medium hover:text-primary transition-colors"
+                            >
+                                Importar
+                            </Link>
                         </nav>
                     </div>
                 </div>
@@ -36,6 +44,7 @@ function Layout({ children }: { children: React.ReactNode }) {
 }
 
 function App() {
+    console.log("App component rendering");
     return (
         <BrowserRouter>
             <Layout>
@@ -46,6 +55,7 @@ function App() {
                     />
                     <Route path="/accounts" element={<Accounts />} />
                     <Route path="/transactions" element={<Transactions />} />
+                    <Route path="/import" element={<ImportPage />} />
                 </Routes>
             </Layout>
         </BrowserRouter>
