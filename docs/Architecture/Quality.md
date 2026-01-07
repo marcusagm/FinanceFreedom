@@ -4,24 +4,24 @@ Como um sistema financeiro, a precisão matemática é inegociável. Um cálculo
 
 ## 1. Pirâmide de Testes
 
-### A. Testes Unitários (Backend) - Cobertura: Alta (80%+)
+### A. Testes Unitários (Backend) - Cobertura: Máxima
 
 -   **Foco:** Lógica de Negócio pura.
 -   **Crítico:** `CalculatorService` (Snowball/Avalanche). Esse módulo DEVE ter testes exaustivos com cenários de borda (juros zero, juros negativos, prazos infinitos).
 -   **Ferramenta:** Jest (Padrão NestJS).
 
-### B. Testes de Integração (Backend) - Cobertura: Média
+### B. Testes de Integração (Backend) - Cobertura: Máxima
 
 -   **Foco:** Fluxo API -> Banco de Dados.
 -   **Cenário:** "Criar uma transação atualiza o saldo da conta corretamente?"
 -   **Ferramenta:** Supertest + SQLite em memória.
 
-### C. Testes de Componente (Frontend)
+### C. Testes de Componente (Frontend) - Cobertura: Máxima
 
--   **Foco:** Renderização correta do Dashboard.
+-   **Foco:** Todos os componentes devem ser testados com a máxima cobertura de código.
 -   **Ferramenta:** Vitest + React Testing Library.
 
-### D. Testes E2E (Ponta a Ponta) - Cobertura: Smoke Test
+### D. Testes E2E (Ponta a Ponta) - Cobertura: Máxima
 
 -   **Foco:** Fluxos principais do usuário ("Login -> Ver Dashboard -> Cadastrar Dívida").
 -   **Ferramenta:** Playwright.

@@ -34,17 +34,14 @@ export class SimulatorService {
         return totalIncome / workHours;
     }
 
-    async calculateDelayCost(accountId: string, daysLate: number) {
-        const account = await this.prisma.account.findUnique({
-            where: { id: accountId },
-        });
-
-        if (!account) throw new NotFoundException("Account not found");
-
-        // Default values if missing (safe fallback)
-        const balance = account.balance.toNumber(); // Normally negative for debt, but let's assume absolute value for calc
-        const debtBalance = Math.abs(balance);
-        const monthlyRate = account.interestRate?.toNumber() || 0; // %
+    async calculateDelayCost(
+        debtBalance: number,
+        monthlyInterestRate: number,
+        daysLate: number,
+        debtName = "Dívida"
+    ) {
+        // Pure logic refactor - Decoupled from Account/DB for Plan 005.5
+        const monthlyRate = monthlyInterestRate; // %
 
         if (debtBalance === 0 || monthlyRate === 0) {
             return {
@@ -69,7 +66,7 @@ export class SimulatorService {
         const totalCost = fine + interest;
 
         return {
-            debtName: account.name,
+            debtName: debtName,
             daysLate,
             fine,
             interest,
@@ -79,29 +76,19 @@ export class SimulatorService {
     }
 
     async calculatePrepaymentSavings(
-        accountId: string,
+        debtBalance: number,
+        monthlyInterestRate: number,
+        minimumPayment: number,
         prepaymentAmount: number
     ) {
-        const account = await this.prisma.account.findUnique({
-            where: { id: accountId },
-        });
-
-        if (!account) throw new NotFoundException("Account not found");
-
-        const debtBalance = Math.abs(account.balance.toNumber());
-        const monthlyRate = account.interestRate?.toNumber() || 0; // %
+        // Pure logic refactor - Decoupled from Account/DB for Plan 005.5
+        const monthlyRate = monthlyInterestRate; // %
 
         if (debtBalance === 0 || monthlyRate === 0) {
             return { saved: 0, message: "No savings possible" };
         }
 
-        // Logic:
-        // Current Scenario: Pay balance over N months? We don't know N.
-        // Assumption: Forever? Or Minimum Payment?
-        // Let's assume user pays Minimum Payment.
-        // If we don't have min payment, assume 5% of balance.
-        const minPayment =
-            account.minimumPayment?.toNumber() || debtBalance * 0.05;
+        const minPayment = minimumPayment || debtBalance * 0.05;
 
         if (minPayment <= 0)
             return { saved: 0, message: "Invalid minimum payment" };

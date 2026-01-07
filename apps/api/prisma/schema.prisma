@@ -20,9 +20,6 @@ model Account {
   type      String   // e.g., "WALLET", "BANK", "INVESTMENT"
   balance   Decimal  @default(0.0)
   color     String?  // Hex code for UI
-  interestRate   Decimal? @default(0.0) // Monthly Interest Rate (%)
-  minimumPayment Decimal? @default(0.0)
-  dueDateDay     Int?     // Day of month (1-31)
   transactions Transaction[]
   emailCredentials EmailCredential[]
   createdAt DateTime @default(now())

@@ -28,3 +28,9 @@ Utilizaremos a biblioteca `shadcn/ui` pela sua acessibilidade e facilidade de cu
 -   Suporte a navegação por teclado (Tab index correto).
 -   Cores com contraste WCAG AA.
 -   Labels em inputs para leitores de tela.
+
+## 5. Reutilização de Componentes
+
+-   **Modularização:** Componentes básicos e reutilizáveis devem ser extraídos para arquivos próprios, evitando duplicação de lógica e estilo (DRY).
+-   **Consistência:** Sempre que for coerente, deve-se priorizar o uso de componentes de interface já existentes no projeto antes de criar novas implementações.
+-   **Referência Técnica:** Para novos componentes fundamentais, utilizar como base as implementações e padrões da [Base UI](https://base-ui.com/) e `shadcn/ui`.

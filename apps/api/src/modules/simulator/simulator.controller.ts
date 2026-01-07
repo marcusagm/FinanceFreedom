@@ -14,20 +14,34 @@ export class SimulatorController {
 
     @Post("delay-cost")
     async calculateDelayCost(
-        @Body() body: { accountId: string; daysLate: number }
+        @Body()
+        body: {
+            debtBalance: number;
+            monthlyInterestRate: number;
+            daysLate: number;
+        }
     ) {
         return this.simulatorService.calculateDelayCost(
-            body.accountId,
+            body.debtBalance,
+            body.monthlyInterestRate,
             body.daysLate
         );
     }
 
     @Post("prepayment-savings")
     async calculatePrepaymentSavings(
-        @Body() body: { accountId: string; prepaymentAmount: number }
+        @Body()
+        body: {
+            debtBalance: number;
+            monthlyInterestRate: number;
+            minimumPayment: number;
+            prepaymentAmount: number;
+        }
     ) {
         return this.simulatorService.calculatePrepaymentSavings(
-            body.accountId,
+            body.debtBalance,
+            body.monthlyInterestRate,
+            body.minimumPayment,
             body.prepaymentAmount
         );
     }

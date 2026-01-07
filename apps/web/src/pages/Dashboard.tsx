@@ -166,10 +166,10 @@ export default function Dashboard() {
                         <div className="text-2xl font-bold text-red-500">
                             {formatMoney(summary.monthlyExpenses)}
                         </div>
-                        <TimeCostBadge
+                        {/* <TimeCostBadge
                             amount={summary.monthlyExpenses}
                             hourlyRate={hourlyRate}
-                        />
+                        /> REMOVED FOR PLAN 005.5 Cleanup */}
                     </CardContent>
                 </Card>
             </div>
@@ -253,7 +253,7 @@ export default function Dashboard() {
                 </Card>
             </div>
 
-            <SimulatorsDemo />
+            {/* <SimulatorsDemo /> - Removed for Plan 005.5 Cleanup */}
         </div>
     );
 }

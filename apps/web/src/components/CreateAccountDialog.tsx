@@ -23,9 +23,6 @@ interface Account {
     type: string;
     balance: number;
     color?: string;
-    interestRate?: number;
-    minimumPayment?: number;
-    dueDateDay?: number;
 }
 
 interface CreateAccountDialogProps {
@@ -39,8 +36,6 @@ const ACCOUNT_TYPES = [
     { value: "WALLET", label: "Carteira / Dinheiro" },
     { value: "BANK", label: "Conta Bancária" },
     { value: "INVESTMENT", label: "Investimento" },
-    { value: "CREDIT_CARD", label: "Cartão de Crédito" },
-    { value: "DEBT", label: "Dívida / Empréstimo" },
 ];
 
 const formSchema = z.object({
@@ -48,9 +43,6 @@ const formSchema = z.object({
     type: z.string().min(1, "Tipo é obrigatório"),
     balance: z.number({ message: "Saldo deve ser um número" }),
     color: z.string().regex(/^#[0-9A-F]{6}$/i, "Cor inválida"),
-    interestRate: z.number().optional(),
-    minimumPayment: z.number().optional(),
-    dueDateDay: z.number().min(1).max(31).optional(),
 });
 
 export function CreateAccountDialog({
@@ -66,17 +58,14 @@ export function CreateAccountDialog({
             type: "WALLET",
             balance: 0,
             color: "#000000",
-            interestRate: 0,
-            minimumPayment: 0,
-            dueDateDay: 10,
         },
     });
 
-    const watchedType = form.watch("type");
-    const isDebt =
-        watchedType === "DEBT" ||
-        watchedType === "CREDIT_CARD" ||
-        watchedType === "LOAN";
+    // const watchedType = form.watch("type");
+    // const isDebt =
+    //     watchedType === "DEBT" ||
+    //     watchedType === "CREDIT_CARD" ||
+    //     watchedType === "LOAN";
 
     // Reset/Populate form on open/change
     useEffect(() => {
@@ -87,16 +76,6 @@ export function CreateAccountDialog({
                     type: accountToEdit.type,
                     balance: parseFloat(String(accountToEdit.balance)),
                     color: accountToEdit.color || "#000000",
-                    // @ts-ignore - Assuming accountToEdit might come with these fields if API sends them
-                    interestRate: accountToEdit.interestRate
-                        ? parseFloat(String(accountToEdit.interestRate))
-                        : 0,
-                    // @ts-ignore
-                    minimumPayment: accountToEdit.minimumPayment
-                        ? parseFloat(String(accountToEdit.minimumPayment))
-                        : 0,
-                    // @ts-ignore
-                    dueDateDay: accountToEdit.dueDateDay || 10,
                 });
             } else {
                 form.reset({
@@ -104,9 +83,6 @@ export function CreateAccountDialog({
                     type: "WALLET",
                     balance: 0,
                     color: "#000000",
-                    interestRate: 0,
-                    minimumPayment: 0,
-                    dueDateDay: 10,
                 });
             }
         }
@@ -219,105 +195,9 @@ export function CreateAccountDialog({
                                 </FormItem>
                             )}
                         />
-
-                        {isDebt && (
-                            <FormField
-                                control={form.control}
-                                name="dueDateDay"
-                                render={({
-                                    field: { onChange, value, ...field },
-                                }) => (
-                                    <FormItem>
-                                        <FormLabel>Dia Vencimento</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                type="number"
-                                                min={1}
-                                                max={31}
-                                                placeholder="Dia"
-                                                value={value || ""}
-                                                onChange={(e) =>
-                                                    onChange(
-                                                        Number(e.target.value)
-                                                    )
-                                                }
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        )}
                     </div>
 
-                    {isDebt && (
-                        <div className="p-4 bg-red-50 rounded-md border border-red-100 space-y-4">
-                            <h4 className="text-sm font-semibold text-red-800">
-                                Detalhes da Dívida (Para Simuladores)
-                            </h4>
-                            <div className="grid grid-cols-2 gap-4">
-                                <FormField
-                                    control={form.control}
-                                    name="interestRate"
-                                    render={({
-                                        field: { onChange, value, ...field },
-                                    }) => (
-                                        <FormItem>
-                                            <FormLabel>
-                                                Juros Mensal (%)
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    type="number"
-                                                    step="0.01"
-                                                    placeholder="0.00%"
-                                                    value={value || ""}
-                                                    onChange={(e) =>
-                                                        onChange(
-                                                            Number(
-                                                                e.target.value
-                                                            )
-                                                        )
-                                                    }
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="minimumPayment"
-                                    render={({
-                                        field: { onChange, value, ...field },
-                                    }) => (
-                                        <FormItem>
-                                            <FormLabel>
-                                                Pagamento Mínimo
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder="R$ 0,00"
-                                                    currency
-                                                    value={value}
-                                                    onValueChange={(values) => {
-                                                        onChange(
-                                                            values.floatValue ||
-                                                                0
-                                                        );
-                                                    }}
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
-                        </div>
-                    )}
+                    {/* Debt fields removed for Plan 005.5 cleanup */}
 
                     <FormField
                         control={form.control}
