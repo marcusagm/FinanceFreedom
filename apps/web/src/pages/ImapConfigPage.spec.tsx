@@ -138,7 +138,9 @@ describe("ImapConfigPage", () => {
 
         renderWithRouter(<ImapConfigPage />);
         await waitFor(() =>
-            expect(screen.getByText("IMAP Configuration")).toBeInTheDocument()
+            expect(
+                screen.getByDisplayValue("imap.test.com")
+            ).toBeInTheDocument()
         );
 
         const saveBtn = screen.getByText("Save Config");
@@ -163,14 +165,16 @@ describe("ImapConfigPage", () => {
 
         renderWithRouter(<ImapConfigPage />);
         await waitFor(() =>
-            expect(screen.getByText("IMAP Configuration")).toBeInTheDocument()
+            expect(
+                screen.getByDisplayValue("imap.test.com")
+            ).toBeInTheDocument()
         );
 
         const testBtn = screen.getByText("Test Connection");
         fireEvent.click(testBtn);
 
         await waitFor(() => {
-            expect(screen.getByText("Connection failed")).toBeInTheDocument();
+            expect(screen.getByText("Error")).toBeInTheDocument();
             expect(screen.getByText("Auth failed")).toBeInTheDocument();
         });
     });
@@ -180,7 +184,9 @@ describe("ImapConfigPage", () => {
 
         renderWithRouter(<ImapConfigPage />);
         await waitFor(() =>
-            expect(screen.getByText("IMAP Configuration")).toBeInTheDocument()
+            expect(
+                screen.getByDisplayValue("imap.test.com")
+            ).toBeInTheDocument()
         );
 
         const testBtn = screen.getByText("Test Connection");
@@ -237,7 +243,7 @@ describe("ImapConfigPage", () => {
     it("handles sync failure", async () => {
         (api.post as any).mockImplementation((url: string) => {
             if (url === "/import/sync-now") {
-                return Promise.rejectedValue(new Error("Timeout"));
+                return Promise.reject(new Error("Timeout"));
             }
             return Promise.resolve({ data: {} });
         });

@@ -15,6 +15,9 @@ import {
     CardHeader,
     CardTitle,
 } from "../components/ui/Card";
+import { TimeCostBadge } from "../components/simulators/TimeCostBadge";
+import { SimulatorsDemo } from "../components/simulators/SimulatorsDemo";
+import { getHourlyRate } from "../services/simulator.service";
 import {
     getDashboardSummary,
     type DashboardSummary,
@@ -24,15 +27,20 @@ import {
 
 export default function Dashboard() {
     const [summary, setSummary] = useState<DashboardSummary | null>(null);
+    const [hourlyRate, setHourlyRate] = useState<number>(0);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const data = await getDashboardSummary();
-                setSummary(data);
+                const [summaryData, hourlyData] = await Promise.all([
+                    getDashboardSummary(),
+                    getHourlyRate().catch(() => ({ hourlyRate: 0 })),
+                ]);
+                setSummary(summaryData);
+                setHourlyRate(hourlyData.hourlyRate);
             } catch (error) {
-                console.error("Failed to fetch dashboard summary", error);
+                console.error("Failed to fetch dashboard data", error);
             } finally {
                 setLoading(false);
             }
@@ -154,10 +162,14 @@ export default function Dashboard() {
                             <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
                         </svg>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="space-y-2">
                         <div className="text-2xl font-bold text-red-500">
                             {formatMoney(summary.monthlyExpenses)}
                         </div>
+                        <TimeCostBadge
+                            amount={summary.monthlyExpenses}
+                            hourlyRate={hourlyRate}
+                        />
                     </CardContent>
                 </Card>
             </div>
@@ -240,6 +252,8 @@ export default function Dashboard() {
                     </CardContent>
                 </Card>
             </div>
+
+            <SimulatorsDemo />
         </div>
     );
 }

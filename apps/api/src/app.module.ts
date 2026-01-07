@@ -7,6 +7,7 @@ import { AccountModule } from "./modules/account/account.module";
 import { TransactionModule } from "./modules/transaction/transaction.module";
 import { ImportModule } from "./modules/import/import.module";
 import { DashboardModule } from "./modules/dashboard/dashboard.module";
+import { SimulatorModule } from "./modules/simulator/simulator.module";
 
 @Module({
     imports: [
@@ -15,6 +16,7 @@ import { DashboardModule } from "./modules/dashboard/dashboard.module";
         TransactionModule,
         ImportModule,
         DashboardModule,
+        SimulatorModule,
         BullModule.forRoot({
             connection: {
                 host: process.env.REDIS_HOST || "localhost",
