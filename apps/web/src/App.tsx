@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { Accounts } from "./pages/Accounts";
+import Debts from "./pages/Debts";
 
 import { Transactions } from "./pages/Transactions";
 import { ImportPage } from "./pages/ImportPage";
@@ -31,6 +32,12 @@ function Layout({ children }: { children: React.ReactNode }) {
                                 Contas
                             </Link>
                             <Link
+                                to="/debts"
+                                className="text-sm font-medium hover:text-primary transition-colors"
+                            >
+                                Dívidas
+                            </Link>
+                            <Link
                                 to="/transactions"
                                 className="text-sm font-medium hover:text-primary transition-colors"
                             >
@@ -59,6 +66,7 @@ function App() {
                 <Routes>
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/accounts" element={<Accounts />} />
+                    <Route path="/debts" element={<Debts />} />
                     <Route path="/transactions" element={<Transactions />} />
                     <Route path="/import" element={<ImportPage />} />
                     <Route path="/import/config" element={<ImapConfigPage />} />

@@ -8,34 +8,34 @@
 
 ## 🚀 Features
 
-- **Self-Hosted:** Full control over your data.
-- **Smart Import:** Automated transaction importing via OFX and Bank Providers.
-- **Dashboard:** Comprehensive view of your financial health.
-- **Multi-Account:** Manage multiple bank accounts and cards.
-- **Open Source:** Free to use and modify.
+-   **Self-Hosted:** Full control over your data.
+-   **Smart Import:** Automated transaction importing via OFX and Bank Providers.
+-   **Dashboard:** Comprehensive view of your financial health.
+-   **Multi-Account:** Manage multiple bank accounts and cards.
+-   **Open Source:** Free to use and modify.
 
 ## 🛠️ Tech Stack
 
-- **Backend:** NestJS
-- **Frontend:** React (Vite)
-- **Database:** SQLite
-- **Language:** TypeScript
-- **Monorepo Tools:** TurboRepo
+-   **Backend:** NestJS
+-   **Frontend:** React (Vite)
+-   **Database:** SQLite
+-   **Language:** TypeScript
+-   **Monorepo Tools:** TurboRepo
 
 ## 📚 Documentation
 
 For detailed documentation on architecture, product vision, and development plans, please verify the [docs](./docs) directory.
 
-- [Concept & Idea](./docs/Idea/Idea.md)
-- [Product Overview](./docs/Product/Product-overview.md)
-- [Architecture](./docs/Architecture/Architecture.md)
+-   [Concept & Idea](./docs/Idea/Idea.md)
+-   [Product Overview](./docs/Product/Product-overview.md)
+-   [Architecture](./docs/Architecture/Architecture.md)
 
 ## 🏁 Getting Started
 
 ### Prerequisites
 
-- Node.js (v20+)
-- Docker & Docker Compose
+-   Node.js (v20+)
+-   Docker & Docker Compose
 
 ### Fast Installation (Users)
 
@@ -53,8 +53,8 @@ For detailed documentation on architecture, product vision, and development plan
     ```
 
 3.  Access the application:
-    - Web: `http://localhost:3000`
-    - API: `http://localhost:3333`
+    -   Web: `http://localhost:3000`
+    -   API: `http://localhost:3333`
 
 ### Development Setup
 
@@ -67,6 +67,40 @@ For detailed documentation on architecture, product vision, and development plan
 2.  Run the development server (API + Web):
     ```bash
     npm run dev
+    ```
+
+### Rebuilding the Docker Image
+
+To update the container state and ensure all configuration changes (such as those in Vite and the Dockerfile) are applied, use the following command in the terminal at the project root:
+
+    ```bash
+    docker compose up --build -d
+    ```
+
+**What this command does:**
+
+-   `up`: Starts the services defined in `docker-compose.yml`.
+-   `--build`: Forces the reconstruction of images (useful when you change the `Dockerfile` or `package.json`).
+-   `-d`: Detached mode (runs in the background, freeing up the terminal).
+
+**Other useful commands:**
+
+Restart only one service (e.g., if you only changed `vite.config.ts`):
+
+    ```bash
+    docker compose restart web
+    ```
+
+Check container status:
+
+    ```bash
+    docker compose ps
+    ```
+
+View logs for a service (e.g., the frontend):
+
+    ```bash
+    docker compose logs -f web
     ```
 
 ## 🤝 Contributing

@@ -15,24 +15,26 @@ Implementar a "Memória da Dívida". Permitir que o usuário cadastre suas dívi
 
 ### 0. Pré-requisito
 
--   [ ] Executar **Plan 005.5** para garantir que o schema `Account` esteja limpo.
+-   [x] Executar **Plan 005.5** para garantir que o schema `Account` esteja limpo.
 
 ### 1. Backend: Modelagem & CRUD
 
--   [ ] Definir modelo `Debt` no Prisma.
+-   [x] Definir modelo `Debt` no Prisma.
     -   Campos: `id`, `name`, `totalAmount` (Saldo Devedor), `interestRate` (Mensal %), `minimumPayment`, `dueDate` (Dia), `categoryId` (opcional), `priority` (opcional).
--   [ ] Criar migração SQL.
--   [ ] Criar módulo `DebtModule`.
--   [ ] Implementar `DebtService` (CRUD básico).
--   [ ] Implementar `DebtController` (Endpoints POST, GET, PUT, DELETE).
+-   [x] Criar migração SQL.
+-   [x] Criar módulo `DebtModule`.
+-   [x] Implementar `DebtService` (CRUD básico).
+-   [x] Implementar `DebtController` (Endpoints POST, GET, PUT, DELETE).
 
 ### 2. Frontend: Tela de Cadastro
 
--   [ ] Criar página `Debts.tsx`.
--   [ ] Criar formulário `DebtForm` com validação (Zod).
+-   [x] Criar página `Debts.tsx`.
+-   [x] Criar formulário `DebtForm` com validação (Zod).
     -   Validar que Juros aceita casas decimais.
     -   Validar que Dia de Vencimento é 1-31.
--   [ ] Listar dívidas cadastradas em Cards simples.
+-   [x] Listar dívidas cadastradas em Cards simples.
+    -   _Standardization Update:_ Cards implementados seguindo padrão `AccountCard` (BEM).
+    -   _Extra:_ Implementada exclusão com `DeleteDebtDialog`.
 
 ## Verificação
 

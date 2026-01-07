@@ -8,6 +8,7 @@ import { TransactionModule } from "./modules/transaction/transaction.module";
 import { ImportModule } from "./modules/import/import.module";
 import { DashboardModule } from "./modules/dashboard/dashboard.module";
 import { SimulatorModule } from "./modules/simulator/simulator.module";
+import { DebtModule } from './modules/debt/debt.module';
 
 @Module({
     imports: [
@@ -23,6 +24,7 @@ import { SimulatorModule } from "./modules/simulator/simulator.module";
                 port: Number(process.env.REDIS_PORT) || 6379,
             },
         }),
+        DebtModule,
     ],
     controllers: [AppController],
     providers: [AppService],

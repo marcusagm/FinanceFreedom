@@ -51,3 +51,16 @@ model EmailCredential {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model Debt {
+  id              String   @id @default(uuid())
+  name            String
+  totalAmount     Decimal  @default(0.0)
+  interestRate    Decimal  @default(0.0) // Monthly Interest Rate (%)
+  minimumPayment  Decimal  @default(0.0)
+  dueDate         Int      // Day of month (1-31)
+  categoryId      String?
+  priority        Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
