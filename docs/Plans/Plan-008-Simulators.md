@@ -18,26 +18,30 @@ Implementar widgets que traduzem dinheiro em tempo e esforço, gerando "dor de p
 
 ### 1. Backend: Service Integration
 
--   [ ] Implementar `SimulatorService`.
+-   [x] Implementar `SimulatorService`.
     -   `calculateTimeCost(amount, hourlyRate)`: Retorna horas de trabalho necessárias.
-    -   `calculateDelayCost(debtId, days)`: Retorna juros acumulados por atraso.
+    -   `calculateDelayCost(debtBalance, interestRate, days)`: Refatorado para ser "pure logic" (não depende de DB).
 
 ### 2. Frontend: Widgets
 
--   [ ] Criar `TimeCostBadge`:
+-   [x] Criar `TimeCostBadge`:
     -   Recebe um valor Monetário.
-    -   Busca `hourlyRate` (mockado ou calculado da renda).
+    -   Busca `hourlyRate` (calculado da renda dos últimos 30 dias).
     -   Exibe: "Isso custa X horas de trabalho".
-    -   Adicionar nos detalhes da Transação.
--   [ ] Criar `DelayCostWidget`:
-    -   Adicionar na tela de Detalhes da Dívida.
-    -   Slider de dias de atraso (1 a 30).
-    -   Mostra o prejuízo em tempo real.
+    -   Adicionado na lista de Transações (Expansível ou badge direto).
+-   [x] Criar `DelayCostWidget` (Renomeado para `DebtDelayCard`):
+    -   Adicionado na tela de Dívidas (Dentro do `DebtCard`).
+    -   Slider de dias de atraso (1 a 60).
+    -   Mostra o prejuízo em tempo real (Juros + Multa).
+
+## Melhorias Adicionais Realizadas
+
+-   **Integração Direta no Card:** Em vez de widgets isolados, os simuladores foram embutidos no component `DebtCard` com botões de ação (Timer para Atraso, TrendingUp para Antecipação).
+-   **Prepayment Opportunity:** O recurso de antecipação (originalmente parte de um demo) foi refatorado e integrado como um "Simulador de Esperança" no Card de Dívida.
+-   **Cleanup:** Remoção de arquivos obsoletos (`SimulatorsDemo.tsx`) e limpeza de código no Dashboard e Página de Dívidas.
 
 ## Verificação
 
--   Definir renda mensal R$ 10.000 / 160h = R$ 62,50/h.
--   Visualizar despesa de R$ 125,00.
--   Badge deve mostrar: "2 horas de vida".
--   No detalhe de uma Dívida de 10% a.m (R$ 1000), simular 30 dias de atraso.
--   Widget deve mostrar +R$ 100 de juros.
+-   [x] Definir renda mensal (cálculo automático baseado em transações).
+-   [x] Visualizar despesa de R$ 125,00 -> Badge "2 horas de vida" (verificado como "2h of work").
+-   [x] No detalhe de uma Dívida de 12% a.m (R$ 1000), simular 30 dias de atraso -> Mostra +R$ 140 (Juros + Multa).

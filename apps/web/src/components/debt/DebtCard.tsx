@@ -1,9 +1,10 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { Pencil, Trash2, Timer } from "lucide-react";
+import { Pencil, Trash2, Timer, TrendingUp } from "lucide-react";
 import { useState } from "react";
 import "./DebtCard.css";
 import { DebtDelayCard } from "../simulators/DebtDelayCard";
+import { PrepaymentOpportunity } from "../simulators/PrepaymentOpportunity";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -20,6 +21,8 @@ interface DebtCardProps {
     onDelete?: (id: string) => void;
 }
 
+type SimulatorType = "NONE" | "DELAY" | "PREPAYMENT";
+
 export function DebtCard({
     id,
     name,
@@ -30,7 +33,12 @@ export function DebtCard({
     onEdit,
     onDelete,
 }: DebtCardProps) {
-    const [showSimulator, setShowSimulator] = useState(false);
+    const [activeSimulator, setActiveSimulator] =
+        useState<SimulatorType>("NONE");
+
+    const toggleSimulator = (type: SimulatorType) => {
+        setActiveSimulator(activeSimulator === type ? "NONE" : type);
+    };
 
     const formatMoney = (value: number) => {
         return new Intl.NumberFormat("pt-BR", {
@@ -63,11 +71,26 @@ export function DebtCard({
 
             <div className="debt-card__actions">
                 <button
-                    onClick={() => setShowSimulator(!showSimulator)}
-                    className="debt-card__action-btn text-blue-500 hover:bg-blue-50"
-                    title="Simular Atraso"
+                    onClick={() => toggleSimulator("DELAY")}
+                    className={`debt-card__action-btn hover:bg-red-50 ${
+                        activeSimulator === "DELAY"
+                            ? "text-red-600 bg-red-50"
+                            : "text-gray-500"
+                    }`}
+                    title="Simular Custo do Atraso"
                 >
                     <Timer className="w-4 h-4" />
+                </button>
+                <button
+                    onClick={() => toggleSimulator("PREPAYMENT")}
+                    className={`debt-card__action-btn hover:bg-emerald-50 ${
+                        activeSimulator === "PREPAYMENT"
+                            ? "text-emerald-600 bg-emerald-50"
+                            : "text-gray-500"
+                    }`}
+                    title="Simular Antecipação"
+                >
+                    <TrendingUp className="w-4 h-4" />
                 </button>
                 <button
                     onClick={() => onEdit?.(id)}
@@ -85,12 +108,23 @@ export function DebtCard({
                 </button>
             </div>
 
-            {showSimulator && (
-                <div className="mt-4 pt-4 border-t border-border">
+            {activeSimulator === "DELAY" && (
+                <div className="mt-4 pt-4 border-t border-border animate-in fade-in slide-in-from-top-2 duration-300">
                     <DebtDelayCard
                         debtName={name}
                         balance={totalAmount}
                         interestRate={interestRate}
+                    />
+                </div>
+            )}
+
+            {activeSimulator === "PREPAYMENT" && (
+                <div className="mt-4 pt-4 border-t border-border animate-in fade-in slide-in-from-top-2 duration-300">
+                    <PrepaymentOpportunity
+                        debtName={name}
+                        balance={totalAmount}
+                        interestRate={interestRate}
+                        minimumPayment={minimumPayment}
                     />
                 </div>
             )}

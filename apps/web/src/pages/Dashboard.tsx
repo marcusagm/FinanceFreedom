@@ -16,7 +16,6 @@ import {
     CardTitle,
 } from "../components/ui/Card";
 import { TimeCostBadge } from "../components/simulators/TimeCostBadge";
-import { SimulatorsDemo } from "../components/simulators/SimulatorsDemo";
 import { getHourlyRate } from "../services/simulator.service";
 import {
     getDashboardSummary,
@@ -252,8 +251,6 @@ export default function Dashboard() {
                     </CardContent>
                 </Card>
             </div>
-
-            {/* <SimulatorsDemo /> - Removed for Plan 005.5 Cleanup */}
         </div>
     );
 }

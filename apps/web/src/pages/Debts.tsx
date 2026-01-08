@@ -5,7 +5,6 @@ import { DebtForm, type Debt } from "../components/debt/DebtForm";
 import { DebtCard } from "../components/debt/DebtCard";
 import { DeleteDebtDialog } from "../components/debt/DeleteDebtDialog";
 import { StrategyComparison } from "../components/debt/StrategyComparison";
-import { SimulatorsDemo } from "../components/simulators/SimulatorsDemo";
 
 export default function Debts() {
     const [debts, setDebts] = useState<Debt[]>([]);
@@ -111,10 +110,7 @@ export default function Debts() {
                     )}
                 </div>
             ) : (
-                <div className="space-y-8">
-                    <StrategyComparison />
-                    <SimulatorsDemo debts={debts} />
-                </div>
+                <StrategyComparison />
             )}
 
             <DebtForm
