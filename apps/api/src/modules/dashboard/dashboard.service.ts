@@ -1,9 +1,13 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../../prisma/prisma.service";
+import { DebtService } from "../debt/debt.service";
 
 @Injectable()
 export class DashboardService {
-    constructor(private readonly prisma: PrismaService) {}
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly debtService: DebtService
+    ) {}
 
     async getSummary() {
         const today = new Date();
@@ -39,20 +43,55 @@ export class DashboardService {
             .filter((t) => t.type === "EXPENSE")
             .reduce((sum, t) => sum + Number(t.amount), 0);
 
-        // 3. 30-Day Evolution Chart data
-        // For simplicity in this iteration, we will just return the summary numbers.
-        // The chart data generation logic can be complex and might need a separate optimized query later.
-        // However, to satisfy the requirement "Criar Gráfico de Linha (Evolução do Saldo - 30 dias)",
-        // we need to construct the daily balance.
-        // This is expensive to calculate on the fly by iterating all transactions every time.
-        // A better approach for the MVP is:
-        // Take the current balance and work backwards with transactions from the last 30 days?
-        // Or just group transactions by date for the last 30 days.
+        // 3. Recommendations
+        const freeCashFlow = income - expenses;
+        const recommendations = [];
 
+        if (freeCashFlow > 0) {
+            const debts = await this.debtService.getSortedDebts("AVALANCHE"); // Default strategy
+            if (debts.length > 0) {
+                const topDebt = debts[0];
+                recommendations.push({
+                    type: "PAY_DEBT",
+                    title: `Pagar Dívida: ${topDebt.name}`,
+                    description: `Você tem R$ ${freeCashFlow.toFixed(
+                        2
+                    )} livres. Use para abater sua dívida mais cara (${
+                        topDebt.interestRate
+                    }% a.m).`,
+                    actionLabel: "Pagar Agora",
+                    actionLink: `/debts`,
+                    priority: "HIGH",
+                });
+            } else {
+                recommendations.push({
+                    type: "INVEST",
+                    title: "Investir Excedente",
+                    description: `Parabéns! Você tem R$ ${freeCashFlow.toFixed(
+                        2
+                    )} livres e nenhuma dívida. Que tal investir?`,
+                    actionLabel: "Ver Investimentos",
+                    actionLink: "/investments",
+                    priority: "MEDIUM",
+                });
+            }
+        } else if (freeCashFlow < 0) {
+            recommendations.push({
+                type: "INCOME_GAP",
+                title: "Faltam Recursos",
+                description: `Você está R$ ${Math.abs(freeCashFlow).toFixed(
+                    2
+                )} negativo neste mês. Considere fazer uma renda extra.`,
+                actionLabel: "Ver Oportunidades",
+                actionLink: "/income/opportunities",
+                priority: "CRITICAL",
+            });
+        }
+
+        // 4. Chart Data (Logic remains same, just ensuring return structure)
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(today.getDate() - 30);
 
-        // Get last 30 days transactions
         const last30DaysTransactions = await this.prisma.transaction.findMany({
             where: {
                 date: {
@@ -64,24 +103,10 @@ export class DashboardService {
             },
         });
 
-        const chartData = [];
-        // This is a simplified "daily flow" chart, not necessarily "balance evolution" if we don't have snapshots.
-        // But we can approximate "balance evolution" if we assume the current balance is correct
-        // and reverse-engineer previous days, OR we can just show "Income vs Expense" per day.
-        // The requirement says "Evolução do Saldo".
-        // Let's implement a 'reverse-calc' strategy:
-        // currentBalance is for TODAY.
-        // Balance Yesterday = Balance Today - Today's Income + Today's Expense.
-
-        let runningBalance = totalBalance;
-
-        // We need a map of transactions per day
         const transactionsMap = new Map<
             string,
             { income: number; expense: number }
         >();
-
-        // Helper to format date as YYYY-MM-DD
         const formatDate = (date: Date) => date.toISOString().split("T")[0];
 
         for (const t of last30DaysTransactions) {
@@ -94,38 +119,19 @@ export class DashboardService {
             else entry.expense += Number(t.amount);
         }
 
-        // Iterate backwards from today to 30 days ago
-        const days = [];
-        for (let i = 0; i < 30; i++) {
-            const date = new Date();
-            date.setDate(today.getDate() - i);
-            const dateKey = formatDate(date);
-            days.push({ date: dateKey, dateObj: date });
-        }
-        // Sort days chronologically (oldest to newest) to build the chart
-        days.sort((a, b) => a.dateObj.getTime() - b.dateObj.getTime());
-
-        // Wait, to build the chart specifically for "Balance Evolution", we should do:
-        // Start with Current Balance. This is the balance at the END of today.
-        // Walk BACKWARDS day by day.
-
-        const balanceEvolution = [];
         let currentCalcBalance = totalBalance;
+        const balanceEvolution = [];
 
-        // We need to iterate backwards in time
         for (let i = 0; i < 30; i++) {
             const date = new Date();
             date.setDate(today.getDate() - i);
             const dateKey = formatDate(date);
 
-            // This is the balance at the end of 'date'.
             balanceEvolution.push({
                 date: dateKey,
                 balance: currentCalcBalance,
             });
 
-            // Now adjust currentCalcBalance to be the balance at the end of 'yesterday' (date - 1)
-            // Balance(Yesterday) = Balance(Today) - Income(Today) + Expense(Today)
             const dayTrans = transactionsMap.get(dateKey) || {
                 income: 0,
                 expense: 0,
@@ -138,7 +144,8 @@ export class DashboardService {
             totalBalance,
             monthlyIncome: income,
             monthlyExpenses: expenses,
-            chartData: balanceEvolution.reverse(), // Return oldest to newest
+            chartData: balanceEvolution.reverse(),
+            recommendations,
         };
     }
 }

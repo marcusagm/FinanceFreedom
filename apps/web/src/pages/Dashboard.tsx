@@ -23,6 +23,7 @@ import {
 } from "../services/dashboard.service";
 // import { formatMoney as _unused } from "../lib/utils"; // Not used, removing line
 // import { cn } from "../lib/utils";
+import { ActionFeed } from "../components/dashboard/ActionFeed";
 
 export default function Dashboard() {
     const [summary, setSummary] = useState<DashboardSummary | null>(null);
@@ -171,6 +172,11 @@ export default function Dashboard() {
                         />
                     </CardContent>
                 </Card>
+            </div>
+
+            {/* Action Feed */}
+            <div className="grid gap-4 md:grid-cols-1">
+                <ActionFeed recommendations={summary.recommendations} />
             </div>
 
             {/* Chart */}

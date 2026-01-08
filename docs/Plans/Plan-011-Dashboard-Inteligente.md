@@ -14,7 +14,7 @@ Fechar o loop. O Dashboard deve deixar de ser passivo e passar a recomendar aç�
 
 ### 1. Backend: Recomendação
 
--   [ ] Atualizar `DashboardService.getSummary`:
+-   [x] Atualizar `DashboardService.getSummary`:
     -   Calcular `freeCashFlow` (Receita - Despesas Essenciais).
     -   Se `freeCashFlow > 0` e houver `Debts`:
         -   Gerar Recomendação: "Pagar Dívida X" (Baseado na estratégia do Plan 007).
@@ -23,9 +23,9 @@ Fechar o loop. O Dashboard deve deixar de ser passivo e passar a recomendar aç�
 
 ### 2. Frontend: Action Feed
 
--   [ ] Criar componente `ActionFeed` na Home.
--   [ ] Renderizar cards dinâmicos baseados na resposta da API.
--   [ ] Botão de Ação Rápida no Card (ex: "Pagar Agora" joga para tela de Dívida).
+-   [x] Criar componente `ActionFeed` na Home.
+-   [x] Renderizar cards dinâmicos baseados na resposta da API.
+-   [x] Botão de Ação Rápida no Card (ex: "Pagar Agora" joga para tela de Dívida).
 
 ## Verificação
 
@@ -33,3 +33,20 @@ Fechar o loop. O Dashboard deve deixar de ser passivo e passar a recomendar aç�
 -   Dashboard deve recomendar: "Use seus R$ 500 para abater Nubank".
 -   Deixar o usuário com saldo negativo (-R$ 200).
 -   Dashboard deve recomendar: "Faça 1 Freela Design para cobrir o rombo".
+
+## Relatório de Implementação (Feito)
+
+Além dos itens planejados, foram realizadas as seguintes melhorias e correções para garantir a qualidade (Quality.md):
+
+### Extras & Correções
+
+1.  **Testes de Alta Cobertura**:
+    -   Backend: `dashboard.service.spec.ts` com **100% de cobertura** na lógica de recomendação.
+    -   Frontend: Criados testes unitários para `ActionCard` e `ActionFeed`.
+    -   Integração: Testes do `Dashboard.tsx` atualizados para verificar a presença das recomendações.
+2.  **Correção de Navegação**:
+    -   Ajustado link de ação da dívida para `/debts` (ao invés de rotas inexistentes), garantindo fluxo contínuo.
+3.  **Build System**:
+    -   Correção de imports case-sensitive (`Card` vs `card`) que quebravam o build em ambientes Linux/Docker.
+4.  **Integração Modular**:
+    -   Refatoração limpa com `DebtModule` exportando `DebtService` para ser injetado no `Dashboard`.

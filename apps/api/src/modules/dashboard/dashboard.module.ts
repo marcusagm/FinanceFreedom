@@ -3,8 +3,10 @@ import { DashboardController } from "./dashboard.controller";
 import { DashboardService } from "./dashboard.service";
 import { PrismaModule } from "../../prisma/prisma.module";
 
+import { DebtModule } from "../debt/debt.module";
+
 @Module({
-    imports: [PrismaModule],
+    imports: [PrismaModule, DebtModule],
     controllers: [DashboardController],
     providers: [DashboardService],
 })

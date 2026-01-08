@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from "@testing-library/react";
+import { BrowserRouter } from "react-router-dom";
 import Dashboard from "./Dashboard";
 import { getDashboardSummary } from "../services/dashboard.service";
 import { vi, describe, it, expect, beforeEach } from "vitest";
@@ -32,7 +33,11 @@ describe("Dashboard", () => {
         (getDashboardSummary as any).mockImplementation(
             () => new Promise(() => {})
         ); // Never resolves
-        render(<Dashboard />);
+        render(
+            <BrowserRouter>
+                <Dashboard />
+            </BrowserRouter>
+        );
         expect(screen.getByText("Loading dashboard...")).toBeInTheDocument();
     });
 
@@ -42,9 +47,23 @@ describe("Dashboard", () => {
             monthlyIncome: 500,
             monthlyExpenses: 200,
             chartData: [{ date: "2023-01-01", balance: 1000 }],
+            recommendations: [
+                {
+                    type: "PAY_DEBT",
+                    title: "Rec 1",
+                    description: "Desc 1",
+                    priority: "HIGH",
+                    actionLabel: "Do it",
+                    actionLink: "/do-it",
+                },
+            ],
         });
 
-        render(<Dashboard />);
+        render(
+            <BrowserRouter>
+                <Dashboard />
+            </BrowserRouter>
+        );
 
         await waitFor(() => {
             expect(screen.getByText("Saldo Total")).toBeInTheDocument();
@@ -55,13 +74,20 @@ describe("Dashboard", () => {
             expect(screen.getByText(/R\$\s?500,00/)).toBeInTheDocument();
             expect(screen.getByText("Despesas (Mês)")).toBeInTheDocument();
             expect(screen.getByText(/R\$\s?200,00/)).toBeInTheDocument();
+
+            // Verify items from recommendations
+            expect(screen.getByText("Rec 1")).toBeInTheDocument();
         });
     });
 
     it("renders error message on failure", async () => {
         (getDashboardSummary as any).mockRejectedValue(new Error("Failed"));
 
-        render(<Dashboard />);
+        render(
+            <BrowserRouter>
+                <Dashboard />
+            </BrowserRouter>
+        );
 
         await waitFor(() => {
             expect(

@@ -47,7 +47,7 @@ function Layout({ children }: { children: React.ReactNode }) {
                             </Link>
                             <Link
                                 to="/income/projection"
-                                className="text-sm font-medium hover:text-primary transition-colors text-emerald-600"
+                                className="text-sm font-medium hover:text-primary transition-colors"
                             >
                                 Projeção
                             </Link>

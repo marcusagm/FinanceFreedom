@@ -2,7 +2,7 @@ import React from "react";
 import { useDroppable } from "@dnd-kit/core";
 import { cn } from "../../lib/utils";
 import { formatCurrency } from "../../utils/format";
-import { Badge } from "../ui/badge";
+
 import { Scissors } from "lucide-react";
 
 interface ProjectedMeta {

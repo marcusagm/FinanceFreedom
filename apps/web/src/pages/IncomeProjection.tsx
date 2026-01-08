@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
     DndContext,
     DragOverlay,
@@ -20,8 +20,8 @@ import {
 import { ptBR } from "date-fns/locale";
 import { DraggableWorkUnit } from "../components/income/DraggableWorkUnit";
 import { CalendarDay } from "../components/income/CalendarDay";
-import { Button } from "../components/ui/button";
-import { Card } from "../components/ui/card";
+import { Button } from "../components/ui/Button";
+import { Card } from "../components/ui/Card";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { formatCurrency } from "../utils/format";
 import { api } from "../lib/api";
