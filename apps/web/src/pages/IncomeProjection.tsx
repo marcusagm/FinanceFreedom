@@ -25,6 +25,7 @@ import { Card } from "../components/ui/card";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { formatCurrency } from "../utils/format";
 import { api } from "../lib/api";
+import { DistributeIncomeDialog } from "../components/income/DistributeIncomeDialog";
 
 export default function IncomeProjection() {
     const [currentDate, setCurrentDate] = useState(new Date());
@@ -104,6 +105,15 @@ export default function IncomeProjection() {
         }
     };
 
+    const handleStatusChange = async (id: string, newStatus: string) => {
+        try {
+            await api.patch(`/income/projection/${id}`, { status: newStatus });
+            fetchProjections();
+        } catch (error) {
+            console.error("Failed to update status", error);
+        }
+    };
+
     const monthStart = startOfMonth(currentDate);
     const monthEnd = endOfMonth(currentDate);
     const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd });
@@ -124,6 +134,42 @@ export default function IncomeProjection() {
         (acc, curr) => acc + Number(curr.amount),
         0
     );
+
+    const [distributeDialog, setDistributeDialog] = useState<{
+        open: boolean;
+        item: any | null;
+    }>({ open: false, item: null });
+
+    const handleOpenDistribute = (item: any) => {
+        setDistributeDialog({ open: true, item });
+    };
+
+    const handleConfirmDistribute = async (data: {
+        hoursPerDay: number;
+        skipWeekends: boolean;
+    }) => {
+        if (!distributeDialog.item) return;
+
+        try {
+            await api.post("/income/projection/distribute", {
+                workUnitId: distributeDialog.item.workUnit.id,
+                startDate: distributeDialog.item.date, // Use the projection date as start
+                hoursPerDay: data.hoursPerDay,
+                skipWeekends: data.skipWeekends,
+            });
+            // Optionally delete the original single-day item if desired,
+            // but the user might want to keep it or the backend logic might cover it?
+            // The backend logic creates NEW items.
+            // If the user is distributing an existing item, we should probably delete the original "placeholder"
+            // to avoid duplication + split.
+            // Let's safe-delete the original item.
+            await handleRemoveProjection(distributeDialog.item.id);
+
+            fetchProjections();
+        } catch (error) {
+            console.error("Failed to distribute projection", error);
+        }
+    };
 
     return (
         <DndContext
@@ -212,7 +258,8 @@ export default function IncomeProjection() {
                                     )}
                                     projections={dateProjections}
                                     onRemove={handleRemoveProjection}
-                                    onStatusChange={() => {}}
+                                    onStatusChange={handleStatusChange}
+                                    onDistribute={handleOpenDistribute}
                                 />
                             );
                         })}
@@ -236,6 +283,15 @@ export default function IncomeProjection() {
                     </div>
                 ) : null}
             </DragOverlay>
+
+            <DistributeIncomeDialog
+                open={distributeDialog.open}
+                onOpenChange={(open) =>
+                    setDistributeDialog((prev) => ({ ...prev, open }))
+                }
+                onConfirm={handleConfirmDistribute}
+                workUnitName={distributeDialog.item?.workUnit.name || ""}
+            />
         </DndContext>
     );
 }

@@ -37,6 +37,7 @@ model Transaction {
   account     Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  projectedIncomes ProjectedIncome[]
 }
 
 model EmailCredential {
@@ -94,4 +95,6 @@ model ProjectedIncome {
   amount      Decimal
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  transactionId String?
+  transaction Transaction? @relation(fields: [transactionId], references: [id], onDelete: SetNull)
 }

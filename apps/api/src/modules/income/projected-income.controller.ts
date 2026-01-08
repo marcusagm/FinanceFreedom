@@ -40,6 +40,27 @@ export class ProjectedIncomeController {
         });
     }
 
+    @Post("distribute")
+    distribute(
+        @Body()
+        dto: {
+            workUnitId: string;
+            startDate: string;
+            hoursPerDay?: number;
+            skipWeekends?: boolean;
+        }
+    ) {
+        if (!dto.workUnitId || !dto.startDate) {
+            throw new BadRequestException("Missing workUnitId or startDate");
+        }
+        return this.projectedIncomeService.distribute({
+            workUnitId: dto.workUnitId,
+            startDate: new Date(dto.startDate),
+            hoursPerDay: dto.hoursPerDay,
+            skipWeekends: dto.skipWeekends,
+        });
+    }
+
     @Get()
     findAll(@Query("month") monthStr: string) {
         // monthStr expected format: YYYY-MM

@@ -8,6 +8,13 @@ const mockPrismaService = {
         findMany: jest.fn(),
         update: jest.fn(),
         delete: jest.fn(),
+        findUnique: jest.fn(),
+    },
+    transaction: {
+        create: jest.fn(),
+    },
+    account: {
+        findMany: jest.fn(),
     },
 };
 
@@ -62,18 +69,136 @@ describe("ProjectedIncomeService", () => {
                         lte: end,
                     },
                 },
-                include: { workUnit: true },
+                include: { workUnit: true, transaction: true },
                 orderBy: { date: "asc" },
             });
         });
     });
 
-    describe("remove", () => {
-        it("should remove a projected income", async () => {
-            await service.remove("1");
-            expect(prisma.projectedIncome.delete).toHaveBeenCalledWith({
-                where: { id: "1" },
-            });
+    it("should remove a projected income", async () => {
+        await service.remove("1");
+        expect(prisma.projectedIncome.delete).toHaveBeenCalledWith({
+            where: { id: "1" },
         });
+    });
+});
+
+describe("update", () => {
+    let service: ProjectedIncomeService;
+    let prisma: typeof mockPrismaService;
+
+    beforeEach(async () => {
+        const module: TestingModule = await Test.createTestingModule({
+            providers: [
+                ProjectedIncomeService,
+                {
+                    provide: PrismaService,
+                    useValue: mockPrismaService,
+                },
+            ],
+        }).compile();
+
+        service = module.get<ProjectedIncomeService>(ProjectedIncomeService);
+        prisma = module.get(PrismaService);
+
+        // Reset all mocks before each test
+        for (const key in mockPrismaService) {
+            if (
+                mockPrismaService[key] &&
+                typeof mockPrismaService[key] === "object"
+            ) {
+                for (const method in mockPrismaService[key]) {
+                    if (
+                        typeof mockPrismaService[key][method] === "function" &&
+                        mockPrismaService[key][method].mock
+                    ) {
+                        mockPrismaService[key][method].mockReset();
+                    }
+                }
+            }
+        }
+    });
+
+    it("should create a transaction when status is updated to PAID and no transaction exists", async () => {
+        const mockProjectedIncome = {
+            id: "1",
+            amount: 100,
+            date: new Date(),
+            workUnit: { name: "Test Unit" },
+            transactionId: null,
+        };
+        const mockAccount = { id: "acc1" };
+        const mockTransaction = { id: "tx1" };
+
+        // Mock findUnique (current state)
+        prisma.projectedIncome.findUnique = jest
+            .fn()
+            .mockResolvedValue(mockProjectedIncome);
+
+        // Mock update (result)
+        prisma.projectedIncome.update = jest
+            .fn()
+            .mockResolvedValue(mockProjectedIncome);
+        prisma.account.findMany = jest.fn().mockResolvedValue([mockAccount]);
+        prisma.transaction.create = jest
+            .fn()
+            .mockResolvedValue(mockTransaction);
+
+        await service.update("1", { status: "PAID" });
+
+        // Verify creation
+        expect(prisma.transaction.create).toHaveBeenCalled();
+        // Verify linking
+        expect(prisma.projectedIncome.update).toHaveBeenCalledWith(
+            expect.objectContaining({
+                where: { id: "1" },
+                data: expect.objectContaining({
+                    transactionId: "tx1",
+                }),
+            })
+        );
+    });
+
+    it("should DELETE transaction when moving away from PAID", async () => {
+        const mockProjectedIncome = {
+            id: "1",
+            amount: 100,
+            date: new Date(),
+            workUnit: { name: "Test Unit" },
+            transactionId: "tx1", // Has existing transaction
+        };
+
+        prisma.projectedIncome.findUnique = jest
+            .fn()
+            .mockResolvedValue(mockProjectedIncome);
+        prisma.projectedIncome.update = jest
+            .fn()
+            .mockResolvedValue(mockProjectedIncome);
+        prisma.transaction.delete = jest.fn().mockResolvedValue({});
+
+        await service.update("1", { status: "PLANNED" });
+
+        expect(prisma.transaction.delete).toHaveBeenCalledWith({
+            where: { id: "tx1" },
+        });
+    });
+
+    it("should NOT create transaction if already PAID and has ID", async () => {
+        const mockProjectedIncome = {
+            id: "1",
+            amount: 100,
+            transactionId: "tx1",
+        };
+
+        prisma.projectedIncome.findUnique = jest
+            .fn()
+            .mockResolvedValue(mockProjectedIncome);
+        prisma.projectedIncome.update = jest
+            .fn()
+            .mockResolvedValue(mockProjectedIncome);
+
+        await service.update("1", { status: "PAID" });
+
+        expect(prisma.transaction.create).not.toHaveBeenCalled();
     });
 });

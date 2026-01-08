@@ -3,6 +3,7 @@ import { useDroppable } from "@dnd-kit/core";
 import { cn } from "../../lib/utils";
 import { formatCurrency } from "../../utils/format";
 import { Badge } from "../ui/badge";
+import { Scissors } from "lucide-react";
 
 interface ProjectedMeta {
     id: string;
@@ -20,6 +21,7 @@ interface CalendarDayProps {
     projections: ProjectedMeta[];
     onRemove: (id: string) => void;
     onStatusChange: (id: string, newStatus: string) => void;
+    onDistribute?: (item: any) => void;
 }
 
 export function CalendarDay({
@@ -28,6 +30,7 @@ export function CalendarDay({
     projections,
     onRemove,
     onStatusChange,
+    onDistribute,
 }: CalendarDayProps) {
     const { isOver, setNodeRef } = useDroppable({
         id: `day-${date.toISOString().split("T")[0]}`,
@@ -35,6 +38,28 @@ export function CalendarDay({
             date: date,
         },
     });
+
+    const statusColors: any = {
+        PLANNED: "bg-slate-100 text-slate-700 border-slate-200",
+        DONE: "bg-amber-50 text-amber-700 border-amber-200",
+        PAID: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    };
+
+    const nextStatus: any = {
+        PLANNED: "DONE",
+        DONE: "PAID",
+        PAID: "PLANNED",
+    };
+
+    const handleStatusClick = (
+        e: React.MouseEvent,
+        id: string,
+        currentStatus: string
+    ) => {
+        e.stopPropagation();
+        const newStatus = nextStatus[currentStatus] || "PLANNED";
+        onStatusChange(id, newStatus);
+    };
 
     return (
         <div
@@ -54,22 +79,42 @@ export function CalendarDay({
             {projections.map((proj) => (
                 <div
                     key={proj.id}
-                    className="group relative bg-emerald-50 border border-emerald-100 p-1.5 rounded text-xs hover:shadow-sm"
+                    className={cn(
+                        "group relative border p-1.5 rounded text-xs hover:shadow-sm cursor-pointer select-none transition-colors",
+                        statusColors[proj.status] || statusColors.PLANNED
+                    )}
+                    onClick={(e) => handleStatusClick(e, proj.id, proj.status)}
+                    title="Clique para alterar status (Plano -> Feito -> Pago)"
                 >
                     <div className="flex justify-between items-center">
                         <span className="truncate font-medium flex-1">
                             {proj.workUnit.name}
                         </span>
-                        <span className="text-emerald-700 font-bold ml-1">
+                        <span className="font-bold ml-1">
                             {formatCurrency(Number(proj.amount))}
                         </span>
                     </div>
 
                     {/* Hover Actions */}
                     <div className="hidden group-hover:flex absolute -top-2 -right-2 bg-white shadow-sm border rounded-full p-0.5 gap-1">
+                        {onDistribute && (
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onDistribute(proj);
+                                }}
+                                className="text-blue-500 hover:bg-blue-50 rounded-full w-4 h-4 flex items-center justify-center border border-transparent hover:border-blue-200"
+                                title="Distribuir (Dividir em vários dias)"
+                            >
+                                <Scissors className="w-2.5 h-2.5" />
+                            </button>
+                        )}
                         <button
-                            onClick={() => onRemove(proj.id)}
-                            className="text-red-500 hover:bg-red-50 rounded-full w-4 h-4 flex items-center justify-center"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onRemove(proj.id);
+                            }}
+                            className="text-red-500 hover:bg-red-50 rounded-full w-4 h-4 flex items-center justify-center border border-transparent hover:border-red-200"
                             title="Remover"
                         >
                             ×
