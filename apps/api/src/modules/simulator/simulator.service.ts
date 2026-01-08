@@ -45,27 +45,24 @@ export class SimulatorService {
         daysLate: number,
         debtName = "Dívida"
     ) {
-        // Pure logic refactor - Decoupled from Account/DB for Plan 005.5
         const monthlyRate = monthlyInterestRate; // %
 
         if (debtBalance === 0 || monthlyRate === 0) {
             return {
-                cost: 0,
+                totalCost: 0,
+                fine: 0,
+                interest: 0,
+                daysLate: 0,
+                debtName: debtName,
+                comparison: "N/A",
                 message: "No impact (Zero balance or 0% interest)",
             };
         }
 
-        // Daily Rate (Simple approx: Rate / 30)
-        // Compound: (1 + rate)^days - 1
-        // Rate is percent, e.g. 10.0 for 10%
         const rateDecimal = monthlyRate / 100;
         const dailyRate = rateDecimal / 30;
 
-        // Simple Interest for short delays is usually Close Enough and what banks often charge as "Mora" + "Multa"
-        // Usually Multa (2%) + Juros (1% ao mes pro-rata)
-        // Let's implement Brazil Standard: Multa 2% fixed + Juros 1% pro-rata
-
-        const fine = debtBalance * 0.02; // Multa is strict 2% usually
+        const fine = debtBalance * 0.02; // Multa 2%
         const interest = debtBalance * (dailyRate * daysLate);
 
         const totalCost = fine + interest;
@@ -86,17 +83,26 @@ export class SimulatorService {
         minimumPayment: number,
         prepaymentAmount: number
     ) {
-        // Pure logic refactor - Decoupled from Account/DB for Plan 005.5
         const monthlyRate = monthlyInterestRate; // %
 
         if (debtBalance === 0 || monthlyRate === 0) {
-            return { saved: 0, message: "No savings possible" };
+            return {
+                interestSaved: 0,
+                monthsSaved: 0,
+                prepaymentAmount: prepaymentAmount || 0,
+                message: "No savings possible",
+            };
         }
 
         const minPayment = minimumPayment || debtBalance * 0.05;
 
         if (minPayment <= 0)
-            return { saved: 0, message: "Invalid minimum payment" };
+            return {
+                interestSaved: 0,
+                monthsSaved: 0,
+                prepaymentAmount: prepaymentAmount || 0,
+                message: "Invalid minimum payment",
+            };
 
         // Function to calc total interest paid until zero
         const calcTotalInterest = (
@@ -132,8 +138,6 @@ export class SimulatorService {
             monthlyRate
         );
 
-        // Savings is the difference in Interest + The Principal you didn't have to pay later?
-        // Actually "Savings" is usually just the Interest Avoided.
         const interestSaved = currentTotalInterest - newTotalInterest;
 
         return {

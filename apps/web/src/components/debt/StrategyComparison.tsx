@@ -34,7 +34,7 @@ export function StrategyComparison() {
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 border-b border-border pb-2">
                 <Button
-                    variant={activeTab === "SNOWBALL" ? "default" : "ghost"}
+                    variant={activeTab === "SNOWBALL" ? "primary" : "ghost"}
                     onClick={() => setActiveTab("SNOWBALL")}
                     className={cn(
                         "justify-start",
@@ -45,7 +45,7 @@ export function StrategyComparison() {
                     ❄️ Bola de Neve (Psicológico)
                 </Button>
                 <Button
-                    variant={activeTab === "AVALANCHE" ? "default" : "ghost"}
+                    variant={activeTab === "AVALANCHE" ? "primary" : "ghost"}
                     onClick={() => setActiveTab("AVALANCHE")}
                     className={cn(
                         "justify-start",

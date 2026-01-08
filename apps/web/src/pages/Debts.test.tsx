@@ -23,6 +23,14 @@ describe("Debts Page", () => {
         vi.clearAllMocks();
     });
 
+    beforeAll(() => {
+        global.ResizeObserver = class ResizeObserver {
+            observe() {}
+            unobserve() {}
+            disconnect() {}
+        };
+    });
+
     it("should fetch and display debts", async () => {
         mockGet.mockResolvedValueOnce({
             data: [

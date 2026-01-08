@@ -1,60 +1,45 @@
-import React, { useEffect, useState } from "react";
-import {
-    Card,
-    CardHeader,
-    CardTitle,
-    CardContent,
-} from "../components/ui/Card";
+import { useEffect, useState } from "react";
 import { Button } from "../components/ui/Button";
-import { Input } from "../components/ui/Input";
-import * as IncomeService from "../services/income.service";
+import {
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger,
+} from "../components/ui/Tabs";
+import {
+    getIncomeSources,
+    getWorkUnits,
+    deleteIncomeSource,
+    deleteWorkUnit,
+    type IncomeSource,
+    type WorkUnit,
+} from "../services/income.service";
+import { IncomeSourceCard } from "../components/income/IncomeSourceCard";
+import { WorkUnitCard } from "../components/income/WorkUnitCard";
+import { CreateIncomeSourceDialog } from "../components/income/CreateIncomeSourceDialog";
+import { CreateWorkUnitDialog } from "../components/income/CreateWorkUnitDialog";
+import { DeleteIncomeDialog } from "../components/income/DeleteIncomeDialog";
 
-// Simple Tabs implementation
-const Tabs = ({ active, onChange, children }: any) => {
-    return (
-        <div className="w-full">
-            <div className="flex border-b mb-4">
-                {children.map((child: any) => (
-                    <button
-                        key={child.props.value}
-                        className={`px-4 py-2 font-medium text-sm transition-colors ${
-                            active === child.props.value
-                                ? "border-b-2 border-primary text-primary"
-                                : "text-muted-foreground hover:text-foreground"
-                        }`}
-                        onClick={() => onChange(child.props.value)}
-                    >
-                        {child.props.label}
-                    </button>
-                ))}
-            </div>
-            {children.find((child: any) => child.props.value === active)}
-        </div>
-    );
-};
-
-const Tab = ({ children }: any) => (
-    <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-        {children}
-    </div>
-);
-
-export const IncomePage = () => {
+export default function IncomePage() {
     const [activeTab, setActiveTab] = useState("sources");
-    const [sources, setSources] = useState<IncomeService.IncomeSource[]>([]);
-    const [workUnits, setWorkUnits] = useState<IncomeService.WorkUnit[]>([]);
+    const [sources, setSources] = useState<IncomeSource[]>([]);
+    const [workUnits, setWorkUnits] = useState<WorkUnit[]>([]);
 
-    // Form State
-    const [sourceForm, setSourceForm] = useState({
-        name: "",
-        amount: "",
-        payDay: "",
-    });
-    const [workUnitForm, setWorkUnitForm] = useState({
-        name: "",
-        defaultPrice: "",
-        estimatedTime: "",
-    });
+    // Dialog States
+    const [isCreateSourceOpen, setIsCreateSourceOpen] = useState(false);
+    const [isCreateWorkUnitOpen, setIsCreateWorkUnitOpen] = useState(false);
+
+    // Edit States
+    const [sourceToEdit, setSourceToEdit] = useState<IncomeSource | null>(null);
+    const [workUnitToEdit, setWorkUnitToEdit] = useState<WorkUnit | null>(null);
+
+    // Delete States
+    const [itemToDelete, setItemToDelete] = useState<{
+        id: string;
+        name: string;
+        type: "SOURCE" | "WORK_UNIT";
+    } | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
         loadData();
@@ -62,8 +47,8 @@ export const IncomePage = () => {
 
     const loadData = async () => {
         try {
-            const s = await IncomeService.getIncomeSources();
-            const w = await IncomeService.getWorkUnits();
+            const s = await getIncomeSources();
+            const w = await getWorkUnits();
             setSources(s);
             setWorkUnits(w);
         } catch (error) {
@@ -71,274 +56,146 @@ export const IncomePage = () => {
         }
     };
 
-    const handleAddSource = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!sourceForm.name || !sourceForm.amount || !sourceForm.payDay)
-            return;
+    // --- Income Source Handlers ---
+    const handleEditSource = (source: IncomeSource) => {
+        setSourceToEdit(source);
+        setIsCreateSourceOpen(true);
+    };
+
+    const handleDeleteSourceClick = (source: IncomeSource) => {
+        setItemToDelete({ id: source.id, name: source.name, type: "SOURCE" });
+    };
+
+    // --- Work Unit Handlers ---
+    const handleEditWorkUnit = (unit: WorkUnit) => {
+        setWorkUnitToEdit(unit);
+        setIsCreateWorkUnitOpen(true);
+    };
+
+    const handleDeleteWorkUnitClick = (unit: WorkUnit) => {
+        setItemToDelete({ id: unit.id, name: unit.name, type: "WORK_UNIT" });
+    };
+
+    // --- Confirm Delete ---
+    const handleConfirmDelete = async () => {
+        if (!itemToDelete) return;
+        setIsDeleting(true);
         try {
-            await IncomeService.createIncomeSource({
-                name: sourceForm.name,
-                amount: Number(sourceForm.amount),
-                payDay: Number(sourceForm.payDay),
-            });
-            setSourceForm({ name: "", amount: "", payDay: "" });
+            if (itemToDelete.type === "SOURCE") {
+                await deleteIncomeSource(itemToDelete.id);
+            } else {
+                await deleteWorkUnit(itemToDelete.id);
+            }
             loadData();
+            setItemToDelete(null);
         } catch (error) {
-            console.error(error);
+            console.error("Failed to delete item", error);
+            alert("Erro ao excluir item.");
+        } finally {
+            setIsDeleting(false);
         }
     };
 
-    const handleDeleteSource = async (id: string) => {
-        if (!confirm("Are you sure?")) return;
-        try {
-            await IncomeService.deleteIncomeSource(id);
-            loadData();
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    const handleAddWorkUnit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (
-            !workUnitForm.name ||
-            !workUnitForm.defaultPrice ||
-            !workUnitForm.estimatedTime
-        )
-            return;
-        try {
-            await IncomeService.createWorkUnit({
-                name: workUnitForm.name,
-                defaultPrice: Number(workUnitForm.defaultPrice),
-                estimatedTime: Number(workUnitForm.estimatedTime),
-            });
-            setWorkUnitForm({ name: "", defaultPrice: "", estimatedTime: "" });
-            loadData();
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    const handleDeleteWorkUnit = async (id: string) => {
-        if (!confirm("Are you sure?")) return;
-        try {
-            await IncomeService.deleteWorkUnit(id);
-            loadData();
-        } catch (error) {
-            console.error(error);
+    const handleCreateClick = () => {
+        if (activeTab === "sources") {
+            setSourceToEdit(null);
+            setIsCreateSourceOpen(true);
+        } else {
+            setWorkUnitToEdit(null);
+            setIsCreateWorkUnitOpen(true);
         }
     };
 
     return (
         <div className="container mx-auto p-6 space-y-8">
-            <div>
-                <h1 className="text-3xl font-bold tracking-tight">
-                    Income Management
-                </h1>
-                <p className="text-muted-foreground">
-                    Manage your fixed income sources and service catalog.
-                </p>
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-3xl font-bold tracking-tight">Renda</h1>
+                    <p className="text-muted-foreground">
+                        Gerencie suas fontes de renda fixa e catálogo de
+                        serviços.
+                    </p>
+                </div>
+                <Button onClick={handleCreateClick}>
+                    {activeTab === "sources"
+                        ? "+ Nova Fonte"
+                        : "+ Novo Serviço"}
+                </Button>
             </div>
 
-            <Tabs active={activeTab} onChange={setActiveTab}>
-                <Tab value="sources" label="Fixed Sources">
-                    <div className="space-y-6">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>New Income Source</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <form
-                                    onSubmit={handleAddSource}
-                                    className="flex gap-4 items-end flex-wrap"
-                                >
-                                    <div className="flex-1 min-w-[200px]">
-                                        <Input
-                                            label="Name (e.g. Salary)"
-                                            value={sourceForm.name}
-                                            onChange={(e) =>
-                                                setSourceForm({
-                                                    ...sourceForm,
-                                                    name: e.target.value,
-                                                })
-                                            }
-                                            placeholder="Source Name"
-                                        />
-                                    </div>
-                                    <div className="w-[150px]">
-                                        <Input
-                                            label="Amount (R$)"
-                                            type="number"
-                                            value={sourceForm.amount}
-                                            onChange={(e) =>
-                                                setSourceForm({
-                                                    ...sourceForm,
-                                                    amount: e.target.value,
-                                                })
-                                            }
-                                            placeholder="0.00"
-                                        />
-                                    </div>
-                                    <div className="w-[100px]">
-                                        <Input
-                                            label="Pay Day"
-                                            type="number"
-                                            min="1"
-                                            max="31"
-                                            value={sourceForm.payDay}
-                                            onChange={(e) =>
-                                                setSourceForm({
-                                                    ...sourceForm,
-                                                    payDay: e.target.value,
-                                                })
-                                            }
-                                            placeholder="5"
-                                        />
-                                    </div>
-                                    <Button type="submit">Add</Button>
-                                </form>
-                            </CardContent>
-                        </Card>
+            <Tabs
+                defaultValue="sources"
+                value={activeTab}
+                onValueChange={setActiveTab}
+            >
+                <TabsList>
+                    <TabsTrigger value="sources">Fontes Fixas</TabsTrigger>
+                    <TabsTrigger value="workUnits">
+                        Catálogo de Serviços
+                    </TabsTrigger>
+                </TabsList>
 
-                        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                            {sources.map((source) => (
-                                <Card key={source.id}>
-                                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                        <CardTitle className="text-lg font-medium">
-                                            {source.name}
-                                        </CardTitle>
-                                        <span className="text-sm font-bold text-emerald-500">
-                                            {new Intl.NumberFormat("pt-BR", {
-                                                style: "currency",
-                                                currency: "BRL",
-                                            }).format(source.amount)}
-                                        </span>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <div className="text-sm text-muted-foreground mb-4">
-                                            Receives on day {source.payDay}
-                                        </div>
-                                        <Button
-                                            variant="destructive"
-                                            size="sm"
-                                            onClick={() =>
-                                                handleDeleteSource(source.id)
-                                            }
-                                        >
-                                            Remove
-                                        </Button>
-                                    </CardContent>
-                                </Card>
-                            ))}
-                        </div>
-                        {sources.length === 0 && (
-                            <p className="text-center text-muted-foreground py-8">
-                                No income sources registered.
-                            </p>
-                        )}
+                <TabsContent value="sources">
+                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                        {sources.map((source) => (
+                            <IncomeSourceCard
+                                key={source.id}
+                                source={source}
+                                onEdit={handleEditSource}
+                                onDelete={handleDeleteSourceClick}
+                            />
+                        ))}
                     </div>
-                </Tab>
-
-                <Tab value="workUnits" label="Service Catalog">
-                    <div className="space-y-6">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>New Service / Job</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <form
-                                    onSubmit={handleAddWorkUnit}
-                                    className="flex gap-4 items-end flex-wrap"
-                                >
-                                    <div className="flex-1 min-w-[200px]">
-                                        <Input
-                                            label="Name (e.g. Logo Design)"
-                                            value={workUnitForm.name}
-                                            onChange={(e) =>
-                                                setWorkUnitForm({
-                                                    ...workUnitForm,
-                                                    name: e.target.value,
-                                                })
-                                            }
-                                            placeholder="Service Name"
-                                        />
-                                    </div>
-                                    <div className="w-[150px]">
-                                        <Input
-                                            label="Base Price (R$)"
-                                            type="number"
-                                            value={workUnitForm.defaultPrice}
-                                            onChange={(e) =>
-                                                setWorkUnitForm({
-                                                    ...workUnitForm,
-                                                    defaultPrice:
-                                                        e.target.value,
-                                                })
-                                            }
-                                            placeholder="0.00"
-                                        />
-                                    </div>
-                                    <div className="w-[150px]">
-                                        <Input
-                                            label="Est. Time (Hours)"
-                                            type="number"
-                                            value={workUnitForm.estimatedTime}
-                                            onChange={(e) =>
-                                                setWorkUnitForm({
-                                                    ...workUnitForm,
-                                                    estimatedTime:
-                                                        e.target.value,
-                                                })
-                                            }
-                                            placeholder="Hrs"
-                                        />
-                                    </div>
-                                    <Button type="submit">Add</Button>
-                                </form>
-                            </CardContent>
-                        </Card>
-
-                        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                            {workUnits.map((unit) => (
-                                <Card key={unit.id}>
-                                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                        <CardTitle className="text-lg font-medium">
-                                            {unit.name}
-                                        </CardTitle>
-                                        <span className="text-sm font-bold">
-                                            {new Intl.NumberFormat("pt-BR", {
-                                                style: "currency",
-                                                currency: "BRL",
-                                            }).format(unit.defaultPrice)}
-                                        </span>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <div className="text-sm text-muted-foreground mb-4">
-                                            Est. Time: {unit.estimatedTime}h
-                                        </div>
-                                        <Button
-                                            variant="destructive"
-                                            size="sm"
-                                            onClick={() =>
-                                                handleDeleteWorkUnit(unit.id)
-                                            }
-                                        >
-                                            Remove
-                                        </Button>
-                                    </CardContent>
-                                </Card>
-                            ))}
+                    {sources.length === 0 && (
+                        <div className="text-center py-10 text-muted-foreground border rounded-lg bg-card/50">
+                            Nenhuma fonte de renda cadastrada. Adicione seu
+                            salário ou renda recorrente!
                         </div>
-                        {workUnits.length === 0 && (
-                            <p className="text-center text-muted-foreground py-8">
-                                No services registered.
-                            </p>
-                        )}
+                    )}
+                </TabsContent>
+
+                <TabsContent value="workUnits">
+                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                        {workUnits.map((unit) => (
+                            <WorkUnitCard
+                                key={unit.id}
+                                unit={unit}
+                                onEdit={handleEditWorkUnit}
+                                onDelete={handleDeleteWorkUnitClick}
+                            />
+                        ))}
                     </div>
-                </Tab>
+                    {workUnits.length === 0 && (
+                        <div className="text-center py-10 text-muted-foreground border rounded-lg bg-card/50">
+                            Nenhum serviço cadastrado. Liste seus serviços de
+                            freelance aqui!
+                        </div>
+                    )}
+                </TabsContent>
             </Tabs>
+
+            <CreateIncomeSourceDialog
+                isOpen={isCreateSourceOpen}
+                onClose={() => setIsCreateSourceOpen(false)}
+                onSuccess={loadData}
+                itemToEdit={sourceToEdit}
+            />
+
+            <CreateWorkUnitDialog
+                isOpen={isCreateWorkUnitOpen}
+                onClose={() => setIsCreateWorkUnitOpen(false)}
+                onSuccess={loadData}
+                itemToEdit={workUnitToEdit}
+            />
+
+            <DeleteIncomeDialog
+                isOpen={!!itemToDelete}
+                onClose={() => setItemToDelete(null)}
+                onConfirm={handleConfirmDelete}
+                itemName={itemToDelete?.name || ""}
+                itemType={itemToDelete?.type || "SOURCE"}
+                isDeleting={isDeleting}
+            />
         </div>
     );
-};
-
-export default IncomePage;
+}

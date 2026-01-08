@@ -17,6 +17,13 @@ export class IncomeService {
         return this.prisma.incomeSource.findMany();
     }
 
+    async updateIncomeSource(id: string, data: Partial<CreateIncomeSourceDto>) {
+        return this.prisma.incomeSource.update({
+            where: { id },
+            data,
+        });
+    }
+
     async deleteIncomeSource(id: string) {
         return this.prisma.incomeSource.delete({
             where: { id },
@@ -31,6 +38,13 @@ export class IncomeService {
 
     async findAllWorkUnits() {
         return this.prisma.workUnit.findMany();
+    }
+
+    async updateWorkUnit(id: string, data: Partial<CreateWorkUnitDto>) {
+        return this.prisma.workUnit.update({
+            where: { id },
+            data,
+        });
     }
 
     async deleteWorkUnit(id: string) {

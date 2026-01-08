@@ -1,5 +1,5 @@
 import { Debt } from "@prisma/client";
-import { describe, it, expect } from "vitest";
+// import { describe, it, expect } from "vitest"; // Jest uses globals
 import { SnowballStrategy } from "./snowball.strategy";
 import { AvalancheStrategy } from "./avalanche.strategy";
 

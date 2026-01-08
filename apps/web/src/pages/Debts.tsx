@@ -5,6 +5,12 @@ import { DebtForm, type Debt } from "../components/debt/DebtForm";
 import { DebtCard } from "../components/debt/DebtCard";
 import { DeleteDebtDialog } from "../components/debt/DeleteDebtDialog";
 import { StrategyComparison } from "../components/debt/StrategyComparison";
+import {
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger,
+} from "../components/ui/Tabs";
 
 export default function Debts() {
     const [debts, setDebts] = useState<Debt[]>([]);
@@ -71,47 +77,47 @@ export default function Debts() {
                 <Button onClick={handleCreate}>Nova Dívida</Button>
             </div>
 
-            <div className="flex gap-2 border-b border-border pb-2">
-                <Button
-                    variant={viewMode === "LIST" ? "secondary" : "ghost"}
-                    onClick={() => setViewMode("LIST")}
-                >
-                    Minhas Dívidas
-                </Button>
-                <Button
-                    variant={viewMode === "STRATEGY" ? "secondary" : "ghost"}
-                    onClick={() => setViewMode("STRATEGY")}
-                >
-                    Estratégias de Pagamento
-                </Button>
-            </div>
+            <Tabs
+                defaultValue="LIST"
+                value={viewMode}
+                onValueChange={(v) => setViewMode(v as "LIST" | "STRATEGY")}
+            >
+                <TabsList>
+                    <TabsTrigger value="LIST">Minhas Dívidas</TabsTrigger>
+                    <TabsTrigger value="STRATEGY">
+                        Estratégias de Pagamento
+                    </TabsTrigger>
+                </TabsList>
 
-            {viewMode === "LIST" ? (
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {debts.map((debt) => (
-                        <DebtCard
-                            key={debt.id}
-                            id={debt.id}
-                            name={debt.name}
-                            totalAmount={debt.totalAmount}
-                            interestRate={debt.interestRate}
-                            minimumPayment={debt.minimumPayment}
-                            dueDate={debt.dueDate}
-                            onEdit={() => handleEdit(debt)}
-                            onDelete={() => handleDeleteClick(debt)}
-                        />
-                    ))}
+                <TabsContent value="LIST">
+                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                        {debts.map((debt) => (
+                            <DebtCard
+                                key={debt.id}
+                                id={debt.id}
+                                name={debt.name}
+                                totalAmount={debt.totalAmount}
+                                interestRate={debt.interestRate}
+                                minimumPayment={debt.minimumPayment}
+                                dueDate={debt.dueDate}
+                                onEdit={() => handleEdit(debt)}
+                                onDelete={() => handleDeleteClick(debt)}
+                            />
+                        ))}
 
-                    {debts.length === 0 && (
-                        <div className="col-span-full text-center py-10 text-muted-foreground">
-                            Nenhuma dívida cadastrada. Parabéns (ou cadastre uma
-                            agora)!
-                        </div>
-                    )}
-                </div>
-            ) : (
-                <StrategyComparison />
-            )}
+                        {debts.length === 0 && (
+                            <div className="col-span-full text-center py-10 text-muted-foreground border rounded-lg bg-card/50">
+                                Nenhuma dívida cadastrada. Parabéns (ou cadastre
+                                uma agora)!
+                            </div>
+                        )}
+                    </div>
+                </TabsContent>
+
+                <TabsContent value="STRATEGY">
+                    <StrategyComparison />
+                </TabsContent>
+            </Tabs>
 
             <DebtForm
                 isOpen={isFormOpen}

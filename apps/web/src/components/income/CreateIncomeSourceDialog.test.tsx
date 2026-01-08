@@ -1,0 +1,131 @@
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { CreateIncomeSourceDialog } from "./CreateIncomeSourceDialog";
+import { vi, describe, it, expect, beforeEach } from "vitest";
+import "@testing-library/jest-dom";
+import * as IncomeService from "../../services/income.service";
+
+// Mock Service
+vi.mock("../../services/income.service", () => ({
+    createIncomeSource: vi.fn(),
+    createWorkUnit: vi.fn(),
+}));
+
+// Mock API (since dialog might call api directly for generic updates if refactored that way)
+// The component uses api.patch
+vi.mock("../../lib/api", () => ({
+    api: {
+        patch: vi.fn(),
+    },
+}));
+
+// Mock Input to handle onValueChange for currency fields
+vi.mock("../ui/Input", () => ({
+    Input: ({ onValueChange, onChange, value, ...props }: any) => (
+        <input
+            {...props}
+            value={value}
+            onChange={(e) => {
+                onChange?.(e);
+                // Simulate react-number-format behavior by parsing float
+                if (onValueChange) {
+                    const floatValue = parseFloat(e.target.value) || 0;
+                    onValueChange({ floatValue, value: e.target.value });
+                }
+            }}
+        />
+    ),
+}));
+
+import { api } from "../../lib/api";
+
+describe("CreateIncomeSourceDialog", () => {
+    const defaultProps = {
+        isOpen: true,
+        onClose: vi.fn(),
+        onSuccess: vi.fn(),
+    };
+
+    beforeEach(() => {
+        vi.clearAllMocks();
+    });
+
+    beforeAll(() => {
+        global.ResizeObserver = class ResizeObserver {
+            observe() {}
+            unobserve() {}
+            disconnect() {}
+        };
+    });
+
+    it("should render correctly", () => {
+        render(<CreateIncomeSourceDialog {...defaultProps} />);
+        expect(screen.getByText("Nova Fonte de Renda")).toBeInTheDocument();
+        expect(screen.getByLabelText(/Nome/i)).toBeInTheDocument();
+    });
+
+    it("should validate inputs", async () => {
+        render(<CreateIncomeSourceDialog {...defaultProps} />);
+
+        const saveButton = screen.getByText("Salvar");
+        fireEvent.click(saveButton);
+
+        await waitFor(() => {
+            expect(screen.getByText("Nome é obrigatório")).toBeInTheDocument();
+        });
+    });
+
+    it("should call createIncomeSource on submit", async () => {
+        render(<CreateIncomeSourceDialog {...defaultProps} />);
+
+        fireEvent.change(screen.getByLabelText(/Nome/i), {
+            target: { value: "Salary" },
+        });
+        fireEvent.change(screen.getByLabelText(/Valor/i), {
+            target: { value: "5000" },
+        });
+
+        const saveButton = screen.getByText("Salvar");
+        fireEvent.click(saveButton);
+
+        await waitFor(() => {
+            expect(IncomeService.createIncomeSource).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    name: "Salary",
+                    amount: 5000,
+                })
+            );
+            expect(defaultProps.onSuccess).toHaveBeenCalled();
+        });
+    });
+
+    it("should call api.patch on edit", async () => {
+        const itemToEdit = {
+            id: "1",
+            name: "Old Name",
+            amount: 1000,
+            payDay: 5,
+        };
+        render(
+            <CreateIncomeSourceDialog
+                {...defaultProps}
+                itemToEdit={itemToEdit}
+            />
+        );
+
+        expect(screen.getByDisplayValue("Old Name")).toBeInTheDocument();
+
+        fireEvent.change(screen.getByLabelText(/Nome/i), {
+            target: { value: "New Name" },
+        });
+        fireEvent.click(screen.getByText("Salvar"));
+
+        await waitFor(() => {
+            expect(api.patch).toHaveBeenCalledWith(
+                "/income/sources/1",
+                expect.objectContaining({
+                    name: "New Name",
+                })
+            );
+        });
+    });
+});

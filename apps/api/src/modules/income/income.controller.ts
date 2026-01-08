@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Delete, Param } from "@nestjs/common";
+import {
+    Controller,
+    Get,
+    Post,
+    Body,
+    Delete,
+    Param,
+    Patch,
+} from "@nestjs/common";
 import { IncomeService } from "./income.service";
 import { CreateIncomeSourceDto } from "./dto/create-income-source.dto";
 import { CreateWorkUnitDto } from "./dto/create-work-unit.dto";
@@ -17,6 +25,14 @@ export class IncomeController {
         return this.incomeService.findAllIncomeSources();
     }
 
+    @Patch("sources/:id")
+    updateSource(
+        @Param("id") id: string,
+        @Body() updateIncomeSourceDto: Partial<CreateIncomeSourceDto>
+    ) {
+        return this.incomeService.updateIncomeSource(id, updateIncomeSourceDto);
+    }
+
     @Delete("sources/:id")
     deleteSource(@Param("id") id: string) {
         return this.incomeService.deleteIncomeSource(id);
@@ -30,6 +46,14 @@ export class IncomeController {
     @Get("work-units")
     findAllWorkUnits() {
         return this.incomeService.findAllWorkUnits();
+    }
+
+    @Patch("work-units/:id")
+    updateWorkUnit(
+        @Param("id") id: string,
+        @Body() updateWorkUnitDto: Partial<CreateWorkUnitDto>
+    ) {
+        return this.incomeService.updateWorkUnit(id, updateWorkUnitDto);
     }
 
     @Delete("work-units/:id")

@@ -8,6 +8,7 @@ import { ImportPage } from "./pages/ImportPage";
 import { ImapConfigPage } from "./pages/ImapConfigPage";
 import Dashboard from "./pages/Dashboard";
 import IncomePage from "./pages/Income";
+import IncomeProjection from "./pages/IncomeProjection";
 import "./App.css";
 
 function Layout({ children }: { children: React.ReactNode }) {
@@ -45,6 +46,12 @@ function Layout({ children }: { children: React.ReactNode }) {
                                 Renda
                             </Link>
                             <Link
+                                to="/income/projection"
+                                className="text-sm font-medium hover:text-primary transition-colors text-emerald-600"
+                            >
+                                Projeção
+                            </Link>
+                            <Link
                                 to="/transactions"
                                 className="text-sm font-medium hover:text-primary transition-colors"
                             >
@@ -75,6 +82,10 @@ function App() {
                     <Route path="/accounts" element={<Accounts />} />
                     <Route path="/debts" element={<Debts />} />
                     <Route path="/income" element={<IncomePage />} />
+                    <Route
+                        path="/income/projection"
+                        element={<IncomeProjection />}
+                    />
                     <Route path="/transactions" element={<Transactions />} />
                     <Route path="/import" element={<ImportPage />} />
                     <Route path="/import/config" element={<ImapConfigPage />} />
