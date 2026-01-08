@@ -14,17 +14,17 @@ Permitir o cadastro de fontes de renda não-lineares (Freelance, Jobs) e definir
 
 ### 1. Backend: Modelagem
 
--   [ ] Atualizar schema Prisma com modelos `IncomeSource` e `WorkUnit`.
+-   [x] Atualizar schema Prisma com modelos `IncomeSource` e `WorkUnit`.
     -   `IncomeSource`: Salário Fixo ou Recorrente.
     -   `WorkUnit`: Tipo de Job (ex: "Logotipo", "Consultoria").
         -   Campos: `name`, `defaultPrice`, `estimatedTime` (horas).
--   [ ] Criar módulo `IncomeModule` na API.
+-   [x] Criar módulo `IncomeModule` na API.
 
 ### 2. Frontend: Gestão de Renda
 
--   [ ] Criar pagina `Income.tsx`.
--   [ ] Aba "Fontes Fixas": CRUD de salários.
--   [ ] Aba "Catálogo de Serviços": CRUD de `WorkUnits`.
+-   [x] Criar pagina `Income.tsx`.
+-   [x] Aba "Fontes Fixas": CRUD de salários.
+-   [x] Aba "Catálogo de Serviços": CRUD de `WorkUnits`.
     -   Ex: Criar "Design de Post" = R$ 50,00 / 1h.
 
 ## Verificação

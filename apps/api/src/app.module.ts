@@ -8,7 +8,8 @@ import { TransactionModule } from "./modules/transaction/transaction.module";
 import { ImportModule } from "./modules/import/import.module";
 import { DashboardModule } from "./modules/dashboard/dashboard.module";
 import { SimulatorModule } from "./modules/simulator/simulator.module";
-import { DebtModule } from './modules/debt/debt.module';
+import { DebtModule } from "./modules/debt/debt.module";
+import { IncomeModule } from "./modules/income/income.module";
 
 @Module({
     imports: [
@@ -25,6 +26,7 @@ import { DebtModule } from './modules/debt/debt.module';
             },
         }),
         DebtModule,
+        IncomeModule,
     ],
     controllers: [AppController],
     providers: [AppService],
