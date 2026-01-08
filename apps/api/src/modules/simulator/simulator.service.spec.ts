@@ -59,15 +59,8 @@ describe("SimulatorService", () => {
 
     describe("calculateDelayCost", () => {
         it("should calculate delay cost correctly", async () => {
-            jest.spyOn(prismaService.account, "findUnique").mockResolvedValue({
-                id: "1",
-                name: "Debt",
-                balance: new Decimal(-1000), // 1000 Debt
-                interestRate: new Decimal(10), // 10%
-                type: "DEBT",
-            } as any);
-
-            const result = await service.calculateDelayCost("1", 5);
+            // Pure logic test, no mocks needed
+            const result = await service.calculateDelayCost(1000, 10, 5);
             // Debt = 1000
             // Fine = 20 (2%)
             // Daily Rate = (10/100)/30 = 0.00333...
@@ -79,63 +72,47 @@ describe("SimulatorService", () => {
             expect(result.totalCost).toBeCloseTo(36.66, 1);
         });
 
-        it("should throw NotFound if account missing", async () => {
-            jest.spyOn(prismaService.account, "findUnique").mockResolvedValue(
-                null
-            );
-            await expect(service.calculateDelayCost("999", 5)).rejects.toThrow(
-                NotFoundException
-            );
-        });
-
         it("should return 0 cost if no balance", async () => {
-            jest.spyOn(prismaService.account, "findUnique").mockResolvedValue({
-                id: "1",
-                name: "Test",
-                balance: new Decimal(0),
-                interestRate: new Decimal(10),
-            } as any);
-
-            const result = await service.calculateDelayCost("1", 5);
-            expect(result.cost).toBe(0);
+            const result = await service.calculateDelayCost(0, 10, 5);
+            expect(result.totalCost).toBe(0);
         });
     });
 
     describe("calculatePrepaymentSavings", () => {
         it("should calculate savings correctly", async () => {
-            jest.spyOn(prismaService.account, "findUnique").mockResolvedValue({
-                id: "1",
-                balance: new Decimal(-5000),
-                interestRate: new Decimal(5), // 5%
-                minimumPayment: new Decimal(250),
-            } as any);
-
-            const result = await service.calculatePrepaymentSavings("1", 1000);
+            // Pure logic test
+            const result = await service.calculatePrepaymentSavings(
+                5000,
+                5,
+                250,
+                1000
+            );
 
             // Just ensure it returns positive savings
-            expect(result.saved).toBeUndefined(); // The service returns { interestSaved } not saved
             expect(result.interestSaved).toBeGreaterThan(0);
             expect(result.prepaymentAmount).toBe(1000);
         });
 
-        it("should throw NotFound if account missing", async () => {
-            jest.spyOn(prismaService.account, "findUnique").mockResolvedValue(
-                null
+        it("should return 0 savings if no balance", async () => {
+            const result = await service.calculatePrepaymentSavings(
+                0,
+                10,
+                50,
+                100
             );
-            await expect(
-                service.calculatePrepaymentSavings("999", 100)
-            ).rejects.toThrow(NotFoundException);
+            expect(result.interestSaved).toBe(0);
+        });
+    });
+
+    describe("calculateTimeCost", () => {
+        it("should return correct hours", () => {
+            const result = service.calculateTimeCost(100, 50);
+            expect(result).toBe(2);
         });
 
-        it("should return 0 savings if no balance", async () => {
-            jest.spyOn(prismaService.account, "findUnique").mockResolvedValue({
-                id: "1",
-                balance: new Decimal(0),
-                interestRate: new Decimal(10),
-            } as any);
-
-            const result = await service.calculatePrepaymentSavings("1", 100);
-            expect(result.saved).toBe(0);
+        it("should return 0 if hourlyRate is 0", () => {
+            const result = service.calculateTimeCost(100, 0);
+            expect(result).toBe(0);
         });
     });
 });

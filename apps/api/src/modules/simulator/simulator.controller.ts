@@ -45,4 +45,13 @@ export class SimulatorController {
             body.prepaymentAmount
         );
     }
+    @Post("time-cost")
+    calculateTimeCost(@Body() body: { amount: number; hourlyRate: number }) {
+        return {
+            timeCost: this.simulatorService.calculateTimeCost(
+                body.amount,
+                body.hourlyRate
+            ),
+        };
+    }
 }

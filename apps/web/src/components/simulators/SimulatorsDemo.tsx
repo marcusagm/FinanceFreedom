@@ -1,59 +1,39 @@
-import React, { useEffect, useState } from "react";
-import { api } from "../../lib/api";
+import React from "react";
 import { DebtDelayCard } from "./DebtDelayCard";
 import { PrepaymentOpportunity } from "./PrepaymentOpportunity";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/Card";
 import { Lightbulb } from "lucide-react";
 
-interface Account {
+// Use the Debt type from DebtForm or define a shared one if possible.
+// For now, let's define the interface compatible with Debt.
+interface Debt {
     id: string;
     name: string;
-    type: string;
-    balance: number;
-    interestRate?: number;
+    totalAmount: number;
+    interestRate: number;
+    minimumPayment: number;
 }
 
-export const SimulatorsDemo: React.FC = () => {
-    const [debts, setDebts] = useState<Account[]>([]);
-    const [loading, setLoading] = useState(true);
+interface SimulatorsDemoProps {
+    debts: Debt[];
+}
 
-    useEffect(() => {
-        const fetchDebts = async () => {
-            try {
-                const response = await api.get<Account[]>("/accounts");
-                const debtAccounts = response.data.filter(
-                    (acc) =>
-                        acc.type === "DEBT" ||
-                        acc.type === "LOAN" ||
-                        acc.type === "CREDIT_CARD" ||
-                        (acc.balance < 0 &&
-                            acc.interestRate &&
-                            acc.interestRate > 0)
-                );
-                setDebts(debtAccounts);
-            } catch (error) {
-                console.error("Failed to fetch accounts for simulators", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchDebts();
-    }, []);
+export const SimulatorsDemo: React.FC<SimulatorsDemoProps> = ({ debts }) => {
+    // Filter pertinent debts (e.g. have balance and interest)
+    const activeDebts = debts.filter(
+        (debt) => debt.totalAmount > 0 && debt.interestRate > 0
+    );
 
-    if (loading) return null;
-
-    // Don't show anything if no debts, unless we want to show an empty state to encourage usage.
-    // Given the user feedback, we will show an empty state.
-
-    const hasDebts = debts.length > 0;
-    const displayDebts = debts.slice(0, 2);
+    const hasDebts = activeDebts.length > 0;
+    // Show top 2 just like before to avoid clutter
+    const displayDebts = activeDebts.slice(0, 2);
 
     return (
         <div className="space-y-4">
             <div className="flex items-center space-x-2">
                 <Lightbulb className="w-5 h-5 text-yellow-500" />
                 <h3 className="text-xl font-bold tracking-tight">
-                    Estratégias e Simuladores
+                    Simuladores de Economia
                 </h3>
             </div>
 
@@ -62,20 +42,22 @@ export const SimulatorsDemo: React.FC = () => {
                     displayDebts.map((debt) => (
                         <Card
                             key={debt.id}
-                            className="border-t-4 border-t-red-500"
+                            className="border-t-4 border-t-emerald-500"
                         >
                             <CardHeader>
                                 <CardTitle>{debt.name}</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <DebtDelayCard
-                                    accountId={debt.id}
                                     debtName={debt.name}
-                                    balance={Math.abs(debt.balance || 0)} // Pass balance
+                                    balance={debt.totalAmount}
+                                    interestRate={debt.interestRate}
                                 />
                                 <PrepaymentOpportunity
-                                    accountId={debt.id}
                                     debtName={debt.name}
+                                    balance={debt.totalAmount}
+                                    interestRate={debt.interestRate}
+                                    minimumPayment={debt.minimumPayment}
                                 />
                             </CardContent>
                         </Card>
@@ -85,12 +67,11 @@ export const SimulatorsDemo: React.FC = () => {
                         <CardContent className="flex flex-col items-center justify-center p-6 text-center text-muted-foreground">
                             <Lightbulb className="w-10 h-10 mb-2 opacity-20" />
                             <p className="font-medium">
-                                Nenhuma dívida cadastrada
+                                Nenhuma dívida elegível para simulação
                             </p>
                             <p className="text-sm">
-                                Cadastre uma conta do tipo "Dívida",
-                                "Empréstimo" ou "Cartão de Crédito" para liberar
-                                os simuladores de economia e juros.
+                                Cadastre dívidas com juros para ver as
+                                oportunidades de economia.
                             </p>
                         </CardContent>
                     </Card>

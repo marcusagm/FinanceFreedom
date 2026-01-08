@@ -6,6 +6,11 @@ import { Prisma } from "@prisma/client";
 export class SimulatorService {
     constructor(private readonly prisma: PrismaService) {}
 
+    calculateTimeCost(amount: number, hourlyRate: number): number {
+        if (!hourlyRate || hourlyRate <= 0) return 0;
+        return amount / hourlyRate;
+    }
+
     async calculateHourlyRate(): Promise<number> {
         // 1. Get total active income in the last 30 days
         // For MVP, we sum all INCOME transactions in the current month or last 30 days

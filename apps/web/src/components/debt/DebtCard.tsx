@@ -1,7 +1,9 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, Timer } from "lucide-react";
+import { useState } from "react";
 import "./DebtCard.css";
+import { DebtDelayCard } from "../simulators/DebtDelayCard";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -28,6 +30,8 @@ export function DebtCard({
     onEdit,
     onDelete,
 }: DebtCardProps) {
+    const [showSimulator, setShowSimulator] = useState(false);
+
     const formatMoney = (value: number) => {
         return new Intl.NumberFormat("pt-BR", {
             style: "currency",
@@ -59,6 +63,13 @@ export function DebtCard({
 
             <div className="debt-card__actions">
                 <button
+                    onClick={() => setShowSimulator(!showSimulator)}
+                    className="debt-card__action-btn text-blue-500 hover:bg-blue-50"
+                    title="Simular Atraso"
+                >
+                    <Timer className="w-4 h-4" />
+                </button>
+                <button
                     onClick={() => onEdit?.(id)}
                     className="debt-card__action-btn debt-card__action-btn--edit"
                     title="Editar"
@@ -73,6 +84,16 @@ export function DebtCard({
                     <Trash2 className="w-4 h-4" />
                 </button>
             </div>
+
+            {showSimulator && (
+                <div className="mt-4 pt-4 border-t border-border">
+                    <DebtDelayCard
+                        debtName={name}
+                        balance={totalAmount}
+                        interestRate={interestRate}
+                    />
+                </div>
+            )}
         </div>
     );
 }

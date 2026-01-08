@@ -8,14 +8,15 @@ import {
 } from "../../services/simulator.service";
 
 interface DebtDelayCardProps {
-    accountId: string;
     debtName: string;
-    balance?: number;
+    balance: number;
+    interestRate: number;
 }
 
 export const DebtDelayCard: React.FC<DebtDelayCardProps> = ({
-    accountId,
     debtName,
+    balance,
+    interestRate,
 }) => {
     const [daysLate, setDaysLate] = useState(5);
     const [result, setResult] = useState<DelayCostResponse | null>(null);
@@ -24,7 +25,11 @@ export const DebtDelayCard: React.FC<DebtDelayCardProps> = ({
     const handleSimulate = async () => {
         setLoading(true);
         try {
-            const data = await calculateDelayCost(accountId, daysLate);
+            const data = await calculateDelayCost(
+                balance,
+                interestRate,
+                daysLate
+            );
             setResult(data);
         } catch (error) {
             console.error("Failed to simulate", error);

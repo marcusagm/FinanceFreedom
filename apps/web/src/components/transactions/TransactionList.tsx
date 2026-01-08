@@ -1,6 +1,8 @@
 import { Edit2, Trash2 } from "lucide-react";
 import type { Transaction } from "../../types";
 import "./TransactionList.css";
+import { useHourlyRate } from "../../hooks/useHourlyRate";
+import { TimeCostBadge } from "../simulators/TimeCostBadge";
 
 interface TransactionListProps {
     transactions: Transaction[];
@@ -13,6 +15,8 @@ export function TransactionList({
     onEdit,
     onDelete,
 }: TransactionListProps) {
+    const { hourlyRate } = useHourlyRate();
+
     return (
         <div className="transaction-list-container">
             <table className="transaction-table">
@@ -38,13 +42,29 @@ export function TransactionList({
                             <td>{transaction.category || "-"}</td>
                             <td>{transaction.account.name}</td>
                             <td
-                                className={`text-right ${transaction.type === "INCOME" ? "text-success" : "text-danger"}`}
+                                className={`text-right ${
+                                    transaction.type === "INCOME"
+                                        ? "text-success"
+                                        : "text-danger"
+                                }`}
                             >
-                                {transaction.type === "INCOME" ? "+" : "-"}
-                                {new Intl.NumberFormat("pt-BR", {
-                                    style: "currency",
-                                    currency: "BRL",
-                                }).format(Number(transaction.amount))}
+                                <div className="flex flex-col items-end gap-1">
+                                    <span>
+                                        {transaction.type === "INCOME"
+                                            ? "+"
+                                            : "-"}
+                                        {new Intl.NumberFormat("pt-BR", {
+                                            style: "currency",
+                                            currency: "BRL",
+                                        }).format(Number(transaction.amount))}
+                                    </span>
+                                    {transaction.type === "EXPENSE" && (
+                                        <TimeCostBadge
+                                            amount={Number(transaction.amount)}
+                                            hourlyRate={hourlyRate}
+                                        />
+                                    )}
+                                </div>
                             </td>
                             <td>
                                 <div className="flex items-center gap-2">

@@ -8,14 +8,18 @@ import {
 } from "../../services/simulator.service";
 
 interface PrepaymentOpportunityProps {
-    accountId: string;
     debtName: string;
+    balance: number;
+    interestRate: number;
+    minimumPayment: number;
     initialAmount?: number;
 }
 
 export const PrepaymentOpportunity: React.FC<PrepaymentOpportunityProps> = ({
-    accountId,
     debtName,
+    balance,
+    interestRate,
+    minimumPayment,
     initialAmount = 500,
 }) => {
     const [amount, setAmount] = useState(initialAmount);
@@ -27,7 +31,12 @@ export const PrepaymentOpportunity: React.FC<PrepaymentOpportunityProps> = ({
     const handleSimulate = async () => {
         setLoading(true);
         try {
-            const data = await calculatePrepaymentSavings(accountId, amount);
+            const data = await calculatePrepaymentSavings(
+                balance,
+                interestRate,
+                minimumPayment,
+                amount
+            );
             setResult(data);
         } catch (error) {
             console.error("Failed to simulate", error);

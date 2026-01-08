@@ -28,23 +28,37 @@ export const getHourlyRate = async (): Promise<HourlyRateResponse> => {
 };
 
 export const calculateDelayCost = async (
-    accountId: string,
+    debtBalance: number,
+    monthlyInterestRate: number,
     daysLate: number
 ): Promise<DelayCostResponse> => {
     const response = await api.post<DelayCostResponse>(
         "/simulators/delay-cost",
-        { accountId, daysLate }
+        { debtBalance, monthlyInterestRate, daysLate }
     );
     return response.data;
 };
 
 export const calculatePrepaymentSavings = async (
-    accountId: string,
+    debtBalance: number,
+    monthlyInterestRate: number,
+    minimumPayment: number,
     prepaymentAmount: number
 ): Promise<PrepaymentSavingsResponse> => {
     const response = await api.post<PrepaymentSavingsResponse>(
         "/simulators/prepayment-savings",
-        { accountId, prepaymentAmount }
+        { debtBalance, monthlyInterestRate, minimumPayment, prepaymentAmount }
+    );
+    return response.data;
+};
+
+export const calculateTimeCost = async (
+    amount: number,
+    hourlyRate: number
+): Promise<{ timeCost: number }> => {
+    const response = await api.post<{ timeCost: number }>(
+        "/simulators/time-cost",
+        { amount, hourlyRate }
     );
     return response.data;
 };
