@@ -3,7 +3,14 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { api } from "../lib/api";
-import { Modal } from "./ui/Modal";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "./ui/Dialog";
 import { Button } from "./ui/Button";
 import { Input } from "./ui/Input";
 import { Select } from "./ui/Select";
@@ -105,12 +112,110 @@ export function CreateAccountDialog({
     };
 
     return (
-        <Modal
-            isOpen={isOpen}
-            onClose={onClose}
-            title={accountToEdit ? "Editar Conta" : "Nova Conta"}
-            footer={
-                <>
+        <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>
+                        {accountToEdit ? "Editar Conta" : "Nova Conta"}
+                    </DialogTitle>
+                    <DialogDescription>
+                        Preencha os dados da conta abaixo.
+                    </DialogDescription>
+                </DialogHeader>
+
+                <Form {...form}>
+                    <form
+                        id="create-account-form"
+                        onSubmit={form.handleSubmit(handleSubmit)}
+                        className="flex flex-col gap-5"
+                    >
+                        <FormField
+                            control={form.control}
+                            name="name"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Nome da Conta</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            placeholder="Ex: Minha Carteira"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="type"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Tipo</FormLabel>
+                                    <FormControl>
+                                        <Select
+                                            value={field.value}
+                                            options={ACCOUNT_TYPES}
+                                            onChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <FormField
+                                control={form.control}
+                                name="balance"
+                                render={({
+                                    field: { onChange, value, ...field },
+                                }) => (
+                                    <FormItem>
+                                        <FormLabel>Saldo Atual</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="R$ 0,00"
+                                                currency
+                                                value={value}
+                                                onValueChange={(values) => {
+                                                    // Set float value
+                                                    onChange(
+                                                        values.floatValue || 0
+                                                    );
+                                                }}
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
+                        {/* Debt fields removed for Plan 005.5 cleanup */}
+
+                        <FormField
+                            control={form.control}
+                            name="color"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Cor</FormLabel>
+                                    <FormControl>
+                                        <ColorInput
+                                            value={field.value}
+                                            onChange={field.onChange}
+                                            onBlur={field.onBlur}
+                                            name={field.name}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </form>
+                </Form>
+                <DialogFooter>
                     <Button variant="outline" onClick={onClose}>
                         Cancelar
                     </Button>
@@ -124,101 +229,8 @@ export function CreateAccountDialog({
                             ? "Salvar Alterações"
                             : "Criar Conta"}
                     </Button>
-                </>
-            }
-        >
-            <Form {...form}>
-                <form
-                    id="create-account-form"
-                    onSubmit={form.handleSubmit(handleSubmit)}
-                    className="flex flex-col gap-5"
-                >
-                    <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Nome da Conta</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        placeholder="Ex: Minha Carteira"
-                                        {...field}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    <FormField
-                        control={form.control}
-                        name="type"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Tipo</FormLabel>
-                                <FormControl>
-                                    <Select
-                                        value={field.value}
-                                        options={ACCOUNT_TYPES}
-                                        onChange={field.onChange}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    <div className="grid grid-cols-2 gap-4">
-                        <FormField
-                            control={form.control}
-                            name="balance"
-                            render={({
-                                field: { onChange, value, ...field },
-                            }) => (
-                                <FormItem>
-                                    <FormLabel>Saldo Atual</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="R$ 0,00"
-                                            currency
-                                            value={value}
-                                            onValueChange={(values) => {
-                                                // Set float value
-                                                onChange(
-                                                    values.floatValue || 0
-                                                );
-                                            }}
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    </div>
-
-                    {/* Debt fields removed for Plan 005.5 cleanup */}
-
-                    <FormField
-                        control={form.control}
-                        name="color"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Cor</FormLabel>
-                                <FormControl>
-                                    <ColorInput
-                                        value={field.value}
-                                        onChange={field.onChange}
-                                        onBlur={field.onBlur}
-                                        name={field.name}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                </form>
-            </Form>
-        </Modal>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     );
 }

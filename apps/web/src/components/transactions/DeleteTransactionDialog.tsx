@@ -1,5 +1,13 @@
-import { Modal } from "../ui/Modal";
 import { Button } from "../ui/Button";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "../ui/Dialog";
+import { AppAlert } from "../ui/AppAlert";
 
 interface DeleteTransactionDialogProps {
     isOpen: boolean;
@@ -17,12 +25,21 @@ export function DeleteTransactionDialog({
     isDeleting,
 }: DeleteTransactionDialogProps) {
     return (
-        <Modal
-            isOpen={isOpen}
-            onClose={onClose}
-            title="Excluir Transação"
-            footer={
-                <>
+        <Dialog open={isOpen} onOpenChange={onClose}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Excluir Transação</DialogTitle>
+                    <DialogDescription>
+                        Esta ação não pode ser desfeita.
+                    </DialogDescription>
+                </DialogHeader>
+
+                <AppAlert variant="destructive" title="Atenção">
+                    A transação <strong>{description}</strong> será
+                    permanentemente removida.
+                </AppAlert>
+
+                <DialogFooter>
                     <Button
                         variant="outline"
                         onClick={onClose}
@@ -37,21 +54,8 @@ export function DeleteTransactionDialog({
                     >
                         {isDeleting ? "Excluindo..." : "Sim, excluir transação"}
                     </Button>
-                </>
-            }
-        >
-            <div className="flex flex-col gap-4">
-                <div className="p-4 rounded-md bg-red-50 text-red-900 border border-red-200">
-                    <p className="font-medium">
-                        Tem certeza que deseja excluir esta transação?
-                    </p>
-                    <p className="text-sm mt-1 text-red-700">
-                        Esta ação não pode ser desfeita. A transação{" "}
-                        <strong>{description}</strong> será permanentemente
-                        removida.
-                    </p>
-                </div>
-            </div>
-        </Modal>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     );
 }

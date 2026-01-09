@@ -1,5 +1,4 @@
-import React from "react";
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Accounts } from "./pages/Accounts";
 import Debts from "./pages/Debts";
 
@@ -10,88 +9,37 @@ import Dashboard from "./pages/Dashboard";
 import IncomePage from "./pages/Income";
 import IncomeProjection from "./pages/IncomeProjection";
 import "./App.css";
-
-function Layout({ children }: { children: React.ReactNode }) {
-    return (
-        <div className="min-h-screen bg-background text-foreground">
-            <header className="border-b">
-                <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-                    <div className="flex items-center gap-6">
-                        <Link to="/" className="font-bold text-xl">
-                            FinanceFreedom
-                        </Link>
-                        <nav className="flex gap-4">
-                            <Link
-                                to="/"
-                                className="text-sm font-medium hover:text-primary transition-colors"
-                            >
-                                Dashboard
-                            </Link>
-                            <Link
-                                to="/accounts"
-                                className="text-sm font-medium hover:text-primary transition-colors"
-                            >
-                                Contas
-                            </Link>
-                            <Link
-                                to="/debts"
-                                className="text-sm font-medium hover:text-primary transition-colors"
-                            >
-                                Dívidas
-                            </Link>
-                            <Link
-                                to="/income"
-                                className="text-sm font-medium hover:text-primary transition-colors"
-                            >
-                                Renda
-                            </Link>
-                            <Link
-                                to="/income/projection"
-                                className="text-sm font-medium hover:text-primary transition-colors"
-                            >
-                                Projeção
-                            </Link>
-                            <Link
-                                to="/transactions"
-                                className="text-sm font-medium hover:text-primary transition-colors"
-                            >
-                                Transações
-                            </Link>
-                            <Link
-                                to="/import"
-                                className="text-sm font-medium hover:text-primary transition-colors"
-                            >
-                                Importar
-                            </Link>
-                        </nav>
-                    </div>
-                </div>
-            </header>
-            <main>{children}</main>
-        </div>
-    );
-}
+import { ThemeProvider } from "./components/providers/ThemeProvider";
+import { Layout } from "./components/layout/Layout";
 
 function App() {
     console.log("App component rendering");
     return (
-        <BrowserRouter>
-            <Layout>
-                <Routes>
-                    <Route path="/" element={<Dashboard />} />
-                    <Route path="/accounts" element={<Accounts />} />
-                    <Route path="/debts" element={<Debts />} />
-                    <Route path="/income" element={<IncomePage />} />
-                    <Route
-                        path="/income/projection"
-                        element={<IncomeProjection />}
-                    />
-                    <Route path="/transactions" element={<Transactions />} />
-                    <Route path="/import" element={<ImportPage />} />
-                    <Route path="/import/config" element={<ImapConfigPage />} />
-                </Routes>
-            </Layout>
-        </BrowserRouter>
+        <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+            <BrowserRouter>
+                <Layout>
+                    <Routes>
+                        <Route path="/" element={<Dashboard />} />
+                        <Route path="/accounts" element={<Accounts />} />
+                        <Route path="/debts" element={<Debts />} />
+                        <Route path="/income" element={<IncomePage />} />
+                        <Route
+                            path="/income/projection"
+                            element={<IncomeProjection />}
+                        />
+                        <Route
+                            path="/transactions"
+                            element={<Transactions />}
+                        />
+                        <Route path="/import" element={<ImportPage />} />
+                        <Route
+                            path="/import/config"
+                            element={<ImapConfigPage />}
+                        />
+                    </Routes>
+                </Layout>
+            </BrowserRouter>
+        </ThemeProvider>
     );
 }
 

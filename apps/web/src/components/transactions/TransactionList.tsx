@@ -1,8 +1,16 @@
 import { Edit2, Trash2 } from "lucide-react";
 import type { Transaction } from "../../types";
-import "./TransactionList.css";
 import { useHourlyRate } from "../../hooks/useHourlyRate";
 import { TimeCostBadge } from "../simulators/TimeCostBadge";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "../ui/Table";
+import { Button } from "../ui/Button";
 
 interface TransactionListProps {
     transactions: Transaction[];
@@ -18,38 +26,40 @@ export function TransactionList({
     const { hourlyRate } = useHourlyRate();
 
     return (
-        <div className="transaction-list-container">
-            <table className="transaction-table">
-                <thead>
-                    <tr>
-                        <th>Data</th>
-                        <th>Descrição</th>
-                        <th>Categoria</th>
-                        <th>Conta</th>
-                        <th className="text-right">Valor</th>
-                        <th className="w-[100px]">Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
+        <div className="rounded-md border bg-card">
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>Data</TableHead>
+                        <TableHead>Descrição</TableHead>
+                        <TableHead>Categoria</TableHead>
+                        <TableHead>Conta</TableHead>
+                        <TableHead className="text-right">Valor</TableHead>
+                        <TableHead className="w-[100px] text-right">
+                            Ações
+                        </TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
                     {transactions.map((transaction) => (
-                        <tr key={transaction.id}>
-                            <td>
+                        <TableRow key={transaction.id}>
+                            <TableCell>
                                 {new Date(
                                     transaction.date
                                 ).toLocaleDateString()}
-                            </td>
-                            <td>{transaction.description}</td>
-                            <td>{transaction.category || "-"}</td>
-                            <td>{transaction.account.name}</td>
-                            <td
+                            </TableCell>
+                            <TableCell>{transaction.description}</TableCell>
+                            <TableCell>{transaction.category || "-"}</TableCell>
+                            <TableCell>{transaction.account.name}</TableCell>
+                            <TableCell
                                 className={`text-right ${
                                     transaction.type === "INCOME"
-                                        ? "text-success"
-                                        : "text-danger"
+                                        ? "text-emerald-600 dark:text-emerald-400"
+                                        : "text-rose-600 dark:text-rose-400"
                                 }`}
                             >
                                 <div className="flex flex-col items-end gap-1">
-                                    <span>
+                                    <span className="font-medium">
                                         {transaction.type === "INCOME"
                                             ? "+"
                                             : "-"}
@@ -65,39 +75,43 @@ export function TransactionList({
                                         />
                                     )}
                                 </div>
-                            </td>
-                            <td>
-                                <div className="flex items-center gap-2">
-                                    <button
+                            </TableCell>
+                            <TableCell className="text-right">
+                                <div className="flex items-center justify-end gap-2">
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
                                         onClick={() => onEdit(transaction)}
-                                        className="p-2 hover:bg-slate-100 rounded-full transition-colors"
+                                        className="h-8 w-8 text-muted-foreground hover:text-foreground"
                                         title="Editar"
                                     >
-                                        <Edit2 className="w-4 h-4 text-slate-500" />
-                                    </button>
-                                    <button
+                                        <Edit2 className="w-4 h-4" />
+                                    </Button>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
                                         onClick={() => onDelete(transaction.id)}
-                                        className="p-2 hover:bg-red-50 rounded-full transition-colors"
+                                        className="h-8 w-8 text-rose-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20"
                                         title="Excluir"
                                     >
-                                        <Trash2 className="w-4 h-4 text-red-500" />
-                                    </button>
+                                        <Trash2 className="w-4 h-4" />
+                                    </Button>
                                 </div>
-                            </td>
-                        </tr>
+                            </TableCell>
+                        </TableRow>
                     ))}
                     {transactions.length === 0 && (
-                        <tr>
-                            <td
+                        <TableRow>
+                            <TableCell
                                 colSpan={6}
-                                className="text-center py-4 text-muted"
+                                className="h-24 text-center text-muted-foreground"
                             >
                                 Nenhuma transação encontrada.
-                            </td>
-                        </tr>
+                            </TableCell>
+                        </TableRow>
                     )}
-                </tbody>
-            </table>
+                </TableBody>
+            </Table>
         </div>
     );
 }

@@ -1,14 +1,9 @@
-import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
-import { Pencil, Trash2, Timer, TrendingUp } from "lucide-react";
+import { Timer, TrendingUp, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
-import "./DebtCard.css";
+import { AppCard } from "../ui/AppCard";
+import { Button } from "../ui/Button";
 import { DebtDelayCard } from "../simulators/DebtDelayCard";
 import { PrepaymentOpportunity } from "../simulators/PrepaymentOpportunity";
-
-export function cn(...inputs: ClassValue[]) {
-    return twMerge(clsx(inputs));
-}
 
 interface DebtCardProps {
     id: string;
@@ -47,65 +42,84 @@ export function DebtCard({
         }).format(value);
     };
 
+    const actions = (
+        <>
+            <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => toggleSimulator("DELAY")}
+                className={
+                    activeSimulator === "DELAY"
+                        ? "text-red-500 bg-red-50 dark:bg-red-950/20"
+                        : ""
+                }
+                title="Simular Custo do Atraso"
+            >
+                <Timer className="w-4 h-4" />
+            </Button>
+            <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => toggleSimulator("PREPAYMENT")}
+                className={
+                    activeSimulator === "PREPAYMENT"
+                        ? "text-emerald-500 bg-emerald-50 dark:bg-emerald-950/20"
+                        : ""
+                }
+                title="Simular Antecipação"
+            >
+                <TrendingUp className="w-4 h-4" />
+            </Button>
+            <Button
+                variant="ghost"
+                size="icon"
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onEdit?.(id);
+                }}
+                title="Editar"
+            >
+                <Pencil className="w-4 h-4" />
+            </Button>
+            <Button
+                variant="ghost"
+                size="icon"
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete?.(id);
+                }}
+                className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                title="Excluir"
+            >
+                <Trash2 className="w-4 h-4" />
+            </Button>
+        </>
+    );
+
+    const footer = (
+        <span>
+            Vence dia {dueDate} • Mínimo: {formatMoney(minimumPayment)}
+        </span>
+    );
+
     return (
-        <div className="debt-card">
-            <div className="debt-card__header">
-                <div className="debt-card__title-group">
-                    <h3 className="debt-card__title">{name}</h3>
-                </div>
-                <span className="debt-card__interest-badge">
+        <AppCard
+            title={name}
+            badge={
+                <span className="text-xs font-mono text-red-500 bg-red-100 dark:bg-red-950/30 px-2 py-0.5 rounded-full">
                     {interestRate}% a.m.
                 </span>
-            </div>
-
+            }
+            actions={actions}
+            footer={footer}
+        >
             <div>
-                <p className="debt-card__amount-label">Saldo Devedor</p>
-                <p className="debt-card__amount-value">
+                <p className="text-sm font-medium text-muted-foreground">
+                    Saldo Devedor
+                </p>
+                <p className="text-2xl font-bold text-red-500">
                     {formatMoney(totalAmount)}
                 </p>
-            </div>
-
-            <div className="debt-card__details">
-                Vence dia {dueDate} • Mínimo: {formatMoney(minimumPayment)}
-            </div>
-
-            <div className="debt-card__actions">
-                <button
-                    onClick={() => toggleSimulator("DELAY")}
-                    className={`debt-card__action-btn hover:bg-red-50 ${
-                        activeSimulator === "DELAY"
-                            ? "text-red-600 bg-red-50"
-                            : "text-gray-500"
-                    }`}
-                    title="Simular Custo do Atraso"
-                >
-                    <Timer className="w-4 h-4" />
-                </button>
-                <button
-                    onClick={() => toggleSimulator("PREPAYMENT")}
-                    className={`debt-card__action-btn hover:bg-emerald-50 ${
-                        activeSimulator === "PREPAYMENT"
-                            ? "text-emerald-600 bg-emerald-50"
-                            : "text-gray-500"
-                    }`}
-                    title="Simular Antecipação"
-                >
-                    <TrendingUp className="w-4 h-4" />
-                </button>
-                <button
-                    onClick={() => onEdit?.(id)}
-                    className="debt-card__action-btn debt-card__action-btn--edit"
-                    title="Editar"
-                >
-                    <Pencil className="w-4 h-4" />
-                </button>
-                <button
-                    onClick={() => onDelete?.(id)}
-                    className="debt-card__action-btn debt-card__action-btn--delete"
-                    title="Excluir"
-                >
-                    <Trash2 className="w-4 h-4" />
-                </button>
             </div>
 
             {activeSimulator === "DELAY" && (
@@ -128,6 +142,6 @@ export function DebtCard({
                     />
                 </div>
             )}
-        </div>
+        </AppCard>
     );
 }

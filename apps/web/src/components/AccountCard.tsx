@@ -1,12 +1,6 @@
-import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
-
 import { Pencil, Trash2 } from "lucide-react";
-import "./AccountCard.css";
-
-export function cn(...inputs: ClassValue[]) {
-    return twMerge(clsx(inputs));
-}
+import { AppCard } from "./ui/AppCard";
+import { Button } from "./ui/Button";
 
 interface AccountCardProps {
     id: string;
@@ -32,43 +26,57 @@ export function AccountCard({
         currency: "BRL",
     }).format(balance);
 
+    const actions = (
+        <>
+            <Button
+                variant="ghost"
+                size="icon"
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onEdit?.(id);
+                }}
+                title="Editar"
+            >
+                <Pencil className="w-4 h-4" />
+            </Button>
+            <Button
+                variant="ghost"
+                size="icon"
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete?.(id);
+                }}
+                title="Excluir"
+                className="text-destructive hover:text-destructive hover:bg-destructive/10"
+            >
+                <Trash2 className="w-4 h-4" />
+            </Button>
+        </>
+    );
+
     return (
-        <div className="account-card">
-            <div className="account-card__header">
-                <div className="account-card__title-group">
-                    {color && (
-                        <div
-                            className="account-card__color-dot"
-                            style={{ backgroundColor: color }}
-                        />
-                    )}
-                    <h3 className="account-card__title">{name}</h3>
-                </div>
-                <span className="account-card__type-badge">{type}</span>
-            </div>
+        <AppCard
+            title={name}
+            badge={
+                <span className="text-xs font-mono uppercase tracking-wider">
+                    {type}
+                </span>
+            }
+            color={color}
+            actions={actions}
+        >
             <div>
-                <p className="account-card__balance-label">Saldo Atual</p>
-                <p className="account-card__balance-value">
+                <p className="text-sm font-medium text-muted-foreground">
+                    Saldo Atual
+                </p>
+                <p
+                    className={`text-2xl font-bold ${
+                        balance >= 0 ? "text-emerald-500" : "text-red-500"
+                    }`}
+                >
                     {formattedBalance}
                 </p>
             </div>
-
-            <div className="account-card__actions">
-                <button
-                    onClick={() => onEdit?.(id)}
-                    className="account-card__action-btn account-card__action-btn--edit"
-                    title="Editar"
-                >
-                    <Pencil className="w-4 h-4" />
-                </button>
-                <button
-                    onClick={() => onDelete?.(id)}
-                    className="account-card__action-btn account-card__action-btn--delete"
-                    title="Excluir"
-                >
-                    <Trash2 className="w-4 h-4" />
-                </button>
-            </div>
-        </div>
+        </AppCard>
     );
 }

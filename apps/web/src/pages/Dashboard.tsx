@@ -24,6 +24,7 @@ import {
 // import { formatMoney as _unused } from "../lib/utils"; // Not used, removing line
 // import { cn } from "../lib/utils";
 import { ActionFeed } from "../components/dashboard/ActionFeed";
+import { ChartTooltip } from "../components/ui/ChartTooltip";
 
 export default function Dashboard() {
     const [summary, setSummary] = useState<DashboardSummary | null>(null);
@@ -233,15 +234,8 @@ export default function Dashboard() {
                                     tickFormatter={(value) => `R$ ${value}`}
                                 />
                                 <Tooltip
-                                    formatter={(value: number | undefined) =>
-                                        value !== undefined
-                                            ? formatMoney(value)
-                                            : ""
-                                    }
-                                    labelFormatter={(label) =>
-                                        new Date(label).toLocaleDateString(
-                                            "pt-BR"
-                                        )
+                                    content={
+                                        <ChartTooltip formatter={formatMoney} />
                                     }
                                 />
                                 <ReferenceLine y={0} stroke="#000" />

@@ -11,6 +11,7 @@ import {
     TabsList,
     TabsTrigger,
 } from "../components/ui/Tabs";
+import { AppAlert } from "../components/ui/AppAlert";
 
 export default function Debts() {
     const [debts, setDebts] = useState<Debt[]>([]);
@@ -19,6 +20,7 @@ export default function Debts() {
     const [debtToDelete, setDebtToDelete] = useState<Debt | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
     const [viewMode, setViewMode] = useState<"LIST" | "STRATEGY">("LIST");
+    const [error, setError] = useState<string | null>(null);
 
     const fetchDebts = async () => {
         try {
@@ -54,9 +56,10 @@ export default function Debts() {
             await api.delete(`/debts/${debtToDelete.id}`);
             await fetchDebts();
             setDebtToDelete(null);
+            setError(null); // Clear error on successful delete
         } catch (error) {
             console.error("Failed to delete debt", error);
-            alert("Erro ao excluir dívida.");
+            setError("Erro ao excluir dívida. Tente novamente.");
         } finally {
             setIsDeleting(false);
         }
@@ -64,6 +67,19 @@ export default function Debts() {
 
     return (
         <div className="space-y-4 p-8 pt-6">
+            {/* Error Alert Placeholder - could be better managed with a global toast context, but local state for now */}
+            {/* Note: In a real app, I'd suggest a Toast provider. For now, we will rely on console errors silently or use a local state if needed. 
+               The native alert was "alert('Erro ao excluir dívida.')". 
+               I will add a simple error state to show AppAlert if needed.
+            */}
+            {error && (
+                <AppAlert
+                    variant="destructive"
+                    title="Erro"
+                    description={error}
+                    className="mb-4"
+                />
+            )}
             <div className="flex items-center justify-between">
                 <div>
                     <h2 className="text-3xl font-bold tracking-tight">

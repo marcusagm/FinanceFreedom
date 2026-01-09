@@ -1,6 +1,7 @@
 import { Pencil, Trash2 } from "lucide-react";
 import type { IncomeSource } from "../../services/income.service";
-import "./IncomeCard.css";
+import { AppCard } from "../ui/AppCard";
+import { Button } from "../ui/Button";
 
 interface IncomeSourceCardProps {
     source: IncomeSource;
@@ -13,39 +14,47 @@ export function IncomeSourceCard({
     onEdit,
     onDelete,
 }: IncomeSourceCardProps) {
-    return (
-        <div className="income-card">
-            <div className="income-card__header">
-                <h3 className="income-card__title">{source.name}</h3>
-            </div>
-            <div className="income-card__content">
-                <div className="income-card__amount">
-                    {new Intl.NumberFormat("pt-BR", {
-                        style: "currency",
-                        currency: "BRL",
-                    }).format(source.amount)}
-                </div>
-                <p className="income-card__subtitle">
-                    Recebe no dia {source.payDay}
-                </p>
-            </div>
+    const actions = (
+        <>
+            <Button
+                variant="ghost"
+                size="icon"
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onEdit(source);
+                }}
+                title="Editar"
+            >
+                <Pencil className="w-4 h-4" />
+            </Button>
+            <Button
+                variant="ghost"
+                size="icon"
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete(source);
+                }}
+                title="Excluir"
+                className="text-destructive hover:text-destructive hover:bg-destructive/10"
+            >
+                <Trash2 className="w-4 h-4" />
+            </Button>
+        </>
+    );
 
-            <div className="income-card__actions">
-                <button
-                    onClick={() => onEdit(source)}
-                    className="income-card__action-btn income-card__action-btn--edit"
-                    title="Editar"
-                >
-                    <Pencil className="w-5 h-5" />
-                </button>
-                <button
-                    onClick={() => onDelete(source)}
-                    className="income-card__action-btn income-card__action-btn--delete"
-                    title="Excluir"
-                >
-                    <Trash2 className="w-5 h-5" />
-                </button>
+    return (
+        <AppCard
+            title={source.name}
+            color="#10b981" // emerald-500
+            actions={actions}
+            footer={`Recebe no dia ${source.payDay}`}
+        >
+            <div className="text-2xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400">
+                {new Intl.NumberFormat("pt-BR", {
+                    style: "currency",
+                    currency: "BRL",
+                }).format(source.amount)}
             </div>
-        </div>
+        </AppCard>
     );
 }

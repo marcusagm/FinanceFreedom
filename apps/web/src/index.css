@@ -1,6 +1,8 @@
-@import "tailwindcss";
-
 @import "theme.css";
+@import "tailwindcss";
+@plugin "tailwindcss-animate";
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 @layer base {
     * {

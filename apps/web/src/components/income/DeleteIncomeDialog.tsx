@@ -1,5 +1,13 @@
-import { Modal } from "../ui/Modal";
 import { Button } from "../ui/Button";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "../ui/Dialog";
+import { AppAlert } from "../ui/AppAlert";
 
 interface DeleteIncomeDialogProps {
     isOpen: boolean;
@@ -18,20 +26,26 @@ export function DeleteIncomeDialog({
     itemType,
     isDeleting,
 }: DeleteIncomeDialogProps) {
-    const typeLabel =
-        itemType === "SOURCE" ? "esta fonte de renda" : "este serviço";
+    const typeLabel = itemType === "SOURCE" ? "Fonte de Renda" : "Serviço";
     const typeLabelStrong =
         itemType === "SOURCE" ? "A fonte de renda" : "O serviço";
 
     return (
-        <Modal
-            isOpen={isOpen}
-            onClose={onClose}
-            title={`Excluir ${
-                itemType === "SOURCE" ? "Fonte de Renda" : "Serviço"
-            }`}
-            footer={
-                <>
+        <Dialog open={isOpen} onOpenChange={onClose}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Excluir {typeLabel}</DialogTitle>
+                    <DialogDescription>
+                        Esta ação não pode ser desfeita.
+                    </DialogDescription>
+                </DialogHeader>
+
+                <AppAlert variant="destructive" title="Atenção">
+                    {typeLabelStrong} <strong>{itemName}</strong> será
+                    permanentemente removida.
+                </AppAlert>
+
+                <DialogFooter>
                     <Button
                         variant="outline"
                         onClick={onClose}
@@ -46,21 +60,8 @@ export function DeleteIncomeDialog({
                     >
                         {isDeleting ? "Excluindo..." : "Sim, excluir"}
                     </Button>
-                </>
-            }
-        >
-            <div className="flex flex-col gap-4">
-                <div className="p-4 rounded-md bg-red-50 text-red-900 border border-red-200">
-                    <p className="font-medium">
-                        Tem certeza que deseja excluir {typeLabel}?
-                    </p>
-                    <p className="text-sm mt-1 text-red-700">
-                        Esta ação não pode ser desfeita. {typeLabelStrong}{" "}
-                        <strong>{itemName}</strong> será permanentemente
-                        removida.
-                    </p>
-                </div>
-            </div>
-        </Modal>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     );
 }

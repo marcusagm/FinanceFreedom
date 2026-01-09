@@ -179,11 +179,11 @@ export default function IncomeProjection() {
         >
             <div className="flex h-[calc(100vh-64px)] overflow-hidden">
                 {/* Sidebar: Available Work Units */}
-                <div className="w-80 border-r bg-slate-50 p-4 overflow-y-auto">
-                    <h2 className="font-bold mb-4 text-lg">
+                <div className="w-80 border-r bg-slate-50 dark:!bg-zinc-900 dark:border-zinc-800 p-4 overflow-y-auto transition-colors">
+                    <h2 className="font-bold mb-4 text-lg dark:text-foreground">
                         Unidades de Trabalho
                     </h2>
-                    <p className="text-sm text-slate-500 mb-4">
+                    <p className="text-sm text-slate-500 dark:text-muted-foreground mb-4">
                         Arraste para o calendário para projetar.
                     </p>
                     <div className="space-y-2">
@@ -206,7 +206,7 @@ export default function IncomeProjection() {
                             >
                                 <ChevronLeft className="h-4 w-4" />
                             </Button>
-                            <h1 className="text-2xl font-bold capitalize">
+                            <h1 className="text-2xl font-bold capitalize dark:text-foreground">
                                 {format(currentDate, "MMMM yyyy", {
                                     locale: ptBR,
                                 })}
@@ -222,23 +222,23 @@ export default function IncomeProjection() {
                             </Button>
                         </div>
 
-                        <div className="bg-emerald-100 px-4 py-2 rounded-lg border border-emerald-200">
-                            <span className="text-emerald-800 text-sm font-medium mr-2">
+                        <div className="bg-emerald-100 dark:bg-emerald-500/10 px-4 py-2 rounded-lg border border-emerald-200 dark:border-emerald-500/20">
+                            <span className="text-emerald-800 dark:text-emerald-400 text-sm font-medium mr-2">
                                 Total Projetado:
                             </span>
-                            <span className="text-emerald-800 text-xl font-bold">
+                            <span className="text-emerald-800 dark:text-emerald-400 text-xl font-bold">
                                 {formatCurrency(totalProjected)}
                             </span>
                         </div>
                     </div>
 
                     {/* Calendar Grid */}
-                    <div className="grid grid-cols-7 gap-px bg-slate-200 border border-slate-200 rounded-lg overflow-hidden flex-1">
+                    <div className="grid grid-cols-7 gap-px bg-slate-200 dark:!bg-zinc-800 border border-slate-200 dark:border-zinc-800 rounded-lg overflow-hidden flex-1">
                         {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"].map(
                             (day) => (
                                 <div
                                     key={day}
-                                    className="bg-slate-50 p-2 text-center text-xs font-semibold text-slate-500 uppercase"
+                                    className="bg-slate-50 dark:!bg-zinc-900 p-2 text-center text-xs font-semibold text-slate-500 dark:text-muted-foreground uppercase"
                                 >
                                     {day}
                                 </div>
@@ -270,11 +270,11 @@ export default function IncomeProjection() {
             <DragOverlay>
                 {activeDragItem ? (
                     <div className="opacity-80 rotate-2 cursor-grabbing w-64">
-                        <Card className="p-3 bg-white shadow-xl ring-2 ring-emerald-500">
-                            <div className="font-medium text-sm">
+                        <Card className="p-3 bg-white dark:bg-card shadow-xl ring-2 ring-emerald-500">
+                            <div className="font-medium text-sm dark:text-foreground">
                                 {activeDragItem.name}
                             </div>
-                            <div className="font-bold text-emerald-600 text-sm">
+                            <div className="font-bold text-emerald-600 dark:text-emerald-400 text-sm">
                                 {formatCurrency(
                                     Number(activeDragItem.defaultPrice)
                                 )}

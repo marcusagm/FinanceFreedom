@@ -13,6 +13,7 @@ import {
     AlertCircle,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { AppAlert } from "../components/ui/AppAlert";
 
 interface ImapConfigFormData {
     host: string;
@@ -327,31 +328,27 @@ export const ImapConfigPage: React.FC = () => {
                     </div>
 
                     {(testStatus || syncStatus) && (
-                        <div
-                            className={`p-4 rounded-md flex items-start gap-2 ${
-                                testStatus?.success ||
-                                syncStatus?.count !== undefined
-                                    ? "bg-emerald-50 text-emerald-900 border border-emerald-200"
-                                    : "bg-red-50 text-red-900 border border-red-200"
-                            }`}
-                        >
+                        <div className="mt-4">
                             {testStatus?.success ||
                             syncStatus?.count !== undefined ? (
-                                <CheckCircle className="w-5 h-5" />
+                                <AppAlert
+                                    variant="success"
+                                    title="Sucesso"
+                                    description={
+                                        testStatus?.message ||
+                                        syncStatus?.message
+                                    }
+                                />
                             ) : (
-                                <AlertCircle className="w-5 h-5" />
+                                <AppAlert
+                                    variant="destructive"
+                                    title="Erro"
+                                    description={
+                                        testStatus?.message ||
+                                        syncStatus?.message
+                                    }
+                                />
                             )}
-                            <div>
-                                <p className="font-medium">
-                                    {testStatus?.success ||
-                                    syncStatus?.count !== undefined
-                                        ? "Success"
-                                        : "Error"}
-                                </p>
-                                <p className="text-sm">
-                                    {testStatus?.message || syncStatus?.message}
-                                </p>
-                            </div>
                         </div>
                     )}
                 </div>

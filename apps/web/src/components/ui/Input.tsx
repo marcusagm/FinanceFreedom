@@ -9,7 +9,8 @@ function cn(...inputs: ClassValue[]) {
 }
 
 // Combine standard Input props with Currency specific props
-export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps
+    extends React.InputHTMLAttributes<HTMLInputElement> {
     label?: string;
     currency?: boolean; // If true, behaves as currency input
     onValueChange?: NumericFormatProps["onValueChange"];

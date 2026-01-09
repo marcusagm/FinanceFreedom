@@ -35,7 +35,7 @@ export function DraggableWorkUnit({ workUnit }: DraggableWorkUnitProps) {
             style={style}
             {...listeners}
             {...attributes}
-            className="p-3 mb-2 cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow bg-white"
+            className="p-3 mb-2 cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow bg-card dark:border"
         >
             <div className="flex justify-between items-start">
                 <div>
@@ -46,7 +46,7 @@ export function DraggableWorkUnit({ workUnit }: DraggableWorkUnitProps) {
                         </Badge>
                     </div>
                 </div>
-                <span className="font-bold text-emerald-600 text-sm">
+                <span className="font-bold text-emerald-600 dark:text-emerald-400 text-sm">
                     {formatCurrency(Number(workUnit.defaultPrice))}
                 </span>
             </div>

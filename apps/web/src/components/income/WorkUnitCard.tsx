@@ -1,6 +1,7 @@
 import { Pencil, Trash2 } from "lucide-react";
 import type { WorkUnit } from "../../services/income.service";
-import "./IncomeCard.css";
+import { AppCard } from "../ui/AppCard";
+import { Button } from "../ui/Button";
 
 interface WorkUnitCardProps {
     unit: WorkUnit;
@@ -9,39 +10,47 @@ interface WorkUnitCardProps {
 }
 
 export function WorkUnitCard({ unit, onEdit, onDelete }: WorkUnitCardProps) {
-    return (
-        <div className="income-card">
-            <div className="income-card__header">
-                <h3 className="income-card__title">{unit.name}</h3>
-            </div>
-            <div className="income-card__content">
-                <div className="income-card__amount">
-                    {new Intl.NumberFormat("pt-BR", {
-                        style: "currency",
-                        currency: "BRL",
-                    }).format(unit.defaultPrice)}
-                </div>
-                <p className="income-card__subtitle">
-                    Tempo Estimado: {unit.estimatedTime}h
-                </p>
-            </div>
+    const actions = (
+        <>
+            <Button
+                variant="ghost"
+                size="icon"
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onEdit(unit);
+                }}
+                title="Editar"
+            >
+                <Pencil className="w-4 h-4" />
+            </Button>
+            <Button
+                variant="ghost"
+                size="icon"
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete(unit);
+                }}
+                title="Excluir"
+                className="text-destructive hover:text-destructive hover:bg-destructive/10"
+            >
+                <Trash2 className="w-4 h-4" />
+            </Button>
+        </>
+    );
 
-            <div className="income-card__actions">
-                <button
-                    onClick={() => onEdit(unit)}
-                    className="income-card__action-btn income-card__action-btn--edit"
-                    title="Editar"
-                >
-                    <Pencil className="w-5 h-5" />
-                </button>
-                <button
-                    onClick={() => onDelete(unit)}
-                    className="income-card__action-btn income-card__action-btn--delete"
-                    title="Excluir"
-                >
-                    <Trash2 className="w-5 h-5" />
-                </button>
+    return (
+        <AppCard
+            title={unit.name}
+            color="#3b82f6" // blue-500
+            actions={actions}
+            footer={`Tempo Estimado: ${unit.estimatedTime}h`}
+        >
+            <div className="text-2xl font-bold tracking-tight text-blue-600 dark:text-blue-400">
+                {new Intl.NumberFormat("pt-BR", {
+                    style: "currency",
+                    currency: "BRL",
+                }).format(unit.defaultPrice)}
             </div>
-        </div>
+        </AppCard>
     );
 }

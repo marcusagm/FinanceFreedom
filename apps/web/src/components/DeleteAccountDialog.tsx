@@ -1,5 +1,13 @@
-import { Modal } from "./ui/Modal";
 import { Button } from "./ui/Button";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "./ui/Dialog";
+import { AppAlert } from "./ui/AppAlert";
 
 interface DeleteAccountDialogProps {
     isOpen: boolean;
@@ -17,12 +25,21 @@ export function DeleteAccountDialog({
     isDeleting,
 }: DeleteAccountDialogProps) {
     return (
-        <Modal
-            isOpen={isOpen}
-            onClose={onClose}
-            title="Excluir Conta"
-            footer={
-                <>
+        <Dialog open={isOpen} onOpenChange={onClose}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Excluir Conta</DialogTitle>
+                    <DialogDescription>
+                        Esta ação não pode ser desfeita.
+                    </DialogDescription>
+                </DialogHeader>
+
+                <AppAlert variant="destructive" title="Atenção">
+                    A conta <strong>{accountName}</strong> será permanentemente
+                    removida.
+                </AppAlert>
+
+                <DialogFooter>
                     <Button
                         variant="outline"
                         onClick={onClose}
@@ -37,21 +54,8 @@ export function DeleteAccountDialog({
                     >
                         {isDeleting ? "Excluindo..." : "Sim, excluir conta"}
                     </Button>
-                </>
-            }
-        >
-            <div className="flex flex-col gap-4">
-                <div className="p-4 rounded-md bg-red-50 text-red-900 border border-red-200">
-                    <p className="font-medium">
-                        Tem certeza que deseja excluir esta conta?
-                    </p>
-                    <p className="text-sm mt-1 text-red-700">
-                        Esta ação não pode ser desfeita. A conta{" "}
-                        <strong>{accountName}</strong> será permanentemente
-                        removida.
-                    </p>
-                </div>
-            </div>
-        </Modal>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     );
 }

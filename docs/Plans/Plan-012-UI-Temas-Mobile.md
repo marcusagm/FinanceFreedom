@@ -14,15 +14,15 @@ Polimento visual para garantir que o app pareça profissional e funcione bem no 
 
 ### 1. Temas (Dark/Light)
 
--   [ ] Implementar Contexto de Tema (`ThemeProvider`).
--   [ ] Definir paleta de cores para modo Escuro (Slate/Emerald/Rose).
--   [ ] Adicionar Toggle de tema no Header.
+-   [x] Implementar Contexto de Tema (`ThemeProvider`).
+-   [x] Definir paleta de cores para modo Escuro (Slate/Emerald/Rose).
+-   [x] Adicionar Toggle de tema no Header.
 
 ### 2. Mobile First
 
--   [ ] Adicionar `manifest.json` para instalação PWA.
--   [ ] Ajustar Grid do Dashboard para 1 coluna no Mobile.
--   [ ] Transformar Menu Lateral em "Bottom Navigation" no Mobile (opcional, ou Drawer).
+-   [x] Adicionar `manifest.json` para instalação PWA.
+-   [x] Ajustar Grid do Dashboard para 1 coluna no Mobile.
+-   [x] Transformar Menu Lateral em "Bottom Navigation" no Mobile (opcional, ou Drawer).
 
 ## Verificação
 

@@ -1,6 +1,6 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import { CreateIncomeSourceDialog } from "./CreateIncomeSourceDialog";
-import { vi, describe, it, expect, beforeEach } from "vitest";
+import { vi, describe, it, expect, beforeEach, beforeAll } from "vitest";
 import "@testing-library/jest-dom";
 import * as IncomeService from "../../services/income.service";
 
@@ -10,23 +10,35 @@ vi.mock("../../services/income.service", () => ({
     createWorkUnit: vi.fn(),
 }));
 
-// Mock API (since dialog might call api directly for generic updates if refactored that way)
-// The component uses api.patch
+// Mock API
 vi.mock("../../lib/api", () => ({
     api: {
         patch: vi.fn(),
     },
 }));
 
-// Mock Input to handle onValueChange for currency fields
+// Mock Modal to avoid animation visibility issues
+vi.mock("../ui/Modal", () => ({
+    Modal: ({ isOpen, title, children, footer }: any) => {
+        if (!isOpen) return null;
+        return (
+            <div data-testid="modal">
+                <h2>{title}</h2>
+                {children}
+                {footer}
+            </div>
+        );
+    },
+}));
+
+// Mock Input
 vi.mock("../ui/Input", () => ({
-    Input: ({ onValueChange, onChange, value, ...props }: any) => (
+    Input: ({ onValueChange, onChange, value, currency, ...props }: any) => (
         <input
             {...props}
             value={value}
             onChange={(e) => {
                 onChange?.(e);
-                // Simulate react-number-format behavior by parsing float
                 if (onValueChange) {
                     const floatValue = parseFloat(e.target.value) || 0;
                     onValueChange({ floatValue, value: e.target.value });
