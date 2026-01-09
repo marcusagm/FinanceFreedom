@@ -131,7 +131,7 @@ export default function Dashboard() {
                 title="Dashboard"
                 actions={
                     <div className="flex gap-2">
-                        {/* <Button
+                        <Button
                             variant="outline"
                             size="sm"
                             onClick={() =>
@@ -167,7 +167,7 @@ export default function Dashboard() {
                             onClick={() => notify.loading("Loading")}
                         >
                             Loading
-                        </Button> */}
+                        </Button>
                         <Button
                             variant="outline"
                             size="sm"

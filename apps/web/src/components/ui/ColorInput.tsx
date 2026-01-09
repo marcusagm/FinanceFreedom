@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import "./ColorInput.css";
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -85,23 +84,32 @@ export function ColorInput({
     };
 
     return (
-        <div className={cn("color-input-wrapper", className)}>
-            {label && <label className="color-input-label">{label}</label>}
-            <div className="color-input-container">
+        <div
+            className={cn(
+                "flex flex-col items-start gap-1.5 w-full",
+                className
+            )}
+        >
+            {label && (
+                <label className="text-sm font-medium leading-none text-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    {label}
+                </label>
+            )}
+            <div className="flex gap-2 items-center w-full">
                 <input
                     type="color"
                     name={name}
                     value={value}
                     onChange={handleNativeChange}
                     // We don't blur the native input usually?
-                    className="color-input-native"
+                    className="h-10 w-12 p-0 border-0 bg-transparent cursor-pointer rounded-md overflow-hidden [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:border [&::-webkit-color-swatch]:border-input [&::-webkit-color-swatch]:rounded-md"
                 />
                 <input
                     type="text"
                     value={inputValue}
                     onChange={handleTextChange}
                     onBlur={handleBlur}
-                    className="color-input-hex"
+                    className="flex-1 h-10 uppercase rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                     placeholder="#000000"
                     maxLength={7}
                 />

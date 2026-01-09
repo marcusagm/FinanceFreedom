@@ -46,9 +46,6 @@ describe("Input", () => {
         render(<Input className="custom-class" />);
         // Current implementation wraps label and input in div if label is present.
         // If no label, it returns input directly.
-        expect(screen.getByRole("textbox")).toHaveClass(
-            "input",
-            "custom-class"
-        );
+        expect(screen.getByRole("textbox")).toHaveClass("custom-class");
     });
 });
