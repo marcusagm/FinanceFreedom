@@ -50,6 +50,9 @@ describe("ImportPage", () => {
     it("renders the title", async () => {
         renderWithRouter(<ImportPage />);
         expect(screen.getByText("Smart Import")).toBeInTheDocument();
+        await waitFor(() => {
+            expect(api.get).toHaveBeenCalled();
+        });
     });
 
     it("fetches and lists accounts", async () => {

@@ -1,8 +1,8 @@
-import React from "react";
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { Header } from "./Header";
 import { MemoryRouter } from "react-router-dom";
+import { PrivacyProvider } from "../../contexts/PrivacyContext";
 
 // Mock ModeToggle
 vi.mock("../ui/ModeToggle", () => ({
@@ -13,7 +13,9 @@ describe("Header", () => {
     it("renders successfully", () => {
         render(
             <MemoryRouter>
-                <Header />
+                <PrivacyProvider>
+                    <Header />
+                </PrivacyProvider>
             </MemoryRouter>
         );
         expect(screen.getByText("FinanceFreedom")).toBeInTheDocument();
@@ -23,7 +25,9 @@ describe("Header", () => {
     it("highlights active link", () => {
         render(
             <MemoryRouter initialEntries={["/accounts"]}>
-                <Header />
+                <PrivacyProvider>
+                    <Header />
+                </PrivacyProvider>
             </MemoryRouter>
         );
 
@@ -39,7 +43,9 @@ describe("Header", () => {
     it("highlights dashboard on root path", () => {
         render(
             <MemoryRouter initialEntries={["/"]}>
-                <Header />
+                <PrivacyProvider>
+                    <Header />
+                </PrivacyProvider>
             </MemoryRouter>
         );
 

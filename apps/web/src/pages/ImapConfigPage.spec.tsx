@@ -174,7 +174,7 @@ describe("ImapConfigPage", () => {
         fireEvent.click(testBtn);
 
         await waitFor(() => {
-            expect(screen.getByText("Error")).toBeInTheDocument();
+            expect(screen.getByText("Erro")).toBeInTheDocument();
             expect(screen.getByText("Auth failed")).toBeInTheDocument();
         });
     });

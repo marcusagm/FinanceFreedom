@@ -41,8 +41,12 @@ describe("AppCard", () => {
 
     it("handles click", () => {
         const handleClick = vi.fn();
-        const { container } = render(<AppCard title="Card" onClick={handleClick}>Content</AppCard>);
-        
+        const { container } = render(
+            <AppCard title="Card" onClick={handleClick}>
+                Content
+            </AppCard>
+        );
+
         // Find the specific card element - using the first child which is the Card div
         const card = container.firstChild;
         if (card) {
@@ -53,4 +57,3 @@ describe("AppCard", () => {
         }
     });
 });
-```

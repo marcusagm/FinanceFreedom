@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent } from "../../utils/test-utils";
 import { describe, it, expect } from "vitest";
 import { ImportReviewTable } from "./ImportReviewTable";
 import "@testing-library/jest-dom";
@@ -28,7 +28,7 @@ describe("ImportReviewTable", () => {
         render(<ImportReviewTable transactions={mockTransactions} />);
 
         expect(screen.getByText("Test Grocery")).toBeInTheDocument();
-        expect(screen.getByText("Salary")).toBeInTheDocument();
+        expect(screen.getAllByText("Salary")).toHaveLength(2);
         expect(screen.getByText("-R$ 50,00")).toBeInTheDocument();
         expect(screen.getByText("R$ 100,00")).toBeInTheDocument();
     });

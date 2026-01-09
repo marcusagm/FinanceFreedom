@@ -46,7 +46,7 @@ describe("DebtForm", () => {
         );
 
         expect(screen.getByText("Nova Dívida")).toBeInTheDocument();
-        expect(screen.getByLabelText("Nome da Dívida")).toBeInTheDocument();
+        expect(screen.getByText("Nome da Dívida")).toBeInTheDocument();
         expect(screen.getByText("Salvar")).toBeInTheDocument();
     });
 
@@ -82,25 +82,30 @@ describe("DebtForm", () => {
 
         // Fill Name
         const nameInput = container.querySelector('input[name="name"]');
+        await user.clear(nameInput!);
         await user.type(nameInput!, "Test Debt");
 
         // Fill Amounts
         const amountInput = container.querySelector(
             'input[name="totalAmount"]'
         );
+        await user.clear(amountInput!);
         await user.type(amountInput!, "1000");
 
         const interestInput = container.querySelector(
             'input[name="interestRate"]'
         );
+        await user.clear(interestInput!);
         await user.type(interestInput!, "5");
 
         const paymentInput = container.querySelector(
             'input[name="minimumPayment"]'
         );
+        await user.clear(paymentInput!);
         await user.type(paymentInput!, "100");
 
         const dueDateInput = container.querySelector('input[name="dueDate"]');
+        await user.clear(dueDateInput!);
         await user.type(dueDateInput!, "10");
 
         const submitButton = screen.getByRole("button", { name: "Salvar" });

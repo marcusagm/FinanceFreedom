@@ -13,14 +13,14 @@ vi.mock("../services/dashboard.service", () => ({
 // Mock Recharts components because they don't play well with JSDOM
 vi.mock("recharts", () => ({
     LineChart: ({ children }: any) => (
-        <div data-testid="line-chart">{children}</div>
+        <svg data-testid="line-chart">{children}</svg>
     ),
-    Line: () => <div />,
-    XAxis: () => <div />,
-    YAxis: () => <div />,
-    CartesianGrid: () => <div />,
-    Tooltip: () => <div />,
-    ReferenceLine: () => <div />,
+    Line: () => <g data-name="Line" />,
+    XAxis: () => <g data-name="XAxis" />,
+    YAxis: () => <g data-name="YAxis" />,
+    CartesianGrid: () => <g data-name="CartesianGrid" />,
+    Tooltip: () => <g data-name="Tooltip" />,
+    ReferenceLine: () => <g data-name="ReferenceLine" />,
     ResponsiveContainer: ({ children }: any) => <div>{children}</div>,
 }));
 

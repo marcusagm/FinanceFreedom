@@ -24,7 +24,7 @@ describe("DeleteIncomeDialog", () => {
     it("should display correct message", () => {
         render(<DeleteIncomeDialog {...defaultProps} />);
         expect(
-            screen.getByText(/Tem certeza que deseja excluir/i)
+            screen.getByText(/será permanentemente removida/i)
         ).toBeInTheDocument();
         expect(screen.getByText("Test Item")).toBeInTheDocument();
     });

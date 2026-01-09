@@ -20,7 +20,7 @@ describe("AccountCard", () => {
         // Check for formatted balance (roughly) or exact text depending on locale mock
         // Assuming BRL: R$ 150,50
         // We will just check existence for now
-        expect(screen.getByText(/Other/i)).toBeInTheDocument(); // Type usually maps to Other? Or need to check logic.
+        expect(screen.getByText("WALLET")).toBeInTheDocument();
         // Wait, AccountCard might map types.
     });
 

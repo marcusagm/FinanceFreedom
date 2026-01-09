@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen } from "../../utils/test-utils";
 import { describe, it, expect } from "vitest";
 import { ChartTooltip } from "./ChartTooltip";
 
@@ -13,7 +13,7 @@ describe("ChartTooltip", () => {
             />
         );
         expect(screen.getByText("Test Label")).toBeInTheDocument();
-        expect(screen.getByText("Data 1")).toBeInTheDocument();
+        expect(screen.getByText("Data 1:")).toBeInTheDocument();
         // Since currency formatting depends on locale, we check for presence of value digit '1'
         expect(screen.getByText(/100/)).toBeInTheDocument();
     });
