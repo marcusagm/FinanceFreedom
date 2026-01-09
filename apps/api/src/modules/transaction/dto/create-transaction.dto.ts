@@ -1,34 +1,38 @@
 import {
-  IsDateString,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-  IsEnum,
-} from 'class-validator';
+    IsDateString,
+    IsNotEmpty,
+    IsNumber,
+    IsOptional,
+    IsString,
+    IsEnum,
+} from "class-validator";
 
 export class CreateTransactionDto {
-  @IsNotEmpty()
-  @IsNumber()
-  amount: number;
+    @IsNotEmpty()
+    @IsNumber()
+    amount: number;
 
-  @IsNotEmpty()
-  @IsDateString()
-  date: string;
+    @IsNotEmpty()
+    @IsDateString()
+    date: string;
 
-  @IsNotEmpty()
-  @IsString()
-  description: string;
+    @IsNotEmpty()
+    @IsString()
+    description: string;
 
-  @IsNotEmpty()
-  @IsEnum(['INCOME', 'EXPENSE'])
-  type: 'INCOME' | 'EXPENSE';
+    @IsNotEmpty()
+    @IsEnum(["INCOME", "EXPENSE"])
+    type: "INCOME" | "EXPENSE";
 
-  @IsOptional()
-  @IsString()
-  category?: string;
+    @IsOptional()
+    @IsString()
+    category?: string;
 
-  @IsNotEmpty()
-  @IsString()
-  accountId: string;
+    @IsOptional()
+    @IsString()
+    debtId?: string;
+
+    @IsNotEmpty()
+    @IsString()
+    accountId: string;
 }

@@ -27,8 +27,11 @@ export class DebtController {
     }
 
     @Get("strategy")
-    getStrategy(@Query("type") type: "SNOWBALL" | "AVALANCHE") {
-        return this.debtService.getSortedDebts(type);
+    getStrategy(
+        @Query("type") type: "SNOWBALL" | "AVALANCHE",
+        @Query("monthlyExtra") monthlyExtra?: string
+    ) {
+        return this.debtService.getSortedDebts(type, Number(monthlyExtra) || 0);
     }
 
     @Get(":id")

@@ -48,7 +48,10 @@ export class DashboardService {
         const recommendations = [];
 
         if (freeCashFlow > 0) {
-            const debts = await this.debtService.getSortedDebts("AVALANCHE"); // Default strategy
+            const { debts } = await this.debtService.getSortedDebts(
+                "SNOWBALL",
+                0
+            );
             if (debts.length > 0) {
                 const topDebt = debts[0];
                 recommendations.push({

@@ -38,6 +38,8 @@ model Transaction {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   projectedIncomes ProjectedIncome[]
+  debtId      String?
+  debt        Debt?    @relation(fields: [debtId], references: [id])
 }
 
 model EmailCredential {
@@ -64,6 +66,7 @@ model Debt {
   priority        Int      @default(0)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+  transactions    Transaction[]
 }
 
 model IncomeSource {

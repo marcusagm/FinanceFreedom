@@ -1,14 +1,15 @@
 import { Test, TestingModule } from "@nestjs/testing";
+import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
 import { DebtService } from "./debt.service";
 import { PrismaService } from "../../prisma/prisma.service";
 
 const mockPrismaService = {
     debt: {
-        create: jest.fn(),
-        findMany: jest.fn(),
-        findUnique: jest.fn(),
-        update: jest.fn(),
-        delete: jest.fn(),
+        create: vi.fn(),
+        findMany: vi.fn(),
+        findUnique: vi.fn(),
+        update: vi.fn(),
+        delete: vi.fn(),
     },
 };
 
@@ -32,7 +33,7 @@ describe("DebtService", () => {
     });
 
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it("should be defined", () => {
@@ -162,6 +163,27 @@ describe("DebtService", () => {
             expect(prisma.debt.delete).toHaveBeenCalledWith({
                 where: { id: "1" },
             });
+        });
+    });
+    describe("getSortedDebts", () => {
+        it("should return debts and projection", async () => {
+            const debts = [
+                {
+                    id: "1",
+                    totalAmount: 1000,
+                    interestRate: 5,
+                    minimumPayment: 100,
+                },
+            ];
+            // @ts-ignore
+            prisma.debt.findMany.mockResolvedValue(debts);
+
+            const result = await service.getSortedDebts("SNOWBALL", 0);
+
+            expect(result).toHaveProperty("debts");
+            expect(result).toHaveProperty("projection");
+            expect(result.projection).toHaveProperty("monthsToPayoff");
+            expect(result.projection).toHaveProperty("totalInterest");
         });
     });
 });
