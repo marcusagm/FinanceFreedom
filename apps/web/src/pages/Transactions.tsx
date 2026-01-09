@@ -6,6 +6,7 @@ import { Button } from "../components/ui/Button";
 import { TransactionList } from "../components/transactions/TransactionList";
 import { NewTransactionDialog } from "../components/transactions/NewTransactionDialog";
 import { DeleteTransactionDialog } from "../components/transactions/DeleteTransactionDialog";
+import { TransactionFilters } from "../components/transactions/TransactionFilters";
 import type { Account, Transaction } from "../types";
 
 export function Transactions() {
@@ -41,6 +42,52 @@ export function Transactions() {
     useEffect(() => {
         fetchData();
     }, []);
+
+    const [filters, setFilters] = useState({
+        search: "",
+        accountId: "all",
+        category: "all",
+        startDate: "",
+        endDate: "",
+    });
+
+    const categories = Array.from(
+        new Set(transactions.map((t) => t.category).filter(Boolean))
+    ).sort();
+
+    const filteredTransactions = transactions.filter((t) => {
+        // Search
+        if (
+            filters.search &&
+            !t.description.toLowerCase().includes(filters.search.toLowerCase())
+        ) {
+            return false;
+        }
+
+        // Account
+        if (filters.accountId !== "all" && t.account.id !== filters.accountId) {
+            return false;
+        }
+
+        // Category
+        if (filters.category !== "all" && t.category !== filters.category) {
+            return false;
+        }
+
+        // Date Range
+        if (filters.startDate) {
+            const txDate = new Date(t.date).setHours(0, 0, 0, 0);
+            const startDate = new Date(filters.startDate).setHours(0, 0, 0, 0);
+            if (txDate < startDate) return false;
+        }
+        if (filters.endDate) {
+            const txDate = new Date(t.date).setHours(0, 0, 0, 0);
+            const endDate = new Date(filters.endDate).setHours(0, 0, 0, 0);
+            if (txDate > endDate) return false;
+        }
+
+        return true;
+    });
 
     const handleEdit = (transaction: Transaction) => {
         setEditingTransaction(transaction);
@@ -89,11 +136,18 @@ export function Transactions() {
                 }
             />
 
+            <TransactionFilters
+                filters={filters}
+                onChange={setFilters}
+                accounts={accounts}
+                categories={categories}
+            />
+
             {loading ? (
                 <div className="text-center py-8">Carregando...</div>
             ) : (
                 <TransactionList
-                    transactions={transactions}
+                    transactions={filteredTransactions}
                     onEdit={handleEdit}
                     onDelete={handleDelete}
                 />
