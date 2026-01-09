@@ -24,7 +24,7 @@ A lista mestre de todas as movimentações. É aqui que a "Inteligência" de cat
 
 ### C. Conciliação (Para Contas Conectadas)
 
--   [ ] Se o Pluggy enviar uma atualização de uma transação (ex: mudou de "Pendente" para "Confirmado"), o sistema atualiza localmente sem duplicar.
+-   [ ] Se a integraçao dom Imap o importação de ofx enviar uma atualização de uma transação (ex: mudou de "Pendente" para "Confirmado"), o sistema atualiza localmente sem duplicar.
 -   [ ] Detecção de duplicatas manuais: Se o usuário lançou manualmente e depois o banco importou, o sistema sugere "Mesclar".
 
 ## 4. Regras de Negócio

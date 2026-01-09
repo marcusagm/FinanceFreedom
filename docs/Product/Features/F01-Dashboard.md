@@ -2,7 +2,7 @@
 
 ## 1. Visão Geral
 
-**User Story:** "Como um usuário endividado, eu quero ver, em 5 segundos, se tenho dinheiro para pagar as contas da semana e qual é o próximo passo da minha estratégia de dívida, para reduzir minha ansiedade."
+**User Story:** "Como um usuário endividado, eu quero ver se tenho dinheiro para pagar as contas da semana e qual é o próximo passo da minha estratégia de dívida, para reduzir minha ansiedade."
 
 O Dashboard não é apenas um relatório; é um **Centro de Comando**. Ele ignora métricas de vaidade e foca em _solvência_ e _ação imediata_.
 
@@ -31,7 +31,7 @@ A tela é dividida em 3 camadas de informação prioritária:
 ### C. Navegação Rápida
 
 -   [ ] Botão flutuante (FAB) para "Transação Rápida" (Gasto ou Renda manual).
--   [ ] Atalho para "Sincronizar Agora" (Forçar update Pluggy).
+-   [ ] Atalho para "Sincronizar Agora".
 
 ## 4. Regras de Negócio
 
@@ -43,4 +43,4 @@ A tela é dividida em 3 camadas de informação prioritária:
 
 -   [ ] O usuário consegue entender seu estado financeiro ("Azul" ou "Vermelho") sem rolar a tela.
 -   [ ] O Action Feed mostra pelo menos uma ação recomendada se houver dívidas ou contas próximas.
--   [ ] O botão de sincronização atualiza os saldos em menos de 5 segundos (simulado ou real).
+-   [ ] O botão de sincronização atualiza os saldos.
