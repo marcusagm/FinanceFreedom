@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
-import { UploadCloud } from "lucide-react";
+import { Upload } from "lucide-react";
 
 interface ImportZoneProps {
     onFileSelect: (file: File) => void;
@@ -64,7 +64,7 @@ export const ImportZone: React.FC<ImportZoneProps> = ({
             <input {...getInputProps()} />
 
             <div className="flex flex-col items-center justify-center">
-                <UploadCloud className="w-12 h-12 text-muted-foreground mb-4" />
+                <Upload className="w-12 h-12 text-muted-foreground mb-4" />
                 {isDragActive ? (
                     <p className="text-lg text-primary font-medium">
                         Drop the OFX file here...

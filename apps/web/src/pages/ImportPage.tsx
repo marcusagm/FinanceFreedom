@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Link } from "react-router-dom";
-import { ImportZone } from "../components/ImportZone";
-import { ImportReviewTable } from "../components/ImportReviewTable";
+import { ImportZone } from "../components/import/ImportZone";
+import { ImportReviewTable } from "../components/import/ImportReviewTable";
 import {
     ImportService,
     type ImportedTransaction,

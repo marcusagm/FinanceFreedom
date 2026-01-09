@@ -1,5 +1,5 @@
 import React from "react";
-import type { ImportedTransaction } from "../services/import.service";
+import type { ImportedTransaction } from "../../services/import.service";
 import {
     Table,
     TableBody,
@@ -7,7 +7,7 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "./ui/Table";
+} from "../../components/ui/Table";
 
 interface Props {
     transactions: ImportedTransaction[];

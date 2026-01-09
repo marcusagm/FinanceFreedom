@@ -1,4 +1,4 @@
-import { Button } from "./ui/Button";
+import { Button } from "../../components/ui/Button";
 import {
     Dialog,
     DialogContent,
@@ -6,8 +6,8 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from "./ui/Dialog";
-import { AppAlert } from "./ui/AppAlert";
+} from "../../components/ui/Dialog";
+import { AppAlert } from "../../components/ui/AppAlert";
 
 interface DeleteAccountDialogProps {
     isOpen: boolean;

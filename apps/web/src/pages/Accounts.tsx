@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { PageHeader } from "../components/ui/PageHeader";
 import { api } from "../lib/api";
-import { AccountCard } from "../components/AccountCard";
-import { CreateAccountDialog } from "../components/CreateAccountDialog";
-import { DeleteAccountDialog } from "../components/DeleteAccountDialog";
+import { AccountCard } from "../components/account/AccountCard";
+import { CreateAccountDialog } from "../components/account/CreateAccountDialog";
+import { DeleteAccountDialog } from "../components/account/DeleteAccountDialog";
 import { Button } from "../components/ui/Button";
-import "./Accounts.css";
 
 interface Account {
     id: string;
@@ -68,14 +67,14 @@ export function Accounts() {
     }, []);
 
     return (
-        <div className="accounts-page">
+        <div className="container mx-auto p-4 max-w-7xl">
             <PageHeader
                 title="Contas"
                 description="Gerencie seus saldos e fontes de receita."
                 actions={<Button onClick={handleCreate}>+ Nova Conta</Button>}
             />
 
-            <div className="accounts-page__grid">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {accounts.map((account) => (
                     <AccountCard
                         key={account.id}
@@ -90,8 +89,8 @@ export function Accounts() {
                 ))}
 
                 {accounts.length === 0 && (
-                    <div className="accounts-page__empty-state">
-                        <p className="accounts-page__empty-text">
+                    <div className="col-span-full text-center py-12">
+                        <p className="text-muted-foreground">
                             Nenhuma conta encontrada. Crie sua primeira conta!
                         </p>
                     </div>

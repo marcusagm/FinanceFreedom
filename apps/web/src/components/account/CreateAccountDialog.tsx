@@ -2,19 +2,19 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { api } from "../lib/api";
+import { api } from "../../lib/api";
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
-} from "./ui/Dialog";
-import { Button } from "./ui/Button";
-import { Input } from "./ui/Input";
-import { Select } from "./ui/Select";
-import { ColorInput } from "./ui/ColorInput";
+    DialogFooter,
+    DialogDescription,
+} from "../../components/ui/Dialog";
+import { Button } from "../../components/ui/Button";
+import { Input } from "../../components/ui/Input";
+import { Select } from "../../components/ui/Select";
+import { ColorInput } from "../../components/ui/ColorInput";
 import {
     Form,
     FormControl,
@@ -22,7 +22,7 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from "./ui/Form";
+} from "../../components/ui/Form";
 
 interface Account {
     id: string;

@@ -1,24 +1,25 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
 import { ImportReviewTable } from "./ImportReviewTable";
-import { ImportedTransaction } from "../services/import.service";
+import "@testing-library/jest-dom";
+import type { ImportedTransaction } from "../../services/import.service";
 
 const mockTransactions: ImportedTransaction[] = [
     {
-        date: new Date("2023-01-01"),
+        date: new Date("2023-01-01").toISOString(),
         amount: -50.0,
         description: "Test Grocery",
         type: "EXPENSE",
         accountId: "acc1",
-        fitId: "1",
+        category: "Food",
     },
     {
-        date: new Date("2023-01-02"),
+        date: new Date("2023-01-02").toISOString(),
         amount: 100.0,
         description: "Salary",
         type: "INCOME",
         accountId: "acc1",
-        fitId: "2",
+        category: "Salary",
     },
 ];
 

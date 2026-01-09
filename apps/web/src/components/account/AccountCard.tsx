@@ -1,6 +1,7 @@
 import { Pencil, Trash2 } from "lucide-react";
-import { AppCard } from "./ui/AppCard";
-import { Button } from "./ui/Button";
+import { AppCard } from "../../components/ui/AppCard";
+import { Button } from "../../components/ui/Button";
+import { formatMoney } from "../../lib/utils";
 
 interface AccountCardProps {
     id: string;
@@ -21,10 +22,7 @@ export function AccountCard({
     onEdit,
     onDelete,
 }: AccountCardProps) {
-    const formattedBalance = new Intl.NumberFormat("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-    }).format(balance);
+    const formattedBalance = formatMoney(balance);
 
     const actions = (
         <>
@@ -35,7 +33,7 @@ export function AccountCard({
                     e.stopPropagation();
                     onEdit?.(id);
                 }}
-                title="Editar"
+                title="Editar Conta"
             >
                 <Pencil className="w-4 h-4" />
             </Button>
@@ -46,7 +44,7 @@ export function AccountCard({
                     e.stopPropagation();
                     onDelete?.(id);
                 }}
-                title="Excluir"
+                title="Excluir Conta"
                 className="text-destructive hover:text-destructive hover:bg-destructive/10"
             >
                 <Trash2 className="w-4 h-4" />
