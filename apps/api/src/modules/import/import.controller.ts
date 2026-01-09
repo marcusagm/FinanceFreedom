@@ -15,6 +15,7 @@ import { CreateTransactionDto } from "../transaction/dto/create-transaction.dto"
 import { TransactionService } from "../transaction/transaction.service";
 import { ImapService } from "./imap.service";
 import { PrismaService } from "../../prisma/prisma.service";
+import { ImportService } from "./import.service";
 
 @Controller("import")
 export class ImportController {
@@ -23,7 +24,8 @@ export class ImportController {
         private readonly smartMerger: SmartMergerService,
         private readonly transactionService: TransactionService,
         private readonly imapService: ImapService,
-        private readonly prisma: PrismaService
+        private readonly prisma: PrismaService,
+        private readonly importService: ImportService
     ) {}
 
     @Post("upload")
@@ -159,44 +161,20 @@ export class ImportController {
 
     @Post("sync-now")
     async syncNow(@Body("accountId") accountId: string) {
-        if (!accountId) throw new BadRequestException("AccountId required");
+        // If no accountId, sync all
+        if (!accountId) {
+            const count = await this.importService.syncAllAccounts();
+            return { imported: count };
+        }
 
         const credential = await this.prisma.emailCredential.findFirst({
             where: { accountId },
+            include: { account: true },
         });
 
         if (!credential) throw new BadRequestException("No IMAP config found");
 
-        // Trigger fetch
-        const attachments = await this.imapService.fetchUnseenAttachments(
-            credential
-        );
-
-        // Process attachments
-        const results = [];
-        for (const buffer of attachments) {
-            try {
-                const transactions = await this.ofxParser.parse(buffer);
-                transactions.forEach((t) => (t.accountId = accountId));
-                const unique = await this.smartMerger.filterDuplicates(
-                    accountId,
-                    transactions
-                );
-
-                // Auto-confirm for sync? Or save to staging?
-                // Requirement: "sync manual" -> "permita a sincronização manual"
-                // Let's create them directly for now, or returns them?
-                // Typically sync implies auto-ingest.
-
-                for (const t of unique) {
-                    await this.transactionService.create(t);
-                }
-                results.push(...unique);
-            } catch (e) {
-                console.error("Error processing attachment", e);
-            }
-        }
-
-        return { imported: results.length };
+        const count = await this.importService.syncAccount(credential);
+        return { imported: count };
     }
 }

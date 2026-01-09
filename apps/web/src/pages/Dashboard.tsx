@@ -28,11 +28,19 @@ import {
 import { ActionFeed } from "../components/dashboard/ActionFeed";
 import { ChartTooltip } from "../components/ui/ChartTooltip";
 import { MoneyDisplay } from "../components/ui/MoneyDisplay";
+import { QuickActionFAB } from "../components/common/QuickActionFAB";
+import { Button } from "../components/ui/Button";
+import { RefreshCw } from "lucide-react";
+import { ImportService } from "../services/import.service";
+import { Modal } from "../components/ui/Modal";
+import { notify } from "../lib/notification";
 
 export default function Dashboard() {
     const [summary, setSummary] = useState<DashboardSummary | null>(null);
     const [hourlyRate, setHourlyRate] = useState<number>(0);
     const [loading, setLoading] = useState(true);
+    const [syncing, setSyncing] = useState(false);
+    const [isSyncConfirmOpen, setIsSyncConfirmOpen] = useState(false); // Confirmation modal state
     const { isObfuscated } = usePrivacy();
 
     const chartFormatter = (value: number) => {
@@ -43,23 +51,53 @@ export default function Dashboard() {
         }).format(value);
     };
 
+    const fetchData = async () => {
+        try {
+            const [summaryData, hourlyData] = await Promise.all([
+                getDashboardSummary(),
+                getHourlyRate().catch(() => ({ hourlyRate: 0 })),
+            ]);
+            setSummary(summaryData);
+            setHourlyRate(hourlyData.hourlyRate);
+        } catch (error) {
+            console.error("Failed to fetch dashboard data", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [summaryData, hourlyData] = await Promise.all([
-                    getDashboardSummary(),
-                    getHourlyRate().catch(() => ({ hourlyRate: 0 })),
-                ]);
-                setSummary(summaryData);
-                setHourlyRate(hourlyData.hourlyRate);
-            } catch (error) {
-                console.error("Failed to fetch dashboard data", error);
-            } finally {
-                setLoading(false);
-            }
-        };
         fetchData();
     }, []);
+
+    const confirmSync = async () => {
+        setIsSyncConfirmOpen(false);
+        setSyncing(true);
+        const toastId = notify.loading("Sincronizando contas...");
+        try {
+            const result = await ImportService.syncNow(); // Sync ALL accounts
+            const count = result.imported;
+            await fetchData(); // Refresh data
+            notify.dismiss(toastId);
+            notify.success(
+                "Sincronização Concluída",
+                `Foram importadas ${count} novas transações.`
+            );
+        } catch (error: any) {
+            console.error("Sync failed", error);
+            notify.dismiss(toastId);
+            notify.error(
+                "Erro na Sincronização",
+                error.message || "Falha ao conectar com o servidor de e-mail."
+            );
+        } finally {
+            setSyncing(false);
+        }
+    };
+
+    const handleSyncClick = () => {
+        setIsSyncConfirmOpen(true);
+    };
 
     if (loading) {
         return <div className="p-8">Loading dashboard...</div>;
@@ -88,8 +126,64 @@ export default function Dashboard() {
     const off = gradientOffset();
 
     return (
-        <div className="space-y-4 p-8 pt-6">
-            <PageHeader title="Dashboard" />
+        <div className="space-y-4 p-8 pt-6 relative min-h-screen">
+            <PageHeader
+                title="Dashboard"
+                actions={
+                    <div className="flex gap-2">
+                        {/* <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() =>
+                                notify.success(
+                                    "Success",
+                                    "Operation completed successfully"
+                                )
+                            }
+                        >
+                            Success
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() =>
+                                notify.error("Error", "Something went wrong")
+                            }
+                        >
+                            Error
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() =>
+                                notify.info("Info", "Some information")
+                            }
+                        >
+                            Info
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => notify.loading("Loading")}
+                        >
+                            Loading
+                        </Button> */}
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={handleSyncClick}
+                            disabled={syncing}
+                        >
+                            <RefreshCw
+                                className={`mr-2 h-4 w-4 ${
+                                    syncing ? "animate-spin" : ""
+                                }`}
+                            />
+                            {syncing ? "Sincronizando..." : "Sincronizar"}
+                        </Button>
+                    </div>
+                }
+            />
 
             {/* Summary Cards */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -260,6 +354,35 @@ export default function Dashboard() {
                     </CardContent>
                 </Card>
             </div>
+
+            <QuickActionFAB />
+
+            <Modal
+                isOpen={isSyncConfirmOpen}
+                onClose={() => setIsSyncConfirmOpen(false)}
+                title="Sincronizar Contas"
+                footer={
+                    <div className="flex justify-end gap-2">
+                        <Button
+                            variant="outline"
+                            onClick={() => setIsSyncConfirmOpen(false)}
+                        >
+                            Cancelar
+                        </Button>
+                        <Button variant="primary" onClick={confirmSync}>
+                            Confirmar
+                        </Button>
+                    </div>
+                }
+            >
+                <p>
+                    Deseja verificar manualmente a caixa de entrada de todos os
+                    e-mails cadastrados em busca de novas transações?
+                </p>
+                <p className="text-sm text-muted-foreground mt-2">
+                    Isso pode levar alguns segundos.
+                </p>
+            </Modal>
         </div>
     );
 }

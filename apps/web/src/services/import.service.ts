@@ -34,4 +34,9 @@ export const ImportService = {
         const response = await api.post("/import/confirm", transactions);
         return response.data;
     },
+
+    syncNow: async (accountId?: string) => {
+        const response = await api.post("/import/sync-now", { accountId });
+        return response.data;
+    },
 };

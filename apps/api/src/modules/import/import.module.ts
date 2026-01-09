@@ -7,6 +7,7 @@ import { ImapService } from "./imap.service";
 import { ImportProcessor } from "./import.processor";
 import { TransactionModule } from "../transaction/transaction.module";
 import { PrismaService } from "../../prisma/prisma.service";
+import { ImportService } from "./import.service";
 
 @Module({
     imports: [
@@ -21,8 +22,9 @@ import { PrismaService } from "../../prisma/prisma.service";
         SmartMergerService,
         ImapService,
         ImportProcessor,
+        ImportService,
         PrismaService, // Should be imported from a CommonModule or DatabaseModule ideally, but locally proving for now if not global
     ],
-    exports: [OfxParserService, SmartMergerService, ImapService],
+    exports: [OfxParserService, SmartMergerService, ImapService, ImportService],
 })
 export class ImportModule {}

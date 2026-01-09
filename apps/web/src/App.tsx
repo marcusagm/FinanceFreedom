@@ -11,6 +11,7 @@ import "./App.css";
 import { ThemeProvider } from "./components/providers/ThemeProvider";
 import { Layout } from "./components/layout/Layout";
 import { PrivacyProvider } from "./contexts/PrivacyContext";
+import { Toaster } from "./components/ui/Sonner";
 
 function App() {
     console.log("App component rendering");
@@ -18,6 +19,7 @@ function App() {
         <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
             <PrivacyProvider>
                 <BrowserRouter>
+                    <Toaster />
                     <Layout>
                         <Routes>
                             <Route path="/" element={<Dashboard />} />
