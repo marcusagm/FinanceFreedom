@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { PageHeader } from "../components/ui/PageHeader";
 import { Plus } from "lucide-react";
 import { api } from "../lib/api";
 import { Button } from "../components/ui/Button";
@@ -77,18 +78,16 @@ export function Transactions() {
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <div className="flex items-center justify-between mb-8">
-                <div>
-                    <h1 className="text-3xl font-bold mb-2">Transações</h1>
-                    <p className="text-muted-foreground">
-                        Gerencie suas receitas e despesas.
-                    </p>
-                </div>
-                <Button onClick={() => setIsNewTransactionOpen(true)}>
-                    <Plus className="w-4 h-4 mr-2" />
-                    Nova Transação
-                </Button>
-            </div>
+            <PageHeader
+                title="Transações"
+                description="Gerencie suas receitas e despesas."
+                actions={
+                    <Button onClick={() => setIsNewTransactionOpen(true)}>
+                        <Plus className="w-4 h-4 mr-2" />
+                        Nova Transação
+                    </Button>
+                }
+            />
 
             {loading ? (
                 <div className="text-center py-8">Carregando...</div>

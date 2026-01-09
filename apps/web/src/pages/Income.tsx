@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { PageHeader } from "../components/ui/PageHeader";
 import { Button } from "../components/ui/Button";
 import {
     Tabs,
@@ -108,20 +109,17 @@ export default function IncomePage() {
 
     return (
         <div className="container mx-auto p-6 space-y-8">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Renda</h1>
-                    <p className="text-muted-foreground">
-                        Gerencie suas fontes de renda fixa e catálogo de
-                        serviços.
-                    </p>
-                </div>
-                <Button onClick={handleCreateClick}>
-                    {activeTab === "sources"
-                        ? "+ Nova Fonte"
-                        : "+ Novo Serviço"}
-                </Button>
-            </div>
+            <PageHeader
+                title="Renda"
+                description="Gerencie suas fontes de renda fixa e catálogo de serviços."
+                actions={
+                    <Button onClick={handleCreateClick}>
+                        {activeTab === "sources"
+                            ? "+ Nova Fonte"
+                            : "+ Novo Serviço"}
+                    </Button>
+                }
+            />
 
             <Tabs
                 defaultValue="sources"

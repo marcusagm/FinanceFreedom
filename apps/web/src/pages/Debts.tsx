@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { PageHeader } from "../components/ui/PageHeader";
 import { api } from "../lib/api";
 import { Button } from "../components/ui/Button";
 import { DebtForm, type Debt } from "../components/debt/DebtForm";
@@ -80,19 +81,12 @@ export default function Debts() {
                     className="mb-4"
                 />
             )}
-            <div className="flex items-center justify-between">
-                <div>
-                    <h2 className="text-3xl font-bold tracking-tight">
-                        Dívidas
-                    </h2>
-                    <p className="text-muted-foreground">
-                        Gerencie suas dívidas e escolha a melhor estratégia para
-                        quitá-las.
-                    </p>
-                </div>
-                <Button onClick={handleCreate}>Nova Dívida</Button>
-            </div>
 
+            <PageHeader
+                title="Dívidas"
+                description="Gerencie suas dívidas e escolha a melhor estratégia para quitá-las."
+                actions={<Button onClick={handleCreate}>Nova Dívida</Button>}
+            />
             <Tabs
                 defaultValue="LIST"
                 value={viewMode}
@@ -134,14 +128,12 @@ export default function Debts() {
                     <StrategyComparison />
                 </TabsContent>
             </Tabs>
-
             <DebtForm
                 isOpen={isFormOpen}
                 onClose={() => setIsFormOpen(false)}
                 onSuccess={fetchDebts}
                 debtToEdit={debtToEdit}
             />
-
             <DeleteDebtDialog
                 isOpen={!!debtToDelete}
                 onClose={() => setDebtToDelete(null)}

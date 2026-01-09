@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { PageHeader } from "../components/ui/PageHeader";
 import { Link } from "react-router-dom";
 import { ImportZone } from "../components/ImportZone";
 import { ImportReviewTable } from "../components/ImportReviewTable";
@@ -93,14 +94,15 @@ export const ImportPage: React.FC = () => {
 
     return (
         <div className="p-6 max-w-4xl mx-auto">
-            <div className="flex items-center justify-between mb-6">
-                <h1 className="text-3xl font-bold text-foreground">
-                    Smart Import
-                </h1>
-                <Link to="/import/config">
-                    <Button variant="outline">Configure IMAP</Button>
-                </Link>
-            </div>
+            <PageHeader
+                title="Smart Import"
+                actions={
+                    <Link to="/import/config">
+                        <Button variant="outline">Configure IMAP</Button>
+                    </Link>
+                }
+                className="mb-6"
+            />
 
             {step === "upload" && (
                 <div className="mb-8 space-y-6">

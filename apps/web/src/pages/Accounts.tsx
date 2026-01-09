@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { PageHeader } from "../components/ui/PageHeader";
 import { api } from "../lib/api";
 import { AccountCard } from "../components/AccountCard";
 import { CreateAccountDialog } from "../components/CreateAccountDialog";
@@ -68,15 +69,11 @@ export function Accounts() {
 
     return (
         <div className="accounts-page">
-            <div className="accounts-page__header">
-                <div>
-                    <h1 className="accounts-page__title">Contas</h1>
-                    <p className="accounts-page__subtitle">
-                        Gerencie seus saldos e fontes de receita.
-                    </p>
-                </div>
-                <Button onClick={handleCreate}>+ Nova Conta</Button>
-            </div>
+            <PageHeader
+                title="Contas"
+                description="Gerencie seus saldos e fontes de receita."
+                actions={<Button onClick={handleCreate}>+ Nova Conta</Button>}
+            />
 
             <div className="accounts-page__grid">
                 {accounts.map((account) => (

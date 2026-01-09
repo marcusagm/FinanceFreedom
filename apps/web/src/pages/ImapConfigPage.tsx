@@ -1,18 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { PageHeader } from "../components/ui/PageHeader";
 import { useForm } from "react-hook-form";
 import { api } from "../lib/api";
 import { Button } from "../components/ui/Button";
 import { Select } from "../components/ui/Select";
 import { Modal } from "../components/ui/Modal";
 
-import {
-    ArrowLeft,
-    RefreshCw,
-    Save,
-    CheckCircle,
-    AlertCircle,
-} from "lucide-react";
-import { Link } from "react-router-dom";
+import { RefreshCw, Save, CheckCircle, AlertCircle } from "lucide-react";
 import { AppAlert } from "../components/ui/AppAlert";
 
 interface ImapConfigFormData {
@@ -214,16 +208,11 @@ export const ImapConfigPage: React.FC = () => {
 
     return (
         <div className="p-6 max-w-2xl mx-auto">
-            <div className="flex items-center gap-4 mb-6">
-                <Link to="/import">
-                    <Button variant="outline" size="icon">
-                        <ArrowLeft className="h-4 w-4" />
-                    </Button>
-                </Link>
-                <h1 className="text-3xl font-bold text-foreground">
-                    IMAP Configuration
-                </h1>
-            </div>
+            <PageHeader
+                title="IMAP Configuration"
+                backLink="/import"
+                className="mb-6"
+            />
 
             <div className="space-y-6">
                 <div className="space-y-2">
