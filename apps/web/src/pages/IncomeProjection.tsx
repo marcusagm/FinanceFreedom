@@ -23,9 +23,10 @@ import { CalendarDay } from "../components/income/CalendarDay";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { formatCurrency } from "../utils/format";
+
 import { api } from "../lib/api";
 import { DistributeIncomeDialog } from "../components/income/DistributeIncomeDialog";
+import { MoneyDisplay } from "../components/ui/MoneyDisplay";
 
 export default function IncomeProjection() {
     const [currentDate, setCurrentDate] = useState(new Date());
@@ -227,7 +228,7 @@ export default function IncomeProjection() {
                                 Total Projetado:
                             </span>
                             <span className="text-emerald-800 dark:text-emerald-400 text-xl font-bold">
-                                {formatCurrency(totalProjected)}
+                                <MoneyDisplay value={totalProjected} />
                             </span>
                         </div>
                     </div>
@@ -275,9 +276,9 @@ export default function IncomeProjection() {
                                 {activeDragItem.name}
                             </div>
                             <div className="font-bold text-emerald-600 dark:text-emerald-400 text-sm">
-                                {formatCurrency(
-                                    Number(activeDragItem.defaultPrice)
-                                )}
+                                <MoneyDisplay
+                                    value={Number(activeDragItem.defaultPrice)}
+                                />
                             </div>
                         </Card>
                     </div>

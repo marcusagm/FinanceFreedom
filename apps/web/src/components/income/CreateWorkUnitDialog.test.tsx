@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { CreateWorkUnitDialog } from "./CreateWorkUnitDialog";
-import { vi, describe, it, expect, beforeEach } from "vitest";
+import { vi, describe, it, expect, beforeEach, beforeAll } from "vitest";
 import "@testing-library/jest-dom";
 import * as IncomeService from "../../services/income.service";
 import { api } from "../../lib/api";
@@ -16,7 +16,7 @@ vi.mock("../../lib/api", () => ({
 }));
 
 vi.mock("../ui/Input", () => ({
-    Input: ({ onValueChange, onChange, value, ...props }: any) => (
+    Input: ({ onValueChange, onChange, value, currency, ...props }: any) => (
         <input
             {...props}
             value={value}
@@ -53,13 +53,13 @@ describe("CreateWorkUnitDialog", () => {
     it("should submit new work unit", async () => {
         render(<CreateWorkUnitDialog {...defaultProps} />);
 
-        fireEvent.change(screen.getByLabelText(/Nome/i), {
+        fireEvent.change(screen.getByPlaceholderText("Ex: Logo Design"), {
             target: { value: "Design" },
         });
-        fireEvent.change(screen.getByLabelText(/Preço/i), {
+        fireEvent.change(screen.getByPlaceholderText("0,00"), {
             target: { value: "500" },
         });
-        fireEvent.change(screen.getByLabelText(/Tempo/i), {
+        fireEvent.change(screen.getByPlaceholderText("Hrs"), {
             target: { value: "10" },
         });
 

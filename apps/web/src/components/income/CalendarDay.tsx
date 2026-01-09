@@ -1,7 +1,8 @@
 import React from "react";
 import { useDroppable } from "@dnd-kit/core";
 import { cn } from "../../lib/utils";
-import { formatCurrency } from "../../utils/format";
+
+import { MoneyDisplay } from "../ui/MoneyDisplay";
 
 import { Scissors } from "lucide-react";
 
@@ -91,7 +92,7 @@ export function CalendarDay({
                             {proj.workUnit.name}
                         </span>
                         <span className="font-bold ml-1">
-                            {formatCurrency(Number(proj.amount))}
+                            <MoneyDisplay value={Number(proj.amount)} />
                         </span>
                     </div>
 

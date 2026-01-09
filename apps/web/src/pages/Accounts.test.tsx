@@ -1,9 +1,8 @@
 import React from "react";
-import { render, screen, waitFor, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "../utils/test-utils";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { Accounts } from "./Accounts";
 import { api } from "../lib/api";
-import { BrowserRouter } from "react-router-dom";
 
 // Mock api
 vi.mock("../lib/api", () => ({
@@ -45,12 +44,7 @@ describe("Accounts Page", () => {
         (api.get as any).mockResolvedValue({ data: [] });
     });
 
-    const renderPage = () =>
-        render(
-            <BrowserRouter>
-                <Accounts />
-            </BrowserRouter>
-        );
+    const renderPage = () => render(<Accounts />);
 
     it("renders empty state", async () => {
         renderPage();

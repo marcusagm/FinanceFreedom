@@ -1,6 +1,6 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent } from "../../utils/test-utils";
 import { CalendarDay } from "./CalendarDay";
-import { vi } from "vitest";
+import { vi, describe, it, expect } from "vitest";
 import { DndContext } from "@dnd-kit/core";
 
 describe("CalendarDay", () => {

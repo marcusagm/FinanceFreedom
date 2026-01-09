@@ -1,5 +1,5 @@
-import { render, screen, waitFor } from "@testing-library/react";
-import { BrowserRouter } from "react-router-dom";
+import { render, screen, waitFor } from "../utils/test-utils";
+
 import Dashboard from "./Dashboard";
 import { getDashboardSummary } from "../services/dashboard.service";
 import { vi, describe, it, expect, beforeEach } from "vitest";
@@ -33,11 +33,7 @@ describe("Dashboard", () => {
         (getDashboardSummary as any).mockImplementation(
             () => new Promise(() => {})
         ); // Never resolves
-        render(
-            <BrowserRouter>
-                <Dashboard />
-            </BrowserRouter>
-        );
+        render(<Dashboard />);
         expect(screen.getByText("Loading dashboard...")).toBeInTheDocument();
     });
 
@@ -59,11 +55,7 @@ describe("Dashboard", () => {
             ],
         });
 
-        render(
-            <BrowserRouter>
-                <Dashboard />
-            </BrowserRouter>
-        );
+        render(<Dashboard />);
 
         await waitFor(() => {
             expect(screen.getByText("Saldo Total")).toBeInTheDocument();
@@ -83,11 +75,7 @@ describe("Dashboard", () => {
     it("renders error message on failure", async () => {
         (getDashboardSummary as any).mockRejectedValue(new Error("Failed"));
 
-        render(
-            <BrowserRouter>
-                <Dashboard />
-            </BrowserRouter>
-        );
+        render(<Dashboard />);
 
         await waitFor(() => {
             expect(

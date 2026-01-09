@@ -4,6 +4,7 @@ import { AppCard } from "../ui/AppCard";
 import { Button } from "../ui/Button";
 import { DebtDelayCard } from "../simulators/DebtDelayCard";
 import { PrepaymentOpportunity } from "../simulators/PrepaymentOpportunity";
+import { MoneyDisplay } from "../ui/MoneyDisplay";
 
 interface DebtCardProps {
     id: string;
@@ -33,13 +34,6 @@ export function DebtCard({
 
     const toggleSimulator = (type: SimulatorType) => {
         setActiveSimulator(activeSimulator === type ? "NONE" : type);
-    };
-
-    const formatMoney = (value: number) => {
-        return new Intl.NumberFormat("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-        }).format(value);
     };
 
     const actions = (
@@ -98,7 +92,8 @@ export function DebtCard({
 
     const footer = (
         <span>
-            Vence dia {dueDate} • Mínimo: {formatMoney(minimumPayment)}
+            Vence dia {dueDate} • Mínimo:{" "}
+            <MoneyDisplay value={minimumPayment} />
         </span>
     );
 
@@ -118,7 +113,7 @@ export function DebtCard({
                     Saldo Devedor
                 </p>
                 <p className="text-2xl font-bold text-red-500">
-                    {formatMoney(totalAmount)}
+                    <MoneyDisplay value={totalAmount} />
                 </p>
             </div>
 

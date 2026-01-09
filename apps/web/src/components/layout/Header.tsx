@@ -1,6 +1,9 @@
 import { Link, useLocation } from "react-router-dom";
 import { ModeToggle } from "../ui/ModeToggle";
 import { cn } from "../../lib/utils";
+import { usePrivacy } from "../../contexts/PrivacyContext";
+import { Eye, EyeOff } from "lucide-react";
+import { Button } from "../ui/Button";
 
 export function Header() {
     const location = useLocation();
@@ -64,10 +67,31 @@ export function Header() {
                         </Link>
                     </nav>
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                    <PrivacyToggle />
                     <ModeToggle />
                 </div>
             </div>
         </header>
+    );
+}
+
+function PrivacyToggle() {
+    const { isObfuscated, toggleObfuscation } = usePrivacy();
+
+    return (
+        <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleObfuscation}
+            title={isObfuscated ? "Mostrar valores" : "Ocultar valores"}
+        >
+            {isObfuscated ? (
+                <EyeOff className="h-[1.2rem] w-[1.2rem]" />
+            ) : (
+                <Eye className="h-[1.2rem] w-[1.2rem]" />
+            )}
+            <span className="sr-only">Toggle privacy mode</span>
+        </Button>
     );
 }

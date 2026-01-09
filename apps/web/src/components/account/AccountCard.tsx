@@ -1,8 +1,7 @@
 import { Pencil, Trash2 } from "lucide-react";
 import { AppCard } from "../../components/ui/AppCard";
-import { Button } from "../../components/ui/Button";
-import { formatMoney } from "../../lib/utils";
-
+import { Button } from "../ui/Button";
+import { MoneyDisplay } from "../ui/MoneyDisplay";
 interface AccountCardProps {
     id: string;
     name: string;
@@ -22,8 +21,6 @@ export function AccountCard({
     onEdit,
     onDelete,
 }: AccountCardProps) {
-    const formattedBalance = formatMoney(balance);
-
     const actions = (
         <>
             <Button
@@ -72,7 +69,7 @@ export function AccountCard({
                         balance >= 0 ? "text-emerald-500" : "text-red-500"
                     }`}
                 >
-                    {formattedBalance}
+                    <MoneyDisplay value={balance} />
                 </p>
             </div>
         </AppCard>

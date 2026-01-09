@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { usePrivacy } from "../contexts/PrivacyContext";
 import { PageHeader } from "../components/ui/PageHeader";
 import {
     LineChart,
@@ -22,15 +23,25 @@ import {
     getDashboardSummary,
     type DashboardSummary,
 } from "../services/dashboard.service";
-// import { formatMoney as _unused } from "../lib/utils"; // Not used, removing line
+
 // import { cn } from "../lib/utils";
 import { ActionFeed } from "../components/dashboard/ActionFeed";
 import { ChartTooltip } from "../components/ui/ChartTooltip";
+import { MoneyDisplay } from "../components/ui/MoneyDisplay";
 
 export default function Dashboard() {
     const [summary, setSummary] = useState<DashboardSummary | null>(null);
     const [hourlyRate, setHourlyRate] = useState<number>(0);
     const [loading, setLoading] = useState(true);
+    const { isObfuscated } = usePrivacy();
+
+    const chartFormatter = (value: number) => {
+        if (isObfuscated) return "••••••";
+        return new Intl.NumberFormat("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+        }).format(value);
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -58,12 +69,7 @@ export default function Dashboard() {
         return <div className="p-8">Failed to load dashboard data.</div>;
     }
 
-    const formatMoney = (value: number) => {
-        return new Intl.NumberFormat("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-        }).format(value);
-    };
+    // const formatMoney = ... (replaced by MoneyDisplay component)
 
     // Calculate gradient offset
     const gradientOffset = () => {
@@ -113,7 +119,7 @@ export default function Dashboard() {
                                     : "text-red-500"
                             }`}
                         >
-                            {formatMoney(summary.totalBalance)}
+                            <MoneyDisplay value={summary.totalBalance} />
                         </div>
                         <p className="text-xs text-muted-foreground">
                             Visão geral de todas as contas
@@ -140,7 +146,7 @@ export default function Dashboard() {
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold text-emerald-500">
-                            {formatMoney(summary.monthlyIncome)}
+                            <MoneyDisplay value={summary.monthlyIncome} />
                         </div>
                     </CardContent>
                 </Card>
@@ -164,7 +170,7 @@ export default function Dashboard() {
                     </CardHeader>
                     <CardContent className="space-y-2">
                         <div className="text-2xl font-bold text-red-500">
-                            {formatMoney(summary.monthlyExpenses)}
+                            <MoneyDisplay value={summary.monthlyExpenses} />
                         </div>
                         <TimeCostBadge
                             amount={summary.monthlyExpenses}
@@ -230,11 +236,15 @@ export default function Dashboard() {
                                     fontSize={12}
                                     tickLine={false}
                                     axisLine={false}
-                                    tickFormatter={(value) => `R$ ${value}`}
+                                    tickFormatter={(value) =>
+                                        isObfuscated ? "••••••" : `R$ ${value}`
+                                    }
                                 />
                                 <Tooltip
                                     content={
-                                        <ChartTooltip formatter={formatMoney} />
+                                        <ChartTooltip
+                                            formatter={chartFormatter}
+                                        />
                                     }
                                 />
                                 <ReferenceLine y={0} stroke="#000" />

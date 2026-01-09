@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent } from "../../utils/test-utils";
 import { describe, it, expect, vi } from "vitest";
 import { TransactionList } from "./TransactionList";
 
@@ -17,7 +17,7 @@ describe("TransactionList", () => {
         id: "1",
         description: "Grocery",
         amount: 50.0, // float
-        type: "EXPENSE",
+        type: "EXPENSE" as "EXPENSE" | "INCOME",
         date: new Date("2023-01-01").toISOString(),
         accountId: "acc1",
         account: { name: "Wallet" },
@@ -40,7 +40,11 @@ describe("TransactionList", () => {
     });
 
     it("formats income correctly", () => {
-        const incomeTx = { ...mockTransaction, type: "INCOME", amount: 1000 };
+        const incomeTx = {
+            ...mockTransaction,
+            type: "INCOME" as "EXPENSE" | "INCOME",
+            amount: 1000,
+        };
         render(<TransactionList {...mockProps} transactions={[incomeTx]} />);
         expect(screen.getByText(/\+/)).toBeInTheDocument();
         expect(screen.queryByTestId("time-cost-badge")).not.toBeInTheDocument();

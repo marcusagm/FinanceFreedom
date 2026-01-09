@@ -1,7 +1,7 @@
-import { render, screen, waitFor, fireEvent } from "@testing-library/react";
+import { render, screen, waitFor, fireEvent } from "../utils/test-utils";
 import IncomeProjection from "./IncomeProjection";
 import { api } from "../lib/api";
-import { vi } from "vitest";
+import { vi, describe, it, expect, beforeEach } from "vitest";
 
 // Mock API
 vi.mock("../lib/api", () => ({

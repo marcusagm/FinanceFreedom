@@ -1,7 +1,8 @@
 import { useDraggable } from "@dnd-kit/core";
 import { Card } from "../ui/Card";
 import { Badge } from "../ui/Badge";
-import { formatCurrency } from "../../utils/format";
+
+import { MoneyDisplay } from "../ui/MoneyDisplay";
 
 interface WorkUnit {
     id: string;
@@ -47,7 +48,7 @@ export function DraggableWorkUnit({ workUnit }: DraggableWorkUnitProps) {
                     </div>
                 </div>
                 <span className="font-bold text-emerald-600 dark:text-emerald-400 text-sm">
-                    {formatCurrency(Number(workUnit.defaultPrice))}
+                    <MoneyDisplay value={Number(workUnit.defaultPrice)} />
                 </span>
             </div>
         </Card>

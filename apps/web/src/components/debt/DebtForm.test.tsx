@@ -14,6 +14,20 @@ vi.mock("../../lib/api", () => ({
     },
 }));
 
+// Mock Modal
+vi.mock("../ui/Modal", () => ({
+    Modal: ({ isOpen, title, children, footer }: any) => {
+        if (!isOpen) return null;
+        return (
+            <div data-testid="modal">
+                <h2>{title}</h2>
+                {children}
+                {footer}
+            </div>
+        );
+    },
+}));
+
 describe("DebtForm", () => {
     const mockOnClose = vi.fn();
     const mockOnSuccess = vi.fn();
@@ -58,7 +72,7 @@ describe("DebtForm", () => {
         const user = userEvent.setup();
         mockPost.mockResolvedValueOnce({ data: {} });
 
-        render(
+        const { container } = render(
             <DebtForm
                 isOpen={true}
                 onClose={mockOnClose}
@@ -67,13 +81,27 @@ describe("DebtForm", () => {
         );
 
         // Fill Name
-        await user.type(screen.getByLabelText("Nome da Dívida"), "Test Debt");
+        const nameInput = container.querySelector('input[name="name"]');
+        await user.type(nameInput!, "Test Debt");
 
-        // Fill Amounts - Using getAllByRole generic or placeholder to avoid label issues with currency input wrappers
-        await user.type(screen.getByLabelText("Saldo Devedor"), "1000");
-        await user.type(screen.getByLabelText("Juros Mensal (%)"), "5");
-        await user.type(screen.getByLabelText("Pagamento Mínimo"), "100");
-        await user.type(screen.getByLabelText("Dia Vencimento"), "10");
+        // Fill Amounts
+        const amountInput = container.querySelector(
+            'input[name="totalAmount"]'
+        );
+        await user.type(amountInput!, "1000");
+
+        const interestInput = container.querySelector(
+            'input[name="interestRate"]'
+        );
+        await user.type(interestInput!, "5");
+
+        const paymentInput = container.querySelector(
+            'input[name="minimumPayment"]'
+        );
+        await user.type(paymentInput!, "100");
+
+        const dueDateInput = container.querySelector('input[name="dueDate"]');
+        await user.type(dueDateInput!, "10");
 
         const submitButton = screen.getByRole("button", { name: "Salvar" });
         await user.click(submitButton);

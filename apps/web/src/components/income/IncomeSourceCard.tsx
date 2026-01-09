@@ -2,6 +2,7 @@ import { Pencil, Trash2 } from "lucide-react";
 import type { IncomeSource } from "../../services/income.service";
 import { AppCard } from "../ui/AppCard";
 import { Button } from "../ui/Button";
+import { MoneyDisplay } from "../ui/MoneyDisplay";
 
 interface IncomeSourceCardProps {
     source: IncomeSource;
@@ -50,10 +51,7 @@ export function IncomeSourceCard({
             footer={`Recebe no dia ${source.payDay}`}
         >
             <div className="text-2xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400">
-                {new Intl.NumberFormat("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                }).format(source.amount)}
+                <MoneyDisplay value={source.amount} />
             </div>
         </AppCard>
     );

@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen } from "../../utils/test-utils";
 import { describe, it, expect, vi } from "vitest";
 import { DraggableWorkUnit } from "./DraggableWorkUnit";
 

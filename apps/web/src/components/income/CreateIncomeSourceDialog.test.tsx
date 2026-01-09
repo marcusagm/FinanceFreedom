@@ -1,4 +1,4 @@
-import { render, screen, waitFor, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { CreateIncomeSourceDialog } from "./CreateIncomeSourceDialog";
 import { vi, describe, it, expect, beforeEach, beforeAll } from "vitest";
 import "@testing-library/jest-dom";
@@ -72,7 +72,9 @@ describe("CreateIncomeSourceDialog", () => {
     it("should render correctly", () => {
         render(<CreateIncomeSourceDialog {...defaultProps} />);
         expect(screen.getByText("Nova Fonte de Renda")).toBeInTheDocument();
-        expect(screen.getByLabelText(/Nome/i)).toBeInTheDocument();
+        expect(
+            screen.getByPlaceholderText("Nome da fonte")
+        ).toBeInTheDocument();
     });
 
     it("should validate inputs", async () => {
@@ -89,21 +91,26 @@ describe("CreateIncomeSourceDialog", () => {
     it("should call createIncomeSource on submit", async () => {
         render(<CreateIncomeSourceDialog {...defaultProps} />);
 
-        fireEvent.change(screen.getByLabelText(/Nome/i), {
-            target: { value: "Salary" },
+        fireEvent.change(screen.getByPlaceholderText("Nome da fonte"), {
+            target: { value: "Salário" },
         });
-        fireEvent.change(screen.getByLabelText(/Valor/i), {
+
+        fireEvent.change(screen.getByPlaceholderText("0,00"), {
             target: { value: "5000" },
         });
 
+        fireEvent.change(screen.getByPlaceholderText("5"), {
+            target: { value: "5" },
+        });
         const saveButton = screen.getByText("Salvar");
         fireEvent.click(saveButton);
 
         await waitFor(() => {
             expect(IncomeService.createIncomeSource).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    name: "Salary",
+                    name: "Salário",
                     amount: 5000,
+                    payDay: 5,
                 })
             );
             expect(defaultProps.onSuccess).toHaveBeenCalled();
@@ -126,7 +133,7 @@ describe("CreateIncomeSourceDialog", () => {
 
         expect(screen.getByDisplayValue("Old Name")).toBeInTheDocument();
 
-        fireEvent.change(screen.getByLabelText(/Nome/i), {
+        fireEvent.change(screen.getByPlaceholderText("Nome da fonte"), {
             target: { value: "New Name" },
         });
         fireEvent.click(screen.getByText("Salvar"));

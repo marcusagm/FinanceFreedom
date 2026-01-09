@@ -11,6 +11,7 @@ import {
     TableRow,
 } from "../ui/Table";
 import { Button } from "../ui/Button";
+import { MoneyDisplay } from "../ui/MoneyDisplay";
 
 interface TransactionListProps {
     transactions: Transaction[];
@@ -63,10 +64,12 @@ export function TransactionList({
                                         {transaction.type === "INCOME"
                                             ? "+"
                                             : "-"}
-                                        {new Intl.NumberFormat("pt-BR", {
-                                            style: "currency",
-                                            currency: "BRL",
-                                        }).format(Number(transaction.amount))}
+                                        {transaction.type === "INCOME"
+                                            ? "+"
+                                            : "-"}
+                                        <MoneyDisplay
+                                            value={Number(transaction.amount)}
+                                        />
                                     </span>
                                     {transaction.type === "EXPENSE" && (
                                         <TimeCostBadge
