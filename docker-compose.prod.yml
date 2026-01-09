@@ -1,0 +1,61 @@
+version: "3.8"
+
+services:
+    # === INFRASTRUCTURE ===
+    redis:
+        image: redis:alpine
+        container_name: finance_redis
+        restart: always
+        volumes:
+            - redis_data:/data
+        networks:
+            - finance-network
+
+    # === BACKEND ===
+    api:
+        build:
+            context: .
+            dockerfile: apps/api/Dockerfile.prod
+        container_name: finance_api
+        restart: always
+        depends_on:
+            - redis
+        environment:
+            - NODE_ENV=production
+            - DATABASE_URL=file:/app/db/prod.db
+            - REDIS_HOST=redis
+            - REDIS_PORT=6379
+            # Security keys should be loaded from host env or .env file
+            # but for now we rely on defaults or pass them through if needed
+            # - JWT_SECRET=${JWT_SECRET}
+        volumes:
+            - sqlite_data:/app/db
+        networks:
+            - finance-network
+
+    # === FRONTEND ===
+    web:
+        build:
+            context: .
+            dockerfile: apps/web/Dockerfile.prod
+            args:
+                - VITE_API_URL=/api
+        container_name: finance_web
+        restart: always
+        depends_on:
+            - api
+        ports:
+            - "8080:80" # Exposed on host port 8080 (or 80 if preferred, checking plan)
+              # Plan says "só expor 80/443... ou a porta da Web".
+              # I'll expose 8080 to avoid conflict with local dev 80 or system 80.
+              # User can map it to 80 if they want.
+        networks:
+            - finance-network
+
+volumes:
+    redis_data:
+    sqlite_data:
+
+networks:
+    finance-network:
+        driver: bridge

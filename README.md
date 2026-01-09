@@ -103,6 +103,26 @@ View logs for a service (e.g., the frontend):
     docker compose logs -f web
     ```
 
+## 🚢 Production Deployment
+
+For a stable, optimized, and persistent environment (Self-hosted), use the production configuration.
+
+1.  **Start the production stack:**
+
+    ```bash
+    docker-compose -f docker-compose.prod.yml up -d --build
+    ```
+
+    > **Note:** This will build optimized images (Node.js for API, Nginx for Web).
+
+2.  **Access:**
+
+    -   Web: `http://localhost:8080` (or the port defined in `docker-compose.prod.yml`)
+    -   API: Internal usage mostly, but accessible if mapped.
+
+3.  **Data Persistence:**
+    -   Database (`.db`) and Redis data are stored in named Docker volumes (`sqlite_data`, `redis_data`) and will survive container restarts.
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please read [CONTRIBUTING.md](./CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
