@@ -1,9 +1,9 @@
-import "@testing-library/jest-dom";
+import "@testing-library/jest-dom/vitest";
 import { expect, afterEach, vi } from "vitest";
 import { cleanup } from "@testing-library/react";
-import * as matchers from "@testing-library/jest-dom/matchers";
 
-expect.extend(matchers);
+// expect.extend is automatically handled by the vitest import in newer versions
+// if not, we can re-add it, but usually the side-effect import is enough.
 
 afterEach(() => {
     cleanup();

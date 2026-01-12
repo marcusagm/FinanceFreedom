@@ -1,9 +1,21 @@
+// @vitest-environment jsdom
 import React from "react";
-import { render, screen, waitFor, fireEvent } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import "@testing-library/jest-dom/vitest";
+import {
+    render,
+    screen,
+    waitFor,
+    fireEvent,
+    cleanup,
+} from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { Transactions } from "./Transactions";
 import { api } from "../lib/api";
 import { BrowserRouter } from "react-router-dom";
+
+afterEach(() => {
+    cleanup();
+});
 
 // Mock api
 vi.mock("../lib/api", () => ({
@@ -41,6 +53,12 @@ vi.mock("../components/transactions/DeleteTransactionDialog", () => ({
                 <button onClick={onConfirm}>ConfirmDelete</button>
             </div>
         ) : null,
+}));
+
+vi.mock("../components/transactions/TransactionFilters", () => ({
+    TransactionFilters: () => (
+        <div data-testid="transaction-filters">Filters</div>
+    ),
 }));
 
 describe("Transactions Page", () => {

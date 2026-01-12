@@ -52,7 +52,9 @@ export function Transactions() {
     });
 
     const categories = Array.from(
-        new Set(transactions.map((t) => t.category).filter(Boolean))
+        new Set(
+            transactions.map((t) => t.category).filter((c): c is string => !!c)
+        )
     ).sort();
 
     const filteredTransactions = transactions.filter((t) => {
@@ -65,7 +67,7 @@ export function Transactions() {
         }
 
         // Account
-        if (filters.accountId !== "all" && t.account.id !== filters.accountId) {
+        if (filters.accountId !== "all" && t.accountId !== filters.accountId) {
             return false;
         }
 

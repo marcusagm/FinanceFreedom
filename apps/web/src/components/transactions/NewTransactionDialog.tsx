@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { api } from "../../lib/api";
+import { format } from "date-fns";
 import {
     Dialog,
     DialogContent,
@@ -13,6 +14,7 @@ import {
 } from "../ui/Dialog";
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
+import { DatePicker } from "../ui/DatePicker";
 import { Select } from "../ui/Select";
 import {
     Form,
@@ -198,10 +200,31 @@ export function NewTransactionDialog({
                                 control={form.control}
                                 name="date"
                                 render={({ field }) => (
-                                    <FormItem>
+                                    <FormItem className="flex flex-col">
                                         <FormLabel>Data</FormLabel>
                                         <FormControl>
-                                            <Input type="date" {...field} />
+                                            <DatePicker
+                                                date={
+                                                    field.value
+                                                        ? new Date(
+                                                              field.value +
+                                                                  "T00:00:00"
+                                                          )
+                                                        : undefined
+                                                }
+                                                setDate={(date) =>
+                                                    field.onChange(
+                                                        date
+                                                            ? format(
+                                                                  date,
+                                                                  "yyyy-MM-dd"
+                                                              )
+                                                            : ""
+                                                    )
+                                                }
+                                                className="w-full"
+                                                placeholder="Selecione a data"
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>

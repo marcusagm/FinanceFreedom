@@ -19,6 +19,7 @@ interface SelectProps {
     onChange: (value: string) => void;
     className?: string;
     placeholder?: string;
+    disabled?: boolean;
 }
 
 export function Select({
@@ -28,6 +29,7 @@ export function Select({
     onChange,
     className,
     placeholder,
+    disabled,
 }: SelectProps) {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -65,8 +67,9 @@ export function Select({
             <div className="relative w-full">
                 <button
                     type="button"
+                    disabled={disabled}
                     className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    onClick={() => setIsOpen(!isOpen)}
+                    onClick={() => !disabled && setIsOpen(!isOpen)}
                 >
                     <span>{currentLabel || placeholder}</span>
                     <ChevronDown className="w-4 h-4 opacity-50" />

@@ -1,7 +1,21 @@
+/**
+ * @vitest-environment jsdom
+ */
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import "@testing-library/jest-dom/vitest";
+import {
+    render,
+    screen,
+    fireEvent,
+    waitFor,
+    cleanup,
+} from "@testing-library/react";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import { NewTransactionDialog } from "./NewTransactionDialog";
+
+afterEach(() => {
+    cleanup();
+});
 import { api } from "../../lib/api";
 
 // Mock api
@@ -10,6 +24,24 @@ vi.mock("../../lib/api", () => ({
         post: vi.fn(),
         patch: vi.fn(),
     },
+}));
+
+// Mock DatePicker to avoid date-fns dependency issues in test environment
+vi.mock("../ui/DatePicker", () => ({
+    DatePicker: ({ date, setDate, placeholder }: any) => (
+        <input
+            data-testid="date-picker"
+            placeholder={placeholder}
+            value={date ? date.toISOString().split("T")[0] : ""}
+            onChange={(e) =>
+                setDate(
+                    e.target.value
+                        ? new Date(e.target.value + "T00:00:00")
+                        : undefined
+                )
+            }
+        />
+    ),
 }));
 
 describe("NewTransactionDialog", () => {
@@ -41,6 +73,10 @@ describe("NewTransactionDialog", () => {
         // Fill Amount
         const amountInput = screen.getByPlaceholderText("R$ 0,00");
         fireEvent.change(amountInput, { target: { value: "100" } });
+
+        // Fill Date (using mock)
+        const dateInput = screen.getByPlaceholderText("Selecione a data");
+        fireEvent.change(dateInput, { target: { value: "2023-10-25" } });
 
         // Submit
         fireEvent.click(screen.getByText("Salvar"));
