@@ -25,16 +25,21 @@ const mockTransactions: ImportedTransaction[] = [
 
 describe("ImportReviewTable", () => {
     it("renders table with transactions", () => {
-        render(<ImportReviewTable transactions={mockTransactions} />);
+        render(
+            <ImportReviewTable
+                transactions={mockTransactions}
+                accounts={[{ id: "acc1", name: "Test Account" }]}
+            />
+        );
 
         expect(screen.getByText("Test Grocery")).toBeInTheDocument();
         expect(screen.getAllByText("Salary")).toHaveLength(2);
-        expect(screen.getByText("-R$ 50,00")).toBeInTheDocument();
-        expect(screen.getByText("R$ 100,00")).toBeInTheDocument();
+        expect(screen.getByText(/50,00/)).toBeInTheDocument();
+        expect(screen.getByText(/100,00/)).toBeInTheDocument();
     });
 
     it("renders empty state if no transactions", () => {
-        render(<ImportReviewTable transactions={[]} />);
+        render(<ImportReviewTable transactions={[]} accounts={[]} />);
         // It might render headers still, checking if rows are absent
         expect(screen.queryByText("Test Grocery")).not.toBeInTheDocument();
     });

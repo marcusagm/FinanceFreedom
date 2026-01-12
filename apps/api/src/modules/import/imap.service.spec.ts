@@ -37,8 +37,28 @@ describe("ImapService", () => {
 
     describe("testConnection", () => {
         it("should return success on connection", async () => {
+            // Mock connect
+            (ImapFlow as unknown as jest.Mock).mockImplementationOnce(() => ({
+                connect: jest.fn().mockResolvedValue(undefined),
+                logout: jest.fn(),
+                mailboxOpen: jest.fn(),
+                search: jest.fn().mockResolvedValue([]), // Return empty array for default test cases
+            }));
             const result = await service.testConnection({} as any);
             expect(result.success).toBe(true);
+        });
+
+        it("should use folder if provided", async () => {
+            const mockOpen = jest.fn();
+            (ImapFlow as unknown as jest.Mock).mockImplementationOnce(() => ({
+                connect: jest.fn().mockResolvedValue(undefined),
+                logout: jest.fn(),
+                mailboxOpen: mockOpen,
+                search: jest.fn().mockResolvedValue([]),
+            }));
+
+            await service.testConnection({ folder: "Archive" } as any);
+            expect(mockOpen).toHaveBeenCalledWith("Archive");
         });
 
         it("should return failure on error", async () => {

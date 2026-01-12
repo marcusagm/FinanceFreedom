@@ -137,7 +137,10 @@ export const ImportPage: React.FC = () => {
                         {transactions.length} new transactions found.
                     </p>
 
-                    <ImportReviewTable transactions={transactions} />
+                    <ImportReviewTable
+                        transactions={transactions}
+                        accounts={accounts}
+                    />
 
                     <div className="flex justify-end gap-4 mt-6">
                         <Button

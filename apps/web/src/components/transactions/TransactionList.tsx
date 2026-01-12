@@ -71,7 +71,9 @@ export function TransactionList({
                                             ? "+"
                                             : "-"}
                                         <MoneyDisplay
-                                            value={Number(transaction.amount)}
+                                            value={Math.abs(
+                                                Number(transaction.amount)
+                                            )}
                                         />
                                     </span>
                                     {transaction.type === "EXPENSE" && (

@@ -5,6 +5,7 @@ import { SmartMergerService } from "./smart-merger.service";
 import { TransactionService } from "../transaction/transaction.service";
 import { ImapService } from "./imap.service";
 import { PrismaService } from "../../prisma/prisma.service";
+import { ImportService } from "./import.service";
 import { BadRequestException } from "@nestjs/common";
 
 describe("ImportController", () => {
@@ -33,7 +34,15 @@ describe("ImportController", () => {
             findFirst: jest.fn(),
             create: jest.fn(),
             update: jest.fn(),
+            findMany: jest.fn(),
+            findUnique: jest.fn(),
+            delete: jest.fn(),
         },
+    };
+
+    const mockImportService = {
+        syncAllAccounts: jest.fn(),
+        syncAccount: jest.fn(),
     };
 
     beforeEach(async () => {
@@ -48,6 +57,7 @@ describe("ImportController", () => {
                 },
                 { provide: ImapService, useValue: mockImapService },
                 { provide: PrismaService, useValue: mockPrisma },
+                { provide: ImportService, useValue: mockImportService },
             ],
         }).compile();
 
@@ -57,6 +67,7 @@ describe("ImportController", () => {
         transactionService = module.get<TransactionService>(TransactionService);
         imapService = module.get<ImapService>(ImapService);
         prisma = module.get<PrismaService>(PrismaService);
+        // importService = module.get<ImportService>(ImportService); // Optional if we need to spy on it
 
         jest.clearAllMocks();
     });
@@ -92,7 +103,7 @@ describe("ImportController", () => {
 
         it("should throw error if accountId missing", async () => {
             await expect(
-                controller.uploadFile({ buffer: Buffer.from("") }, null)
+                controller.uploadFile({ buffer: Buffer.from("") }, null as any)
             ).rejects.toThrow(BadRequestException);
         });
     });
@@ -121,32 +132,34 @@ describe("ImportController", () => {
         });
     });
 
-    describe("getImapConfig", () => {
-        it("should return config without password", async () => {
+    describe("getImapConfigs", () => {
+        it("should return configs without passwords", async () => {
             const config = { id: "1", password: "encrypted" };
             (
-                mockPrisma.emailCredential.findFirst as jest.Mock
-            ).mockResolvedValue(config);
+                mockPrisma.emailCredential.findMany as jest.Mock
+            ).mockResolvedValue([config]);
 
-            const result = await controller.getImapConfig("acc1");
+            const result = await controller.getImapConfigs("acc1");
 
-            expect(result).toEqual({
-                ...config,
-                password: "",
-                hasPassword: true,
-            });
+            expect(result).toEqual([
+                {
+                    ...config,
+                    password: "",
+                    hasPassword: true,
+                },
+            ]);
         });
 
-        it("should return null if no config", async () => {
+        it("should return empty array if no config", async () => {
             (
-                mockPrisma.emailCredential.findFirst as jest.Mock
-            ).mockResolvedValue(null);
-            const result = await controller.getImapConfig("acc1");
-            expect(result).toBeNull();
+                mockPrisma.emailCredential.findMany as jest.Mock
+            ).mockResolvedValue([]);
+            const result = await controller.getImapConfigs("acc1");
+            expect(result).toEqual([]);
         });
 
         it("should throw if no accountId", async () => {
-            await expect(controller.getImapConfig("")).rejects.toThrow(
+            await expect(controller.getImapConfigs("")).rejects.toThrow(
                 BadRequestException
             );
         });
@@ -184,10 +197,11 @@ describe("ImportController", () => {
                 host: "imap",
                 email: "e",
                 port: 993,
+                id: "1",
             };
             const existing = { id: "1", password: "old" };
             (
-                mockPrisma.emailCredential.findFirst as jest.Mock
+                mockPrisma.emailCredential.findUnique as jest.Mock
             ).mockResolvedValue(existing);
 
             await controller.saveImapConfig(body);
@@ -212,9 +226,9 @@ describe("ImportController", () => {
         });
 
         it("should use saved password if not provided", async () => {
-            const body = { accountId: "acc1" };
+            const body = { accountId: "acc1", id: "1" };
             (
-                mockPrisma.emailCredential.findFirst as jest.Mock
+                mockPrisma.emailCredential.findUnique as jest.Mock
             ).mockResolvedValue({ password: "saved" });
             mockImapService.testConnection.mockResolvedValue({ success: true });
 
@@ -233,19 +247,14 @@ describe("ImportController", () => {
             const unique = [{ description: "T1" }];
 
             (
-                mockPrisma.emailCredential.findFirst as jest.Mock
-            ).mockResolvedValue({ id: "1" });
-            mockImapService.fetchUnseenAttachments.mockResolvedValue([buffer]);
-            mockOfxParser.parse.mockResolvedValue(transactions);
-            mockSmartMerger.filterDuplicates.mockResolvedValue(unique);
-            mockTransactionService.create.mockResolvedValue({});
+                mockPrisma.emailCredential.findMany as jest.Mock
+            ).mockResolvedValue([{ id: "1" }]);
+            mockImportService.syncAccount.mockResolvedValue(1);
 
             const result = await controller.syncNow("acc1");
 
             expect(result.imported).toBe(1);
-            expect(imapService.fetchUnseenAttachments).toHaveBeenCalled();
-            expect(ofxParser.parse).toHaveBeenCalled();
-            expect(transactionService.create).toHaveBeenCalled();
+            expect(mockImportService.syncAccount).toHaveBeenCalled();
         });
     });
 });

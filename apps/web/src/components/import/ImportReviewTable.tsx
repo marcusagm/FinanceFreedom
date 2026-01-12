@@ -11,15 +11,25 @@ import {
 
 interface Props {
     transactions: ImportedTransaction[];
+    accounts: any[]; // Or specific type
 }
 
-export const ImportReviewTable: React.FC<Props> = ({ transactions }) => {
+export const ImportReviewTable: React.FC<Props> = ({
+    transactions,
+    accounts,
+}) => {
+    const getAccountName = (id: string) => {
+        const acc = accounts.find((a) => a.id === id);
+        return acc ? acc.name : "Unknown";
+    };
+
     return (
         <div className="rounded-md border bg-card mt-6">
             <Table>
                 <TableHeader>
                     <TableRow>
                         <TableHead>Date</TableHead>
+                        <TableHead>Account</TableHead>
                         <TableHead>Description</TableHead>
                         <TableHead>Category</TableHead>
                         <TableHead className="text-right">Amount</TableHead>
@@ -31,6 +41,7 @@ export const ImportReviewTable: React.FC<Props> = ({ transactions }) => {
                             <TableCell>
                                 {new Date(t.date).toLocaleDateString()}
                             </TableCell>
+                            <TableCell>{getAccountName(t.accountId)}</TableCell>
                             <TableCell>{t.description}</TableCell>
                             <TableCell>{t.category}</TableCell>
                             <TableCell className="text-right font-mono font-medium">
@@ -44,7 +55,7 @@ export const ImportReviewTable: React.FC<Props> = ({ transactions }) => {
                                     {new Intl.NumberFormat("pt-BR", {
                                         style: "currency",
                                         currency: "BRL",
-                                    }).format(t.amount)}
+                                    }).format(Math.abs(t.amount))}
                                 </span>
                             </TableCell>
                         </TableRow>

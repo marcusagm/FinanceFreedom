@@ -75,35 +75,39 @@ export class ImportController {
             errors,
         };
     }
-    @Get("imap-config")
-    async getImapConfig(@Query("accountId") accountId: string) {
+    @Get("imap-configs")
+    async getImapConfigs(@Query("accountId") accountId: string) {
         if (!accountId) throw new BadRequestException("AccountId required");
 
-        const config = await this.prisma.emailCredential.findFirst({
+        const configs = await this.prisma.emailCredential.findMany({
             where: { accountId },
         });
 
-        if (!config) return null;
-
-        return {
-            ...config,
+        return configs.map((c) => ({
+            ...c,
             password: "", // Mask password
             hasPassword: true,
-        };
+        }));
     }
 
     @Post("imap-config")
     async saveImapConfig(@Body() body: any) {
-        const { accountId, host, port, secure, email, password } = body;
+        const {
+            id,
+            accountId,
+            host,
+            port,
+            secure,
+            email,
+            password,
+            folder,
+            sender,
+            subject,
+        } = body;
 
         if (!accountId || !host || !email) {
             throw new BadRequestException("Missing required fields");
         }
-
-        // Check if config exists
-        const existing = await this.prisma.emailCredential.findFirst({
-            where: { accountId },
-        });
 
         const data: any = {
             accountId,
@@ -111,15 +115,26 @@ export class ImportController {
             port: Number(port),
             secure: Boolean(secure),
             email,
+            folder: folder || "INBOX",
+            sender: sender || null,
+            subject: subject || null,
         };
 
         if (password) {
             data.password = password; // TODO: Encrypt
         }
 
-        if (existing) {
+        if (id) {
+            const existing = await this.prisma.emailCredential.findUnique({
+                where: { id },
+            });
+            if (!existing) throw new BadRequestException("Config not found");
+
+            // If updating and no password provided, keep existing
+            if (!password) delete data.password;
+
             return this.prisma.emailCredential.update({
-                where: { id: existing.id },
+                where: { id },
                 data,
             });
         }
@@ -127,27 +142,44 @@ export class ImportController {
         if (!password) {
             throw new BadRequestException("Password required for new config");
         }
-        data.password = password;
 
         return this.prisma.emailCredential.create({
             data,
         });
     }
 
+    @Post("imap-config/delete")
+    async deleteImapConfig(@Body("id") id: string) {
+        if (!id) throw new BadRequestException("ID required");
+        return this.prisma.emailCredential.delete({ where: { id } });
+    }
+
     @Post("imap-test")
     async testImapConfig(@Body() body: any) {
-        // Can test with provided credentials OR saved credentials
-        let { accountId, host, port, secure, email, password } = body;
+        let {
+            id,
+            accountId,
+            host,
+            port,
+            secure,
+            email,
+            password,
+            folder,
+            sender,
+            subject,
+        } = body;
 
-        if (!password && accountId) {
-            const saved = await this.prisma.emailCredential.findFirst({
-                where: { accountId },
+        // If testing an existing config, fetch password if not provided
+        if (!password && id) {
+            const saved = await this.prisma.emailCredential.findUnique({
+                where: { id },
             });
             if (saved) {
                 password = saved.password;
             }
         }
 
+        // Fallback: if user is testing a NEW config but forgot password? Front should validate.
         if (!password) throw new BadRequestException("Password required");
 
         return this.imapService.testConnection({
@@ -156,25 +188,42 @@ export class ImportController {
             secure: Boolean(secure),
             email,
             password,
+            // @ts-ignore
+            folder,
+            // @ts-ignore
+            sender,
+            // @ts-ignore
+            subject,
         });
     }
 
     @Post("sync-now")
     async syncNow(@Body("accountId") accountId: string) {
-        // If no accountId, sync all
+        // If no accountId, sync all? Or maybe sync specific config?
+        // Let's stick to syncing all configs for the account OR all accounts.
+
         if (!accountId) {
+            // Sync ALL accounts
             const count = await this.importService.syncAllAccounts();
             return { imported: count };
         }
 
-        const credential = await this.prisma.emailCredential.findFirst({
+        const credentials = await this.prisma.emailCredential.findMany({
             where: { accountId },
             include: { account: true },
         });
 
-        if (!credential) throw new BadRequestException("No IMAP config found");
+        if (!credentials || credentials.length === 0) {
+            // Check if maybe we want to sync just one config?
+            // For now, return 0
+            return { imported: 0, message: "No IMAP configs found" };
+        }
 
-        const count = await this.importService.syncAccount(credential);
-        return { imported: count };
+        let total = 0;
+        for (const cred of credentials) {
+            total += await this.importService.syncAccount(cred);
+        }
+
+        return { imported: total };
     }
 }

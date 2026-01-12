@@ -25,22 +25,25 @@ export class ImapService {
         try {
             await client.connect();
 
-            const lock = await client.getMailboxLock("INBOX");
+            // Select specific folder (default to INBOX)
+            const folder = credential.folder || "INBOX";
+            const lock = await client.getMailboxLock(folder);
             try {
-                // Fetch unseen messages
-                for await (const message of client.fetch(
-                    "1:*",
-                    { flags: true, envelope: true, bodyStructure: true },
-                    { uid: true }
-                )) {
-                    // Note: 'unseen' filter usually done in search, but imapflow fetch can filter?
-                    // client.fetch({ seen: false } ...)
+                // Build search criteria
+                const searchCriteria: any = { seen: false };
+
+                if (credential.sender) {
+                    searchCriteria.from = credential.sender;
+                }
+
+                if (credential.subject) {
+                    searchCriteria.subject = credential.subject;
                 }
 
                 // Correct approach with imapflow for searching unseen
-                const list = await client.search({ seen: false });
+                const list = await client.search(searchCriteria);
 
-                if (list === false) return [];
+                if (list === false || list.length === 0) return [];
 
                 for (const seq of list) {
                     const message = await client.fetchOne(seq, {
@@ -98,6 +101,9 @@ export class ImapService {
         secure: boolean;
         email: string;
         password: string;
+        folder?: string;
+        sender?: string;
+        subject?: string;
     }): Promise<{ success: boolean; message?: string }> {
         const client = new ImapFlow({
             host: credential.host,
@@ -112,8 +118,32 @@ export class ImapService {
 
         try {
             await client.connect();
+
+            // Try to open the folder to verify it exists
+            const folderName = credential.folder || "INBOX";
+            await client.mailboxOpen(folderName);
+
+            // Check for matching emails
+            const searchCriteria: any = {};
+            if (credential.sender) searchCriteria.from = credential.sender;
+            if (credential.subject) searchCriteria.subject = credential.subject;
+
+            // Search all matching (seen or unseen)
+            const allMatches = await client.search(searchCriteria);
+            const totalCount = allMatches === false ? 0 : allMatches.length;
+
+            // Search unseen matching
+            const unseenCriteria = { ...searchCriteria, seen: false };
+            const unseenMatches = await client.search(unseenCriteria);
+            const unseenCount =
+                unseenMatches === false ? 0 : unseenMatches.length;
+
             await client.logout();
-            return { success: true };
+
+            return {
+                success: true,
+                message: `Connection successful! Found matching emails: ${totalCount} (Unseen: ${unseenCount}) in '${folderName}'`,
+            };
         } catch (err) {
             this.logger.error("IMAP Test Error", err);
             return { success: false, message: err.message };

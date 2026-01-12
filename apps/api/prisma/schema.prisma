@@ -44,11 +44,14 @@ model Transaction {
 
 model EmailCredential {
   id        String   @id @default(uuid())
-  email     String   @unique
+  email     String
   password  String   // Encrypted
   host      String
   port      Int
   secure    Boolean  @default(true)
+  folder    String   @default("INBOX")
+  sender    String?
+  subject   String?
   accountId String
   account   Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
