@@ -1,71 +1,95 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+    Injectable,
+    NotFoundException,
+    BadRequestException,
+} from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
 import { CreateTransactionDto } from "./dto/create-transaction.dto";
 import { UpdateTransactionDto } from "./dto/update-transaction.dto";
+import { SplitTransactionDto } from "./dto/split-transaction.dto";
+import { addMonths } from "date-fns";
 
 @Injectable()
 export class TransactionService {
     constructor(private readonly prisma: PrismaService) {}
 
     create(createTransactionDto: CreateTransactionDto) {
-        const { accountId, amount, type, date, ...rest } = createTransactionDto;
+        const {
+            accountId,
+            amount,
+            type,
+            date,
+            isRecurring,
+            repeatCount,
+            ...rest
+        } = createTransactionDto;
+        const transactionDate = new Date(date);
+        const iterations = isRecurring ? repeatCount || 12 : 1;
 
         // Use interactive transaction to ensure atomicity
         return this.prisma.$transaction(
             async (prisma: Prisma.TransactionClient) => {
-                // 1. Create the transaction
-                const transaction = await prisma.transaction.create({
-                    data: {
-                        accountId,
-                        amount,
-                        type,
-                        date: new Date(date),
-                        ...rest,
-                    },
-                });
+                const createdTransactions = [];
 
-                // 2. Update the account balance
-                const account = await prisma.account.findUnique({
-                    where: { id: accountId },
-                });
+                for (let i = 0; i < iterations; i++) {
+                    const currentDate = addMonths(transactionDate, i);
+                    // currentDate.setMonth(currentDate.getMonth() + i); - REMOVED
 
-                if (!account) {
-                    throw new NotFoundException(
-                        `Account with ID ${accountId} not found`
-                    );
-                }
+                    // 1. Create the transaction
+                    const transaction = await prisma.transaction.create({
+                        data: {
+                            accountId,
+                            amount,
+                            type,
+                            date: currentDate,
+                            ...rest,
+                        },
+                    });
+                    createdTransactions.push(transaction);
 
-                const balanceChange = type === "INCOME" ? amount : -amount;
-                const newBalance =
-                    Number(account.balance) + Number(balanceChange);
-
-                await prisma.account.update({
-                    where: { id: accountId },
-                    data: { balance: newBalance },
-                });
-
-                // 3. Update debt balance if applicable
-                if (createTransactionDto.debtId && type === "EXPENSE") {
-                    const debt = await prisma.debt.findUnique({
-                        where: { id: createTransactionDto.debtId },
+                    // 2. Update the account balance
+                    const account = await prisma.account.findUnique({
+                        where: { id: accountId },
                     });
 
-                    if (debt) {
-                        const newDebtBalance =
-                            Number(debt.totalAmount) - Number(amount);
-                        // Ensure debt doesn't go below zero? Or allow it? Allowing for now.
-                        await prisma.debt.update({
+                    if (!account) {
+                        throw new NotFoundException(
+                            `Account with ID ${accountId} not found`
+                        );
+                    }
+
+                    const balanceChange = type === "INCOME" ? amount : -amount;
+                    const newBalance =
+                        Number(account.balance) + Number(balanceChange);
+
+                    await prisma.account.update({
+                        where: { id: accountId },
+                        data: { balance: newBalance },
+                    });
+
+                    // 3. Update debt balance if applicable
+                    if (createTransactionDto.debtId && type === "EXPENSE") {
+                        const debt = await prisma.debt.findUnique({
                             where: { id: createTransactionDto.debtId },
-                            data: {
-                                totalAmount:
-                                    newDebtBalance < 0 ? 0 : newDebtBalance,
-                            },
                         });
+
+                        if (debt) {
+                            const newDebtBalance =
+                                Number(debt.totalAmount) - Number(amount);
+                            // Ensure debt doesn't go below zero? Or allow it? Allowing for now.
+                            await prisma.debt.update({
+                                where: { id: createTransactionDto.debtId },
+                                data: {
+                                    totalAmount:
+                                        newDebtBalance < 0 ? 0 : newDebtBalance,
+                                },
+                            });
+                        }
                     }
                 }
 
-                return transaction;
+                return createdTransactions[0]; // Return the first one created
             }
         );
     }
@@ -201,5 +225,83 @@ export class TransactionService {
                 });
             }
         );
+    }
+
+    async split(id: string, splitTransactionDto: SplitTransactionDto) {
+        const { splits } = splitTransactionDto;
+
+        return this.prisma.$transaction(async (prisma) => {
+            // 1. Get original transaction
+            const originalTransaction = await prisma.transaction.findUnique({
+                where: { id },
+                include: { account: true },
+            });
+
+            if (!originalTransaction) {
+                throw new NotFoundException(
+                    `Transaction with ID ${id} not found`
+                );
+            }
+
+            // 2. Validate total amount
+            const totalSplitAmount = splits.reduce(
+                (sum, split) => sum + Number(split.amount),
+                0
+            );
+            const originalAmount = Number(originalTransaction.amount);
+
+            // Floating point tolerance check
+            if (Math.abs(totalSplitAmount - originalAmount) > 0.01) {
+                throw new BadRequestException(
+                    "Sum of splits must equal original transaction amount"
+                );
+            }
+
+            // 3. Create new transactions
+            const createdTransactions = [];
+            for (const split of splits) {
+                const newTransaction = await prisma.transaction.create({
+                    data: {
+                        accountId: originalTransaction.accountId,
+                        amount: split.amount,
+                        type: originalTransaction.type,
+                        date: originalTransaction.date,
+                        description: split.description,
+                        category:
+                            split.category || originalTransaction.category,
+                        debtId: originalTransaction.debtId, // Maintain debt link if exists?
+                        // If linked to debt, we should technically handle debt balance updates carefully.
+                        // Ideally, splitting shouldn't change total debt payment, just categorize it differently.
+                    },
+                });
+                createdTransactions.push(newTransaction);
+            }
+
+            // 4. Delete original transaction
+            // Note: We don't need to revert account balance because the total amount IN/OUT is the same.
+            // We just swap one big transaction for N small ones.
+            // BUT, if we delete the original using `remove` logic, it reverts balance.
+            // So we should manually delete without reverting balance, OR revert and re-apply.
+            // Simplest is: Delete original (without balance logic), let new ones exist.
+            // Wait, create() updates balance!
+
+            // Correction: The `create` calls above (step 3) WILL update the balance because they are simple `prisma.transaction.create`.
+            // WAIT - `prisma.transaction.create` is the raw Prisma method, NOT `this.create`.
+            // The raw prisma `create` DOES NOT update side-effects (Account Balance).
+            // So:
+            // - Original transaction exists. Balance is already impacted by it.
+            // - We delete original transaction record. Balance remains as is (since we don't trigger revert logic).
+            // - We create N new transaction records. Balance remains as is (since we use raw create).
+            // - Net result: Account Balance is correct (Total amount didn't change).
+
+            // However, what if we use `this.create`? Then we'd update balance N times.
+            // Better to use raw prisma calls here inside $transaction for full control.
+
+            await prisma.transaction.delete({
+                where: { id },
+            });
+
+            return createdTransactions;
+        });
     }
 }

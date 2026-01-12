@@ -101,4 +101,20 @@ describe("NewTransactionDialog", () => {
         expect(screen.getByText("Editar Transação")).toBeInTheDocument();
         expect(screen.getByDisplayValue("Old Tx")).toBeInTheDocument();
     });
+
+    it("toggles recurrence fields", async () => {
+        render(<NewTransactionDialog {...mockProps} />);
+
+        // Recurrence checkbox exists
+        const checkbox = screen.getByRole("checkbox");
+        expect(checkbox).toBeInTheDocument();
+        expect(screen.queryByText("Número de vezes")).not.toBeInTheDocument();
+
+        // Click to toggle
+        fireEvent.click(checkbox);
+
+        // Input should appear
+        expect(screen.getByText("Número de vezes")).toBeInTheDocument();
+        expect(screen.getByDisplayValue("12")).toBeInTheDocument(); // Default value
+    });
 });

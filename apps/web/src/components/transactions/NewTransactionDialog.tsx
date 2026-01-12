@@ -16,6 +16,7 @@ import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
 import { DatePicker } from "../ui/DatePicker";
 import { Select } from "../ui/Select";
+import { Checkbox } from "../ui/Checkbox";
 import {
     Form,
     FormControl,
@@ -43,6 +44,8 @@ const formSchema = z.object({
     date: z.string().min(1, "Data é obrigatória"),
     accountId: z.string().min(1, "Conta é obrigatória"),
     category: z.string().optional(),
+    isRecurring: z.boolean().optional(),
+    repeatCount: z.number().optional(),
 });
 
 export function NewTransactionDialog({
@@ -61,8 +64,12 @@ export function NewTransactionDialog({
             date: new Date().toISOString().split("T")[0],
             accountId: "",
             category: "",
+            isRecurring: false,
+            repeatCount: 12,
         },
     });
+
+    const isRecurring = form.watch("isRecurring");
 
     useEffect(() => {
         if (isOpen) {
@@ -76,6 +83,8 @@ export function NewTransactionDialog({
                         .split("T")[0],
                     accountId: initialData.accountId,
                     category: initialData.category || "",
+                    isRecurring: false,
+                    repeatCount: 12,
                 });
             } else {
                 form.reset({
@@ -85,6 +94,8 @@ export function NewTransactionDialog({
                     date: new Date().toISOString().split("T")[0],
                     accountId: accounts.length > 0 ? accounts[0].id : "",
                     category: "",
+                    isRecurring: false,
+                    repeatCount: 12,
                 });
             }
         }
@@ -267,6 +278,61 @@ export function NewTransactionDialog({
                                 </FormItem>
                             )}
                         />
+
+                        {!initialData && (
+                            <div className="space-y-4 rounded-lg border p-4">
+                                <FormField
+                                    control={form.control}
+                                    name="isRecurring"
+                                    render={({ field }) => (
+                                        <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4 shadow-sm">
+                                            <FormControl className="w-auto">
+                                                <Checkbox
+                                                    checked={field.value}
+                                                    onCheckedChange={
+                                                        field.onChange
+                                                    }
+                                                />
+                                            </FormControl>
+                                            <div className="space-y-1 leading-none">
+                                                <FormLabel className="w-auto cursor-pointer font-normal">
+                                                    Repetir mensalmente
+                                                </FormLabel>
+                                            </div>
+                                        </FormItem>
+                                    )}
+                                />
+
+                                {isRecurring && (
+                                    <FormField
+                                        control={form.control}
+                                        name="repeatCount"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    Número de vezes
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        type="number"
+                                                        {...field}
+                                                        onChange={(e) =>
+                                                            field.onChange(
+                                                                Number(
+                                                                    e.target
+                                                                        .value
+                                                                )
+                                                            )
+                                                        }
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                )}
+                            </div>
+                        )}
                     </form>
                 </Form>
                 <DialogFooter>

@@ -1,4 +1,4 @@
-import { Edit2, Trash2 } from "lucide-react";
+import { Edit2, Trash2, Split } from "lucide-react";
 import type { Transaction } from "../../types";
 import { useHourlyRate } from "../../hooks/useHourlyRate";
 import { TimeCostBadge } from "../simulators/TimeCostBadge";
@@ -12,19 +12,25 @@ import {
 } from "../ui/Table";
 import { Button } from "../ui/Button";
 import { MoneyDisplay } from "../ui/MoneyDisplay";
+import { useState } from "react";
+import { SplitTransactionDialog } from "./SplitTransactionDialog";
 
 interface TransactionListProps {
     transactions: Transaction[];
     onEdit: (transaction: Transaction) => void;
     onDelete: (id: string) => void;
+    onTransactionUpdated?: () => void;
 }
 
 export function TransactionList({
     transactions,
     onEdit,
     onDelete,
+    onTransactionUpdated,
 }: TransactionListProps) {
     const { hourlyRate } = useHourlyRate();
+    const [splitDialogTransaction, setSplitDialogTransaction] =
+        useState<Transaction | null>(null);
 
     return (
         <div className="rounded-md border bg-card">
@@ -36,9 +42,7 @@ export function TransactionList({
                         <TableHead>Categoria</TableHead>
                         <TableHead>Conta</TableHead>
                         <TableHead className="text-right">Valor</TableHead>
-                        <TableHead className="w-[100px] text-right">
-                            Ações
-                        </TableHead>
+                        <TableHead className="w-32 text-right">Ações</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -49,7 +53,9 @@ export function TransactionList({
                                     transaction.date
                                 ).toLocaleDateString()}
                             </TableCell>
-                            <TableCell>{transaction.description}</TableCell>
+                            <TableCell className="text-left">
+                                {transaction.description}
+                            </TableCell>
                             <TableCell>{transaction.category || "-"}</TableCell>
                             <TableCell>{transaction.account.name}</TableCell>
                             <TableCell
@@ -61,9 +67,6 @@ export function TransactionList({
                             >
                                 <div className="flex flex-col items-end gap-1">
                                     <span className="font-medium">
-                                        {transaction.type === "INCOME"
-                                            ? "+"
-                                            : "-"}
                                         {transaction.type === "INCOME"
                                             ? "+"
                                             : "-"}
@@ -81,6 +84,19 @@ export function TransactionList({
                             </TableCell>
                             <TableCell className="text-right">
                                 <div className="flex items-center justify-end gap-2">
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() =>
+                                            setSplitDialogTransaction(
+                                                transaction
+                                            )
+                                        }
+                                        className="h-8 w-8 text-blue-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/20"
+                                        title="Dividir Transação"
+                                    >
+                                        <Split className="w-4 h-4" />
+                                    </Button>
                                     <Button
                                         variant="ghost"
                                         size="icon"
@@ -115,6 +131,16 @@ export function TransactionList({
                     )}
                 </TableBody>
             </Table>
+
+            <SplitTransactionDialog
+                isOpen={!!splitDialogTransaction}
+                onClose={() => setSplitDialogTransaction(null)}
+                transaction={splitDialogTransaction}
+                onSuccess={() => {
+                    setSplitDialogTransaction(null);
+                    onTransactionUpdated?.();
+                }}
+            />
         </div>
     );
 }

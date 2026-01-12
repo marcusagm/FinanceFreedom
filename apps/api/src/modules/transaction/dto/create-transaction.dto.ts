@@ -35,4 +35,11 @@ export class CreateTransactionDto {
     @IsNotEmpty()
     @IsString()
     accountId: string;
+
+    @IsOptional()
+    isRecurring?: boolean;
+
+    @IsOptional()
+    @IsNumber()
+    repeatCount?: number;
 }

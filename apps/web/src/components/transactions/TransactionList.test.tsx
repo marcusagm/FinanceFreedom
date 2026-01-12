@@ -64,6 +64,14 @@ describe("TransactionList", () => {
         expect(mockProps.onDelete).toHaveBeenCalledWith("1");
     });
 
+    it("opens split dialog", () => {
+        render(<TransactionList {...mockProps} />);
+        const splitBtn = screen.getByTitle("Dividir Transação");
+        fireEvent.click(splitBtn);
+        // Checking if dialog opened by looking for its title
+        expect(screen.getByText("Dividir Transação")).toBeInTheDocument();
+    });
+
     it("renders empty state", () => {
         render(<TransactionList {...mockProps} transactions={[]} />);
         expect(

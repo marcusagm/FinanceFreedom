@@ -1,29 +1,35 @@
-```typescript
 import { Test, TestingModule } from "@nestjs/testing";
-import { vi, describe, it, expect, beforeEach } from "vitest";
 import { TransactionService } from "./transaction.service";
 import { PrismaService } from "../../prisma/prisma.service";
 import { CreateTransactionDto } from "./dto/create-transaction.dto";
 
 const mockTransactionClient = {
     transaction: {
-        create: vi.fn(),
-        findMany: vi.fn(),
-        findUnique: vi.fn(),
-        update: vi.fn(),
-        delete: vi.fn(),
+        create: jest.fn(),
+        findMany: jest.fn(),
+        findUnique: jest.fn(),
+        update: jest.fn(),
+        delete: jest.fn(),
     },
     account: {
-        findUnique: vi.fn(),
-        update: vi.fn(),
+        findUnique: jest.fn(),
+        update: jest.fn(),
+    },
+    debt: {
+        findUnique: jest.fn(),
+        update: jest.fn(),
     },
 };
 
 const mockPrismaService = {
-    $transaction: vi.fn((callback) => callback(mockTransactionClient)),
+    $transaction: jest.fn((callback) => callback(mockTransactionClient)),
     transaction: {
-        findMany: vi.fn(),
-        findUnique: vi.fn(),
+        findMany: jest.fn(),
+        findUnique: jest.fn(),
+    },
+    debt: {
+        findUnique: jest.fn(),
+        update: jest.fn(),
     },
 };
 
@@ -42,8 +48,8 @@ describe("TransactionService", () => {
         service = module.get<TransactionService>(TransactionService);
         prisma = module.get<PrismaService>(PrismaService);
 
-        vi.resetAllMocks();
-        (prisma.$transaction as vi.Mock).mockImplementation((callback) =>
+        jest.resetAllMocks();
+        (prisma.$transaction as jest.Mock).mockImplementation((callback) =>
             callback(mockTransactionClient)
         );
     });
@@ -134,7 +140,7 @@ describe("TransactionService", () => {
                 mockAccount
             );
             // Mock debt find
-            (prisma.debt.findUnique as vi.Mock) = vi
+            (prisma.debt.findUnique as jest.Mock) = jest
                 .fn()
                 .mockResolvedValue(mockDebt);
             // Actually we need to mock the client method since it's inside $transaction
@@ -142,8 +148,8 @@ describe("TransactionService", () => {
             // No, it uses `prisma.debt` which comes from the transaction client `prisma` arg.
             // So I need to add `debt` to `mockTransactionClient`.
             mockTransactionClient["debt"] = {
-                findUnique: vi.fn().mockResolvedValue(mockDebt),
-                update: vi.fn(),
+                findUnique: jest.fn().mockResolvedValue(mockDebt),
+                update: jest.fn(),
             };
 
             await service.create(dto);
@@ -163,7 +169,7 @@ describe("TransactionService", () => {
     describe("findAll", () => {
         it("should return an array of transactions", async () => {
             const result = [{ id: "1" }];
-            (prisma.transaction.findMany as vi.Mock).mockResolvedValue(
+            (prisma.transaction.findMany as jest.Mock).mockResolvedValue(
                 result
             );
 
@@ -174,7 +180,7 @@ describe("TransactionService", () => {
     describe("findOne", () => {
         it("should return a single transaction", async () => {
             const result = { id: "1" };
-            (prisma.transaction.findUnique as vi.Mock).mockResolvedValue(
+            (prisma.transaction.findUnique as jest.Mock).mockResolvedValue(
                 result
             );
 

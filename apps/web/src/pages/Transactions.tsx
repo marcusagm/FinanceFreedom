@@ -152,6 +152,7 @@ export function Transactions() {
                     transactions={filteredTransactions}
                     onEdit={handleEdit}
                     onDelete={handleDelete}
+                    onTransactionUpdated={fetchData}
                 />
             )}
 
