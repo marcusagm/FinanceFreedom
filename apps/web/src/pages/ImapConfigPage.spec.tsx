@@ -1,4 +1,5 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { ImapConfigPage } from "./ImapConfigPage";
 import { api } from "../lib/api";
@@ -26,9 +27,41 @@ vi.mock("../components/ui/Modal", () => ({
         ) : null,
 }));
 
-// Helper to render with Router
+// Mock ImapConfigForm to simplify page testing
+vi.mock("../components/import/ImapConfigForm", () => ({
+    ImapConfigForm: ({ isOpen, initialData, onSubmit, onTest }: any) =>
+        isOpen ? (
+            <div data-testid="imap-config-form">
+                <label htmlFor="host">Host (IMAP)</label>
+                <input
+                    id="host"
+                    defaultValue={initialData?.host || "imap.gmail.com"}
+                    aria-label="Host (IMAP)"
+                    onChange={() => {}}
+                />
+                <button onClick={() => onSubmit(initialData)}>
+                    Save Config
+                </button>
+                <button onClick={() => onTest(initialData)}>
+                    Test Connection
+                </button>
+                <button onClick={() => {}}>Close</button>
+            </div>
+        ) : null,
+}));
+
+// Remove Dialog mock as it is no longer needed
+// vi.mock("../components/ui/Dialog", ...); removed
+
+import { PrivacyProvider } from "@/contexts/PrivacyContext";
+
+// Helper to render with Router and Providers
 const renderWithRouter = (ui: React.ReactElement) => {
-    return render(<BrowserRouter>{ui}</BrowserRouter>);
+    return render(
+        <PrivacyProvider>
+            <BrowserRouter>{ui}</BrowserRouter>
+        </PrivacyProvider>
+    );
 };
 
 describe("ImapConfigPage", () => {
@@ -41,15 +74,19 @@ describe("ImapConfigPage", () => {
                     data: [{ id: "acc1", name: "Bank A", type: "CHECKING" }],
                 });
             }
-            if (url.includes("/import/imap-config")) {
+            if (url.includes("/import/imap-configs")) {
                 return Promise.resolve({
-                    data: {
-                        host: "imap.test.com",
-                        port: 993,
-                        secure: true,
-                        email: "test@test.com",
-                        hasPassword: true,
-                    },
+                    data: [
+                        {
+                            id: "1",
+                            accountId: "acc1",
+                            host: "imap.test.com",
+                            port: 993,
+                            secure: true,
+                            email: "test@test.com",
+                            hasPassword: true,
+                        },
+                    ],
                 });
             }
             return Promise.resolve({ data: {} });
@@ -65,13 +102,14 @@ describe("ImapConfigPage", () => {
             expect(api.get).toHaveBeenCalledWith("/accounts");
         });
 
-        // Should fetch config for acc1 (default)
+        // Should fetch config for acc1 (default) and display in list
         await waitFor(() => {
-            const hostInput = screen.getByPlaceholderText(
-                "imap.gmail.com"
-            ) as HTMLInputElement;
-            expect(hostInput.value).toBe("imap.test.com");
+            expect(screen.getByText("test@test.com")).toBeInTheDocument();
+            expect(screen.getByText("imap.test.com")).toBeInTheDocument(); // Host is probably not shown, check what IS shown.
         });
+
+        // Host isn't shown in list, email is.
+        expect(screen.getByText("test@test.com")).toBeInTheDocument();
     });
 
     it("saves configuration", async () => {
@@ -80,9 +118,16 @@ describe("ImapConfigPage", () => {
         renderWithRouter(<ImapConfigPage />);
 
         await waitFor(() => {
-            expect(
-                screen.getByDisplayValue("imap.test.com")
-            ).toBeInTheDocument();
+            expect(screen.getByText("test@test.com")).toBeInTheDocument();
+        });
+
+        const user = userEvent.setup();
+        const editBtns = screen.getAllByLabelText("Edit");
+        await user.click(editBtns[0]);
+
+        await waitFor(() => {
+            const input = screen.getByLabelText("Host (IMAP)");
+            expect(input).toHaveValue("imap.test.com");
         });
 
         const saveBtn = screen.getByText("Save Config");
@@ -112,9 +157,16 @@ describe("ImapConfigPage", () => {
         renderWithRouter(<ImapConfigPage />);
 
         await waitFor(() => {
-            expect(
-                screen.getByDisplayValue("imap.test.com")
-            ).toBeInTheDocument();
+            expect(screen.getByText("test@test.com")).toBeInTheDocument();
+        });
+
+        const user = userEvent.setup();
+        const editBtns = screen.getAllByLabelText("Edit");
+        await user.click(editBtns[0]);
+
+        await waitFor(() => {
+            const input = screen.getByLabelText("Host (IMAP)");
+            expect(input).toHaveValue("imap.test.com");
         });
 
         const testBtn = screen.getByText("Test Connection");
@@ -137,6 +189,14 @@ describe("ImapConfigPage", () => {
         (api.post as any).mockRejectedValue(new Error("Save failed"));
 
         renderWithRouter(<ImapConfigPage />);
+        await waitFor(() =>
+            expect(screen.getByText("test@test.com")).toBeInTheDocument()
+        );
+
+        const user = userEvent.setup();
+        const editBtns = screen.getAllByLabelText("Edit");
+        await user.click(editBtns[0]);
+
         await waitFor(() =>
             expect(
                 screen.getByDisplayValue("imap.test.com")
@@ -165,6 +225,14 @@ describe("ImapConfigPage", () => {
 
         renderWithRouter(<ImapConfigPage />);
         await waitFor(() =>
+            expect(screen.getByText("test@test.com")).toBeInTheDocument()
+        );
+
+        const user = userEvent.setup();
+        const editBtns = screen.getAllByLabelText("Edit");
+        await user.click(editBtns[0]);
+
+        await waitFor(() =>
             expect(
                 screen.getByDisplayValue("imap.test.com")
             ).toBeInTheDocument()
@@ -183,6 +251,14 @@ describe("ImapConfigPage", () => {
         (api.post as any).mockRejectedValue(new Error("Network error"));
 
         renderWithRouter(<ImapConfigPage />);
+        await waitFor(() =>
+            expect(screen.getByText("test@test.com")).toBeInTheDocument()
+        );
+
+        const user = userEvent.setup();
+        const editBtns = screen.getAllByLabelText("Edit");
+        await user.click(editBtns[0]);
+
         await waitFor(() =>
             expect(
                 screen.getByDisplayValue("imap.test.com")
@@ -210,7 +286,7 @@ describe("ImapConfigPage", () => {
             expect(screen.getByText("IMAP Configuration")).toBeInTheDocument()
         );
 
-        const syncBtn = screen.getByText("Sync Now");
+        const syncBtn = screen.getByText("Sync All");
         fireEvent.click(syncBtn);
 
         // Confirm modal appears
@@ -253,7 +329,7 @@ describe("ImapConfigPage", () => {
             expect(screen.getByText("IMAP Configuration")).toBeInTheDocument()
         );
 
-        const syncBtn = screen.getByText("Sync Now");
+        const syncBtn = screen.getByText("Sync All");
         fireEvent.click(syncBtn);
 
         await waitFor(() =>

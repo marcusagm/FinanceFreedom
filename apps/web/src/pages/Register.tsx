@@ -105,6 +105,7 @@ export function Register() {
                                 id="name"
                                 type="text"
                                 placeholder="João Silva"
+                                data-testid="name-input"
                                 {...register("name")}
                             />
                             {errors.name && (
@@ -119,6 +120,7 @@ export function Register() {
                                 id="email"
                                 type="email"
                                 placeholder="nome@exemplo.com"
+                                data-testid="email-input"
                                 {...register("email")}
                             />
                             {errors.email && (
@@ -132,6 +134,7 @@ export function Register() {
                             <Input
                                 id="password"
                                 type="password"
+                                data-testid="password-input"
                                 {...register("password")}
                             />
                             {errors.password && (
@@ -147,6 +150,7 @@ export function Register() {
                             <Input
                                 id="confirmPassword"
                                 type="password"
+                                data-testid="confirm-password-input"
                                 {...register("confirmPassword")}
                             />
                             {errors.confirmPassword && (

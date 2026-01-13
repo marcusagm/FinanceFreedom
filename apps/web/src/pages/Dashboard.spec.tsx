@@ -3,7 +3,6 @@ import { render, screen, waitFor } from "../utils/test-utils";
 import Dashboard from "./Dashboard";
 import { getDashboardSummary } from "../services/dashboard.service";
 import { vi, describe, it, expect, beforeEach } from "vitest";
-import React from "react";
 
 // Mock the service
 vi.mock("../services/dashboard.service", () => ({
@@ -80,6 +79,9 @@ describe("Dashboard", () => {
         await waitFor(() => {
             expect(
                 screen.getByText("Failed to load dashboard data.")
+            ).toBeInTheDocument();
+            expect(
+                screen.getByRole("button", { name: "Try Again" })
             ).toBeInTheDocument();
         });
     });

@@ -63,7 +63,11 @@ describe("SmartMergerService", () => {
             },
         ];
 
-        const result = await service.filterDuplicates(accountId, incoming);
+        const result = await service.filterDuplicates(
+            "userId",
+            accountId,
+            incoming
+        );
 
         expect(result).toHaveLength(1);
         expect(result[0].description).toBe("Bakery");
@@ -83,7 +87,11 @@ describe("SmartMergerService", () => {
             },
         ];
 
-        const result = await service.filterDuplicates("acc1", incoming);
+        const result = await service.filterDuplicates(
+            "userId",
+            "acc1",
+            incoming
+        );
         expect(result).toHaveLength(1);
     });
 });

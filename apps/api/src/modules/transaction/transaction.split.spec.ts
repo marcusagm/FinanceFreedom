@@ -10,15 +10,18 @@ const mockTransactionClient = {
         create: jest.fn(),
         findMany: jest.fn(),
         findUnique: jest.fn(),
+        findFirst: jest.fn(),
         update: jest.fn(),
         delete: jest.fn(),
     },
     account: {
         findUnique: jest.fn(),
+        findFirst: jest.fn(),
         update: jest.fn(),
     },
     debt: {
         findUnique: jest.fn(),
+        findFirst: jest.fn(),
         update: jest.fn(),
     },
 };
@@ -65,7 +68,7 @@ describe("TransactionService - Advanced Features", () => {
             };
 
             const mockAccount = { id: "acc-1", balance: 1000 };
-            mockTransactionClient.account.findUnique.mockResolvedValue(
+            mockTransactionClient.account.findFirst.mockResolvedValue(
                 mockAccount
             );
             mockTransactionClient.transaction.create.mockResolvedValue({
@@ -73,7 +76,7 @@ describe("TransactionService - Advanced Features", () => {
                 ...dto,
             });
 
-            await service.create(dto);
+            await service.create("user-1", dto);
 
             // Should call create 3 times
             expect(
@@ -113,14 +116,14 @@ describe("TransactionService - Advanced Features", () => {
                 ],
             };
 
-            mockTransactionClient.transaction.findUnique.mockResolvedValue(
+            mockTransactionClient.transaction.findFirst.mockResolvedValue(
                 originalTx
             );
             mockTransactionClient.transaction.create.mockResolvedValue({
                 id: "new-tx",
             });
 
-            await service.split("tx-original", splitDto);
+            await service.split("user-1", "tx-original", splitDto);
 
             // 1. Check validation passed (implied if no error)
 
@@ -166,12 +169,12 @@ describe("TransactionService - Advanced Features", () => {
                 ],
             };
 
-            mockTransactionClient.transaction.findUnique.mockResolvedValue(
+            mockTransactionClient.transaction.findFirst.mockResolvedValue(
                 originalTx
             );
 
             await expect(
-                service.split("tx-original", splitDto)
+                service.split("user-1", "tx-original", splitDto)
             ).rejects.toThrow(BadRequestException);
         });
     });

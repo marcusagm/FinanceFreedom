@@ -1,5 +1,4 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { describe, it, expect, beforeEach, vi } from "vitest";
 import { ImportService } from "./import.service";
 import { ImapService } from "./imap.service";
 import { OfxParserService } from "./ofx-parser.service";
@@ -13,20 +12,25 @@ describe("ImportService", () => {
     let prisma: PrismaService;
 
     const mockImapService = {
-        fetchUnseenAttachments: vi.fn(),
+        fetchUnseenAttachments: jest.fn(),
     };
     const mockOfxParser = {
-        parse: vi.fn(),
+        parse: jest.fn(),
     };
     const mockSmartMerger = {
-        filterDuplicates: vi.fn(),
+        filterDuplicates: jest.fn(),
     };
     const mockTransactionService = {
-        create: vi.fn(),
+        create: jest.fn(),
     };
+
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+
     const mockPrisma = {
         emailCredential: {
-            findMany: vi.fn(),
+            findMany: jest.fn(),
         },
     };
 
@@ -34,9 +38,18 @@ describe("ImportService", () => {
         const module: TestingModule = await Test.createTestingModule({
             providers: [
                 ImportService,
-                { provide: ImapService, useValue: mockImapService },
-                { provide: OfxParserService, useValue: mockOfxParser },
-                { provide: SmartMergerService, useValue: mockSmartMerger },
+                {
+                    provide: ImapService,
+                    useValue: mockImapService,
+                },
+                {
+                    provide: OfxParserService,
+                    useValue: mockOfxParser,
+                },
+                {
+                    provide: SmartMergerService,
+                    useValue: mockSmartMerger,
+                },
                 {
                     provide: TransactionService,
                     useValue: mockTransactionService,

@@ -7,16 +7,19 @@ const mockTransactionClient = {
     transaction: {
         create: jest.fn(),
         findMany: jest.fn(),
-        findUnique: jest.fn(),
+        findFirst: jest.fn(),
         update: jest.fn(),
         delete: jest.fn(),
     },
     account: {
-        findUnique: jest.fn(),
+        findFirst: jest.fn(),
         update: jest.fn(),
     },
     debt: {
-        findUnique: jest.fn(),
+        findUnique: jest.fn(), // debt service might use findUnique?
+        // Service code: prisma.debt.findFirst (in create)
+        // Wait, line 74: `prisma.debt.findFirst`
+        findFirst: jest.fn(),
         update: jest.fn(),
     },
 };
@@ -25,7 +28,7 @@ const mockPrismaService = {
     $transaction: jest.fn((callback) => callback(mockTransactionClient)),
     transaction: {
         findMany: jest.fn(),
-        findUnique: jest.fn(),
+        findFirst: jest.fn(),
     },
     debt: {
         findUnique: jest.fn(),
@@ -70,21 +73,19 @@ describe("TransactionService", () => {
             mockTransactionClient.transaction.create.mockResolvedValue(
                 expectedTransaction
             );
-            mockTransactionClient.account.findUnique.mockResolvedValue(
+            mockTransactionClient.account.findFirst.mockResolvedValue(
                 mockAccount
             );
 
-            const result = await service.create(dto);
+            const result = await service.create("user-1", dto);
 
             expect(result).toEqual(expectedTransaction);
 
             // Verify transaction creation
-
             expect(mockTransactionClient.transaction.create).toHaveBeenCalled();
 
             // Verify balance update logic
             // Initial 50 + 100 Income = 150
-
             expect(mockTransactionClient.account.update).toHaveBeenCalledWith({
                 where: { id: "acc-1" },
                 data: { balance: 150 },
@@ -106,14 +107,13 @@ describe("TransactionService", () => {
             mockTransactionClient.transaction.create.mockResolvedValue(
                 expectedTransaction
             );
-            mockTransactionClient.account.findUnique.mockResolvedValue(
+            mockTransactionClient.account.findFirst.mockResolvedValue(
                 mockAccount
             );
 
-            await service.create(dto);
+            await service.create("user-1", dto);
 
             // Initial 100 - 50 Expense = 50
-
             expect(mockTransactionClient.account.update).toHaveBeenCalledWith({
                 where: { id: "acc-1" },
                 data: { balance: 50 },
@@ -136,23 +136,16 @@ describe("TransactionService", () => {
             mockTransactionClient.transaction.create.mockResolvedValue(
                 expectedTransaction
             );
-            mockTransactionClient.account.findUnique.mockResolvedValue(
+            mockTransactionClient.account.findFirst.mockResolvedValue(
                 mockAccount
             );
             // Mock debt find
-            (prisma.debt.findUnique as jest.Mock) = jest
-                .fn()
-                .mockResolvedValue(mockDebt);
-            // Actually we need to mock the client method since it's inside $transaction
-            // But wait, the service uses `prisma.debt.findUnique` inside the transaction callback?
-            // No, it uses `prisma.debt` which comes from the transaction client `prisma` arg.
-            // So I need to add `debt` to `mockTransactionClient`.
             mockTransactionClient["debt"] = {
-                findUnique: jest.fn().mockResolvedValue(mockDebt),
+                findFirst: jest.fn().mockResolvedValue(mockDebt),
                 update: jest.fn(),
             };
 
-            await service.create(dto);
+            await service.create("user-1", dto);
 
             expect(mockTransactionClient.account.update).toHaveBeenCalledWith({
                 where: { id: "acc-1" },
@@ -173,18 +166,18 @@ describe("TransactionService", () => {
                 result
             );
 
-            expect(await service.findAll()).toBe(result);
+            expect(await service.findAll("user-1")).toBe(result);
         });
     });
 
     describe("findOne", () => {
         it("should return a single transaction", async () => {
             const result = { id: "1" };
-            (prisma.transaction.findUnique as jest.Mock).mockResolvedValue(
+            (prisma.transaction.findFirst as jest.Mock).mockResolvedValue(
                 result
             );
 
-            expect(await service.findOne("1")).toBe(result);
+            expect(await service.findOne("user-1", "1")).toBe(result);
         });
     });
 
@@ -207,7 +200,7 @@ describe("TransactionService", () => {
             };
 
             // 1. Get Old
-            mockTransactionClient.transaction.findUnique
+            mockTransactionClient.transaction.findFirst
                 .mockResolvedValueOnce(oldTransaction) // For step 1
                 .mockResolvedValueOnce({ ...oldTransaction, amount: 200 }); // For return? (mock implementation might differ in reality but logic flow matters)
 
@@ -215,15 +208,17 @@ describe("TransactionService", () => {
             // 3. New logic: New Income 200 -> Balance 50 + 200 = 250.
 
             // For findTargetAccount (Step 5)
-            mockTransactionClient.account.findUnique.mockResolvedValue({
+            mockTransactionClient.account.findFirst.mockResolvedValue({
                 id: "acc-1",
                 balance: 50,
             }); // Balance after revert
 
-            await service.update(id, dto);
+            // Update call needs mockTransactionClient methods mocked
+            mockTransactionClient.transaction.update = jest.fn();
+
+            await service.update("user-1", id, dto);
 
             // Verify Revert
-
             expect(
                 mockTransactionClient.account.update
             ).toHaveBeenNthCalledWith(1, {
@@ -252,11 +247,11 @@ describe("TransactionService", () => {
                 account: { balance: 150 }, // When fetched, balance includes the transaction effect
             };
 
-            mockTransactionClient.transaction.findUnique.mockResolvedValue(
+            mockTransactionClient.transaction.findFirst.mockResolvedValue(
                 transaction
             );
 
-            await service.remove(id);
+            await service.remove("user-1", id);
 
             // Logic in service:
             // balanceChange = 100 (Income)

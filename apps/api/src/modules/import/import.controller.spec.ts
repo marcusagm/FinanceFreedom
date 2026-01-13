@@ -72,6 +72,8 @@ describe("ImportController", () => {
         jest.clearAllMocks();
     });
 
+    const mockRequest = { user: { userId: "1" } };
+
     describe("uploadFile", () => {
         it("should upload and parse file", async () => {
             const file = { buffer: Buffer.from("OFX CONTENT") };
@@ -84,26 +86,35 @@ describe("ImportController", () => {
                 uniqueTransactions
             );
 
-            const result = await controller.uploadFile(file, accountId);
+            const result = await controller.uploadFile(
+                mockRequest,
+                file,
+                accountId
+            );
 
             expect(result).toEqual(uniqueTransactions);
             expect(ofxParser.parse).toHaveBeenCalledWith(file.buffer);
             expect(transactions[0]).toHaveProperty("accountId", accountId);
             expect(smartMerger.filterDuplicates).toHaveBeenCalledWith(
+                "1",
                 accountId,
                 transactions
             );
         });
 
         it("should throw error if file missing", async () => {
-            await expect(controller.uploadFile(null, "acc1")).rejects.toThrow(
-                BadRequestException
-            );
+            await expect(
+                controller.uploadFile(mockRequest, null, "acc1")
+            ).rejects.toThrow(BadRequestException);
         });
 
         it("should throw error if accountId missing", async () => {
             await expect(
-                controller.uploadFile({ buffer: Buffer.from("") }, null as any)
+                controller.uploadFile(
+                    mockRequest,
+                    { buffer: Buffer.from("") },
+                    null as any
+                )
             ).rejects.toThrow(BadRequestException);
         });
     });
@@ -113,18 +124,21 @@ describe("ImportController", () => {
             const body = [{ description: "T1" }] as any;
             mockTransactionService.create.mockResolvedValue({ id: "t1" });
 
-            const result = await controller.confirmImport(body);
+            const result = await controller.confirmImport(mockRequest, body);
 
             expect(result.imported).toBe(1);
             expect(result.failed).toBe(0);
-            expect(transactionService.create).toHaveBeenCalledWith(body[0]);
+            expect(transactionService.create).toHaveBeenCalledWith(
+                "1",
+                body[0]
+            );
         });
 
         it("should handle creation errors", async () => {
             const body = [{ description: "T1" }] as any;
             mockTransactionService.create.mockRejectedValue(new Error("Fail"));
 
-            const result = await controller.confirmImport(body);
+            const result = await controller.confirmImport(mockRequest, body);
 
             expect(result.imported).toBe(0);
             expect(result.failed).toBe(1);
@@ -139,7 +153,7 @@ describe("ImportController", () => {
                 mockPrisma.emailCredential.findMany as jest.Mock
             ).mockResolvedValue([config]);
 
-            const result = await controller.getImapConfigs("acc1");
+            const result = await controller.getImapConfigs(mockRequest, "acc1");
 
             expect(result).toEqual([
                 {
@@ -154,14 +168,14 @@ describe("ImportController", () => {
             (
                 mockPrisma.emailCredential.findMany as jest.Mock
             ).mockResolvedValue([]);
-            const result = await controller.getImapConfigs("acc1");
+            const result = await controller.getImapConfigs(mockRequest, "acc1");
             expect(result).toEqual([]);
         });
 
         it("should throw if no accountId", async () => {
-            await expect(controller.getImapConfigs("")).rejects.toThrow(
-                BadRequestException
-            );
+            await expect(
+                controller.getImapConfigs(mockRequest, "")
+            ).rejects.toThrow(BadRequestException);
         });
     });
 
@@ -181,7 +195,7 @@ describe("ImportController", () => {
                 id: "1",
             });
 
-            await controller.saveImapConfig(body);
+            await controller.saveImapConfig(mockRequest, body);
 
             expect(mockPrisma.emailCredential.create).toHaveBeenCalledWith({
                 data: expect.objectContaining({
@@ -201,10 +215,10 @@ describe("ImportController", () => {
             };
             const existing = { id: "1", password: "old" };
             (
-                mockPrisma.emailCredential.findUnique as jest.Mock
+                mockPrisma.emailCredential.findFirst as jest.Mock
             ).mockResolvedValue(existing);
 
-            await controller.saveImapConfig(body);
+            await controller.saveImapConfig(mockRequest, body);
 
             expect(mockPrisma.emailCredential.update).toHaveBeenCalledWith({
                 where: { id: "1" },
@@ -218,7 +232,7 @@ describe("ImportController", () => {
             const body = { accountId: "acc1", password: "p" };
             mockImapService.testConnection.mockResolvedValue({ success: true });
 
-            await controller.testImapConfig(body);
+            await controller.testImapConfig(mockRequest, body);
 
             expect(imapService.testConnection).toHaveBeenCalledWith(
                 expect.objectContaining({ password: "p" })
@@ -228,11 +242,11 @@ describe("ImportController", () => {
         it("should use saved password if not provided", async () => {
             const body = { accountId: "acc1", id: "1" };
             (
-                mockPrisma.emailCredential.findUnique as jest.Mock
+                mockPrisma.emailCredential.findFirst as jest.Mock
             ).mockResolvedValue({ password: "saved" });
             mockImapService.testConnection.mockResolvedValue({ success: true });
 
-            await controller.testImapConfig(body);
+            await controller.testImapConfig(mockRequest, body);
 
             expect(imapService.testConnection).toHaveBeenCalledWith(
                 expect.objectContaining({ password: "saved" })
@@ -251,7 +265,7 @@ describe("ImportController", () => {
             ).mockResolvedValue([{ id: "1" }]);
             mockImportService.syncAccount.mockResolvedValue(1);
 
-            const result = await controller.syncNow("acc1");
+            const result = await controller.syncNow(mockRequest, "acc1");
 
             expect(result.imported).toBe(1);
             expect(mockImportService.syncAccount).toHaveBeenCalled();

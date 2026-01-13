@@ -26,12 +26,14 @@ describe("IncomeService", () => {
         incomeSource: {
             create: jest.fn(),
             findMany: jest.fn(),
+            findFirstOrThrow: jest.fn(),
             update: jest.fn(),
             delete: jest.fn(),
         },
         workUnit: {
             create: jest.fn(),
             findMany: jest.fn(),
+            findFirstOrThrow: jest.fn(),
             update: jest.fn(),
             delete: jest.fn(),
         },
@@ -57,10 +59,10 @@ describe("IncomeService", () => {
         it("should create an income source", async () => {
             prismaMock.incomeSource.create.mockResolvedValue(mockIncomeSource);
             const dto = { name: "Job", amount: 5000, payDay: 5 };
-            const result = await service.createIncomeSource(dto);
+            const result = await service.createIncomeSource("user-1", dto);
             expect(result).toEqual(mockIncomeSource);
             expect(prisma.incomeSource.create).toHaveBeenCalledWith({
-                data: dto,
+                data: { ...dto, userId: "user-1" },
             });
         });
     });
@@ -70,7 +72,7 @@ describe("IncomeService", () => {
             prismaMock.incomeSource.findMany.mockResolvedValue([
                 mockIncomeSource,
             ]);
-            const result = await service.findAllIncomeSources();
+            const result = await service.findAllIncomeSources("user-1");
             expect(result).toEqual([mockIncomeSource]);
         });
     });
@@ -82,6 +84,7 @@ describe("IncomeService", () => {
             prismaMock.incomeSource.update.mockResolvedValue(updatedSource);
 
             const result = await service.updateIncomeSource(
+                "user-1",
                 "source-1",
                 updateDto
             );
@@ -96,7 +99,10 @@ describe("IncomeService", () => {
     describe("deleteIncomeSource", () => {
         it("should delete an income source", async () => {
             prismaMock.incomeSource.delete.mockResolvedValue(mockIncomeSource);
-            const result = await service.deleteIncomeSource("source-1");
+            const result = await service.deleteIncomeSource(
+                "user-1",
+                "source-1"
+            );
             expect(result).toEqual(mockIncomeSource);
             expect(prisma.incomeSource.delete).toHaveBeenCalledWith({
                 where: { id: "source-1" },
@@ -114,16 +120,18 @@ describe("IncomeService", () => {
                 estimatedTime: 10,
                 taxRate: 10,
             };
-            const result = await service.createWorkUnit(dto);
+            const result = await service.createWorkUnit("user-1", dto);
             expect(result).toEqual(mockWorkUnit);
-            expect(prisma.workUnit.create).toHaveBeenCalledWith({ data: dto });
+            expect(prisma.workUnit.create).toHaveBeenCalledWith({
+                data: { ...dto, userId: "user-1" },
+            });
         });
     });
 
     describe("findAllWorkUnits", () => {
         it("should return all work units", async () => {
             prismaMock.workUnit.findMany.mockResolvedValue([mockWorkUnit]);
-            const result = await service.findAllWorkUnits();
+            const result = await service.findAllWorkUnits("user-1");
             expect(result).toEqual([mockWorkUnit]);
         });
     });
@@ -134,7 +142,11 @@ describe("IncomeService", () => {
             const updatedUnit = { ...mockWorkUnit, defaultPrice: 600 };
             prismaMock.workUnit.update.mockResolvedValue(updatedUnit);
 
-            const result = await service.updateWorkUnit("unit-1", updateDto);
+            const result = await service.updateWorkUnit(
+                "user-1",
+                "unit-1",
+                updateDto
+            );
             expect(result).toEqual(updatedUnit);
             expect(prisma.workUnit.update).toHaveBeenCalledWith({
                 where: { id: "unit-1" },
@@ -146,7 +158,7 @@ describe("IncomeService", () => {
     describe("deleteWorkUnit", () => {
         it("should delete a work unit", async () => {
             prismaMock.workUnit.delete.mockResolvedValue(mockWorkUnit);
-            const result = await service.deleteWorkUnit("unit-1");
+            const result = await service.deleteWorkUnit("user-1", "unit-1");
             expect(result).toEqual(mockWorkUnit);
             expect(prisma.workUnit.delete).toHaveBeenCalledWith({
                 where: { id: "unit-1" },

@@ -1,5 +1,5 @@
 import { cn } from "../../lib/utils";
-import { usePrivacy } from "../../contexts/PrivacyContext";
+import { usePrivacy } from "@/contexts/PrivacyContext";
 
 interface MoneyDisplayProps {
     value: number;

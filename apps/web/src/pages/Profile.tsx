@@ -131,7 +131,11 @@ export function Profile() {
                         <CardContent className="space-y-4">
                             <div className="space-y-2">
                                 <Label htmlFor="name">Nome</Label>
-                                <Input id="name" {...registerProfile("name")} />
+                                <Input
+                                    id="name"
+                                    data-testid="profile-name-input"
+                                    {...registerProfile("name")}
+                                />
                                 {profileErrors.name && (
                                     <p className="text-sm text-destructive">
                                         {profileErrors.name.message}
@@ -143,6 +147,7 @@ export function Profile() {
                                 <Input
                                     id="email"
                                     type="email"
+                                    data-testid="profile-email-input"
                                     {...registerProfile("email")}
                                 />
                                 {profileErrors.email && (
@@ -184,6 +189,7 @@ export function Profile() {
                                 <Input
                                     id="currentPassword"
                                     type="password"
+                                    data-testid="current-password-input"
                                     {...registerPassword("currentPassword")}
                                 />
                                 {passwordErrors.currentPassword && (
@@ -197,6 +203,7 @@ export function Profile() {
                                 <Input
                                     id="newPassword"
                                     type="password"
+                                    data-testid="new-password-input"
                                     {...registerPassword("newPassword")}
                                 />
                                 {passwordErrors.newPassword && (
@@ -212,6 +219,7 @@ export function Profile() {
                                 <Input
                                     id="confirmNewPassword"
                                     type="password"
+                                    data-testid="confirm-new-password-input"
                                     {...registerPassword("confirmNewPassword")}
                                 />
                                 {passwordErrors.confirmNewPassword && (

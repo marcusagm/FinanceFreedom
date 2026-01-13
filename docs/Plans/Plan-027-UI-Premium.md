@@ -24,7 +24,24 @@
     -   _Budget Overview:_ Mini-barras das top categorias.
     -   _Wealth Summary:_ Total Investido vs Dívidas.
 
-### C. Customização (Temas)
+### C. Verificação de layout premium por View
+
+-   [ ] Melhorar aparencia da tela de Login, Register, Reset Password, Forgot Password
+-   [ ] Melhorar aparencia da tela de Dashboard
+-   [ ] Melhorar aparencia da tela de Transactions
+-   [ ] Melhorar aparencia da tela de Accounts
+-   [ ] Melhorar aparencia da tela de Income
+-   [ ] Melhorar aparencia da tela de IncomeProjection
+-   [ ] Melhorar aparencia da tela de Debts
+-   [ ] Melhorar aparencia da tela de Settings
+-   [ ] Melhorar aparencia da tela de Profile
+-   [ ] Melhorar aparencia da tela de ImportPage
+-   [ ] Melhorar aparencia da tela de ImapConfigPage
+-   [ ] Melhorar aparencia da tela de Categories
+-   [ ] Melhorar aparencia da tela de Investments
+-   [ ] Melhorar aparencia da tela de Reports
+
+### D. Customização (Temas)
 
 -   [ ] **Theme Picker:** Em Settings, permitir escolher entre presets (Emerald, Violet, Corporate Blue, Sunset).
 -   [ ] **Variáveis:** Garantir que todas as cores usem variáveis CSS `hsl` dinâmicas.

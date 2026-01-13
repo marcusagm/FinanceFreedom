@@ -27,7 +27,9 @@ describe("DashboardService", () => {
                 {
                     provide: DebtService,
                     useValue: {
-                        getSortedDebts: jest.fn().mockResolvedValue([]),
+                        getSortedDebts: jest
+                            .fn()
+                            .mockResolvedValue({ debts: [] }),
                     },
                 },
             ],
@@ -90,9 +92,11 @@ describe("DashboardService", () => {
                 }
             );
 
-            (debtService.getSortedDebts as jest.Mock).mockResolvedValue([
-                { id: "1", name: "High Interest Debt", interestRate: 10 },
-            ]);
+            (debtService.getSortedDebts as jest.Mock).mockResolvedValue({
+                debts: [
+                    { id: "1", name: "High Interest Debt", interestRate: 10 },
+                ],
+            });
 
             const result = await service.getSummary();
 
@@ -117,7 +121,9 @@ describe("DashboardService", () => {
                 }
             );
 
-            (debtService.getSortedDebts as jest.Mock).mockResolvedValue([]);
+            (debtService.getSortedDebts as jest.Mock).mockResolvedValue({
+                debts: [],
+            });
 
             const result = await service.getSummary();
 

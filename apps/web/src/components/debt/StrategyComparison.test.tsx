@@ -6,6 +6,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { StrategyComparison } from "./StrategyComparison";
 import { api } from "../../lib/api";
+import { PrivacyProvider } from "@/contexts/PrivacyContext";
 
 // Mock api
 vi.mock("../../lib/api", () => ({
@@ -61,7 +62,11 @@ describe("StrategyComparison", () => {
     });
 
     it("renders and loads snowball strategy by default", async () => {
-        render(<StrategyComparison />);
+        render(
+            <PrivacyProvider>
+                <StrategyComparison />
+            </PrivacyProvider>
+        );
         expect(
             screen.getByText("❄️ Bola de Neve (Psicológico)")
         ).toBeInTheDocument();
@@ -73,7 +78,11 @@ describe("StrategyComparison", () => {
     });
 
     it("persists monthly extra value in localStorage", async () => {
-        render(<StrategyComparison />);
+        render(
+            <PrivacyProvider>
+                <StrategyComparison />
+            </PrivacyProvider>
+        );
 
         const input = screen.getByLabelText("Valor Extra Mensal (Opcional)");
         fireEvent.change(input, { target: { value: "500" } });
@@ -87,7 +96,11 @@ describe("StrategyComparison", () => {
 
     it("loads monthly extra value from localStorage", async () => {
         localStorage.setItem("debt_strategy_extra_value", "300");
-        render(<StrategyComparison />);
+        render(
+            <PrivacyProvider>
+                <StrategyComparison />
+            </PrivacyProvider>
+        );
 
         const input = screen.getByLabelText(
             "Valor Extra Mensal (Opcional)"
@@ -102,7 +115,11 @@ describe("StrategyComparison", () => {
                 projection: { monthsToPayoff: 10, totalInterest: 500 },
             },
         });
-        render(<StrategyComparison />);
+        render(
+            <PrivacyProvider>
+                <StrategyComparison />
+            </PrivacyProvider>
+        );
 
         await waitFor(() => {
             expect(screen.getByText("Debt 1")).toBeInTheDocument();

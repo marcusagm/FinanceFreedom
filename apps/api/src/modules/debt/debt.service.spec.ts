@@ -1,15 +1,16 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
 import { DebtService } from "./debt.service";
 import { PrismaService } from "../../prisma/prisma.service";
 
 const mockPrismaService = {
     debt: {
-        create: vi.fn(),
-        findMany: vi.fn(),
-        findUnique: vi.fn(),
-        update: vi.fn(),
-        delete: vi.fn(),
+        create: jest.fn(),
+        findMany: jest.fn(),
+        findUnique: jest.fn(),
+        findFirst: jest.fn(),
+        findFirstOrThrow: jest.fn(),
+        update: jest.fn(),
+        delete: jest.fn(),
     },
 };
 
@@ -33,7 +34,7 @@ describe("DebtService", () => {
     });
 
     afterEach(() => {
-        vi.clearAllMocks();
+        jest.clearAllMocks();
     });
 
     it("should be defined", () => {
@@ -60,8 +61,10 @@ describe("DebtService", () => {
             // @ts-ignore
             prisma.debt.create.mockResolvedValue(result);
 
-            expect(await service.create(dto)).toEqual(result);
-            expect(prisma.debt.create).toHaveBeenCalledWith({ data: dto });
+            expect(await service.create("1", dto)).toEqual(result);
+            expect(prisma.debt.create).toHaveBeenCalledWith({
+                data: { ...dto, userId: "1" },
+            });
         });
     });
 
@@ -83,7 +86,7 @@ describe("DebtService", () => {
             // @ts-ignore
             prisma.debt.findMany.mockResolvedValue(result);
 
-            expect(await service.findAll()).toEqual(result);
+            expect(await service.findAll("1")).toEqual(result);
             expect(prisma.debt.findMany).toHaveBeenCalled();
         });
     });
@@ -102,11 +105,11 @@ describe("DebtService", () => {
                 updatedAt: new Date(),
             };
             // @ts-ignore
-            prisma.debt.findUnique.mockResolvedValue(result);
+            prisma.debt.findFirst.mockResolvedValue(result);
 
-            expect(await service.findOne("1")).toEqual(result);
-            expect(prisma.debt.findUnique).toHaveBeenCalledWith({
-                where: { id: "1" },
+            expect(await service.findOne("1", "1")).toEqual(result);
+            expect(prisma.debt.findFirst).toHaveBeenCalledWith({
+                where: { id: "1", userId: "1" },
             });
         });
     });
@@ -135,7 +138,7 @@ describe("DebtService", () => {
             // @ts-ignore
             prisma.debt.update.mockResolvedValue(result);
 
-            expect(await service.update("1", dto)).toEqual(result);
+            expect(await service.update("1", "1", dto)).toEqual(result);
             expect(prisma.debt.update).toHaveBeenCalledWith({
                 where: { id: "1" },
                 data: dto,
@@ -159,7 +162,7 @@ describe("DebtService", () => {
             // @ts-ignore
             prisma.debt.delete.mockResolvedValue(result);
 
-            expect(await service.remove("1")).toEqual(result);
+            expect(await service.remove("1", "1")).toEqual(result);
             expect(prisma.debt.delete).toHaveBeenCalledWith({
                 where: { id: "1" },
             });
@@ -178,7 +181,7 @@ describe("DebtService", () => {
             // @ts-ignore
             prisma.debt.findMany.mockResolvedValue(debts);
 
-            const result = await service.getSortedDebts("SNOWBALL", 0);
+            const result = await service.getSortedDebts("1", "SNOWBALL", 0);
 
             expect(result).toHaveProperty("debts");
             expect(result).toHaveProperty("projection");

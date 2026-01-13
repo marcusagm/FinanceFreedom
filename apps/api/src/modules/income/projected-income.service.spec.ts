@@ -9,12 +9,18 @@ const mockPrismaService = {
         update: jest.fn(),
         delete: jest.fn(),
         findUnique: jest.fn(),
+        findFirst: jest.fn(),
+        findFirstOrThrow: jest.fn(),
     },
     transaction: {
         create: jest.fn(),
+        delete: jest.fn(),
     },
     account: {
         findMany: jest.fn(),
+    },
+    workUnit: {
+        findFirst: jest.fn(),
     },
 };
 
@@ -49,9 +55,9 @@ describe("ProjectedIncomeService", () => {
                 amount: 100,
                 status: "PLANNED",
             };
-            await service.create(dto as any);
+            await service.create("user-1", dto as any);
             expect(prisma.projectedIncome.create).toHaveBeenCalledWith({
-                data: dto,
+                data: { ...dto, user: { connect: { id: "user-1" } } },
                 include: { workUnit: true },
             });
         });
@@ -61,9 +67,10 @@ describe("ProjectedIncomeService", () => {
         it("should return projected incomes for a range", async () => {
             const start = new Date("2024-01-01");
             const end = new Date("2024-01-31");
-            await service.findAll(start, end);
+            await service.findAll("user-1", start, end);
             expect(prisma.projectedIncome.findMany).toHaveBeenCalledWith({
                 where: {
+                    userId: "user-1",
                     date: {
                         gte: start,
                         lte: end,
@@ -76,7 +83,7 @@ describe("ProjectedIncomeService", () => {
     });
 
     it("should remove a projected income", async () => {
-        await service.remove("1");
+        await service.remove("user-1", "1");
         expect(prisma.projectedIncome.delete).toHaveBeenCalledWith({
             where: { id: "1" },
         });
@@ -130,8 +137,8 @@ describe("update", () => {
         const mockAccount = { id: "acc1" };
         const mockTransaction = { id: "tx1" };
 
-        // Mock findUnique (current state)
-        prisma.projectedIncome.findUnique = jest
+        // Mock findFirst (current state)
+        prisma.projectedIncome.findFirst = jest
             .fn()
             .mockResolvedValue(mockProjectedIncome);
 
@@ -144,7 +151,7 @@ describe("update", () => {
             .fn()
             .mockResolvedValue(mockTransaction);
 
-        await service.update("1", { status: "PAID" });
+        await service.update("user-1", "1", { status: "PAID" });
 
         // Verify creation
         expect(prisma.transaction.create).toHaveBeenCalled();
@@ -168,7 +175,8 @@ describe("update", () => {
             transactionId: "tx1", // Has existing transaction
         };
 
-        prisma.projectedIncome.findUnique = jest
+        // Mock findFirst instead of findUnique
+        prisma.projectedIncome.findFirst = jest
             .fn()
             .mockResolvedValue(mockProjectedIncome);
         prisma.projectedIncome.update = jest
@@ -176,7 +184,7 @@ describe("update", () => {
             .mockResolvedValue(mockProjectedIncome);
         prisma.transaction.delete = jest.fn().mockResolvedValue({});
 
-        await service.update("1", { status: "PLANNED" });
+        await service.update("user-1", "1", { status: "PLANNED" });
 
         expect(prisma.transaction.delete).toHaveBeenCalledWith({
             where: { id: "tx1" },
@@ -190,14 +198,15 @@ describe("update", () => {
             transactionId: "tx1",
         };
 
-        prisma.projectedIncome.findUnique = jest
+        // Mock findFirst
+        prisma.projectedIncome.findFirst = jest
             .fn()
             .mockResolvedValue(mockProjectedIncome);
         prisma.projectedIncome.update = jest
             .fn()
             .mockResolvedValue(mockProjectedIncome);
 
-        await service.update("1", { status: "PAID" });
+        await service.update("user-1", "1", { status: "PAID" });
 
         expect(prisma.transaction.create).not.toHaveBeenCalled();
     });

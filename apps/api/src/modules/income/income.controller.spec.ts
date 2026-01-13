@@ -48,16 +48,18 @@ describe("IncomeController", () => {
         expect(controller).toBeDefined();
     });
 
+    const mockRequest = { user: { userId: "1" } };
+
     describe("createSource", () => {
         it("should create source", async () => {
             mockIncomeService.createIncomeSource.mockResolvedValue(
                 mockIncomeSource
             );
             const dto = { name: "Job", amount: 5000, payDay: 5 };
-            expect(await controller.createSource(dto)).toEqual(
+            expect(await controller.createSource(mockRequest, dto)).toEqual(
                 mockIncomeSource
             );
-            expect(service.createIncomeSource).toHaveBeenCalledWith(dto);
+            expect(service.createIncomeSource).toHaveBeenCalledWith("1", dto);
         });
     });
 
@@ -66,9 +68,10 @@ describe("IncomeController", () => {
             mockIncomeService.findAllIncomeSources.mockResolvedValue([
                 mockIncomeSource,
             ]);
-            expect(await controller.findAllSources()).toEqual([
+            expect(await controller.findAllSources(mockRequest)).toEqual([
                 mockIncomeSource,
             ]);
+            expect(service.findAllIncomeSources).toHaveBeenCalledWith("1");
         });
     });
 
@@ -79,11 +82,14 @@ describe("IncomeController", () => {
                 ...mockIncomeSource,
                 ...dto,
             });
-            expect(await controller.updateSource("source-1", dto)).toEqual({
+            expect(
+                await controller.updateSource(mockRequest, "source-1", dto)
+            ).toEqual({
                 ...mockIncomeSource,
                 ...dto,
             });
             expect(service.updateIncomeSource).toHaveBeenCalledWith(
+                "1",
                 "source-1",
                 dto
             );
@@ -95,10 +101,13 @@ describe("IncomeController", () => {
             mockIncomeService.deleteIncomeSource.mockResolvedValue(
                 mockIncomeSource
             );
-            expect(await controller.deleteSource("source-1")).toEqual(
-                mockIncomeSource
+            expect(
+                await controller.deleteSource(mockRequest, "source-1")
+            ).toEqual(mockIncomeSource);
+            expect(service.deleteIncomeSource).toHaveBeenCalledWith(
+                "1",
+                "source-1"
             );
-            expect(service.deleteIncomeSource).toHaveBeenCalledWith("source-1");
         });
     });
 
@@ -111,8 +120,10 @@ describe("IncomeController", () => {
                 estimatedTime: 10,
                 taxRate: 10,
             };
-            expect(await controller.createWorkUnit(dto)).toEqual(mockWorkUnit);
-            expect(service.createWorkUnit).toHaveBeenCalledWith(dto);
+            expect(await controller.createWorkUnit(mockRequest, dto)).toEqual(
+                mockWorkUnit
+            );
+            expect(service.createWorkUnit).toHaveBeenCalledWith("1", dto);
         });
     });
 
@@ -121,7 +132,10 @@ describe("IncomeController", () => {
             mockIncomeService.findAllWorkUnits.mockResolvedValue([
                 mockWorkUnit,
             ]);
-            expect(await controller.findAllWorkUnits()).toEqual([mockWorkUnit]);
+            expect(await controller.findAllWorkUnits(mockRequest)).toEqual([
+                mockWorkUnit,
+            ]);
+            expect(service.findAllWorkUnits).toHaveBeenCalledWith("1");
         });
     });
 
@@ -132,21 +146,27 @@ describe("IncomeController", () => {
                 ...mockWorkUnit,
                 ...dto,
             });
-            expect(await controller.updateWorkUnit("unit-1", dto)).toEqual({
+            expect(
+                await controller.updateWorkUnit(mockRequest, "unit-1", dto)
+            ).toEqual({
                 ...mockWorkUnit,
                 ...dto,
             });
-            expect(service.updateWorkUnit).toHaveBeenCalledWith("unit-1", dto);
+            expect(service.updateWorkUnit).toHaveBeenCalledWith(
+                "1",
+                "unit-1",
+                dto
+            );
         });
     });
 
     describe("deleteWorkUnit", () => {
         it("should delete work unit", async () => {
             mockIncomeService.deleteWorkUnit.mockResolvedValue(mockWorkUnit);
-            expect(await controller.deleteWorkUnit("unit-1")).toEqual(
-                mockWorkUnit
-            );
-            expect(service.deleteWorkUnit).toHaveBeenCalledWith("unit-1");
+            expect(
+                await controller.deleteWorkUnit(mockRequest, "unit-1")
+            ).toEqual(mockWorkUnit);
+            expect(service.deleteWorkUnit).toHaveBeenCalledWith("1", "unit-1");
         });
     });
 });

@@ -7,7 +7,7 @@ import {
     DialogHeader,
     DialogTitle,
     DialogDescription,
-} from "../ui/Dialog";
+} from "@/components/ui/Dialog";
 import { CheckCircle, AlertCircle } from "lucide-react";
 
 interface ImapConfigFormData {

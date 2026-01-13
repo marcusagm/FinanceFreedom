@@ -34,6 +34,8 @@ describe("ProjectedIncomeController", () => {
         expect(controller).toBeDefined();
     });
 
+    const mockRequest = { user: { userId: "1" } };
+
     describe("create", () => {
         it("should create a projection", async () => {
             const dto = {
@@ -41,15 +43,38 @@ describe("ProjectedIncomeController", () => {
                 date: "2024-01-01",
                 amount: 100,
             };
-            await controller.create(dto);
-            expect(service.create).toHaveBeenCalled();
+            await controller.create(mockRequest, dto);
+            expect(service.create).toHaveBeenCalledWith("1", {
+                workUnit: { connect: { id: "1" } },
+                date: new Date("2024-01-01"),
+                amount: 100,
+                status: "PLANNED",
+            });
         });
     });
 
     describe("findAll", () => {
         it("should find all by month", async () => {
-            await controller.findAll("2024-01");
-            expect(service.findAll).toHaveBeenCalled();
+            await controller.findAll(mockRequest, "2024-01");
+
+            // Replicate controller date logic
+            const date = new Date("2024-01-01T00:00:00");
+            const startOfMonth = new Date(
+                date.getFullYear(),
+                date.getMonth(),
+                1
+            );
+            const endOfMonth = new Date(
+                date.getFullYear(),
+                date.getMonth() + 1,
+                0
+            );
+
+            expect(service.findAll).toHaveBeenCalledWith(
+                "1",
+                startOfMonth,
+                endOfMonth
+            );
         });
     });
 });
