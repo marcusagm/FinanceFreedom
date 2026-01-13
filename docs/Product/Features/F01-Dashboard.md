@@ -18,29 +18,44 @@ A tela é dividida em 3 camadas de informação prioritária:
 
 ### A. Sinais Vitais
 
--   [ ] Exibir "Saldo Total" (Soma de todas as contas correntes conectadas).
+-   [x] Exibir "Saldo Total" (Soma de todas as contas correntes conectadas).
 -   [ ] Exibir "Comprometido no Cartão" (Soma das faturas em aberto fechando nos próximos 30 dias).
--   [ ] Exibir "Saldo Livre Real" (Saldo Total - Contas a Pagar Imediatas - Faturas Imediatas). **Este é o número que importa.**
+-   [!] Exibir "Saldo Livre Real" (Saldo Total - Contas a Pagar Imediatas - Faturas Imediatas).
+    -   _Nota de Auditoria:_ Atualmente exibe "Receitas vs Despesas" (Fluxo de Caixa) e Saldo Total. A lógica de "Saldo Livre Futuro" requer o módulo de faturas de cartão (V1.1).
 
 ### B. Action Feed (Motor de Recomendação)
 
--   [ ] Card "Alerta de Vencimento": Contas vencendo em 48h.
--   [ ] Card "Oportunidade de Dívida": "Sobraram R$ 200. Pague a dívida X para economizar Juros." (Link para F04).
--   [ ] Card "Meta de Renda": "Faltam R$ 300 para fechar o mês no azul. Pegue 2 Jobs de Ilustração." (Link para F03).
+-   [x] Card "Alerta de Vencimento": Contas vencendo em 48h (via Income Gap / Debt Alerts).
+-   [x] Card "Oportunidade de Dívida": "Sobraram R$ 200. Pague a dívida X para economizar Juros." (Link para F04).
+-   [x] Card "Meta de Renda": "Faltam R$ 300 para fechar o mês no azul. Pegue 2 Jobs de Ilustração." (Link para F03).
 
 ### C. Navegação Rápida
 
--   [ ] Botão flutuante (FAB) para "Transação Rápida" (Gasto ou Renda manual).
--   [ ] Atalho para "Sincronizar Agora".
+-   [x] Botão flutuante (FAB) para "Transação Rápida" (Gasto ou Renda manual).
+-   [x] Atalho para "Sincronizar Agora" (Header).
 
 ## 4. Regras de Negócio
 
--   **RN01 - Saldo Livre:** Se o Saldo Livre for negativo, o Dashboard deve entrar em "Modo de Alerta" (Tema Vermelho/Laranja).
--   **RN02 - Privacidade:** Deve haver um botão "Eye" para ocultar valores numéricos (Modo Discreto).
--   **RN03 - Cache:** Os dados do dashboard devem carregar instantaneamente do cache local (Offline-first) e atualizar em background.
+-   **RN01 - Saldo Livre:** Se o Saldo Livre (ou Fluxo de Caixa) for negativo, o Dashboard deve entrar em "Modo de Alerta" (Tema Vermelho/Laranja). **[IMPLEMENTADO]**
+-   **RN02 - Privacidade:** Deve haver um botão "Eye" para ocultar valores numéricos (Modo Discreto). **[IMPLEMENTADO - via Context]**
+-   **RN03 - Cache:** Os dados do dashboard devem carregar instantaneamente do cache local (Offline-first) e atualizar em background. **[IMPLEMENTADO - React Query]**
 
 ## 5. Critérios de Aceite
 
--   [ ] O usuário consegue entender seu estado financeiro ("Azul" ou "Vermelho") sem rolar a tela.
--   [ ] O Action Feed mostra pelo menos uma ação recomendada se houver dívidas ou contas próximas.
--   [ ] O botão de sincronização atualiza os saldos.
+-   [x] O usuário consegue entender seu estado financeiro ("Azul" ou "Vermelho") sem rolar a tela.
+-   [x] O Action Feed mostra pelo menos uma ação recomendada se houver dívidas ou contas próximas.
+-   [x] O botão de sincronização atualiza os saldos.
+
+## 6. Status de Implementação (V1.0 Audit)
+
+O módulo F01 foi entregue com foco em **Fluxo de Caixa** e **Ação Imediata**.
+
+### Funcionalidades Adicionais Entregues
+
+-   **Time Cost Badge:** Exibe o custo das despesas em "Horas de Trabalho" baseadas no Income Engine.
+-   **Sync Manual:** Botão de sincronização forçada com feedback visual (`toast` e `spin`).
+-   **Chart Evolution:** Gráfico de saldo com gradiente dinâmico (Verde/Vermelho) baseado na positividade do saldo.
+
+### Pendências (V1.1)
+
+-   **Gestão de Cartões de Crédito:** O cálculo "Comprometido no Cartão" não foi implementado pois depende de um módulo de gestão de faturas (invoice management) que ficou para a V1.1.

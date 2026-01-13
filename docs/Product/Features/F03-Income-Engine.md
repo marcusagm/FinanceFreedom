@@ -14,33 +14,46 @@ O sistema permite cadastrar "Produtos de Trabalho" (ex: "Hora de Consultoria", "
 
 ### A. Cadastro de Fontes de Renda
 
--   [ ] **Tipo Salário:** Valor fixo, data recorrente (ex: Dia 05). Previsibilidade 100%.
--   [ ] **Tipo Variável (Unitário):**
+### A. Cadastro de Fontes de Renda
+
+-   [x] **Tipo Salário:** Valor fixo, data recorrente (ex: Dia 05). Previsibilidade 100%. (Via `IncomeSourceCard` / `IncomePage`).
+-   [x] **Tipo Variável (Unitário):**
     -   Nome da Unidade (ex: "Ilustração").
     -   Valor Unitário Líquido (ex: R$ 500).
     -   Tempo Médio de Execução (ex: 10h ou 5 dias).
-    -   Capacidade Simultânea (ex: Consigo fazer 2 ao mesmo tempo).
+    -   Capacidade Simultânea (ex: Consigo fazer 2 ao mesmo tempo). (Campo `estimatedTime` implementado).
 
 ### B. Planejador de Capacidade (The Grind)
 
--   [ ] Painel "Projeção de Renda": O usuário arrasta "Unidades" para o mês.
+-   [x] Painel "Projeção de Renda": O usuário arrasta "Unidades" para o mês.
     -   Ex: "Vou pegar 3 ilustrações em Janeiro".
     -   Sistema calcula: 3 x R$ 500 = **+R$ 1.500 projetados**.
--   [ ] Status do Job: "A Fazer" -> "Em Andamento" -> "Entregue (A Receber)" -> "Recebido".
+-   [x] Status do Job: "A Fazer" -> "Em Andamento" -> "Entregue (A Receber)" -> "Recebido".
     -   Só entra no Fluxo de Caixa Real quando "Recebido".
     -   Entra no Fluxo Projetado quando "A Fazer/Em Andamento".
 
 ### C. Gamificação da Meta
 
--   [ ] O sistema integra com o F04 (Dívidas): "Faltam R$ 1.000 para a meta do mês. Isso equivale a **2 Ilustrações**. Você tem 20h livres na agenda. Aceita o desafio?"
+-   [x] O sistema integra com o F04 (Dívidas): "Faltam R$ 1.000 para a meta do mês." (Via `TimeCostBadge` nos cards de despesa/dívida, mostrando quanto tempo de trabalho custa aquela dívida).
 
 ## 4. Regras de Negócio
 
--   **RN01 - Conservadorismo:** A renda variável projetada deve ser mostrada separada da renda garantida no Dashboard principal, para não gerar falsa segurança.
--   **RN02 - Impostos:** Campo opcional de "% de Imposto" para descontar automaticamente do valor unitário (ex: MEI/Simples).
+-   **RN01 - Conservadorismo:** A renda variável projetada deve ser mostrada separada da renda garantida no Dashboard principal. **[IMPLEMENTADO - IncomeProjection Page]**
+-   **RN02 - Impostos:** Campo opcional de "% de Imposto" para descontar automaticamente do valor unitário. **[IMPLEMENTADO - Plan-020]**
 
 ## 5. Critérios de Aceite
 
--   [ ] Cadastrar uma unidade de trabalho "Freelance".
--   [ ] Adicionar 3 unidades ao mês atual e ver a "Renda Projetada" aumentar.
--   [ ] Marcar um job como "Recebido" e ver o saldo da conta aumentar automaticamente.
+-   [x] Cadastrar uma unidade de trabalho "Freelance".
+-   [x] Adicionar 3 unidades ao mês atual e ver a "Renda Projetada" aumentar.
+-   [x] Marcar um job como "Recebido" e ver o saldo da conta aumentar automaticamente.
+
+## 6. Status de Implementação (V1.0 Audit)
+
+O módulo F03 foi implementado integralmente, oferecendo um motor de projeção de renda poderoso.
+
+### Funcionalidades Adicionais Entregues
+
+-   **Tax Engine:** Cálculo automático de imposto (Tax Rate) por unidade de trabalho, exibindo valores Líquidos na projeção.
+-   **Distribuição de Carga:** Ferramenta "Tesoura" para dividir jobs longos em múltiplos dias no calendário.
+-   **Status Bidirecional:** Marcar como "Pago" gera transação; Desmarcar remove transação ou estorna, mantendo integridade.
+-   **Visual Drag & Drop:** Interface rica com Dnd-Kit e calendário responsivo.

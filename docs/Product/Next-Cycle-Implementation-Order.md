@@ -1,62 +1,61 @@
-# Ordem de Implementação - Ciclo v1.1
+# Ordem de Implementação - Ciclo V1.1 (Premium & Expansion)
 
-Este documento define o roadmap detalhado para o ciclo de refinamento pós-RC1, com planos granulares para facilitar a execução e revisão.
+Com base na auditoria final da V1.0 e nas novas requisições estratégicas, este ciclo foca em **Profissionalização (UI/Auth)** e **Expansão de Escopo (Investimentos/Orçamento)**.
 
-## Prioridades
+## Fases de Implementação
 
-1.  **Usabilidade e Execução (UX Core)**
-2.  **Gestão de Transações (Feature Completeness)**
-3.  **Refinamento de Motores (Smart Features)**
-4.  **Garantia de Qualidade (QA)**
+A ordem abaixo prioriza dependências lógicas (ex: Categorias são necessárias para Orçamento; Auth é necessário para perfis).
 
-## Roadmap Detalhado
+### Fase 1: Fundação e Segurança (Semana 1)
 
-### 1. UX e Execução
+**Objetivo:** Preparar a aplicação para o "mundo real" e criar estruturas de dados base.
 
-#### [Plano 015] Dashboard UX
+1.  **[Plan-022] Autenticação & Segurança**
 
-**Objetivo:** Implementar FAB e Botão de Sync no Dashboard.
+    -   _Feature Relacionada:_ Segurança / Multi-usuário.
+    -   _Justificativa:_ Requisito crítico para deploy e para proteger os novos dados sensíveis (Investimentos).
+    -   _Escopo:_ NextAuth.js, Login Page, Proteção de Rotas.
 
--   **Justificativa:** Acesso rápido às ações principais.
+2.  **[Plan-023] Configurações Gerais & Categorias**
+    -   _Feature Relacionada:_ Gestão de Categorias, Despesas Fixas.
+    -   _Justificativa:_ Requisito fundamental para os módulos de Orçamento e UI personalizada.
+    -   _Escopo:_ Página de Settings, CRUD Categorias (com Cores), CRUD Despesas Fixas.
 
-#### [Plano 016] Execução de Dívidas
+### Fase 2: Expansão do Motor Financeiro (Semana 2)
 
-**Objetivo:** Implementar fluxo de pagamento direto na tela de Dívidas e definição do Valor de Ataque.
+**Objetivo:** Preencher as lacunas funcionais apontadas (Dívidas, Investimentos).
 
--   **Justificativa:** Integrar o planejamento estratégica com a execução real.
+3.  **[Plan-024] Controle Avançado de Dívidas**
 
-### 2. Refinamento de Transações
+    -   _Feature Relacionada:_ Debt Engine.
+    -   _Justificativa:_ O controle atual carece de precisão sobre parcelas.
+    -   _Escopo:_ Controle de parcelas pagas/pendentes, projeção real.
 
-#### [Plano 017] Filtros de Transações
+4.  **[Plan-025] Módulo de Investimentos & Metas**
+    -   _Feature Relacionada:_ Wealth Management (Novo).
+    -   _Justificativa:_ Transforma o app de um "gerenciador de dívidas" para um "gerenciador de patrimônio".
+    -   _Escopo:_ Contas de Investimento, Metas de Economia.
 
-**Objetivo:** Implementar filtros avançados e busca na listagem de transações.
+### Fase 3: Inteligência e Gestão (Semana 3)
 
--   **Justificativa:** Essencial para análise de dados históricos.
+**Objetivo:** Transformar dados em insights e controle.
 
-#### [Plano 018] Transações Avançadas
+5.  **[Plan-026] Orçamento & Saúde Financeira**
+    -   _Feature Relacionada:_ Financial Health / Budgeting.
+    -   _Justificativa:_ O usuário precisa definir limites e saber sua nota geral.
+    -   _Escopo:_ Orçamento por Categoria, Health Score Engine (0-1000), Gráfico de Velocímetro.
 
-**Objetivo:** Implementar Split de transações e Recorrência automática.
+### Fase 4: Experiência Premium (Semana 4)
 
--   **Justificativa:** Refinamento necessário para precisão do orçamento.
+**Objetivo:** "Wow Factor" e Performance.
 
-### 3. Features Inteligentes
+6.  **[Plan-027] UI Premium & Dashboard 2.0**
 
-#### [Plano 019] Configuração Smart Import
+    -   _Feature Relacionada:_ Dashboard / UI-UX.
+    -   _Justificativa:_ A "cara" do app precisa refletir profissionalismo.
+    -   _Escopo:_ Sidebar Navigation, Novos Widgets (Futuro/Investimentos), Temas Personalizáveis.
 
-**Objetivo:** Criar gestão de múltiplas configurações IMAP com filtros e associação a contas.
-
--   **Justificativa:** Suporte a múltiplos bancos e redução de ruído (spam).
-
-#### [Plano 020] Imposto de Renda (Engine)
-
-**Objetivo:** Adicionar campo de imposto nas WorkUnits para projeção líquida.
-
--   **Justificativa:** Aumentar o realismo das projeções de renda.
-
-### 4. Garantia de Qualidade
-
-#### [Plano 021] QA e Testes E2E
-
-**Objetivo:** Configurar Playwright e implementar cenários de teste críticos.
-
--   **Justificativa:** Segurança contra regressões.
+7.  **[Plan-028] Otimização de Performance (Server-Side)**
+    -   _Feature Relacionada:_ Transaction Manager.
+    -   _Justificativa:_ Garantir escalabilidade para usuários com milhares de registros.
+    -   _Escopo:_ Server-side Filtering & Pagination em tabelas grandes.
