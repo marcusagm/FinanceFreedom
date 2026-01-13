@@ -1,33 +1,40 @@
 import {
-  IsDateString,
-  IsEnum,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+    IsDateString,
+    IsEnum,
+    IsNumber,
+    IsOptional,
+    IsString,
+} from "class-validator";
 
 export class UpdateTransactionDto {
-  @IsOptional()
-  @IsNumber()
-  amount?: number;
+    @IsOptional()
+    @IsNumber()
+    amount?: number;
 
-  @IsOptional()
-  @IsDateString()
-  date?: string;
+    @IsOptional()
+    @IsDateString()
+    date?: string;
 
-  @IsOptional()
-  @IsString()
-  description?: string;
+    @IsOptional()
+    @IsString()
+    description?: string;
 
-  @IsOptional()
-  @IsEnum(['INCOME', 'EXPENSE'])
-  type?: 'INCOME' | 'EXPENSE';
+    @IsOptional()
+    @IsEnum(["INCOME", "EXPENSE"])
+    type?: "INCOME" | "EXPENSE";
 
-  @IsOptional()
-  @IsString()
-  category?: string;
+    @IsOptional()
+    @IsString()
+    category?: string;
 
-  @IsOptional()
-  @IsString()
-  accountId?: string;
+    @IsOptional()
+    @IsString()
+    accountId?: string;
+
+    @IsOptional()
+    isRecurring?: boolean;
+
+    @IsOptional()
+    @IsNumber()
+    repeatCount?: number;
 }

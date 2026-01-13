@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "target": "es2016",
+        "lib": ["DOM", "DOM.Iterable", "ESNext"],
+        "module": "commonjs",
+        "rootDir": "./",
+        "moduleResolution": "Node16",
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "strict": true
+    },
+    "include": ["**/*.ts"]
+}

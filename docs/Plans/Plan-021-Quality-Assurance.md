@@ -6,16 +6,16 @@
 
 ### A. Setup
 
--   [ ] Instalar Playwright: `npm init playwright@latest`.
--   [ ] Configurar para ambiente local e Docker.
+-   [x] Instalar Playwright: `npm init playwright@latest`.
+-   [x] Configurar para ambiente local e Docker.
 
 ### B. Cenários de Teste
 
--   [ ] **Smoke Test:** Dashboard carrega.
--   [ ] **CRUD Transação:** Criar, Listar, Editar, Excluir em todos os cadastros.
--   [ ] **Fluxo Renda:** Arrastar item no calendário.
+-   [x] **Smoke Test:** Dashboard carrega.
+-   [x] **CRUDs Completo:** Contas, Dívidas, Transações, Renda (Fontes e Serviços).
+-   [x] **Fluxo Renda:** Arrastar item no calendário.
 
 ## 2. Critérios de Aceite
 
--   [ ] Testes rodando com `npx playwright test`.
--   [ ] Relatório de sucesso.
+-   [x] Testes rodando com `npx playwright test`.
+-   [x] Relatório de sucesso.

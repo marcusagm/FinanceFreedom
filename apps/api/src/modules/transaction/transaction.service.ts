@@ -109,7 +109,15 @@ export class TransactionService {
     }
 
     update(id: string, updateTransactionDto: UpdateTransactionDto) {
-        const { accountId, amount, type, date, ...rest } = updateTransactionDto;
+        const {
+            accountId,
+            amount,
+            type,
+            date,
+            isRecurring,
+            repeatCount,
+            ...rest
+        } = updateTransactionDto;
 
         return this.prisma.$transaction(
             async (prisma: Prisma.TransactionClient) => {

@@ -18,7 +18,7 @@ const Form = FormProvider;
 
 type FormFieldContextValue<
     TFieldValues extends FieldValues = FieldValues,
-    TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+    TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 > = {
     name: TName;
 };
@@ -29,7 +29,7 @@ const FormFieldContext = React.createContext<FormFieldContextValue>(
 
 const FormField = <
     TFieldValues extends FieldValues = FieldValues,
-    TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+    TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 >({
     ...props
 }: ControllerProps<TFieldValues, TName>) => {
@@ -113,6 +113,11 @@ const FormLabel = React.forwardRef<
 });
 FormLabel.displayName = "FormLabel";
 
+import { Slot } from "@radix-ui/react-slot";
+// ... (keep unused imports if needed or let them be)
+
+// ...
+
 const FormControl = React.forwardRef<
     HTMLDivElement,
     React.HTMLAttributes<HTMLDivElement>
@@ -121,7 +126,7 @@ const FormControl = React.forwardRef<
         useFormField();
 
     return (
-        <div
+        <Slot
             ref={ref}
             id={formItemId}
             aria-describedby={
@@ -130,7 +135,6 @@ const FormControl = React.forwardRef<
                     : `${formDescriptionId} ${formMessageId}`
             }
             aria-invalid={!!error}
-            className="w-full"
             {...props}
         />
     );
