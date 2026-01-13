@@ -43,15 +43,30 @@ Foram auditados os planos de execução do ciclo final (V1.1 Preparation / Polis
 
 Apesar da alta qualidade, os seguintes pontos devem ser observados para a V1.1 ou V2.0:
 
-1.  **Autenticação:** O sistema opera em modo "Single User / Local Trust". Não há camada de login/senha na aplicação. A segurança depende do ambiente de hospedagem (e.g., proteção via Proxy reverso).
+1.  **Melhorar a interface:** Melhorar. interface para ter a aparecencia de uma aplicação com layout premium, com mais opções de temas, e mais opções de personalização. Trabalhar com uma sidebar semelhante a dashboards premium.
     -   _Recomendação:_ Implementar Auth (NextAuth/Clerk) na V1.1 se o deploy público for desejado.
-2.  **Performance de Listas (Client-side):** A filtragem de transações ocorre no frontend. Para volumes de dados massivos (>10k transações), isso pode causar lentidão.
+2.  **Autenticação:** O sistema opera em modo "Single User / Local Trust". Não há camada de login/senha na aplicação. A segurança depende do ambiente de hospedagem (e.g., proteção via Proxy reverso).
+    -   _Recomendação:_ Implementar Auth (NextAuth/Clerk) na V1.1 se o deploy público for desejado.
+3.  **Performance de Listas (Client-side):** A filtragem de transações ocorre no frontend. Para volumes de dados massivos (>10k transações), isso pode causar lentidão.
     -   _Recomendação:_ Implementar paginação e filtragem server-side na V1.1.
-3.  **Strict Mode em Testes:** Os testes E2E utilizam seletores rigorosos (`exact: true`) para textos. Pequenas alterações de copy na UI podem quebrar testes.
+4.  **Strict Mode em Testes:** Os testes E2E utilizam seletores rigorosos (`exact: true`) para textos. Pequenas alterações de copy na UI podem quebrar testes.
     -   _Ação:_ Manter a disciplina de atualizar testes ao alterar textos da interface.
-4.  **Controle de parcelas de dívidas:** Ao cadastrar uma dívida, não é possível controlar o número de parcelas pagas e pendentes.
+5.  **Controle de parcelas de dívidas:** Ao cadastrar uma dívida, não é possível controlar o número de parcelas pagas e pendentes. Incluir parcelas futuras nos relatórios, gráficos e projeções.
     -   _Recomendação:_ Implementar controle de parcelas de dívidas na V1.1.
-5.  **Criar uma página de configurações:** Páginas de configurações gerais da aplicação permitindo customizar prâmetros como taxas de juros, custo do atraso, simuladores, horas de trabalho, dias úteis, etc.
+6.  **Criar uma página de configurações:** Páginas de configurações gerais da aplicação permitindo customizar prâmetros como taxas de juros, custo do atraso, simuladores, horas de trabalho, dias úteis, agendamento de sincronização, etc.
+    -   _Recomendação:_ Implementar configurações gerais na V1.1.
+7.  **Cadastro de categorias:** Ter um controle de categorias, onde o usuário pod casdastra, definir nome, cores, editar excluir.
+    -   _Recomendação:_ Implementar configurações gerais na V1.1.
+8.  **Orçamento por categoria:** Permitir o usuário definir orçamento por categoria , definindo porcentagens da renda ou valores, e o relatório deve mostrar o quanto foi gasto em determinada categoria.
+    -   _Recomendação:_ Implementar configurações gerais na V1.1.
+9.  **Cadastros de despesas fixas:** Ter um controle de despesas fixas, onde o usuário pod casdastra, definir nome, valor, data de vencimento, editar excluir.
+    -   _Recomendação:_ Implementar configurações gerais na V1.1.
+10. **Casdatro de conta de investimento:** Ter um controle de contas de investimento, onde o usuário pod casdastra, definir nome, tipo, saldo, rentabilidade, editar, excluir.
+    -   _Recomendação:_ Implementar configurações gerais na V1.1.
+11. **Relatório de saúde financeira:** Um relatório que definie ma pontuação de 0 a 1000 indicando o quão bem ou mal está a saúde financeiraatual do usuário , considerando gastos,ganhos, investimentos e dívidas. Deve ter um relatório detalhado mostrando a evolução da pontuação diariamente, e uma visão com no dashboard representado a pontuação atual através de um gráfico de velocímetro.
+12. **Cadastro de metas de economia:** Um CRUD completo onde o usuário pod casdastra, definir nome, valor, data de vencimento (opcional), prioridade, editar, excluir.
+    -   _Recomendação:_ Implementar configurações gerais na V1.1.
+13. **Novas informações no dashboard:** Implementar visão de transações futuras e recentes, visualização do oraçamento mensal mostrando o quanto já foi gasto, visão de total de economias e investimentos, metas de economia e investimento.
     -   _Recomendação:_ Implementar configurações gerais na V1.1.
 
 ## 6. Conclusão
