@@ -43,7 +43,11 @@ export const ImapConfigForm: React.FC<ImapConfigFormProps> = ({
     isTesting,
     isSaving,
 }) => {
-    const { register, handleSubmit, reset } = useForm<ImapConfigFormData>({
+    const {
+        register,
+        handleSubmit: hookSubmit,
+        reset,
+    } = useForm<ImapConfigFormData>({
         defaultValues: {
             host: "imap.gmail.com",
             port: 993,
@@ -119,7 +123,7 @@ export const ImapConfigForm: React.FC<ImapConfigFormProps> = ({
                     </div>
                 )}
 
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                <form onSubmit={hookSubmit(onSubmit)} className="space-y-6">
                     {/* Connection Settings */}
                     <div className="space-y-4 border-b pb-4">
                         <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
@@ -287,14 +291,18 @@ export const ImapConfigForm: React.FC<ImapConfigFormProps> = ({
                         <Button
                             type="button"
                             variant="secondary"
-                            onClick={handleSubmit(handleTestConnection)}
+                            onClick={hookSubmit(handleTestConnection)}
                             disabled={isTesting}
                         >
                             {isTesting ? "Testing..." : "Test Connection"}
                         </Button>
                         <Button
-                            type="submit"
+                            type="button"
                             variant="primary"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                hookSubmit(onSubmit)();
+                            }}
                             disabled={isSaving}
                         >
                             {isSaving ? "Saving..." : "Save Configuration"}

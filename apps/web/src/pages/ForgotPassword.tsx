@@ -19,7 +19,7 @@ import { Alert, AlertDescription } from "../components/ui/Alert";
 import { notify } from "../lib/notification";
 
 const forgotPasswordSchema = z.object({
-    email: z.string().email("Por favor, insira um e-mail válido"),
+    email: z.string().email("Please enter a valid email address"),
 });
 
 type ForgotPasswordForm = z.infer<typeof forgotPasswordSchema>;
@@ -42,10 +42,10 @@ export function ForgotPassword() {
         try {
             await api.post("/auth/forgot-password", { email: data.email });
             setIsSubmitted(true);
-            notify.success("Link de recuperação enviado");
+            notify.success("Recovery link sent");
         } catch (err: any) {
             console.error("Forgot password failed", err);
-            setSubmitError("Ocorreu um erro. Tente novamente.");
+            setSubmitError("An error occurred. Please try again.");
         }
     };
 
@@ -55,25 +55,22 @@ export function ForgotPassword() {
                 <Card className="w-full max-w-md">
                     <CardHeader className="text-center">
                         <CardTitle className="text-2xl">
-                            Verifique seu e-mail
+                            Check your email
                         </CardTitle>
                         <CardDescription>
-                            Se existe uma conta para{" "}
-                            <strong>{getValues("email")}</strong>, nós enviamos
-                            um link de redefinição de senha.
+                            If an account exists for{" "}
+                            <strong>{getValues("email")}</strong>, we have sent
+                            a password reset link.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="text-center space-y-4">
                         <p className="text-sm text-muted-foreground">
-                            (Verifique sua caixa de entrada e também a pasta de
-                            spam)
+                            (Check your inbox and also the spam folder)
                         </p>
                     </CardContent>
                     <CardFooter className="flex justify-center">
                         <Link to="/login">
-                            <Button variant="outline">
-                                Voltar para o Login
-                            </Button>
+                            <Button variant="outline">Back to Login</Button>
                         </Link>
                     </CardFooter>
                 </Card>
@@ -85,12 +82,10 @@ export function ForgotPassword() {
         <div className="flex items-center justify-center min-h-screen bg-background p-4">
             <Card className="w-full max-w-md">
                 <CardHeader className="text-center">
-                    <CardTitle className="text-2xl">
-                        Esqueceu a Senha?
-                    </CardTitle>
+                    <CardTitle className="text-2xl">Forgot Password?</CardTitle>
                     <CardDescription>
-                        Digite seu e-mail e enviaremos um link para redefinir
-                        sua senha.
+                        Enter your email and we'll send you a link to reset your
+                        password.
                     </CardDescription>
                 </CardHeader>
                 <form onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -107,7 +102,7 @@ export function ForgotPassword() {
                             <Input
                                 id="email"
                                 type="email"
-                                placeholder="nome@exemplo.com"
+                                placeholder="name@example.com"
                                 {...register("email")}
                             />
                             {errors.email && (
@@ -123,14 +118,14 @@ export function ForgotPassword() {
                             className="w-full"
                             disabled={isSubmitting}
                         >
-                            {isSubmitting ? "Enviando..." : "Enviar Link"}
+                            {isSubmitting ? "Sending..." : "Send Link"}
                         </Button>
                         <div className="text-center text-sm">
                             <Link
                                 to="/login"
                                 className="text-primary hover:underline"
                             >
-                                Voltar para o Login
+                                Back to Login
                             </Link>
                         </div>
                     </CardFooter>

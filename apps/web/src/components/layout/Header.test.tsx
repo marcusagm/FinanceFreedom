@@ -9,6 +9,14 @@ vi.mock("../ui/ModeToggle", () => ({
     ModeToggle: () => <div data-testid="mode-toggle">ModeToggle</div>,
 }));
 
+// Mock useAuth
+vi.mock("../../contexts/AuthContext", () => ({
+    useAuth: () => ({
+        logout: vi.fn(),
+        user: { email: "test@example.com" },
+    }),
+}));
+
 describe("Header", () => {
     it("renders successfully", () => {
         render(
@@ -20,6 +28,7 @@ describe("Header", () => {
         );
         expect(screen.getByText("FinanceFreedom")).toBeInTheDocument();
         expect(screen.getByTestId("mode-toggle")).toBeInTheDocument();
+        expect(screen.getByText("test@example.com")).toBeInTheDocument();
     });
 
     it("highlights active link", () => {
@@ -32,7 +41,7 @@ describe("Header", () => {
         );
 
         // Desktop nav check
-        const accountsLink = screen.getByRole("link", { name: "Contas" });
+        const accountsLink = screen.getByRole("link", { name: "Accounts" });
         expect(accountsLink).toHaveClass("border-primary");
         expect(accountsLink).toHaveClass("text-primary");
 

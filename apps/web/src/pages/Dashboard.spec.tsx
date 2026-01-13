@@ -1,15 +1,19 @@
 import { render, screen, waitFor } from "../utils/test-utils";
-
 import Dashboard from "./Dashboard";
 import { getDashboardSummary } from "../services/dashboard.service";
+import { getHourlyRate } from "../services/simulator.service";
 import { vi, describe, it, expect, beforeEach } from "vitest";
 
-// Mock the service
+// Mock the services
 vi.mock("../services/dashboard.service", () => ({
     getDashboardSummary: vi.fn(),
 }));
 
-// Mock Recharts components because they don't play well with JSDOM
+vi.mock("../services/simulator.service", () => ({
+    getHourlyRate: vi.fn(),
+}));
+
+// Mock Recharts components
 vi.mock("recharts", () => ({
     LineChart: ({ children }: any) => (
         <svg data-testid="line-chart">{children}</svg>
@@ -26,14 +30,18 @@ vi.mock("recharts", () => ({
 describe("Dashboard", () => {
     beforeEach(() => {
         vi.clearAllMocks();
+        // Default mock for getHourlyRate to avoid crashes
+        (getHourlyRate as any).mockImplementation(() =>
+            Promise.resolve({ hourlyRate: 0 })
+        );
     });
 
     it("renders loading state initially", () => {
         (getDashboardSummary as any).mockImplementation(
             () => new Promise(() => {})
-        ); // Never resolves
+        );
         render(<Dashboard />);
-        expect(screen.getByText("Loading dashboard...")).toBeInTheDocument();
+        expect(screen.getByText("Carregando dashboard...")).toBeInTheDocument();
     });
 
     it("renders dashboard content after loading", async () => {
@@ -53,35 +61,34 @@ describe("Dashboard", () => {
                 },
             ],
         });
+        (getHourlyRate as any).mockResolvedValue({ hourlyRate: 50 });
 
         render(<Dashboard />);
 
         await waitFor(() => {
             expect(screen.getByText("Saldo Total")).toBeInTheDocument();
-            // Use regex or simpler match for currency to avoid locale issues in test env if any
-            // But we used explicit pt-BR formatting
             expect(screen.getByText(/R\$\s?1\.000,00/)).toBeInTheDocument();
             expect(screen.getByText("Receitas (Mês)")).toBeInTheDocument();
             expect(screen.getByText(/R\$\s?500,00/)).toBeInTheDocument();
             expect(screen.getByText("Despesas (Mês)")).toBeInTheDocument();
             expect(screen.getByText(/R\$\s?200,00/)).toBeInTheDocument();
-
-            // Verify items from recommendations
             expect(screen.getByText("Rec 1")).toBeInTheDocument();
         });
     });
 
     it("renders error message on failure", async () => {
-        (getDashboardSummary as any).mockRejectedValue(new Error("Failed"));
+        (getDashboardSummary as any).mockRejectedValue(
+            new Error("Failed to load dashboard data")
+        );
 
         render(<Dashboard />);
 
         await waitFor(() => {
             expect(
-                screen.getByText("Failed to load dashboard data.")
+                screen.getByText("Failed to load dashboard data")
             ).toBeInTheDocument();
             expect(
-                screen.getByRole("button", { name: "Try Again" })
+                screen.getByRole("button", { name: "Tentar Novamente" })
             ).toBeInTheDocument();
         });
     });

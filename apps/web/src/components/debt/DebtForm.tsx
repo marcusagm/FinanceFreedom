@@ -16,11 +16,11 @@ import { Modal } from "../ui/Modal";
 import { useEffect } from "react";
 
 const formSchema = z.object({
-    name: z.string().min(1, "Nome é obrigatório"),
-    totalAmount: z.number({ message: "Valor deve ser um número" }).min(0),
-    interestRate: z.number().min(0, "Juros não pode ser negativo"),
-    minimumPayment: z.number().min(0, "Pagamento mínimo não pode ser negativo"),
-    dueDate: z.number().min(1).max(31, "Dia deve ser entre 1 e 31"),
+    name: z.string().min(1, "Name is required"),
+    totalAmount: z.number({ message: "Value must be a number" }).min(0),
+    interestRate: z.number().min(0, "Interest cannot be negative"),
+    minimumPayment: z.number().min(0, "Minimum payment cannot be negative"),
+    dueDate: z.number().min(1).max(31, "Day must be between 1 and 31"),
 });
 
 export interface Debt {
@@ -91,7 +91,7 @@ export function DebtForm({
             onClose();
         } catch (error) {
             console.error("Failed to save debt", error);
-            alert("Erro ao salvar dívida.");
+            alert("Error saving debt.");
         }
     };
 
@@ -99,17 +99,17 @@ export function DebtForm({
         <Modal
             isOpen={isOpen}
             onClose={onClose}
-            title={debtToEdit ? "Editar Dívida" : "Nova Dívida"}
+            title={debtToEdit ? "Edit Debt" : "New Debt"}
             footer={
                 <>
                     <Button variant="outline" onClick={onClose}>
-                        Cancelar
+                        Cancel
                     </Button>
                     <Button
                         onClick={form.handleSubmit(handleSubmit)}
                         disabled={form.formState.isSubmitting}
                     >
-                        {form.formState.isSubmitting ? "Salvando..." : "Salvar"}
+                        {form.formState.isSubmitting ? "Saving..." : "Save"}
                     </Button>
                 </>
             }
@@ -121,10 +121,10 @@ export function DebtForm({
                         name="name"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Nome da Dívida</FormLabel>
+                                <FormLabel>Debt Name</FormLabel>
                                 <FormControl>
                                     <Input
-                                        placeholder="Ex: Nubank"
+                                        placeholder="Ex: Credit Card"
                                         {...field}
                                     />
                                 </FormControl>
@@ -141,10 +141,10 @@ export function DebtForm({
                                 field: { onChange, value, ...field },
                             }) => (
                                 <FormItem>
-                                    <FormLabel>Saldo Devedor</FormLabel>
+                                    <FormLabel>Total Balance</FormLabel>
                                     <FormControl>
                                         <Input
-                                            placeholder="R$ 0,00"
+                                            placeholder="$ 0.00"
                                             currency
                                             value={value}
                                             onValueChange={(values) =>
@@ -165,7 +165,7 @@ export function DebtForm({
                                 field: { onChange, value, ...field },
                             }) => (
                                 <FormItem>
-                                    <FormLabel>Juros Mensal (%)</FormLabel>
+                                    <FormLabel>Monthly Interest (%)</FormLabel>
                                     <FormControl>
                                         <Input
                                             type="number"
@@ -192,10 +192,10 @@ export function DebtForm({
                                 field: { onChange, value, ...field },
                             }) => (
                                 <FormItem>
-                                    <FormLabel>Pagamento Mínimo</FormLabel>
+                                    <FormLabel>Minimum Payment</FormLabel>
                                     <FormControl>
                                         <Input
-                                            placeholder="R$ 0,00"
+                                            placeholder="$ 0.00"
                                             currency
                                             value={value}
                                             onValueChange={(values) =>
@@ -216,7 +216,7 @@ export function DebtForm({
                                 field: { onChange, value, ...field },
                             }) => (
                                 <FormItem>
-                                    <FormLabel>Dia Vencimento</FormLabel>
+                                    <FormLabel>Due Day</FormLabel>
                                     <FormControl>
                                         <Input
                                             type="number"

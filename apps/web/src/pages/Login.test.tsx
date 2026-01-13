@@ -49,22 +49,22 @@ describe("Login Component", () => {
         renderComponent();
         expect(screen.getByText("Finance Freedom")).toBeInTheDocument();
         expect(screen.getByLabelText("Email")).toBeInTheDocument();
-        expect(screen.getByLabelText("Senha")).toBeInTheDocument();
+        expect(screen.getByLabelText("Password")).toBeInTheDocument();
         expect(
-            screen.getByRole("button", { name: "Entrar" })
+            screen.getByRole("button", { name: "Sign In" })
         ).toBeInTheDocument();
     });
 
     it("validates empty inputs", async () => {
         renderComponent();
-        fireEvent.click(screen.getByRole("button", { name: "Entrar" }));
+        fireEvent.click(screen.getByRole("button", { name: "Sign In" }));
 
         await waitFor(() => {
             expect(
-                screen.getByText("Por favor, insira um e-mail válido")
+                screen.getByText("Please enter a valid email")
             ).toBeInTheDocument();
             expect(
-                screen.getByText("A senha é obrigatória")
+                screen.getByText("Password is required")
             ).toBeInTheDocument();
         });
     });
@@ -81,10 +81,10 @@ describe("Login Component", () => {
         fireEvent.change(screen.getByLabelText("Email"), {
             target: { value: "test@example.com" },
         });
-        fireEvent.change(screen.getByLabelText("Senha"), {
+        fireEvent.change(screen.getByLabelText("Password"), {
             target: { value: "password" },
         });
-        fireEvent.click(screen.getByRole("button", { name: "Entrar" }));
+        fireEvent.click(screen.getByRole("button", { name: "Sign In" }));
 
         await waitFor(() => {
             expect(mockedApiPost).toHaveBeenCalledWith("/auth/login", {
@@ -105,14 +105,14 @@ describe("Login Component", () => {
         fireEvent.change(screen.getByLabelText("Email"), {
             target: { value: "test@example.com" },
         });
-        fireEvent.change(screen.getByLabelText("Senha"), {
+        fireEvent.change(screen.getByLabelText("Password"), {
             target: { value: "wrong" },
         });
-        fireEvent.click(screen.getByRole("button", { name: "Entrar" }));
+        fireEvent.click(screen.getByRole("button", { name: "Sign In" }));
 
         await waitFor(() => {
             expect(
-                screen.getByText("Credenciais inválidas. Tente novamente.")
+                screen.getByText("Invalid credentials. Please try again.")
             ).toBeInTheDocument();
         });
     });

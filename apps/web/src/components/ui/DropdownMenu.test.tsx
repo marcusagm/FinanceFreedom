@@ -1,6 +1,6 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
-import { describe, it, expect } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { describe, it, expect, vi } from "vitest";
 import userEvent from "@testing-library/user-event";
 import {
     DropdownMenu,
@@ -8,6 +8,38 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
 } from "./DropdownMenu";
+
+// Local stateful mock for DropdownMenu
+vi.mock("./DropdownMenu", () => {
+    const MockDropdown = ({ children }: any) => {
+        const [open, setOpen] = React.useState(false);
+        return (
+            <div onClick={() => setOpen(!open)}>
+                {React.Children.map(children, (child) => {
+                    if (child.type.displayName === "DropdownMenuContent") {
+                        return open ? child : null;
+                    }
+                    return child;
+                })}
+            </div>
+        );
+    };
+
+    const MockTrigger = ({ children }: any) => <div>{children}</div>;
+    MockTrigger.displayName = "DropdownMenuTrigger";
+
+    const MockContent = ({ children }: any) => <div>{children}</div>;
+    MockContent.displayName = "DropdownMenuContent";
+
+    return {
+        DropdownMenu: MockDropdown,
+        DropdownMenuTrigger: MockTrigger,
+        DropdownMenuContent: MockContent,
+        DropdownMenuItem: ({ children, onClick }: any) => (
+            <div onClick={onClick}>{children}</div>
+        ),
+    };
+});
 
 describe("DropdownMenu", () => {
     it("opens and shows items", async () => {

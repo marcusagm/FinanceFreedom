@@ -22,11 +22,11 @@ const resetPasswordSchema = z
     .object({
         newPassword: z
             .string()
-            .min(6, "A senha deve ter pelo menos 6 caracteres"),
+            .min(6, "Password must be at least 6 characters"),
         confirmPassword: z.string(),
     })
     .refine((data) => data.newPassword === data.confirmPassword, {
-        message: "As senhas não coincidem",
+        message: "Passwords do not match",
         path: ["confirmPassword"],
     });
 
@@ -48,7 +48,7 @@ export function ResetPassword() {
 
     const onSubmit = async (data: ResetPasswordForm) => {
         if (!token) {
-            setSubmitError("Token inválido ou ausente.");
+            setSubmitError("Invalid or missing token.");
             return;
         }
 
@@ -58,13 +58,13 @@ export function ResetPassword() {
                 token,
                 newPassword: data.newPassword,
             });
-            notify.success("Senha redefinida com sucesso!");
+            notify.success("Password reset successfully!");
             navigate("/login");
         } catch (err: any) {
             console.error("Reset password failed", err);
             setSubmitError(
                 err.response?.data?.message ||
-                    "Ocorreu um erro ao redefinir a senha."
+                    "An error occurred while resetting your password."
             );
         }
     };
@@ -75,17 +75,15 @@ export function ResetPassword() {
                 <Card className="w-full max-w-md">
                     <CardHeader className="text-center">
                         <CardTitle className="text-destructive">
-                            Link Inválido
+                            Invalid Link
                         </CardTitle>
                         <CardDescription>
-                            O token de redefinição de senha está ausente.
+                            The password reset token is missing.
                         </CardDescription>
                     </CardHeader>
                     <CardFooter className="flex justify-center">
                         <Link to="/forgot-password">
-                            <Button variant="outline">
-                                Solicitar novo link
-                            </Button>
+                            <Button variant="outline">Request new link</Button>
                         </Link>
                     </CardFooter>
                 </Card>
@@ -97,9 +95,9 @@ export function ResetPassword() {
         <div className="flex items-center justify-center min-h-screen bg-background p-4">
             <Card className="w-full max-w-md">
                 <CardHeader className="text-center">
-                    <CardTitle className="text-2xl">Redefinir Senha</CardTitle>
+                    <CardTitle className="text-2xl">Reset Password</CardTitle>
                     <CardDescription>
-                        Crie uma nova senha para sua conta.
+                        Create a new password for your account.
                     </CardDescription>
                 </CardHeader>
                 <form onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -112,7 +110,7 @@ export function ResetPassword() {
                             </Alert>
                         )}
                         <div className="space-y-2">
-                            <Label htmlFor="newPassword">Nova Senha</Label>
+                            <Label htmlFor="newPassword">New Password</Label>
                             <Input
                                 id="newPassword"
                                 type="password"
@@ -127,7 +125,7 @@ export function ResetPassword() {
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="confirmPassword">
-                                Confirmar Senha
+                                Confirm Password
                             </Label>
                             <Input
                                 id="confirmPassword"
@@ -148,16 +146,14 @@ export function ResetPassword() {
                             className="w-full"
                             disabled={isSubmitting}
                         >
-                            {isSubmitting
-                                ? "Redefinindo..."
-                                : "Redefinir Senha"}
+                            {isSubmitting ? "Resetting..." : "Reset Password"}
                         </Button>
                         <div className="text-center text-sm">
                             <Link
                                 to="/login"
                                 className="text-primary hover:underline"
                             >
-                                Voltar para o Login
+                                Back to Login
                             </Link>
                         </div>
                     </CardFooter>

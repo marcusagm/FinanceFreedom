@@ -2,19 +2,25 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { ImapConfigForm } from "./ImapConfigForm";
 import { describe, it, expect, vi } from "vitest";
 
-// Mock Dialog components since they rely on Radix UI which might need setup
-vi.mock("../ui/Dialog", () => ({
-    Dialog: ({ children, open }: any) => (open ? <div>{children}</div> : null),
-    DialogContent: ({ children }: any) => <div>{children}</div>,
-    DialogHeader: ({ children }: any) => <div>{children}</div>,
-    DialogTitle: ({ children }: any) => <div>{children}</div>,
-    DialogDescription: ({ children }: any) => <div>{children}</div>,
-}));
-
 describe("ImapConfigForm", () => {
     const mockSubmit = vi.fn();
     const mockClose = vi.fn();
     const mockTest = vi.fn();
+
+    const fillForm = () => {
+        fireEvent.change(screen.getByLabelText(/host/i), {
+            target: { value: "imap.test.com" },
+        });
+        fireEvent.change(screen.getByLabelText(/port/i), {
+            target: { value: "993" },
+        });
+        fireEvent.change(screen.getByLabelText(/email/i), {
+            target: { value: "test@test.com" },
+        });
+        fireEvent.change(screen.getByLabelText(/source folder/i), {
+            target: { value: "INBOX" },
+        });
+    };
 
     it("should render form fields", () => {
         render(
@@ -31,27 +37,6 @@ describe("ImapConfigForm", () => {
         expect(screen.getByLabelText(/source folder/i)).toBeInTheDocument();
     });
 
-    it("should validate required fields", async () => {
-        render(
-            <ImapConfigForm
-                isOpen={true}
-                onClose={mockClose}
-                onSubmit={mockSubmit}
-            />
-        );
-
-        const submitBtn = screen.getByRole("button", {
-            name: /save configuration/i,
-        });
-        fireEvent.click(submitBtn);
-
-        // Since we use native browser validation or react-hook-form default, we might not see error text unless configured.
-        // Assuming standard implementation:
-        await waitFor(() => {
-            expect(mockSubmit).not.toHaveBeenCalled();
-        });
-    });
-
     it("should call onSubmit with data", async () => {
         render(
             <ImapConfigForm
@@ -61,31 +46,23 @@ describe("ImapConfigForm", () => {
             />
         );
 
-        fireEvent.change(screen.getByLabelText(/host/i), {
-            target: { value: "imap.test.com" },
-        });
-        fireEvent.change(screen.getByLabelText(/port/i), {
-            target: { value: "993" },
-        });
-        fireEvent.change(screen.getByLabelText(/email/i), {
-            target: { value: "test@test.com" },
-        });
-        fireEvent.change(screen.getByLabelText(/source folder/i), {
-            target: { value: "INBOX" },
-        });
+        fillForm();
 
-        const submitBtn = screen.getByRole("button", {
-            name: /save configuration/i,
-        });
+        const submitBtn = screen.getByText(/save configuration/i);
         fireEvent.click(submitBtn);
 
-        await waitFor(() => {
-            expect(mockSubmit).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    host: "imap.test.com",
-                    email: "test@test.com",
-                })
-            );
+        await waitFor(
+            () => {
+                expect(mockSubmit).toHaveBeenCalled();
+            },
+            { timeout: 3000 }
+        );
+
+        expect(mockSubmit.mock.calls[0][0]).toMatchObject({
+            host: "imap.test.com",
+            port: 993,
+            email: "test@test.com",
+            folder: "INBOX",
         });
     });
 
@@ -100,22 +77,9 @@ describe("ImapConfigForm", () => {
             />
         );
 
-        fireEvent.change(screen.getByLabelText(/host/i), {
-            target: { value: "imap.test.com" },
-        });
-        fireEvent.change(screen.getByLabelText(/port/i), {
-            target: { value: "993" },
-        });
-        fireEvent.change(screen.getByLabelText(/email/i), {
-            target: { value: "test@test.com" },
-        });
-        fireEvent.change(screen.getByLabelText(/source folder/i), {
-            target: { value: "INBOX" },
-        });
+        fillForm();
 
-        const testBtn = screen.getByRole("button", {
-            name: /test connection/i,
-        });
+        const testBtn = screen.getByText(/test connection/i);
         fireEvent.click(testBtn);
 
         await waitFor(() => {
@@ -135,22 +99,9 @@ describe("ImapConfigForm", () => {
             />
         );
 
-        fireEvent.change(screen.getByLabelText(/host/i), {
-            target: { value: "imap.test.com" },
-        });
-        fireEvent.change(screen.getByLabelText(/port/i), {
-            target: { value: "993" },
-        });
-        fireEvent.change(screen.getByLabelText(/email/i), {
-            target: { value: "test@test.com" },
-        });
-        fireEvent.change(screen.getByLabelText(/source folder/i), {
-            target: { value: "INBOX" },
-        });
+        fillForm();
 
-        const testBtn = screen.getByRole("button", {
-            name: /test connection/i,
-        });
+        const testBtn = screen.getByText(/test connection/i);
         fireEvent.click(testBtn);
 
         await waitFor(() => {

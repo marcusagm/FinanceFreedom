@@ -21,13 +21,13 @@ import { notify } from "../lib/notification";
 
 const registerSchema = z
     .object({
-        name: z.string().min(2, "O nome deve ter pelo menos 2 caracteres"),
-        email: z.string().email("Por favor, insira um e-mail válido"),
-        password: z.string().min(6, "A senha deve ter pelo menos 6 caracteres"),
+        name: z.string().min(2, "Name must be at least 2 characters"),
+        email: z.string().email("Please enter a valid email"),
+        password: z.string().min(6, "Password must be at least 6 characters"),
         confirmPassword: z.string(),
     })
     .refine((data) => data.password === data.confirmPassword, {
-        message: "As senhas não coincidem",
+        message: "Passwords do not match",
         path: ["confirmPassword"],
     });
 
@@ -56,7 +56,7 @@ export function Register() {
                 password: data.password,
             });
 
-            notify.success("Conta criada com sucesso!");
+            notify.success("Account created successfully!");
 
             // Auto-login
             const loginRes = await api.post("/auth/login", {
@@ -76,7 +76,7 @@ export function Register() {
             console.error("Registration failed", err);
             const message =
                 err.response?.data?.message ||
-                "Falha no cadastro. Tente novamente.";
+                "Registration failed. Please try again.";
             setAuthError(Array.isArray(message) ? message.join(", ") : message);
             delete api.defaults.headers.common["Authorization"];
         }
@@ -86,10 +86,9 @@ export function Register() {
         <div className="flex items-center justify-center min-h-screen bg-background p-4">
             <Card className="w-full max-w-md">
                 <CardHeader className="text-center">
-                    <CardTitle className="text-2xl">Criar Conta</CardTitle>
+                    <CardTitle className="text-2xl">Create Account</CardTitle>
                     <CardDescription>
-                        Junte-se ao Finance Freedom para começar a gerenciar
-                        suas finanças.
+                        Join Finance Freedom to start managing your finances.
                     </CardDescription>
                 </CardHeader>
                 <form onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -100,11 +99,11 @@ export function Register() {
                             </Alert>
                         )}
                         <div className="space-y-2">
-                            <Label htmlFor="name">Nome Completo</Label>
+                            <Label htmlFor="name">Full Name</Label>
                             <Input
                                 id="name"
                                 type="text"
-                                placeholder="João Silva"
+                                placeholder="John Doe"
                                 data-testid="name-input"
                                 {...register("name")}
                             />
@@ -119,7 +118,7 @@ export function Register() {
                             <Input
                                 id="email"
                                 type="email"
-                                placeholder="nome@exemplo.com"
+                                placeholder="name@example.com"
                                 data-testid="email-input"
                                 {...register("email")}
                             />
@@ -130,7 +129,7 @@ export function Register() {
                             )}
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="password">Senha</Label>
+                            <Label htmlFor="password">Password</Label>
                             <Input
                                 id="password"
                                 type="password"
@@ -145,7 +144,7 @@ export function Register() {
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="confirmPassword">
-                                Confirmar Senha
+                                Confirm Password
                             </Label>
                             <Input
                                 id="confirmPassword"
@@ -166,15 +165,17 @@ export function Register() {
                             className="w-full"
                             disabled={isSubmitting}
                         >
-                            {isSubmitting ? "Criando conta..." : "Criar Conta"}
+                            {isSubmitting
+                                ? "Creating account..."
+                                : "Create Account"}
                         </Button>
                         <div className="text-center text-sm">
-                            Já tem uma conta?{" "}
+                            Already have an account?{" "}
                             <Link
                                 to="/login"
                                 className="text-primary hover:underline"
                             >
-                                Entrar
+                                Sign In
                             </Link>
                         </div>
                     </CardFooter>

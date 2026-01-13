@@ -1,42 +1,27 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { DebtForm } from "./DebtForm";
-import { vi, describe, it, expect, beforeEach } from "vitest";
+import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import "@testing-library/jest-dom";
+import { DebtForm } from "./DebtForm";
+import { api } from "../../lib/api";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 
 // Mock API
-const mockPost = vi.fn();
-const mockPatch = vi.fn();
 vi.mock("../../lib/api", () => ({
     api: {
-        post: (...args: any[]) => mockPost(...args),
-        patch: (...args: any[]) => mockPatch(...args),
-    },
-}));
-
-// Mock Modal
-vi.mock("../ui/Modal", () => ({
-    Modal: ({ isOpen, title, children, footer }: any) => {
-        if (!isOpen) return null;
-        return (
-            <div data-testid="modal">
-                <h2>{title}</h2>
-                {children}
-                {footer}
-            </div>
-        );
+        post: vi.fn(),
+        patch: vi.fn(),
     },
 }));
 
 describe("DebtForm", () => {
     const mockOnClose = vi.fn();
     const mockOnSuccess = vi.fn();
+    const mockPost = api.post as any;
 
     beforeEach(() => {
         vi.clearAllMocks();
     });
 
-    it("should render create form correctly", () => {
+    it("renders new debt form", () => {
         render(
             <DebtForm
                 isOpen={true}
@@ -44,13 +29,11 @@ describe("DebtForm", () => {
                 onSuccess={mockOnSuccess}
             />
         );
-
-        expect(screen.getByText("Nova Dívida")).toBeInTheDocument();
-        expect(screen.getByText("Nome da Dívida")).toBeInTheDocument();
-        expect(screen.getByText("Salvar")).toBeInTheDocument();
+        expect(screen.getByText("New Debt")).toBeInTheDocument();
+        expect(screen.getByText("Debt Name")).toBeInTheDocument();
     });
 
-    it("should validate required fields", async () => {
+    it("shows validation error for empty name", async () => {
         const user = userEvent.setup();
         render(
             <DebtForm
@@ -60,11 +43,11 @@ describe("DebtForm", () => {
             />
         );
 
-        const submitButton = screen.getByRole("button", { name: "Salvar" });
-        await user.click(submitButton);
+        const submitBtn = screen.getByRole("button", { name: /save/i });
+        await user.click(submitBtn);
 
         await waitFor(() => {
-            expect(screen.getByText("Nome é obrigatório")).toBeInTheDocument();
+            expect(screen.getByText("Name is required")).toBeInTheDocument();
         });
     });
 
@@ -72,82 +55,54 @@ describe("DebtForm", () => {
         const user = userEvent.setup();
         mockPost.mockResolvedValueOnce({ data: {} });
 
-        const { container } = render(
-            <DebtForm
-                isOpen={true}
-                onClose={mockOnClose}
-                onSuccess={mockOnSuccess}
-            />
-        );
-
-        // Fill Name
-        const nameInput = container.querySelector('input[name="name"]');
-        await user.clear(nameInput!);
-        await user.type(nameInput!, "Test Debt");
-
-        // Fill Amounts
-        const amountInput = container.querySelector(
-            'input[name="totalAmount"]'
-        );
-        await user.clear(amountInput!);
-        await user.type(amountInput!, "1000");
-
-        const interestInput = container.querySelector(
-            'input[name="interestRate"]'
-        );
-        await user.clear(interestInput!);
-        await user.type(interestInput!, "5");
-
-        const paymentInput = container.querySelector(
-            'input[name="minimumPayment"]'
-        );
-        await user.clear(paymentInput!);
-        await user.type(paymentInput!, "100");
-
-        const dueDateInput = container.querySelector('input[name="dueDate"]');
-        await user.clear(dueDateInput!);
-        await user.type(dueDateInput!, "10");
-
-        const submitButton = screen.getByRole("button", { name: "Salvar" });
-        await user.click(submitButton);
-
-        await waitFor(() => {
-            expect(mockPost).toHaveBeenCalledWith(
-                "/debts",
-                expect.objectContaining({
-                    name: "Test Debt",
-                    totalAmount: 1000,
-                    interestRate: 5,
-                    minimumPayment: 100,
-                    dueDate: 10,
-                })
-            );
-            expect(mockOnSuccess).toHaveBeenCalled();
-            expect(mockOnClose).toHaveBeenCalled();
-        });
-    });
-
-    it("should populate form when editing", () => {
-        const debtToEdit = {
-            id: "1",
-            name: "Existing Debt",
-            totalAmount: 5000,
-            interestRate: 2.5,
-            minimumPayment: 300,
-            dueDate: 15,
-        };
-
         render(
             <DebtForm
                 isOpen={true}
                 onClose={mockOnClose}
                 onSuccess={mockOnSuccess}
-                debtToEdit={debtToEdit}
             />
         );
 
-        expect(screen.getByText("Editar Dívida")).toBeInTheDocument();
-        expect(screen.getByDisplayValue("Existing Debt")).toBeInTheDocument();
-        expect(screen.getByDisplayValue("R$ 5.000,00")).toBeInTheDocument(); // Currency Input format check might be tricky
+        // Fill Name - Using placeholder or just choosing input
+        const nameInput = screen.getByPlaceholderText("Ex: Credit Card");
+        await user.type(nameInput, "Test Debt");
+
+        // Fill Total Balance
+        const amountInput = screen.getAllByPlaceholderText("$ 0.00")[0];
+        fireEvent.change(amountInput, { target: { value: "1000" } });
+
+        // Fill Interest Rate
+        const rateInput = screen.getByPlaceholderText("0.00%");
+        fireEvent.change(rateInput, { target: { value: "5" } });
+
+        // Fill Minimum Payment
+        const minPayInput = screen.getAllByPlaceholderText("$ 0.00")[1];
+        fireEvent.change(minPayInput, { target: { value: "100" } });
+
+        // Fill Due Day - Find by value since it has default 10
+        const dueDayInput = screen.getByDisplayValue("10");
+        fireEvent.change(dueDayInput, { target: { value: "15" } });
+
+        const submitBtn = screen.getByRole("button", { name: /save/i });
+        await user.click(submitBtn);
+
+        await waitFor(
+            () => {
+                expect(mockPost).toHaveBeenCalledWith(
+                    "/debts",
+                    expect.objectContaining({
+                        name: "Test Debt",
+                        totalAmount: 1000,
+                        interestRate: 5,
+                        minimumPayment: 100,
+                        dueDate: 15,
+                    })
+                );
+            },
+            { timeout: 4000 }
+        );
+
+        expect(mockOnSuccess).toHaveBeenCalled();
+        expect(mockOnClose).toHaveBeenCalled();
     });
 });

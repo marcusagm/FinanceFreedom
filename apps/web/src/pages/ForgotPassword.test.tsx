@@ -31,7 +31,7 @@ describe("ForgotPassword Component", () => {
 
     it("renders form", () => {
         renderComponent();
-        expect(screen.getByText("Esqueceu a Senha?")).toBeInTheDocument();
+        expect(screen.getByText("Forgot Password?")).toBeInTheDocument();
         expect(screen.getByLabelText("Email")).toBeInTheDocument();
     });
 
@@ -42,12 +42,10 @@ describe("ForgotPassword Component", () => {
         fireEvent.change(screen.getByLabelText("Email"), {
             target: { value: "test@test.com" },
         });
-        fireEvent.click(screen.getByRole("button", { name: "Enviar Link" }));
+        fireEvent.click(screen.getByRole("button", { name: "Send Link" }));
 
         await waitFor(() => {
-            expect(
-                screen.getByText("Verifique seu e-mail")
-            ).toBeInTheDocument();
+            expect(screen.getByText("Check your email")).toBeInTheDocument();
         });
     });
 
@@ -58,11 +56,11 @@ describe("ForgotPassword Component", () => {
         fireEvent.change(screen.getByLabelText("Email"), {
             target: { value: "test@test.com" },
         });
-        fireEvent.click(screen.getByRole("button", { name: "Enviar Link" }));
+        fireEvent.click(screen.getByRole("button", { name: "Send Link" }));
 
         await waitFor(() => {
             expect(
-                screen.getByText("Ocorreu um erro. Tente novamente.")
+                screen.getByText("An error occurred. Please try again.")
             ).toBeInTheDocument();
         });
     });

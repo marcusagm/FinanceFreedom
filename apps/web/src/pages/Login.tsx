@@ -18,8 +18,8 @@ import {
 import { Alert, AlertDescription } from "../components/ui/Alert";
 
 const loginSchema = z.object({
-    email: z.string().email("Por favor, insira um e-mail válido"),
-    password: z.string().min(1, "A senha é obrigatória"),
+    email: z.string().email("Please enter a valid email"),
+    password: z.string().min(1, "Password is required"),
 });
 
 type LoginForm = z.infer<typeof loginSchema>;
@@ -53,13 +53,13 @@ export function Login() {
             navigate("/");
         } catch (err: any) {
             console.error("Login failed", err);
-            setAuthError("Credenciais inválidas. Tente novamente.");
+            setAuthError("Invalid credentials. Please try again.");
             delete api.defaults.headers.common["Authorization"];
         }
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-background">
+        <div className="flex items-center justify-center min-h-screen bg-background p-4">
             <Card className="w-full max-w-md">
                 <CardHeader>
                     <CardTitle className="text-2xl text-center">
@@ -78,7 +78,8 @@ export function Login() {
                             <Input
                                 id="email"
                                 type="email"
-                                placeholder="nome@exemplo.com"
+                                placeholder="name@example.com"
+                                data-testid="email-input"
                                 {...register("email")}
                             />
                             {errors.email && (
@@ -88,10 +89,11 @@ export function Login() {
                             )}
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="password">Senha</Label>
+                            <Label htmlFor="password">Password</Label>
                             <Input
                                 id="password"
                                 type="password"
+                                data-testid="password-input"
                                 {...register("password")}
                             />
                             {errors.password && (
@@ -104,7 +106,7 @@ export function Login() {
                                     to="/forgot-password"
                                     className="text-sm text-muted-foreground hover:text-primary"
                                 >
-                                    Esqueceu a senha?
+                                    Forgot password?
                                 </Link>
                             </div>
                         </div>
@@ -115,15 +117,15 @@ export function Login() {
                             className="w-full"
                             disabled={isSubmitting}
                         >
-                            {isSubmitting ? "Entrando..." : "Entrar"}
+                            {isSubmitting ? "Signing in..." : "Sign In"}
                         </Button>
                         <div className="text-center text-sm mt-4">
-                            Não tem uma conta?{" "}
+                            Don't have an account?{" "}
                             <Link
                                 to="/register"
                                 className="text-primary hover:underline"
                             >
-                                Cadastre-se
+                                Register now
                             </Link>
                         </div>
                     </CardFooter>

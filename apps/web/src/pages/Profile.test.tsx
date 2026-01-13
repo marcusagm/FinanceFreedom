@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { describe, it, vi, expect } from "vitest";
+import { describe, it, vi, expect, beforeEach, afterEach } from "vitest";
 import { Profile } from "./Profile";
 import { AuthContext } from "../contexts/AuthContext";
 import { api } from "../lib/api";
@@ -28,6 +28,18 @@ describe("Profile Component", () => {
     const loginMock = vi.fn();
     const mockUser = { id: "1", name: "User", email: "user@example.com" };
 
+    beforeEach(() => {
+        vi.stubGlobal("localStorage", {
+            getItem: vi.fn().mockReturnValue("fake-token"),
+            setItem: vi.fn(),
+            removeItem: vi.fn(),
+        });
+    });
+
+    afterEach(() => {
+        vi.unstubAllGlobals();
+    });
+
     const renderComponent = (user = mockUser) => {
         return render(
             <AuthContext.Provider
@@ -53,8 +65,8 @@ describe("Profile Component", () => {
         expect(screen.getByTestId("profile-email-input")).toHaveValue(
             "user@example.com"
         );
-        expect(screen.getByText("Dados Pessoais")).toBeInTheDocument();
-        expect(screen.getByText("Alterar Senha")).toBeInTheDocument();
+        expect(screen.getByText("Personal Information")).toBeInTheDocument();
+        expect(screen.getByText("Change Password")).toBeInTheDocument();
     });
 
     it("updates profile info successfully", async () => {
@@ -66,9 +78,7 @@ describe("Profile Component", () => {
         fireEvent.change(screen.getByTestId("profile-name-input"), {
             target: { value: "New Name" },
         });
-        fireEvent.click(
-            screen.getByRole("button", { name: "Salvar Alterações" })
-        );
+        fireEvent.click(screen.getByRole("button", { name: "Save Changes" }));
 
         await waitFor(() => {
             expect(mockedApiPut).toHaveBeenCalledWith("/auth/profile", {
@@ -90,11 +100,13 @@ describe("Profile Component", () => {
         fireEvent.change(screen.getByTestId("confirm-new-password-input"), {
             target: { value: "mismatch" },
         });
-        fireEvent.click(screen.getByRole("button", { name: "Alterar Senha" }));
+        fireEvent.click(
+            screen.getByRole("button", { name: "Update Password" })
+        );
 
         await waitFor(() => {
             expect(
-                screen.getByText("As senhas não coincidem")
+                screen.getByText("Passwords do not match")
             ).toBeInTheDocument();
         });
     });
@@ -112,7 +124,9 @@ describe("Profile Component", () => {
         fireEvent.change(screen.getByTestId("confirm-new-password-input"), {
             target: { value: "new123" },
         });
-        fireEvent.click(screen.getByRole("button", { name: "Alterar Senha" }));
+        fireEvent.click(
+            screen.getByRole("button", { name: "Update Password" })
+        );
 
         await waitFor(() => {
             expect(mockedApiPut).toHaveBeenCalledWith("/auth/password", {

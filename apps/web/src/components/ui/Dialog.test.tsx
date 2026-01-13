@@ -2,6 +2,9 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
 import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "./Dialog";
+import { vi } from "vitest";
+
+vi.unmock("@/components/ui/Dialog");
 
 // Radix UI Dialog renders into a portal, so we might need to look at document.body
 describe("Dialog", () => {

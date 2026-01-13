@@ -19,20 +19,20 @@ import { Button } from "../components/ui/Button";
 import { notify } from "../lib/notification";
 
 const profileSchema = z.object({
-    name: z.string().min(2, "O nome é obrigatório"),
-    email: z.string().email("E-mail inválido"),
+    name: z.string().min(2, "Name is required"),
+    email: z.string().email("Invalid email address"),
 });
 
 const passwordSchema = z
     .object({
-        currentPassword: z.string().min(1, "A senha atual é obrigatória"),
+        currentPassword: z.string().min(1, "Current password is required"),
         newPassword: z
             .string()
-            .min(6, "A nova senha deve ter pelo menos 6 caracteres"),
+            .min(6, "New password must be at least 6 characters"),
         confirmNewPassword: z.string(),
     })
     .refine((data) => data.newPassword === data.confirmNewPassword, {
-        message: "As senhas não coincidem",
+        message: "Passwords do not match",
         path: ["confirmNewPassword"],
     });
 
@@ -82,12 +82,12 @@ export function Profile() {
                 login(token, updatedUser);
             }
 
-            notify.success("Dados atualizados com sucesso!");
+            notify.success("Profile updated successfully!");
         } catch (error: any) {
             console.error("Profile update failed", error);
             notify.error(
-                "Erro ao atualizar perfil",
-                error.response?.data?.message || "Erro desconhecido"
+                "Error updating profile",
+                error.response?.data?.message || "Unknown error"
             );
         }
     };
@@ -98,13 +98,13 @@ export function Profile() {
                 currentPassword: data.currentPassword,
                 newPassword: data.newPassword,
             });
-            notify.success("Senha alterada com sucesso!");
+            notify.success("Password changed successfully!");
             resetPasswordForm();
         } catch (error: any) {
             console.error("Password change failed", error);
             notify.error(
-                "Erro ao alterar senha",
-                error.response?.data?.message || "Erro desconhecido"
+                "Error changing password",
+                error.response?.data?.message || "Unknown error"
             );
         }
     };
@@ -112,16 +112,16 @@ export function Profile() {
     return (
         <div className="space-y-6 container mx-auto p-4 max-w-4xl">
             <PageHeader
-                title="Meu Perfil"
-                description="Gerencie suas informações e segurança."
+                title="My Profile"
+                description="Manage your account information and security."
             />
 
             <div className="grid gap-6 md:grid-cols-2">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Dados Pessoais</CardTitle>
+                        <CardTitle>Personal Information</CardTitle>
                         <CardDescription>
-                            Atualize seu nome e e-mail.
+                            Update your name and email.
                         </CardDescription>
                     </CardHeader>
                     <form
@@ -130,7 +130,7 @@ export function Profile() {
                     >
                         <CardContent className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="name">Nome</Label>
+                                <Label htmlFor="name">Name</Label>
                                 <Input
                                     id="name"
                                     data-testid="profile-name-input"
@@ -163,8 +163,8 @@ export function Profile() {
                                 disabled={isProfileSubmitting}
                             >
                                 {isProfileSubmitting
-                                    ? "Salvando..."
-                                    : "Salvar Alterações"}
+                                    ? "Saving..."
+                                    : "Save Changes"}
                             </Button>
                         </CardFooter>
                     </form>
@@ -172,9 +172,9 @@ export function Profile() {
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>Alterar Senha</CardTitle>
+                        <CardTitle>Change Password</CardTitle>
                         <CardDescription>
-                            Mantenha sua conta segura.
+                            Keep your account secure.
                         </CardDescription>
                     </CardHeader>
                     <form
@@ -184,7 +184,7 @@ export function Profile() {
                         <CardContent className="space-y-4">
                             <div className="space-y-2">
                                 <Label htmlFor="currentPassword">
-                                    Senha Atual
+                                    Current Password
                                 </Label>
                                 <Input
                                     id="currentPassword"
@@ -199,7 +199,9 @@ export function Profile() {
                                 )}
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="newPassword">Nova Senha</Label>
+                                <Label htmlFor="newPassword">
+                                    New Password
+                                </Label>
                                 <Input
                                     id="newPassword"
                                     type="password"
@@ -214,7 +216,7 @@ export function Profile() {
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="confirmNewPassword">
-                                    Confirmar Nova Senha
+                                    Confirm New Password
                                 </Label>
                                 <Input
                                     id="confirmNewPassword"
@@ -238,8 +240,8 @@ export function Profile() {
                                 disabled={isPasswordSubmitting}
                             >
                                 {isPasswordSubmitting
-                                    ? "Alterando..."
-                                    : "Alterar Senha"}
+                                    ? "Updating..."
+                                    : "Update Password"}
                             </Button>
                         </CardFooter>
                     </form>

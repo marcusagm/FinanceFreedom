@@ -1,6 +1,9 @@
 import { renderHook, act } from "@testing-library/react";
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { PrivacyProvider, usePrivacy } from "./PrivacyContext";
+
+vi.unmock("./PrivacyContext");
+vi.unmock("@/contexts/PrivacyContext");
 
 describe("PrivacyContext", () => {
     beforeEach(() => {

@@ -35,35 +35,33 @@ describe("ResetPassword Component", () => {
     it("renders form when token present", () => {
         renderComponent();
         expect(
-            screen.getByRole("heading", { name: "Redefinir Senha" })
+            screen.getByRole("heading", { name: "Reset Password" })
         ).toBeInTheDocument();
-        expect(screen.getByLabelText("Nova Senha")).toBeInTheDocument();
-        expect(screen.getByLabelText("Confirmar Senha")).toBeInTheDocument();
+        expect(screen.getByLabelText("New Password")).toBeInTheDocument();
+        expect(screen.getByLabelText("Confirm Password")).toBeInTheDocument();
     });
 
     it("shows invalid token message when token missing", () => {
         renderComponent(""); // Empty token
-        expect(screen.getByText("Link Inválido")).toBeInTheDocument();
+        expect(screen.getByText("Invalid Link")).toBeInTheDocument();
         expect(
-            screen.getByText("O token de redefinição de senha está ausente.")
+            screen.getByText("The password reset token is missing.")
         ).toBeInTheDocument();
     });
 
     it("validates password mismatch", async () => {
         renderComponent();
-        fireEvent.change(screen.getByLabelText("Nova Senha"), {
+        fireEvent.change(screen.getByLabelText("New Password"), {
             target: { value: "password123" },
         });
-        fireEvent.change(screen.getByLabelText("Confirmar Senha"), {
+        fireEvent.change(screen.getByLabelText("Confirm Password"), {
             target: { value: "mismatch" },
         });
-        fireEvent.click(
-            screen.getByRole("button", { name: "Redefinir Senha" })
-        );
+        fireEvent.click(screen.getByRole("button", { name: "Reset Password" }));
 
         await waitFor(() => {
             expect(
-                screen.getByText("As senhas não coincidem")
+                screen.getByText("Passwords do not match")
             ).toBeInTheDocument();
         });
     });
@@ -72,15 +70,13 @@ describe("ResetPassword Component", () => {
         renderComponent();
         mockedApiPost.mockResolvedValueOnce({});
 
-        fireEvent.change(screen.getByLabelText("Nova Senha"), {
+        fireEvent.change(screen.getByLabelText("New Password"), {
             target: { value: "password123" },
         });
-        fireEvent.change(screen.getByLabelText("Confirmar Senha"), {
+        fireEvent.change(screen.getByLabelText("Confirm Password"), {
             target: { value: "password123" },
         });
-        fireEvent.click(
-            screen.getByRole("button", { name: "Redefinir Senha" })
-        );
+        fireEvent.click(screen.getByRole("button", { name: "Reset Password" }));
 
         await waitFor(() => {
             expect(mockedApiPost).toHaveBeenCalledWith("/auth/reset-password", {
@@ -97,15 +93,13 @@ describe("ResetPassword Component", () => {
             response: { data: { message: "Token expired" } },
         });
 
-        fireEvent.change(screen.getByLabelText("Nova Senha"), {
+        fireEvent.change(screen.getByLabelText("New Password"), {
             target: { value: "password123" },
         });
-        fireEvent.change(screen.getByLabelText("Confirmar Senha"), {
+        fireEvent.change(screen.getByLabelText("Confirm Password"), {
             target: { value: "password123" },
         });
-        fireEvent.click(
-            screen.getByRole("button", { name: "Redefinir Senha" })
-        );
+        fireEvent.click(screen.getByRole("button", { name: "Reset Password" }));
 
         await waitFor(() => {
             expect(screen.getByText("Token expired")).toBeInTheDocument();

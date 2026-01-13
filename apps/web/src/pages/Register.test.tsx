@@ -48,7 +48,7 @@ describe("Register Component", () => {
     it("renders register form", () => {
         renderComponent();
         expect(
-            screen.getByRole("heading", { name: "Criar Conta" })
+            screen.getByRole("heading", { name: "Create Account" })
         ).toBeInTheDocument();
         expect(screen.getByTestId("name-input")).toBeInTheDocument();
         expect(screen.getByTestId("email-input")).toBeInTheDocument();
@@ -66,11 +66,11 @@ describe("Register Component", () => {
         fireEvent.change(screen.getByTestId("confirm-password-input"), {
             target: { value: "mismatch" },
         });
-        fireEvent.click(screen.getByRole("button", { name: "Criar Conta" }));
+        fireEvent.click(screen.getByRole("button", { name: "Create Account" }));
 
         await waitFor(() => {
             expect(
-                screen.getByText("As senhas não coincidem")
+                screen.getByText("Passwords do not match")
             ).toBeInTheDocument();
         });
     });
@@ -95,7 +95,7 @@ describe("Register Component", () => {
         fireEvent.change(screen.getByTestId("confirm-password-input"), {
             target: { value: "password123" },
         });
-        fireEvent.click(screen.getByRole("button", { name: "Criar Conta" }));
+        fireEvent.click(screen.getByRole("button", { name: "Create Account" }));
 
         await waitFor(() => {
             expect(mockedApiPost).toHaveBeenCalledWith(

@@ -44,28 +44,28 @@ export function Header() {
                             to="/accounts"
                             className={getLinkClass("/accounts")}
                         >
-                            Contas
+                            Accounts
                         </Link>
                         <Link to="/debts" className={getLinkClass("/debts")}>
-                            Dívidas
+                            Debts
                         </Link>
                         <Link to="/income" className={getLinkClass("/income")}>
-                            Renda
+                            Income
                         </Link>
                         <Link
                             to="/income/projection"
                             className={getLinkClass("/income/projection")}
                         >
-                            Projeção
+                            Projection
                         </Link>
                         <Link
                             to="/transactions"
                             className={getLinkClass("/transactions")}
                         >
-                            Transações
+                            Transactions
                         </Link>
                         <Link to="/import" className={getLinkClass("/import")}>
-                            Importar
+                            Import
                         </Link>
                     </nav>
                 </div>
@@ -82,10 +82,10 @@ export function Header() {
                         variant="ghost"
                         size="icon"
                         onClick={logout}
-                        title="Sair"
+                        title="Logout"
                     >
                         <LogOut className="h-[1.2rem] w-[1.2rem]" />
-                        <span className="sr-only">Sair</span>
+                        <span className="sr-only">Logout</span>
                     </Button>
                 </div>
             </div>
@@ -101,7 +101,7 @@ function PrivacyToggle() {
             variant="ghost"
             size="icon"
             onClick={toggleObfuscation}
-            title={isObfuscated ? "Mostrar valores" : "Ocultar valores"}
+            title={isObfuscated ? "Show values" : "Hide values"}
         >
             {isObfuscated ? (
                 <EyeOff className="h-[1.2rem] w-[1.2rem]" />
