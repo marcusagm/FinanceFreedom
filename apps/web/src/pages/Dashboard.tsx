@@ -51,7 +51,11 @@ export default function Dashboard() {
         }).format(value);
     };
 
+    const [error, setError] = useState<string | null>(null);
+
     const fetchData = async () => {
+        setLoading(true);
+        setError(null);
         try {
             const [summaryData, hourlyData] = await Promise.all([
                 getDashboardSummary(),
@@ -59,8 +63,9 @@ export default function Dashboard() {
             ]);
             setSummary(summaryData);
             setHourlyRate(hourlyData.hourlyRate);
-        } catch (error) {
-            console.error("Failed to fetch dashboard data", error);
+        } catch (err: any) {
+            console.error("Failed to fetch dashboard data", err);
+            setError(err.message || "Failed to load dashboard data");
         } finally {
             setLoading(false);
         }
@@ -100,11 +105,31 @@ export default function Dashboard() {
     };
 
     if (loading) {
-        return <div className="p-8">Loading dashboard...</div>;
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="text-lg">Carregando dashboard...</div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-screen gap-4">
+                <div className="text-destructive text-lg font-medium">
+                    {error}
+                </div>
+                <Button onClick={fetchData}>Tentar Novamente</Button>
+            </div>
+        );
     }
 
     if (!summary) {
-        return <div className="p-8">Failed to load dashboard data.</div>;
+        return (
+            <div className="flex flex-col items-center justify-center min-h-screen gap-4">
+                <div className="text-lg">Nenhum dado disponível.</div>
+                <Button onClick={fetchData}>Atualizar</Button>
+            </div>
+        );
     }
 
     // const formatMoney = ... (replaced by MoneyDisplay component)

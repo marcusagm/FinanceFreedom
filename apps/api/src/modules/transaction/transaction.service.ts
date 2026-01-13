@@ -14,7 +14,7 @@ import { addMonths } from "date-fns";
 export class TransactionService {
     constructor(private readonly prisma: PrismaService) {}
 
-    create(createTransactionDto: CreateTransactionDto) {
+    create(userId: string, createTransactionDto: CreateTransactionDto) {
         const {
             accountId,
             amount,
@@ -39,6 +39,7 @@ export class TransactionService {
                     // 1. Create the transaction
                     const transaction = await prisma.transaction.create({
                         data: {
+                            userId,
                             accountId,
                             amount,
                             type,
@@ -49,8 +50,8 @@ export class TransactionService {
                     createdTransactions.push(transaction);
 
                     // 2. Update the account balance
-                    const account = await prisma.account.findUnique({
-                        where: { id: accountId },
+                    const account = await prisma.account.findFirst({
+                        where: { id: accountId, userId },
                     });
 
                     if (!account) {
@@ -70,8 +71,8 @@ export class TransactionService {
 
                     // 3. Update debt balance if applicable
                     if (createTransactionDto.debtId && type === "EXPENSE") {
-                        const debt = await prisma.debt.findUnique({
-                            where: { id: createTransactionDto.debtId },
+                        const debt = await prisma.debt.findFirst({
+                            where: { id: createTransactionDto.debtId, userId },
                         });
 
                         if (debt) {
@@ -94,21 +95,26 @@ export class TransactionService {
         );
     }
 
-    findAll() {
+    findAll(userId: string) {
         return this.prisma.transaction.findMany({
+            where: { userId },
             orderBy: { date: "desc" },
             include: { account: true },
         });
     }
 
-    findOne(id: string) {
-        return this.prisma.transaction.findUnique({
-            where: { id },
+    findOne(userId: string, id: string) {
+        return this.prisma.transaction.findFirst({
+            where: { id, userId },
             include: { account: true },
         });
     }
 
-    update(id: string, updateTransactionDto: UpdateTransactionDto) {
+    update(
+        userId: string,
+        id: string,
+        updateTransactionDto: UpdateTransactionDto
+    ) {
         const {
             accountId,
             amount,
@@ -122,8 +128,8 @@ export class TransactionService {
         return this.prisma.$transaction(
             async (prisma: Prisma.TransactionClient) => {
                 // 1. Get original transaction
-                const oldTransaction = await prisma.transaction.findUnique({
-                    where: { id },
+                const oldTransaction = await prisma.transaction.findFirst({
+                    where: { id, userId },
                     include: { account: true },
                 });
 
@@ -172,8 +178,8 @@ export class TransactionService {
 
                 // 5. Apply new balance to target account
                 // Need to fetch target account again to get fresh balance (especially if it was the same as old account)
-                const targetAccount = await prisma.account.findUnique({
-                    where: { id: targetAccountId },
+                const targetAccount = await prisma.account.findFirst({
+                    where: { id: targetAccountId, userId },
                 });
 
                 if (!targetAccount) {
@@ -199,12 +205,12 @@ export class TransactionService {
         );
     }
 
-    remove(id: string) {
+    remove(userId: string, id: string) {
         return this.prisma.$transaction(
             async (prisma: Prisma.TransactionClient) => {
                 // 1. Get transaction
-                const transaction = await prisma.transaction.findUnique({
-                    where: { id },
+                const transaction = await prisma.transaction.findFirst({
+                    where: { id, userId },
                     include: { account: true },
                 });
 
@@ -235,13 +241,17 @@ export class TransactionService {
         );
     }
 
-    async split(id: string, splitTransactionDto: SplitTransactionDto) {
+    async split(
+        userId: string,
+        id: string,
+        splitTransactionDto: SplitTransactionDto
+    ) {
         const { splits } = splitTransactionDto;
 
         return this.prisma.$transaction(async (prisma) => {
             // 1. Get original transaction
-            const originalTransaction = await prisma.transaction.findUnique({
-                where: { id },
+            const originalTransaction = await prisma.transaction.findFirst({
+                where: { id, userId },
                 include: { account: true },
             });
 
@@ -280,6 +290,7 @@ export class TransactionService {
                         debtId: originalTransaction.debtId, // Maintain debt link if exists?
                         // If linked to debt, we should technically handle debt balance updates carefully.
                         // Ideally, splitting shouldn't change total debt payment, just categorize it differently.
+                        userId,
                     },
                 });
                 createdTransactions.push(newTransaction);

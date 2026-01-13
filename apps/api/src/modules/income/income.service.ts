@@ -7,47 +7,63 @@ import { CreateWorkUnitDto } from "./dto/create-work-unit.dto";
 export class IncomeService {
     constructor(private readonly prisma: PrismaService) {}
 
-    async createIncomeSource(data: CreateIncomeSourceDto) {
+    async createIncomeSource(userId: string, data: CreateIncomeSourceDto) {
         return this.prisma.incomeSource.create({
-            data,
+            data: { ...data, userId },
         });
     }
 
-    async findAllIncomeSources() {
-        return this.prisma.incomeSource.findMany();
+    async findAllIncomeSources(userId: string) {
+        return this.prisma.incomeSource.findMany({ where: { userId } });
     }
 
-    async updateIncomeSource(id: string, data: Partial<CreateIncomeSourceDto>) {
+    async updateIncomeSource(
+        userId: string,
+        id: string,
+        data: Partial<CreateIncomeSourceDto>
+    ) {
+        await this.prisma.incomeSource.findFirstOrThrow({
+            where: { id, userId },
+        });
         return this.prisma.incomeSource.update({
             where: { id },
             data,
         });
     }
 
-    async deleteIncomeSource(id: string) {
+    async deleteIncomeSource(userId: string, id: string) {
+        await this.prisma.incomeSource.findFirstOrThrow({
+            where: { id, userId },
+        });
         return this.prisma.incomeSource.delete({
             where: { id },
         });
     }
 
-    async createWorkUnit(data: CreateWorkUnitDto) {
+    async createWorkUnit(userId: string, data: CreateWorkUnitDto) {
         return this.prisma.workUnit.create({
-            data,
+            data: { ...data, userId },
         });
     }
 
-    async findAllWorkUnits() {
-        return this.prisma.workUnit.findMany();
+    async findAllWorkUnits(userId: string) {
+        return this.prisma.workUnit.findMany({ where: { userId } });
     }
 
-    async updateWorkUnit(id: string, data: Partial<CreateWorkUnitDto>) {
+    async updateWorkUnit(
+        userId: string,
+        id: string,
+        data: Partial<CreateWorkUnitDto>
+    ) {
+        await this.prisma.workUnit.findFirstOrThrow({ where: { id, userId } });
         return this.prisma.workUnit.update({
             where: { id },
             data,
         });
     }
 
-    async deleteWorkUnit(id: string) {
+    async deleteWorkUnit(userId: string, id: string) {
+        await this.prisma.workUnit.findFirstOrThrow({ where: { id, userId } });
         return this.prisma.workUnit.delete({
             where: { id },
         });

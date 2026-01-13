@@ -2,11 +2,13 @@ import { Link, useLocation } from "react-router-dom";
 import { ModeToggle } from "../ui/ModeToggle";
 import { cn } from "../../lib/utils";
 import { usePrivacy } from "../../contexts/PrivacyContext";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, LogOut } from "lucide-react";
 import { Button } from "../ui/Button";
+import { useAuth } from "../../contexts/AuthContext";
 
 export function Header() {
     const location = useLocation();
+    const { logout, user } = useAuth();
 
     const isActive = (path: string) => {
         if (path === "/") {
@@ -25,7 +27,7 @@ export function Header() {
     };
 
     return (
-        <header className="border-b sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <header className="border-b sticky top-0 z-50 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
             <div className="container mx-auto px-4 h-16 flex items-center justify-between">
                 <div className="flex items-center gap-6">
                     <Link
@@ -68,8 +70,23 @@ export function Header() {
                     </nav>
                 </div>
                 <div className="flex items-center gap-2">
+                    <Link
+                        to="/profile"
+                        className="text-sm font-medium mr-2 hidden md:inline-block hover:underline"
+                    >
+                        {user?.email}
+                    </Link>
                     <PrivacyToggle />
                     <ModeToggle />
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={logout}
+                        title="Sair"
+                    >
+                        <LogOut className="h-[1.2rem] w-[1.2rem]" />
+                        <span className="sr-only">Sair</span>
+                    </Button>
                 </div>
             </div>
         </header>

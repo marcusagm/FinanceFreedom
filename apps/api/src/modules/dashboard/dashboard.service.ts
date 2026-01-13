@@ -9,7 +9,7 @@ export class DashboardService {
         private readonly debtService: DebtService
     ) {}
 
-    async getSummary() {
+    async getSummary(userId: string) {
         const today = new Date();
         const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
         const endOfMonth = new Date(
@@ -19,7 +19,9 @@ export class DashboardService {
         );
 
         // 1. Total Balance (Sum of all accounts)
-        const accounts = await this.prisma.account.findMany();
+        const accounts = await this.prisma.account.findMany({
+            where: { userId },
+        });
         const totalBalance = accounts.reduce(
             (sum, acc) => sum + Number(acc.balance),
             0
@@ -28,6 +30,7 @@ export class DashboardService {
         // 2. Monthly Income & Expenses
         const transactions = await this.prisma.transaction.findMany({
             where: {
+                userId,
                 date: {
                     gte: startOfMonth,
                     lte: endOfMonth,
@@ -49,6 +52,7 @@ export class DashboardService {
 
         if (freeCashFlow > 0) {
             const { debts } = await this.debtService.getSortedDebts(
+                userId,
                 "SNOWBALL",
                 0
             );
@@ -97,6 +101,7 @@ export class DashboardService {
 
         const last30DaysTransactions = await this.prisma.transaction.findMany({
             where: {
+                userId,
                 date: {
                     gte: thirtyDaysAgo,
                 },

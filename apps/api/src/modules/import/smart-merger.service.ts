@@ -8,6 +8,7 @@ export class SmartMergerService {
     constructor(private readonly prisma: PrismaService) {}
 
     async filterDuplicates(
+        userId: string,
         accountId: string,
         transactions: CreateTransactionDto[]
     ): Promise<CreateTransactionDto[]> {
@@ -35,6 +36,7 @@ export class SmartMergerService {
 
         const existing = await this.prisma.transaction.findMany({
             where: {
+                userId,
                 accountId,
                 date: {
                     gte: minDate,

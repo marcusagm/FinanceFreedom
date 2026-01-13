@@ -18,9 +18,13 @@ export class ImportService {
         private readonly prisma: PrismaService
     ) {}
 
-    async syncAllAccounts(): Promise<number> {
-        this.logger.log("Starting sync for ALL accounts");
+    async syncAllAccounts(userId?: string): Promise<number> {
+        this.logger.log(
+            `Starting sync for ${userId ? "user " + userId : "ALL accounts"}`
+        );
+        const where = userId ? { userId } : {};
         const credentials = await this.prisma.emailCredential.findMany({
+            where,
             include: { account: true },
         });
 
@@ -59,6 +63,7 @@ export class ImportService {
 
                         // Filter
                         const unique = await this.smartMerger.filterDuplicates(
+                            credential.userId,
                             credential.accountId,
                             transactions
                         );
@@ -69,7 +74,10 @@ export class ImportService {
                             );
 
                             for (const t of unique) {
-                                await this.transactionService.create(t);
+                                await this.transactionService.create(
+                                    credential.userId,
+                                    t
+                                );
                             }
                             importedCount += unique.length;
                         } else {

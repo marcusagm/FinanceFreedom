@@ -12,36 +12,85 @@ import { ThemeProvider } from "./components/providers/ThemeProvider";
 import { Layout } from "./components/layout/Layout";
 import { PrivacyProvider } from "./contexts/PrivacyContext";
 import { Toaster } from "./components/ui/Sonner";
+import { AuthProvider } from "./contexts/AuthContext";
+import { Login } from "./pages/Login";
+import { Register } from "./pages/Register";
+import { Profile } from "./pages/Profile";
+import { ForgotPassword } from "./pages/ForgotPassword";
+import { ResetPassword } from "./pages/ResetPassword";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 function App() {
     console.log("App component rendering");
     return (
         <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
             <PrivacyProvider>
-                <BrowserRouter>
-                    <Toaster />
-                    <Layout>
+                <AuthProvider>
+                    <BrowserRouter>
+                        <Toaster />
                         <Routes>
-                            <Route path="/" element={<Dashboard />} />
-                            <Route path="/accounts" element={<Accounts />} />
-                            <Route path="/debts" element={<Debts />} />
-                            <Route path="/income" element={<IncomePage />} />
+                            <Route path="/login" element={<Login />} />
+                            <Route path="/register" element={<Register />} />
                             <Route
-                                path="/income/projection"
-                                element={<IncomeProjection />}
+                                path="/forgot-password"
+                                element={<ForgotPassword />}
                             />
                             <Route
-                                path="/transactions"
-                                element={<Transactions />}
+                                path="/reset-password"
+                                element={<ResetPassword />}
                             />
-                            <Route path="/import" element={<ImportPage />} />
-                            <Route
-                                path="/import/config"
-                                element={<ImapConfigPage />}
-                            />
+                            <Route element={<ProtectedRoute />}>
+                                <Route
+                                    path="*"
+                                    element={
+                                        <Layout>
+                                            <Routes>
+                                                <Route
+                                                    path="/"
+                                                    element={<Dashboard />}
+                                                />
+                                                <Route
+                                                    path="/accounts"
+                                                    element={<Accounts />}
+                                                />
+                                                <Route
+                                                    path="/debts"
+                                                    element={<Debts />}
+                                                />
+                                                <Route
+                                                    path="/income"
+                                                    element={<IncomePage />}
+                                                />
+                                                <Route
+                                                    path="/income/projection"
+                                                    element={
+                                                        <IncomeProjection />
+                                                    }
+                                                />
+                                                <Route
+                                                    path="/transactions"
+                                                    element={<Transactions />}
+                                                />
+                                                <Route
+                                                    path="/import"
+                                                    element={<ImportPage />}
+                                                />
+                                                <Route
+                                                    path="/import/config"
+                                                    element={<ImapConfigPage />}
+                                                />
+                                                <Route
+                                                    path="/profile"
+                                                    element={<Profile />}
+                                                />
+                                            </Routes>
+                                        </Layout>
+                                    }
+                                />
+                            </Route>
                         </Routes>
-                    </Layout>
-                </BrowserRouter>
+                    </BrowserRouter>
+                </AuthProvider>
             </PrivacyProvider>
         </ThemeProvider>
     );

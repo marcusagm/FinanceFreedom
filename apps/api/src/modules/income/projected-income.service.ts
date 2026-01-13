@@ -6,18 +6,22 @@ import { Prisma } from "@prisma/client";
 export class ProjectedIncomeService {
     constructor(private readonly prisma: PrismaService) {}
 
-    async create(data: Prisma.ProjectedIncomeCreateInput) {
+    async create(
+        userId: string,
+        data: Omit<Prisma.ProjectedIncomeCreateInput, "user">
+    ) {
         return this.prisma.projectedIncome.create({
-            data,
+            data: { ...data, user: { connect: { id: userId } } },
             include: {
                 workUnit: true,
             },
         });
     }
 
-    async findAll(startDate: Date, endDate: Date) {
+    async findAll(userId: string, startDate: Date, endDate: Date) {
         return this.prisma.projectedIncome.findMany({
             where: {
+                userId,
                 date: {
                     gte: startDate,
                     lte: endDate,
@@ -33,10 +37,14 @@ export class ProjectedIncomeService {
         });
     }
 
-    async update(id: string, data: Prisma.ProjectedIncomeUpdateInput) {
+    async update(
+        userId: string,
+        id: string,
+        data: Prisma.ProjectedIncomeUpdateInput
+    ) {
         // First get current state to check for existing transaction
-        const current = await this.prisma.projectedIncome.findUnique({
-            where: { id },
+        const current = await this.prisma.projectedIncome.findFirst({
+            where: { id, userId },
         });
 
         if (!current) {
@@ -56,6 +64,7 @@ export class ProjectedIncomeService {
             if (!current.transactionId) {
                 const amount = Number(result.amount);
                 const accounts = await this.prisma.account.findMany({
+                    where: { userId },
                     take: 1,
                 });
 
@@ -68,6 +77,7 @@ export class ProjectedIncomeService {
                             type: "INCOME",
                             category: "Trabalho",
                             accountId: accounts[0].id,
+                            userId,
                         },
                     });
 
@@ -91,20 +101,26 @@ export class ProjectedIncomeService {
         return result;
     }
 
-    async remove(id: string) {
+    async remove(userId: string, id: string) {
+        await this.prisma.projectedIncome.findFirstOrThrow({
+            where: { id, userId },
+        });
         return this.prisma.projectedIncome.delete({
             where: { id },
         });
     }
 
-    async distribute(data: {
-        workUnitId: string;
-        startDate: Date;
-        hoursPerDay?: number;
-        skipWeekends?: boolean;
-    }) {
-        const workUnit = await this.prisma.workUnit.findUnique({
-            where: { id: data.workUnitId },
+    async distribute(
+        userId: string,
+        data: {
+            workUnitId: string;
+            startDate: Date;
+            hoursPerDay?: number;
+            skipWeekends?: boolean;
+        }
+    ) {
+        const workUnit = await this.prisma.workUnit.findFirst({
+            where: { id: data.workUnitId, userId },
         });
 
         if (!workUnit) throw new Error("Work Unit not found");
@@ -137,7 +153,7 @@ export class ProjectedIncomeService {
             const hoursToday = Math.min(hoursRemaining, hoursPerDay);
             const amountToday = hourlyRate * hoursToday;
 
-            const created = await this.create({
+            const created = await this.create(userId, {
                 workUnit: { connect: { id: workUnit.id } },
                 date: new Date(currentDate),
                 amount: amountToday,

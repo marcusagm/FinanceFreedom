@@ -7,6 +7,7 @@ import {
     BadRequestException,
     Get,
     Query,
+    Request,
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { OfxParserService } from "./ofx-parser.service";
@@ -31,6 +32,7 @@ export class ImportController {
     @Post("upload")
     @UseInterceptors(FileInterceptor("file"))
     async uploadFile(
+        @Request() req: any,
         @UploadedFile() file: any,
         @Body("accountId") accountId: string
     ) {
@@ -48,6 +50,7 @@ export class ImportController {
 
         // Filter duplicates
         const uniqueTransactions = await this.smartMerger.filterDuplicates(
+            req.user.userId,
             accountId,
             transactions
         );
@@ -56,13 +59,19 @@ export class ImportController {
     }
 
     @Post("confirm")
-    async confirmImport(@Body() transactions: CreateTransactionDto[]) {
+    async confirmImport(
+        @Request() req: any,
+        @Body() transactions: CreateTransactionDto[]
+    ) {
         const results = [];
         const errors = [];
 
         for (const t of transactions) {
             try {
-                const res = await this.transactionService.create(t);
+                const res = await this.transactionService.create(
+                    req.user.userId,
+                    t
+                );
                 results.push(res);
             } catch (e) {
                 errors.push({ transaction: t, error: e.message });
@@ -76,11 +85,14 @@ export class ImportController {
         };
     }
     @Get("imap-configs")
-    async getImapConfigs(@Query("accountId") accountId: string) {
+    async getImapConfigs(
+        @Request() req: any,
+        @Query("accountId") accountId: string
+    ) {
         if (!accountId) throw new BadRequestException("AccountId required");
 
         const configs = await this.prisma.emailCredential.findMany({
-            where: { accountId },
+            where: { accountId, userId: req.user.userId },
         });
 
         return configs.map((c) => ({
@@ -91,7 +103,7 @@ export class ImportController {
     }
 
     @Post("imap-config")
-    async saveImapConfig(@Body() body: any) {
+    async saveImapConfig(@Request() req: any, @Body() body: any) {
         const {
             id,
             accountId,
@@ -118,6 +130,7 @@ export class ImportController {
             folder: folder || "INBOX",
             sender: sender || null,
             subject: subject || null,
+            userId: req.user.userId,
         };
 
         if (password) {
@@ -125,8 +138,8 @@ export class ImportController {
         }
 
         if (id) {
-            const existing = await this.prisma.emailCredential.findUnique({
-                where: { id },
+            const existing = await this.prisma.emailCredential.findFirst({
+                where: { id, userId: req.user.userId },
             });
             if (!existing) throw new BadRequestException("Config not found");
 
@@ -149,13 +162,18 @@ export class ImportController {
     }
 
     @Post("imap-config/delete")
-    async deleteImapConfig(@Body("id") id: string) {
+    async deleteImapConfig(@Request() req: any, @Body("id") id: string) {
         if (!id) throw new BadRequestException("ID required");
+        const existing = await this.prisma.emailCredential.findFirst({
+            where: { id, userId: req.user.userId },
+        });
+        if (!existing)
+            throw new BadRequestException("Not found or access denied");
         return this.prisma.emailCredential.delete({ where: { id } });
     }
 
     @Post("imap-test")
-    async testImapConfig(@Body() body: any) {
+    async testImapConfig(@Request() req: any, @Body() body: any) {
         let {
             id,
             accountId,
@@ -171,8 +189,8 @@ export class ImportController {
 
         // If testing an existing config, fetch password if not provided
         if (!password && id) {
-            const saved = await this.prisma.emailCredential.findUnique({
-                where: { id },
+            const saved = await this.prisma.emailCredential.findFirst({
+                where: { id, userId: req.user.userId },
             });
             if (saved) {
                 password = saved.password;
@@ -198,18 +216,20 @@ export class ImportController {
     }
 
     @Post("sync-now")
-    async syncNow(@Body("accountId") accountId: string) {
+    async syncNow(@Request() req: any, @Body("accountId") accountId: string) {
         // If no accountId, sync all? Or maybe sync specific config?
         // Let's stick to syncing all configs for the account OR all accounts.
 
         if (!accountId) {
-            // Sync ALL accounts
-            const count = await this.importService.syncAllAccounts();
+            // Sync ALL accounts for this user
+            const count = await this.importService.syncAllAccounts(
+                req.user.userId
+            );
             return { imported: count };
         }
 
         const credentials = await this.prisma.emailCredential.findMany({
-            where: { accountId },
+            where: { accountId, userId: req.user.userId },
             include: { account: true },
         });
 

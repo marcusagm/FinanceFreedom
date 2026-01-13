@@ -9,41 +9,45 @@ import { AvalancheStrategy } from "./strategies/avalanche.strategy";
 export class DebtService {
     constructor(private readonly prisma: PrismaService) {}
 
-    create(createDebtDto: CreateDebtDto) {
+    create(userId: string, createDebtDto: CreateDebtDto) {
         return this.prisma.debt.create({
-            data: createDebtDto,
+            data: { ...createDebtDto, userId },
         });
     }
 
-    findAll() {
+    findAll(userId: string) {
         return this.prisma.debt.findMany({
+            where: { userId },
             orderBy: { createdAt: "desc" },
         });
     }
 
-    findOne(id: string) {
-        return this.prisma.debt.findUnique({
-            where: { id },
+    findOne(userId: string, id: string) {
+        return this.prisma.debt.findFirst({
+            where: { id, userId },
         });
     }
 
-    update(id: string, updateDebtDto: UpdateDebtDto) {
+    async update(userId: string, id: string, updateDebtDto: UpdateDebtDto) {
+        await this.prisma.debt.findFirstOrThrow({ where: { id, userId } });
         return this.prisma.debt.update({
             where: { id },
             data: updateDebtDto,
         });
     }
 
-    remove(id: string) {
+    async remove(userId: string, id: string) {
+        await this.prisma.debt.findFirstOrThrow({ where: { id, userId } });
         return this.prisma.debt.delete({
             where: { id },
         });
     }
     async getSortedDebts(
+        userId: string,
         strategyType: "SNOWBALL" | "AVALANCHE",
         monthlyExtra = 0
     ) {
-        const debts = await this.findAll();
+        const debts = await this.findAll(userId);
         const strategy =
             strategyType === "SNOWBALL"
                 ? new SnowballStrategy()

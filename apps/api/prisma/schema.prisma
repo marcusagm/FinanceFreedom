@@ -14,6 +14,26 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  resetToken   String?
+  resetTokenExpiry DateTime?
+
+  accounts         Account[]
+  emailCredentials EmailCredential[]
+  transactions     Transaction[]
+  debts            Debt[]
+  incomeSources    IncomeSource[]
+  workUnits        WorkUnit[]
+  projectedIncomes ProjectedIncome[]
+  categories       Category[]
+}
+
 model Account {
   id        String   @id @default(uuid())
   name      String
@@ -24,6 +44,9 @@ model Account {
   emailCredentials EmailCredential[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Transaction {
@@ -32,7 +55,11 @@ model Transaction {
   date        DateTime @default(now())
   description String
   type        String   // INCOME, EXPENSE
-  category    String?
+  
+  category    String? // Keep for backward compatibility or simple usage
+  categoryId  String?
+  categoryRel Category? @relation(fields: [categoryId], references: [id])
+
   accountId   String
   account     Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
@@ -40,6 +67,25 @@ model Transaction {
   projectedIncomes ProjectedIncome[]
   debtId      String?
   debt        Debt?    @relation(fields: [debtId], references: [id])
+
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Category {
+  id          String   @id @default(uuid())
+  name        String
+  color       String?
+  icon        String?
+  type        String?  // INCOME, EXPENSE
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  transactions Transaction[]
+  debts        Debt[]
+  
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model EmailCredential {
@@ -56,6 +102,9 @@ model EmailCredential {
   account   Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Debt {
@@ -65,11 +114,17 @@ model Debt {
   interestRate    Decimal  @default(0.0) // Monthly Interest Rate (%)
   minimumPayment  Decimal  @default(0.0)
   dueDate         Int      // Day of month (1-31)
+  
   categoryId      String?
+  categoryRel     Category? @relation(fields: [categoryId], references: [id])
+  
   priority        Int      @default(0)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   transactions    Transaction[]
+
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model IncomeSource {
@@ -79,6 +134,9 @@ model IncomeSource {
   payDay       Int      // Day of month (1-31)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 
@@ -91,6 +149,9 @@ model WorkUnit {
   projections     ProjectedIncome[]
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model ProjectedIncome {
@@ -104,4 +165,7 @@ model ProjectedIncome {
   updatedAt   DateTime @updatedAt
   transactionId String?
   transaction Transaction? @relation(fields: [transactionId], references: [id], onDelete: SetNull)
+
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

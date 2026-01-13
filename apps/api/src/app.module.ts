@@ -1,5 +1,9 @@
 import { Module } from "@nestjs/common";
+import { APP_GUARD } from "@nestjs/core";
 import { BullModule } from "@nestjs/bullmq";
+import { ConfigModule } from "@nestjs/config";
+import { AuthModule } from "./modules/auth/auth.module";
+import { JwtAuthGuard } from "./modules/auth/guards/jwt-auth.guard";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { PrismaModule } from "./prisma/prisma.module";
@@ -13,7 +17,11 @@ import { IncomeModule } from "./modules/income/income.module";
 
 @Module({
     imports: [
+        ConfigModule.forRoot({
+            isGlobal: true,
+        }),
         PrismaModule,
+        AuthModule,
         AccountModule,
         TransactionModule,
         ImportModule,
@@ -29,6 +37,12 @@ import { IncomeModule } from "./modules/income/income.module";
         IncomeModule,
     ],
     controllers: [AppController],
-    providers: [AppService],
+    providers: [
+        AppService,
+        {
+            provide: APP_GUARD,
+            useClass: JwtAuthGuard,
+        },
+    ],
 })
 export class AppModule {}

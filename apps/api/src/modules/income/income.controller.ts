@@ -6,6 +6,7 @@ import {
     Delete,
     Param,
     Patch,
+    Request,
 } from "@nestjs/common";
 import { IncomeService } from "./income.service";
 import { CreateIncomeSourceDto } from "./dto/create-income-source.dto";
@@ -16,48 +17,70 @@ export class IncomeController {
     constructor(private readonly incomeService: IncomeService) {}
 
     @Post("sources")
-    createSource(@Body() createIncomeSourceDto: CreateIncomeSourceDto) {
-        return this.incomeService.createIncomeSource(createIncomeSourceDto);
+    createSource(
+        @Request() req: any,
+        @Body() createIncomeSourceDto: CreateIncomeSourceDto
+    ) {
+        return this.incomeService.createIncomeSource(
+            req.user.userId,
+            createIncomeSourceDto
+        );
     }
 
     @Get("sources")
-    findAllSources() {
-        return this.incomeService.findAllIncomeSources();
+    findAllSources(@Request() req: any) {
+        return this.incomeService.findAllIncomeSources(req.user.userId);
     }
 
     @Patch("sources/:id")
     updateSource(
+        @Request() req: any,
         @Param("id") id: string,
         @Body() updateIncomeSourceDto: Partial<CreateIncomeSourceDto>
     ) {
-        return this.incomeService.updateIncomeSource(id, updateIncomeSourceDto);
+        return this.incomeService.updateIncomeSource(
+            req.user.userId,
+            id,
+            updateIncomeSourceDto
+        );
     }
 
     @Delete("sources/:id")
-    deleteSource(@Param("id") id: string) {
-        return this.incomeService.deleteIncomeSource(id);
+    deleteSource(@Request() req: any, @Param("id") id: string) {
+        return this.incomeService.deleteIncomeSource(req.user.userId, id);
     }
 
     @Post("work-units")
-    createWorkUnit(@Body() createWorkUnitDto: CreateWorkUnitDto) {
-        return this.incomeService.createWorkUnit(createWorkUnitDto);
+    createWorkUnit(
+        @Request() req: any,
+        @Body() createWorkUnitDto: CreateWorkUnitDto
+    ) {
+        return this.incomeService.createWorkUnit(
+            req.user.userId,
+            createWorkUnitDto
+        );
     }
 
     @Get("work-units")
-    findAllWorkUnits() {
-        return this.incomeService.findAllWorkUnits();
+    findAllWorkUnits(@Request() req: any) {
+        return this.incomeService.findAllWorkUnits(req.user.userId);
     }
 
     @Patch("work-units/:id")
     updateWorkUnit(
+        @Request() req: any,
         @Param("id") id: string,
         @Body() updateWorkUnitDto: Partial<CreateWorkUnitDto>
     ) {
-        return this.incomeService.updateWorkUnit(id, updateWorkUnitDto);
+        return this.incomeService.updateWorkUnit(
+            req.user.userId,
+            id,
+            updateWorkUnitDto
+        );
     }
 
     @Delete("work-units/:id")
-    deleteWorkUnit(@Param("id") id: string) {
-        return this.incomeService.deleteWorkUnit(id);
+    deleteWorkUnit(@Request() req: any, @Param("id") id: string) {
+        return this.incomeService.deleteWorkUnit(req.user.userId, id);
     }
 }
