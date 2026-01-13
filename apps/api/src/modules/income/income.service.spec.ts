@@ -19,6 +19,7 @@ describe("IncomeService", () => {
         name: "Logo",
         defaultPrice: 500,
         estimatedTime: 10,
+        taxRate: 10,
     };
 
     const prismaMock = {
@@ -107,7 +108,12 @@ describe("IncomeService", () => {
     describe("createWorkUnit", () => {
         it("should create a work unit", async () => {
             prismaMock.workUnit.create.mockResolvedValue(mockWorkUnit);
-            const dto = { name: "Logo", defaultPrice: 500, estimatedTime: 10 };
+            const dto = {
+                name: "Logo",
+                defaultPrice: 500,
+                estimatedTime: 10,
+                taxRate: 10,
+            };
             const result = await service.createWorkUnit(dto);
             expect(result).toEqual(mockWorkUnit);
             expect(prisma.workUnit.create).toHaveBeenCalledWith({ data: dto });

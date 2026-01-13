@@ -154,4 +154,45 @@ describe("IncomeProjection Page", () => {
             expect(screen.getByText("Design Job")).toBeInTheDocument();
         });
     });
+
+    it("should display net income correctly", async () => {
+        const mockWorkUnits = [];
+        const mockProjections = [
+            {
+                id: "proj1",
+                date: new Date().toISOString(),
+                amount: 1000,
+                status: "PLANNED",
+                workUnit: {
+                    id: "wu1",
+                    name: "Taxed Job",
+                    defaultPrice: 1000,
+                    estimatedTime: 10,
+                    taxRate: 10,
+                },
+            },
+        ];
+
+        (api.get as any).mockImplementation((url: string) => {
+            if (url === "/income/work-units") {
+                return Promise.resolve({ data: mockWorkUnits });
+            }
+            if (url.includes("/income/projection")) {
+                return Promise.resolve({ data: mockProjections });
+            }
+            return Promise.resolve({ data: [] });
+        });
+
+        render(<IncomeProjection />);
+
+        // Check if item is rendered first
+        await screen.findByText("Taxed Job");
+
+        // Check Net Amount (1000 * 0.9 = 900)
+        // Match "900" to be safe with formatting
+        await waitFor(() => {
+            const elements = screen.getAllByText(/900/);
+            expect(elements.length).toBeGreaterThan(0);
+        });
+    });
 });

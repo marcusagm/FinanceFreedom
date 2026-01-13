@@ -1,4 +1,12 @@
-import { IsString, IsNotEmpty, IsNumber, IsPositive } from "class-validator";
+import {
+    IsString,
+    IsNotEmpty,
+    IsNumber,
+    IsPositive,
+    Min,
+    Max,
+    IsOptional,
+} from "class-validator";
 import { Type } from "class-transformer";
 
 export class CreateWorkUnitDto {
@@ -15,4 +23,11 @@ export class CreateWorkUnitDto {
     @IsPositive()
     @Type(() => Number)
     estimatedTime: number;
+
+    @IsNumber()
+    @Min(0)
+    @Max(100)
+    @IsOptional()
+    @Type(() => Number)
+    taxRate?: number;
 }

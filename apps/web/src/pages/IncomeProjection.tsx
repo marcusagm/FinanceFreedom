@@ -131,10 +131,12 @@ export default function IncomeProjection() {
 
     const calendarGrid = [...prefixDays, ...daysInMonth];
 
-    const totalProjected = projections.reduce(
-        (acc, curr) => acc + Number(curr.amount),
-        0
-    );
+    const totalProjected = projections.reduce((acc, curr) => {
+        const taxRate = Number(curr.workUnit?.taxRate || 0);
+        const gross = Number(curr.amount);
+        const net = gross * (1 - taxRate / 100);
+        return acc + net;
+    }, 0);
 
     const [distributeDialog, setDistributeDialog] = useState<{
         open: boolean;
@@ -180,7 +182,7 @@ export default function IncomeProjection() {
         >
             <div className="flex h-[calc(100vh-64px)] overflow-hidden">
                 {/* Sidebar: Available Work Units */}
-                <div className="w-80 border-r bg-slate-50 dark:!bg-zinc-900 dark:border-zinc-800 p-4 overflow-y-auto transition-colors">
+                <div className="w-80 border-r bg-slate-50 dark:bg-zinc-900! dark:border-zinc-800 p-4 overflow-y-auto transition-colors">
                     <h2 className="font-bold mb-4 text-lg dark:text-foreground">
                         Unidades de Trabalho
                     </h2>
@@ -234,12 +236,12 @@ export default function IncomeProjection() {
                     </div>
 
                     {/* Calendar Grid */}
-                    <div className="grid grid-cols-7 gap-px bg-slate-200 dark:!bg-zinc-800 border border-slate-200 dark:border-zinc-800 rounded-lg overflow-hidden flex-1">
+                    <div className="grid grid-cols-7 gap-px bg-slate-200 dark:bg-zinc-800! border border-slate-200 dark:border-zinc-800 rounded-lg overflow-hidden flex-1">
                         {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"].map(
                             (day) => (
                                 <div
                                     key={day}
-                                    className="bg-slate-50 dark:!bg-zinc-900 p-2 text-center text-xs font-semibold text-slate-500 dark:text-muted-foreground uppercase"
+                                    className="bg-slate-50 dark:bg-zinc-900! p-2 text-center text-xs font-semibold text-slate-500 dark:text-muted-foreground uppercase"
                                 >
                                     {day}
                                 </div>

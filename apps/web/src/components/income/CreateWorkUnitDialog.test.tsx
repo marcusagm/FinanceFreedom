@@ -62,6 +62,9 @@ describe("CreateWorkUnitDialog", () => {
         fireEvent.change(screen.getByPlaceholderText("Hrs"), {
             target: { value: "10" },
         });
+        fireEvent.change(screen.getByPlaceholderText("%"), {
+            target: { value: "10" },
+        });
 
         fireEvent.click(screen.getByText("Salvar"));
 
@@ -71,6 +74,7 @@ describe("CreateWorkUnitDialog", () => {
                     name: "Design",
                     defaultPrice: 500,
                     estimatedTime: 10,
+                    taxRate: 10,
                 })
             );
         });

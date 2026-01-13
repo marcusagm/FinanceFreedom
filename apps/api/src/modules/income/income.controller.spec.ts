@@ -18,6 +18,7 @@ describe("IncomeController", () => {
         name: "Logo",
         defaultPrice: 500,
         estimatedTime: 10,
+        taxRate: 10,
     };
 
     const mockIncomeService = {
@@ -104,7 +105,12 @@ describe("IncomeController", () => {
     describe("createWorkUnit", () => {
         it("should create work unit", async () => {
             mockIncomeService.createWorkUnit.mockResolvedValue(mockWorkUnit);
-            const dto = { name: "Logo", defaultPrice: 500, estimatedTime: 10 };
+            const dto = {
+                name: "Logo",
+                defaultPrice: 500,
+                estimatedTime: 10,
+                taxRate: 10,
+            };
             expect(await controller.createWorkUnit(dto)).toEqual(mockWorkUnit);
             expect(service.createWorkUnit).toHaveBeenCalledWith(dto);
         });

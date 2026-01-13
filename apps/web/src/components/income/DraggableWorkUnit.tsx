@@ -9,6 +9,7 @@ interface WorkUnit {
     name: string;
     defaultPrice: number;
     estimatedTime: number;
+    taxRate?: number;
 }
 
 interface DraggableWorkUnitProps {
@@ -45,6 +46,14 @@ export function DraggableWorkUnit({ workUnit }: DraggableWorkUnitProps) {
                         <Badge variant="outline" className="text-xs">
                             {workUnit.estimatedTime}h
                         </Badge>
+                        {!!workUnit.taxRate && workUnit.taxRate > 0 && (
+                            <Badge
+                                variant="outline"
+                                className="text-xs text-red-600 border-red-200 bg-red-50 dark:bg-red-900/20 dark:text-red-400 dark:border-red-900"
+                            >
+                                -{workUnit.taxRate}%
+                            </Badge>
+                        )}
                     </div>
                 </div>
                 <span className="font-bold text-emerald-600 dark:text-emerald-400 text-sm">

@@ -12,7 +12,7 @@
 ### B. Cenários de Teste
 
 -   [ ] **Smoke Test:** Dashboard carrega.
--   [ ] **CRUD Transação:** Criar, Listar, Editar, Excluir.
+-   [ ] **CRUD Transação:** Criar, Listar, Editar, Excluir em todos os cadastros.
 -   [ ] **Fluxo Renda:** Arrastar item no calendário.
 
 ## 2. Critérios de Aceite

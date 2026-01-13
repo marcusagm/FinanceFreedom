@@ -12,6 +12,7 @@ export interface WorkUnit {
     name: string;
     defaultPrice: number;
     estimatedTime: number;
+    taxRate: number;
 }
 
 export interface CreateIncomeSourceDto {
@@ -24,6 +25,7 @@ export interface CreateWorkUnitDto {
     name: string;
     defaultPrice: number;
     estimatedTime: number;
+    taxRate?: number;
 }
 
 export const getIncomeSources = async () => {

@@ -11,6 +11,7 @@ interface ProjectedMeta {
     workUnit: {
         name: string;
         defaultPrice: number;
+        taxRate?: number;
     };
     amount: number;
     status: string;
@@ -60,12 +61,12 @@ export function CalendarDay({
         <div
             ref={setNodeRef}
             className={cn(
-                "min-h-[100px] border p-2 flex flex-col gap-1 transition-colors dark:border-border",
+                "min-h-25 border p-2 flex flex-col gap-1 transition-colors dark:border-border",
                 !isCurrentMonth &&
-                    "bg-slate-50 text-slate-400 dark:!bg-zinc-900/50 dark:text-muted-foreground",
+                    "bg-slate-50 text-slate-400 dark:bg-zinc-900/50! dark:text-muted-foreground",
                 isOver &&
                     "bg-emerald-50 border-emerald-500 ring-2 ring-emerald-200 dark:bg-emerald-500/10 dark:ring-emerald-500/30",
-                isCurrentMonth && "bg-white dark:!bg-zinc-950"
+                isCurrentMonth && "bg-white dark:bg-zinc-950!"
             )}
         >
             <span className="text-xs font-semibold mb-1 block dark:text-foreground">
@@ -92,8 +93,24 @@ export function CalendarDay({
                             {proj.workUnit.name}
                         </span>
                         <span className="font-bold ml-1">
-                            <MoneyDisplay value={Number(proj.amount)} />
+                            <MoneyDisplay
+                                value={
+                                    Number(proj.amount) *
+                                    (1 -
+                                        Number(proj.workUnit.taxRate || 0) /
+                                            100)
+                                }
+                            />
                         </span>
+                    </div>
+                    {/* Tooltip detail (visible on hover via title or custom UI) */}
+                    <div className="hidden group-hover:block absolute -top-8 left-0 bg-black text-white text-[10px] p-1 rounded z-10 whitespace-nowrap">
+                        Bruto:{" "}
+                        {new Intl.NumberFormat("pt-BR", {
+                            style: "currency",
+                            currency: "BRL",
+                        }).format(Number(proj.amount))}{" "}
+                        | Taxa: {proj.workUnit.taxRate || 0}%
                     </div>
 
                     {/* Hover Actions */}

@@ -27,6 +27,12 @@ const formSchema = z.object({
     name: z.string().min(1, "Nome é obrigatório"),
     defaultPrice: z.number().min(0.01, "Preço deve ser maior que zero"),
     estimatedTime: z.number().min(1, "Tempo inválido"),
+    taxRate: z
+        .number()
+        .min(0, "Mínimo 0%")
+        .max(100, "Máximo 100%")
+        .optional()
+        .default(0),
 });
 
 export function CreateWorkUnitDialog({
@@ -41,6 +47,7 @@ export function CreateWorkUnitDialog({
             name: "",
             defaultPrice: 0,
             estimatedTime: 1,
+            taxRate: 0,
         },
     });
 
@@ -51,12 +58,14 @@ export function CreateWorkUnitDialog({
                     name: itemToEdit.name,
                     defaultPrice: Number(itemToEdit.defaultPrice),
                     estimatedTime: Number(itemToEdit.estimatedTime),
+                    taxRate: Number(itemToEdit.taxRate || 0),
                 });
             } else {
                 form.reset({
                     name: "",
                     defaultPrice: 0,
                     estimatedTime: 1,
+                    taxRate: 0,
                 });
             }
         }
@@ -138,6 +147,31 @@ export function CreateWorkUnitDialog({
                                         type="number"
                                         min="1"
                                         placeholder="Hrs"
+                                        {...field}
+                                        onChange={(e) =>
+                                            field.onChange(
+                                                Number(e.target.value)
+                                            )
+                                        }
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="taxRate"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Imposto (%)</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        type="number"
+                                        min="0"
+                                        max="100"
+                                        placeholder="%"
                                         {...field}
                                         onChange={(e) =>
                                             field.onChange(

@@ -87,6 +87,7 @@ model WorkUnit {
   name            String
   defaultPrice    Decimal  @default(0.0)
   estimatedTime   Decimal  @default(0.0) // Hours
+  taxRate         Decimal  @default(0.0) // Percentage (0-100)
   projections     ProjectedIncome[]
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
