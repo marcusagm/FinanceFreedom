@@ -1,7 +1,6 @@
 /**
  * @vitest-environment jsdom
  */
-import React from "react";
 import "@testing-library/jest-dom/vitest";
 import {
     render,
@@ -51,6 +50,7 @@ describe("NewTransactionDialog", () => {
         onClose: vi.fn(),
         onSuccess: vi.fn(),
         accounts: mockAccounts,
+        categories: [],
     };
 
     it("renders form fields", () => {
@@ -92,10 +92,16 @@ describe("NewTransactionDialog", () => {
             id: "1",
             description: "Old Tx",
             amount: 50,
-            type: "EXPENSE",
+            type: "EXPENSE" as "EXPENSE" | "INCOME",
             date: "2023-01-01",
             accountId: "acc1",
             category: "Food",
+            account: {
+                id: "acc1",
+                name: "Wallet",
+                type: "CHECKING",
+                balance: 1000,
+            },
         };
         render(<NewTransactionDialog {...mockProps} initialData={tx} />);
         expect(screen.getByText("Editar Transação")).toBeInTheDocument();

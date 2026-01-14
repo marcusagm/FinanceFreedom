@@ -124,7 +124,7 @@ describe("IncomeProjection Page", () => {
         // Check for month title (current month)
         // Since we can't easily predict the exact month text in test without knowing date,
         // we check for static text or known elements.
-        expect(screen.getByText(/Total Projetado:/i)).toBeInTheDocument();
+        expect(screen.getByText(/Entradas:/i)).toBeInTheDocument();
         expect(screen.getByText("Unidades de Trabalho")).toBeInTheDocument();
     });
 
@@ -156,7 +156,7 @@ describe("IncomeProjection Page", () => {
     });
 
     it("should display net income correctly", async () => {
-        const mockWorkUnits = [];
+        const mockWorkUnits: any[] = [];
         const mockProjections = [
             {
                 id: "proj1",
