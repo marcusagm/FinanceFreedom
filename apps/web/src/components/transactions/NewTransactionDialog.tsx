@@ -26,12 +26,14 @@ import {
     FormMessage,
 } from "../ui/Form";
 import type { Account, Transaction } from "../../types";
+import type { Category } from "../../services/category.service";
 
 interface NewTransactionDialogProps {
     isOpen: boolean;
     onClose: () => void;
     onSuccess: () => void;
     accounts: Account[];
+    categories: Category[];
     initialData?: Transaction | null;
 }
 
@@ -53,6 +55,7 @@ export function NewTransactionDialog({
     onClose,
     onSuccess,
     accounts,
+    categories,
     initialData,
 }: NewTransactionDialogProps) {
     const form = useForm<z.infer<typeof formSchema>>({
@@ -61,7 +64,7 @@ export function NewTransactionDialog({
             description: "",
             amount: 0,
             type: "EXPENSE",
-            date: new Date().toISOString().split("T")[0],
+            date: format(new Date(), "yyyy-MM-dd"),
             accountId: "",
             category: "",
             isRecurring: false,
@@ -78,9 +81,9 @@ export function NewTransactionDialog({
                     description: initialData.description,
                     amount: Number(initialData.amount),
                     type: initialData.type,
-                    date: new Date(initialData.date)
-                        .toISOString()
-                        .split("T")[0],
+                    date: initialData.date
+                        ? format(new Date(initialData.date), "yyyy-MM-dd")
+                        : format(new Date(), "yyyy-MM-dd"),
                     accountId: initialData.accountId,
                     category: initialData.category || "",
                     isRecurring: false,
@@ -91,7 +94,7 @@ export function NewTransactionDialog({
                     description: "",
                     amount: 0,
                     type: "EXPENSE",
-                    date: new Date().toISOString().split("T")[0],
+                    date: format(new Date(), "yyyy-MM-dd"),
                     accountId: accounts.length > 0 ? accounts[0].id : "",
                     category: "",
                     isRecurring: false,
@@ -269,9 +272,20 @@ export function NewTransactionDialog({
                                 <FormItem>
                                     <FormLabel>Categoria (Opcional)</FormLabel>
                                     <FormControl>
-                                        <Input
-                                            placeholder="Ex: Alimentação"
-                                            {...field}
+                                        <Select
+                                            value={field.value}
+                                            options={[
+                                                {
+                                                    label: "Sem categoria",
+                                                    value: "",
+                                                },
+                                                ...categories.map((c) => ({
+                                                    label: c.name,
+                                                    value: c.name,
+                                                })),
+                                            ]}
+                                            onChange={field.onChange}
+                                            placeholder="Selecione uma categoria"
                                         />
                                     </FormControl>
                                     <FormMessage />

@@ -8,10 +8,12 @@ import { NewTransactionDialog } from "../components/transactions/NewTransactionD
 import { DeleteTransactionDialog } from "../components/transactions/DeleteTransactionDialog";
 import { TransactionFilters } from "../components/transactions/TransactionFilters";
 import type { Account, Transaction } from "../types";
+import { categoryService, type Category } from "../services/category.service";
 
 export function Transactions() {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [accounts, setAccounts] = useState<Account[]>([]);
+    const [categories, setCategories] = useState<Category[]>([]);
     const [isNewTransactionOpen, setIsNewTransactionOpen] = useState(false);
     const [loading, setLoading] = useState(true);
 
@@ -26,12 +28,15 @@ export function Transactions() {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const [transactionsRes, accountsRes] = await Promise.all([
-                api.get("/transactions"),
-                api.get("/accounts"),
-            ]);
+            const [transactionsRes, accountsRes, categoriesRes] =
+                await Promise.all([
+                    api.get("/transactions"),
+                    api.get("/accounts"),
+                    categoryService.getAll(),
+                ]);
             setTransactions(transactionsRes.data);
             setAccounts(accountsRes.data);
+            setCategories(categoriesRes);
         } catch (error) {
             console.error("Failed to fetch data", error);
         } finally {
@@ -51,11 +56,8 @@ export function Transactions() {
         endDate: "",
     });
 
-    const categories = Array.from(
-        new Set(
-            transactions.map((t) => t.category).filter((c): c is string => !!c)
-        )
-    ).sort();
+    // Derived categories are no longer needed for the dropdowns, but might be useful for filters if we want to include categories that are in transactions but deleted from system?
+    // For now, let's use the fetched categories for selection.
 
     const filteredTransactions = transactions.filter((t) => {
         // Search
@@ -161,6 +163,7 @@ export function Transactions() {
                 onClose={handleCloseDialog}
                 onSuccess={fetchData}
                 accounts={accounts}
+                categories={categories}
                 initialData={editingTransaction}
             />
 

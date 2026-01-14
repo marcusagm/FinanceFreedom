@@ -5,6 +5,7 @@ import { DatePicker } from "../ui/DatePicker";
 import { X } from "lucide-react";
 import { format } from "date-fns";
 import type { Account } from "../../types";
+import type { Category } from "../../services/category.service";
 
 export interface FilterState {
     search: string;
@@ -18,7 +19,7 @@ interface TransactionFiltersProps {
     filters: FilterState;
     onChange: (filters: FilterState) => void;
     accounts: Account[];
-    categories: string[];
+    categories: Category[];
 }
 
 export function TransactionFilters({
@@ -76,8 +77,8 @@ export function TransactionFilters({
                         options={[
                             { value: "all", label: "Todas as Categorias" },
                             ...categories.map((cat) => ({
-                                value: cat,
-                                label: cat,
+                                value: cat.name,
+                                label: cat.name,
                             })),
                         ]}
                         placeholder="Categoria"

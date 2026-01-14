@@ -17,7 +17,7 @@
 
 ### A. Página de Configurações Gerais
 
--   [ ] **Geral (Parâmetros do Sistema):**
+-   [x] **Geral (Parâmetros do Sistema):**
     -   Dia Padrão de Fechamento (Faturas/Relatórios).
     -   Juros Médios Padrão (%) para novas dívidas.
     -   Valor Extra Mensal Padrão (Estratégia de Dívidas).
@@ -27,32 +27,32 @@
     -   Categoria Padrão p/ Recebimentos - default: "Trabalho".
     -   Número Padrão de Recorrências - default: 12.
     -   Conta Padrão p/ Lançamentos Automáticos.
--   [ ] **Preferências (Apenas Placeholders Visuais):**
-    -   [ ] _Aparência (Design System - Ver Plan-029)_
-    -   [ ] _Idioma e Localização (i18n - Ver Plan-030)_
--   [ ] **Persistência:** Criar tabela `SystemConfig` { key: string, value: string, userId: string } no Backend.
+-   [x] **Preferências (Apenas Placeholders Visuais):**
+    -   [x] _Aparência (Design System - Ver Plan-029)_
+    -   [x] _Idioma e Localização (i18n - Ver Plan-030)_
+-   [x] **Persistência:** Criar tabela `SystemConfig` { key: string, value: string, userId: string } no Backend.
 
 ### B. Gestão de Categorias (Nova Página `/categories`)
 
--   [ ] **Backend:** Atualizar `Category` schema para incluir `color`, `icon`, `budgetLimit`.
--   [ ] **Frontend:** CRUD completo com Color Picker e Icons.
--   [ ] **Migração:** Garantir que categorias existentes ganhem cores padrão.
+-   [x] **Backend:** Atualizar `Category` schema para incluir `color`, `icon`, `budgetLimit`.
+-   [x] **Frontend:** CRUD completo com Color Picker e Icons.
+-   [x] **Migração:** Garantir que categorias existentes ganhem cores padrão.
 
 ### C. Gestão de Despesas Fixas (Nova Página `/fixed-expenses`)
 
--   [ ] **Schema:** Criar `FixedExpense` { id, name, amount, dueDay, categoryId, accountId, autoCreate (bool) }.
--   [ ] **Backend:** Service para gerar transações automaticamente e fornecer dados para projeção.
--   [ ] **Frontend:** CRUD Visual para gerenciar o que "sai todo mês`.
+-   [x] **Schema:** Criar `FixedExpense` { id, name, amount, dueDay, categoryId, accountId, autoCreate (bool) }.
+-   [x] **Backend:** Service para gerar transações automaticamente e fornecer dados para projeção.
+-   [x] **Frontend:** CRUD Visual para gerenciar o que "sai todo mês`.
 
 ### D. Integração com Projeções e Relatórios
 
--   [ ] **Motor de Projeção:** Atualizar o backend para que o cálculo de "Saldo Previsto" subtraia as `FixedExpense` recorrentes nos meses futuros.
--   [ ] **Relatórios:** Criar visão de "Comprometimento de Renda" (Quanto do que ganho já está carimbado por despesas fixas).
+-   [x] **Motor de Projeção:** Atualizar o backend para que o cálculo de "Saldo Previsto" subtraia as `FixedExpense` recorrentes nos meses futuros.
+-   [x] **Relatórios:** Criar visão de "Comprometimento de Renda" (Quanto do que ganho já está carimbado por despesas fixas).
 
 ## 3. Critérios de Aceite
 
--   [ ] Acessar "Categorias" e "Despesas Fixas" como links independentes no menu.
--   [ ] Criar nova categoria "Lazer" com cor Azul na página de Categorias.
--   [ ] Cadastrar Despesa Fixa "Aluguel" (Dia 10) de R$ 2.000,00 na página de Despesas Fixas.
--   [ ] Visualizar na tela de **Projeções** que o saldo estimado para o próximo mês já considera a saída do "Aluguel", mesmo sem transação criada ainda.
--   [ ] Sistema sugere ou cria a transação de Aluguel quando chega o dia configurado.
+-   [x] Acessar "Categorias" e "Despesas Fixas" como links independentes no menu.
+-   [x] Criar nova categoria "Lazer" com cor Azul na página de Categorias.
+-   [x] Cadastrar Despesa Fixa "Aluguel" (Dia 10) de R$ 2.000,00 na página de Despesas Fixas.
+-   [x] Visualizar na tela de **Projeções** que o saldo estimado para o próximo mês já considera a saída do "Aluguel", mesmo sem transação criada ainda.
+-   [x] Sistema sugere ou cria a transação de Aluguel quando chega o dia configurado.

@@ -28,7 +28,9 @@ export const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
         { date, setDate, className, placeholder = "dd/mm/aaaa", disabled },
         ref
     ) => {
-        const [inputValue, setInputValue] = useState("");
+        const [inputValue, setInputValue] = useState(
+            date ? format(date, "dd/MM/yyyy") : ""
+        );
         const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
         // Track the last valid date timestamp to prevent overwriting input during typing

@@ -67,6 +67,24 @@ export function Header() {
                         <Link to="/import" className={getLinkClass("/import")}>
                             Import
                         </Link>
+                        <Link
+                            to="/categories"
+                            className={getLinkClass("/categories")}
+                        >
+                            Categorias
+                        </Link>
+                        <Link
+                            to="/fixed-expenses"
+                            className={getLinkClass("/fixed-expenses")}
+                        >
+                            Fixas
+                        </Link>
+                        <Link
+                            to="/settings"
+                            className={getLinkClass("/settings")}
+                        >
+                            Settings
+                        </Link>
                     </nav>
                 </div>
                 <div className="flex items-center gap-2">

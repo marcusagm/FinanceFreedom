@@ -1,5 +1,11 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Wallet, ArrowRightLeft, DollarSign } from "lucide-react";
+import {
+    Home,
+    Wallet,
+    ArrowRightLeft,
+    DollarSign,
+    Settings as SettingsIcon,
+} from "lucide-react";
 import { Header } from "./Header";
 import { cn } from "../../lib/utils";
 
@@ -65,6 +71,18 @@ export function Layout({ children }: { children: React.ReactNode }) {
                     >
                         <DollarSign className="h-5 w-5" />
                         <span>Renda</span>
+                    </Link>
+                    <Link
+                        to="/settings"
+                        className={cn(
+                            "flex flex-col items-center justify-center w-full h-full space-y-1 text-xs font-medium transition-colors",
+                            isActive("/settings")
+                                ? "text-primary"
+                                : "text-muted-foreground hover:text-primary"
+                        )}
+                    >
+                        <SettingsIcon className="h-5 w-5" />
+                        <span>Config</span>
                     </Link>
                 </nav>
             </div>

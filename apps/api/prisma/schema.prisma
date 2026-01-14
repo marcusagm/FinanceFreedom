@@ -32,6 +32,8 @@ model User {
   workUnits        WorkUnit[]
   projectedIncomes ProjectedIncome[]
   categories       Category[]
+  systemConfigs    SystemConfig[]
+  fixedExpenses    FixedExpense[]
 }
 
 model Account {
@@ -42,6 +44,7 @@ model Account {
   color     String?  // Hex code for UI
   transactions Transaction[]
   emailCredentials EmailCredential[]
+  fixedExpenses FixedExpense[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   
@@ -78,11 +81,13 @@ model Category {
   color       String?
   icon        String?
   type        String?  // INCOME, EXPENSE
+  budgetLimit Decimal?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   transactions Transaction[]
   debts        Debt[]
+  fixedExpenses FixedExpense[]
   
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -168,4 +173,38 @@ model ProjectedIncome {
 
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model SystemConfig {
+  id        String   @id @default(uuid())
+  key       String
+  value     String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([key, userId])
+}
+
+model FixedExpense {
+  id          String   @id @default(uuid())
+  description String
+  amount      Decimal
+  dueDay      Int
+  autoCreate  Boolean  @default(false)
+  startDate   DateTime?
+  endDate     DateTime?
+
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id])
+  
+  accountId   String
+  account     Account  @relation(fields: [accountId], references: [id])
+
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

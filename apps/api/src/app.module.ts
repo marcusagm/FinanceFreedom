@@ -14,6 +14,9 @@ import { DashboardModule } from "./modules/dashboard/dashboard.module";
 import { SimulatorModule } from "./modules/simulator/simulator.module";
 import { DebtModule } from "./modules/debt/debt.module";
 import { IncomeModule } from "./modules/income/income.module";
+import { SystemConfigModule } from "./modules/system-config/system-config.module";
+import { FixedExpenseModule } from "./modules/fixed-expense/fixed-expense.module";
+import { CategoryModule } from "./modules/category/category.module";
 
 @Module({
     imports: [
@@ -35,6 +38,9 @@ import { IncomeModule } from "./modules/income/income.module";
         }),
         DebtModule,
         IncomeModule,
+        SystemConfigModule,
+        FixedExpenseModule,
+        CategoryModule,
     ],
     controllers: [AppController],
     providers: [

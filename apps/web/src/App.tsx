@@ -18,6 +18,9 @@ import { Register } from "./pages/Register";
 import { Profile } from "./pages/Profile";
 import { ForgotPassword } from "./pages/ForgotPassword";
 import { ResetPassword } from "./pages/ResetPassword";
+import { Settings } from "./pages/Settings";
+import { Categories } from "./pages/Categories";
+import { FixedExpenses } from "./pages/FixedExpenses";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
 function App() {
@@ -78,6 +81,18 @@ function App() {
                                                 <Route
                                                     path="/import/config"
                                                     element={<ImapConfigPage />}
+                                                />
+                                                <Route
+                                                    path="/categories"
+                                                    element={<Categories />}
+                                                />
+                                                <Route
+                                                    path="/fixed-expenses"
+                                                    element={<FixedExpenses />}
+                                                />
+                                                <Route
+                                                    path="/settings"
+                                                    element={<Settings />}
                                                 />
                                                 <Route
                                                     path="/profile"

@@ -27,11 +27,13 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { api } from "../lib/api";
 import { DistributeIncomeDialog } from "../components/income/DistributeIncomeDialog";
 import { MoneyDisplay } from "../components/ui/MoneyDisplay";
+import { fixedExpenseService } from "../services/fixed-expense.service";
 
 export default function IncomeProjection() {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [workUnits, setWorkUnits] = useState<any[]>([]);
     const [projections, setProjections] = useState<any[]>([]);
+    const [fixedExpenses, setFixedExpenses] = useState<any[]>([]);
     const [activeDragItem, setActiveDragItem] = useState<any>(null);
 
     const sensors = useSensors(
@@ -44,6 +46,7 @@ export default function IncomeProjection() {
 
     useEffect(() => {
         fetchWorkUnits();
+        fetchFixedExpenses();
     }, []);
 
     useEffect(() => {
@@ -56,6 +59,15 @@ export default function IncomeProjection() {
             setWorkUnits(res.data);
         } catch (error) {
             console.error("Failed to fetch work units", error);
+        }
+    };
+
+    const fetchFixedExpenses = async () => {
+        try {
+            const data = await fixedExpenseService.getAll();
+            setFixedExpenses(data);
+        } catch (error) {
+            console.error("Failed to fetch fixed expenses", error);
         }
     };
 
@@ -136,6 +148,20 @@ export default function IncomeProjection() {
         const gross = Number(curr.amount);
         const net = gross * (1 - taxRate / 100);
         return acc + net;
+        return acc + net;
+    }, 0);
+
+    const totalFixedExpenses = fixedExpenses.reduce((acc, curr) => {
+        // Check dates
+        // Ideally checking against the specific month logic
+        const start = curr.startDate ? new Date(curr.startDate) : null;
+        const end = curr.endDate ? new Date(curr.endDate) : null;
+
+        // Simple check: if start is after current month end, or end is before current month start, exclude.
+        if (start && start > monthEnd) return acc;
+        if (end && end < monthStart) return acc;
+
+        return acc + Number(curr.amount);
     }, 0);
 
     const [distributeDialog, setDistributeDialog] = useState<{
@@ -225,13 +251,37 @@ export default function IncomeProjection() {
                             </Button>
                         </div>
 
-                        <div className="bg-emerald-100 dark:bg-emerald-500/10 px-4 py-2 rounded-lg border border-emerald-200 dark:border-emerald-500/20">
-                            <span className="text-emerald-800 dark:text-emerald-400 text-sm font-medium mr-2">
-                                Total Projetado:
-                            </span>
-                            <span className="text-emerald-800 dark:text-emerald-400 text-xl font-bold">
-                                <MoneyDisplay value={totalProjected} />
-                            </span>
+                        <div className="flex gap-4">
+                            <div className="bg-red-100 dark:bg-red-500/10 px-4 py-2 rounded-lg border border-red-200 dark:border-red-500/20">
+                                <span className="text-red-800 dark:text-red-400 text-sm font-medium mr-2">
+                                    Despesas Fixas:
+                                </span>
+                                <span className="text-red-800 dark:text-red-400 text-xl font-bold">
+                                    <MoneyDisplay value={totalFixedExpenses} />
+                                </span>
+                            </div>
+
+                            <div className="bg-emerald-100 dark:bg-emerald-500/10 px-4 py-2 rounded-lg border border-emerald-200 dark:border-emerald-500/20">
+                                <span className="text-emerald-800 dark:text-emerald-400 text-sm font-medium mr-2">
+                                    Entradas:
+                                </span>
+                                <span className="text-emerald-800 dark:text-emerald-400 text-xl font-bold">
+                                    <MoneyDisplay value={totalProjected} />
+                                </span>
+                            </div>
+
+                            <div className="bg-blue-100 dark:bg-blue-500/10 px-4 py-2 rounded-lg border border-blue-200 dark:border-blue-500/20">
+                                <span className="text-blue-800 dark:text-blue-400 text-sm font-medium mr-2">
+                                    Saldo Previsto:
+                                </span>
+                                <span className="text-blue-800 dark:text-blue-400 text-xl font-bold">
+                                    <MoneyDisplay
+                                        value={
+                                            totalProjected - totalFixedExpenses
+                                        }
+                                    />
+                                </span>
+                            </div>
                         </div>
                     </div>
 
