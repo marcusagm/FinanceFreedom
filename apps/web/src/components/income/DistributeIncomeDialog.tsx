@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import type React from "react";
+import { useState } from "react";
+import { Button } from "../ui/Button";
 import {
     Dialog,
     DialogContent,
@@ -7,7 +9,6 @@ import {
     DialogHeader,
     DialogTitle,
 } from "../ui/Dialog";
-import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
 
 interface DistributeIncomeDialogProps {
@@ -38,26 +39,20 @@ export function DistributeIncomeDialog({
                 <DialogHeader>
                     <DialogTitle>Distribuir "{workUnitName}"</DialogTitle>
                     <DialogDescription>
-                        Defina como distribuir as horas para esta unidade de
-                        trabalho.
+                        Defina como distribuir as horas para esta unidade de trabalho.
                     </DialogDescription>
                 </DialogHeader>
 
                 <div className="grid gap-4 py-4">
                     <div className="grid grid-cols-4 items-center gap-4">
-                        <label
-                            htmlFor="hours"
-                            className="text-right text-sm font-medium"
-                        >
+                        <label htmlFor="hours" className="text-right text-sm font-medium">
                             Horas/Dia
                         </label>
                         <Input
                             id="hours"
                             type="number"
                             value={hoursPerDay}
-                            onChange={(e) =>
-                                setHoursPerDay(Number(e.target.value))
-                            }
+                            onChange={(e) => setHoursPerDay(Number(e.target.value))}
                             className="col-span-3"
                             min={1}
                             max={24}
@@ -82,11 +77,7 @@ export function DistributeIncomeDialog({
                 </div>
 
                 <DialogFooter>
-                    <Button
-                        variant="ghost"
-                        onClick={() => onOpenChange(false)}
-                        type="button"
-                    >
+                    <Button variant="ghost" onClick={() => onOpenChange(false)} type="button">
                         Cancelar
                     </Button>
                     <Button onClick={handleSubmit}>Distribuir</Button>

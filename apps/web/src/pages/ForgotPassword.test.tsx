@@ -1,9 +1,9 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { describe, it, vi, expect } from "vitest";
-import { ForgotPassword } from "./ForgotPassword";
 import { BrowserRouter } from "react-router-dom";
+import { describe, expect, it, vi } from "vitest";
 import { api } from "../lib/api";
+import { ForgotPassword } from "./ForgotPassword";
 
 vi.mock("../lib/api", () => ({
     api: {
@@ -25,7 +25,7 @@ describe("ForgotPassword Component", () => {
         return render(
             <BrowserRouter>
                 <ForgotPassword />
-            </BrowserRouter>
+            </BrowserRouter>,
         );
     };
 
@@ -59,9 +59,7 @@ describe("ForgotPassword Component", () => {
         fireEvent.click(screen.getByRole("button", { name: "Send Link" }));
 
         await waitFor(() => {
-            expect(
-                screen.getByText("An error occurred. Please try again.")
-            ).toBeInTheDocument();
+            expect(screen.getByText("An error occurred. Please try again.")).toBeInTheDocument();
         });
     });
 });

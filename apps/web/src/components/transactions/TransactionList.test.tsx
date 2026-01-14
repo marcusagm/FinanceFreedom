@@ -1,6 +1,6 @@
 import React from "react";
-import { render, screen, fireEvent } from "../../utils/test-utils";
-import { describe, it, expect, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import { fireEvent, render, screen } from "../../utils/test-utils";
 import { TransactionList } from "./TransactionList";
 
 // Mock TimeCostBadge and hooks
@@ -74,8 +74,6 @@ describe("TransactionList", () => {
 
     it("renders empty state", () => {
         render(<TransactionList {...mockProps} transactions={[]} />);
-        expect(
-            screen.getByText("Nenhuma transação encontrada.")
-        ).toBeInTheDocument();
+        expect(screen.getByText("Nenhuma transação encontrada.")).toBeInTheDocument();
     });
 });

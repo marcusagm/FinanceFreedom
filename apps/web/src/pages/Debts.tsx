@@ -1,18 +1,13 @@
 import { useEffect, useState } from "react";
-import { PageHeader } from "../components/ui/PageHeader";
-import { api } from "../lib/api";
-import { Button } from "../components/ui/Button";
-import { DebtForm, type Debt } from "../components/debt/DebtForm";
 import { DebtCard } from "../components/debt/DebtCard";
+import { type Debt, DebtForm } from "../components/debt/DebtForm";
 import { DeleteDebtDialog } from "../components/debt/DeleteDebtDialog";
 import { StrategyComparison } from "../components/debt/StrategyComparison";
-import {
-    Tabs,
-    TabsContent,
-    TabsList,
-    TabsTrigger,
-} from "../components/ui/Tabs";
 import { AppAlert } from "../components/ui/AppAlert";
+import { Button } from "../components/ui/Button";
+import { PageHeader } from "../components/ui/PageHeader";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/Tabs";
+import { api } from "../lib/api";
 
 export default function Debts() {
     const [debts, setDebts] = useState<Debt[]>([]);
@@ -66,6 +61,16 @@ export default function Debts() {
         }
     };
 
+    const handleUpdateInstallments = async (id: string, installmentsPaid: number) => {
+        try {
+            await api.patch(`/debts/${id}`, { installmentsPaid });
+            await fetchDebts();
+        } catch (error) {
+            console.error("Failed to update installments", error);
+            setError("Erro ao atualizar parcelas.");
+        }
+    };
+
     return (
         <div className="space-y-4 p-8 pt-6">
             {/* Error Alert Placeholder - could be better managed with a global toast context, but local state for now */}
@@ -74,12 +79,7 @@ export default function Debts() {
                I will add a simple error state to show AppAlert if needed.
             */}
             {error && (
-                <AppAlert
-                    variant="destructive"
-                    title="Erro"
-                    description={error}
-                    className="mb-4"
-                />
+                <AppAlert variant="destructive" title="Erro" description={error} className="mb-4" />
             )}
 
             <PageHeader
@@ -94,9 +94,7 @@ export default function Debts() {
             >
                 <TabsList>
                     <TabsTrigger value="LIST">Minhas Dívidas</TabsTrigger>
-                    <TabsTrigger value="STRATEGY">
-                        Estratégias de Pagamento
-                    </TabsTrigger>
+                    <TabsTrigger value="STRATEGY">Estratégias de Pagamento</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="LIST">
@@ -110,22 +108,27 @@ export default function Debts() {
                                 interestRate={debt.interestRate}
                                 minimumPayment={debt.minimumPayment}
                                 dueDate={debt.dueDate}
+                                installmentsTotal={debt.installmentsTotal}
+                                installmentsPaid={debt.installmentsPaid}
+                                firstInstallmentDate={debt.firstInstallmentDate}
                                 onEdit={() => handleEdit(debt)}
                                 onDelete={() => handleDeleteClick(debt)}
+                                onUpdateInstallments={(count) =>
+                                    handleUpdateInstallments(debt.id, count)
+                                }
                             />
                         ))}
 
                         {debts.length === 0 && (
                             <div className="col-span-full text-center py-10 text-muted-foreground border rounded-lg bg-card/50">
-                                Nenhuma dívida cadastrada. Parabéns (ou cadastre
-                                uma agora)!
+                                Nenhuma dívida cadastrada. Parabéns (ou cadastre uma agora)!
                             </div>
                         )}
                     </div>
                 </TabsContent>
 
                 <TabsContent value="STRATEGY">
-                    <StrategyComparison />
+                    <StrategyComparison onEdit={handleEdit} onDelete={handleDeleteClick} />
                 </TabsContent>
             </Tabs>
             <DebtForm

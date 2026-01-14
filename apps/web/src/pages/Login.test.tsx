@@ -1,10 +1,10 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { describe, it, vi, expect } from "vitest";
-import { Login } from "./Login";
 import { BrowserRouter } from "react-router-dom";
+import { describe, expect, it, vi } from "vitest";
 import { AuthContext } from "../contexts/AuthContext";
 import { api } from "../lib/api";
+import { Login } from "./Login";
 
 // Mock API
 vi.mock("../lib/api", () => ({
@@ -41,7 +41,7 @@ describe("Login Component", () => {
                 <BrowserRouter>
                     <Login />
                 </BrowserRouter>
-            </AuthContext.Provider>
+            </AuthContext.Provider>,
         );
     };
 
@@ -50,9 +50,7 @@ describe("Login Component", () => {
         expect(screen.getByText("Finance Freedom")).toBeInTheDocument();
         expect(screen.getByLabelText("Email")).toBeInTheDocument();
         expect(screen.getByLabelText("Password")).toBeInTheDocument();
-        expect(
-            screen.getByRole("button", { name: "Sign In" })
-        ).toBeInTheDocument();
+        expect(screen.getByRole("button", { name: "Sign In" })).toBeInTheDocument();
     });
 
     it("validates empty inputs", async () => {
@@ -60,12 +58,8 @@ describe("Login Component", () => {
         fireEvent.click(screen.getByRole("button", { name: "Sign In" }));
 
         await waitFor(() => {
-            expect(
-                screen.getByText("Please enter a valid email")
-            ).toBeInTheDocument();
-            expect(
-                screen.getByText("Password is required")
-            ).toBeInTheDocument();
+            expect(screen.getByText("Please enter a valid email")).toBeInTheDocument();
+            expect(screen.getByText("Password is required")).toBeInTheDocument();
         });
     });
 
@@ -111,9 +105,7 @@ describe("Login Component", () => {
         fireEvent.click(screen.getByRole("button", { name: "Sign In" }));
 
         await waitFor(() => {
-            expect(
-                screen.getByText("Invalid credentials. Please try again.")
-            ).toBeInTheDocument();
+            expect(screen.getByText("Invalid credentials. Please try again.")).toBeInTheDocument();
         });
     });
 });

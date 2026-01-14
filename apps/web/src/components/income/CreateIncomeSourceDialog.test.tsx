@@ -1,6 +1,6 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { CreateIncomeSourceDialog } from "./CreateIncomeSourceDialog";
-import { vi, describe, it, expect, beforeEach, beforeAll } from "vitest";
 import "@testing-library/jest-dom";
 import * as IncomeService from "../../services/income.service";
 
@@ -40,7 +40,7 @@ vi.mock("../ui/Input", () => ({
             onChange={(e) => {
                 onChange?.(e);
                 if (onValueChange) {
-                    const floatValue = parseFloat(e.target.value) || 0;
+                    const floatValue = Number.parseFloat(e.target.value) || 0;
                     onValueChange({ floatValue, value: e.target.value });
                 }
             }}
@@ -72,9 +72,7 @@ describe("CreateIncomeSourceDialog", () => {
     it("should render correctly", () => {
         render(<CreateIncomeSourceDialog {...defaultProps} />);
         expect(screen.getByText("Nova Fonte de Renda")).toBeInTheDocument();
-        expect(
-            screen.getByPlaceholderText("Nome da fonte")
-        ).toBeInTheDocument();
+        expect(screen.getByPlaceholderText("Nome da fonte")).toBeInTheDocument();
     });
 
     it("should validate inputs", async () => {
@@ -111,7 +109,7 @@ describe("CreateIncomeSourceDialog", () => {
                     name: "Salário",
                     amount: 5000,
                     payDay: 5,
-                })
+                }),
             );
             expect(defaultProps.onSuccess).toHaveBeenCalled();
         });
@@ -124,12 +122,7 @@ describe("CreateIncomeSourceDialog", () => {
             amount: 1000,
             payDay: 5,
         };
-        render(
-            <CreateIncomeSourceDialog
-                {...defaultProps}
-                itemToEdit={itemToEdit}
-            />
-        );
+        render(<CreateIncomeSourceDialog {...defaultProps} itemToEdit={itemToEdit} />);
 
         expect(screen.getByDisplayValue("Old Name")).toBeInTheDocument();
 
@@ -143,7 +136,7 @@ describe("CreateIncomeSourceDialog", () => {
                 "/income/sources/1",
                 expect.objectContaining({
                     name: "New Name",
-                })
+                }),
             );
         });
     });

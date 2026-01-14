@@ -11,6 +11,9 @@ export interface ActionRecommendation {
 
 export interface DashboardSummary {
     totalBalance: number;
+    totalInvested: number;
+    totalDebt: number;
+    netWorth: number;
     monthlyIncome: number;
     monthlyExpenses: number;
     chartData: { date: string; balance: number }[];

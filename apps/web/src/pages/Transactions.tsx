@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react";
-import { PageHeader } from "../components/ui/PageHeader";
 import { Plus } from "lucide-react";
-import { api } from "../lib/api";
-import { Button } from "../components/ui/Button";
-import { TransactionList } from "../components/transactions/TransactionList";
-import { NewTransactionDialog } from "../components/transactions/NewTransactionDialog";
+import { useEffect, useState } from "react";
 import { DeleteTransactionDialog } from "../components/transactions/DeleteTransactionDialog";
+import { NewTransactionDialog } from "../components/transactions/NewTransactionDialog";
 import { TransactionFilters } from "../components/transactions/TransactionFilters";
+import { TransactionList } from "../components/transactions/TransactionList";
+import { Button } from "../components/ui/Button";
+import { PageHeader } from "../components/ui/PageHeader";
+import { api } from "../lib/api";
+import { type Category, categoryService } from "../services/category.service";
 import type { Account, Transaction } from "../types";
-import { categoryService, type Category } from "../services/category.service";
 
 export function Transactions() {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -17,23 +17,20 @@ export function Transactions() {
     const [isNewTransactionOpen, setIsNewTransactionOpen] = useState(false);
     const [loading, setLoading] = useState(true);
 
-    const [editingTransaction, setEditingTransaction] =
-        useState<Transaction | null>(null);
+    const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
 
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-    const [transactionToDelete, setTransactionToDelete] =
-        useState<Transaction | null>(null);
+    const [transactionToDelete, setTransactionToDelete] = useState<Transaction | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
 
     const fetchData = async () => {
         setLoading(true);
         try {
-            const [transactionsRes, accountsRes, categoriesRes] =
-                await Promise.all([
-                    api.get("/transactions"),
-                    api.get("/accounts"),
-                    categoryService.getAll(),
-                ]);
+            const [transactionsRes, accountsRes, categoriesRes] = await Promise.all([
+                api.get("/transactions"),
+                api.get("/accounts"),
+                categoryService.getAll(),
+            ]);
             setTransactions(transactionsRes.data);
             setAccounts(accountsRes.data);
             setCategories(categoriesRes);
@@ -61,10 +58,7 @@ export function Transactions() {
 
     const filteredTransactions = transactions.filter((t) => {
         // Search
-        if (
-            filters.search &&
-            !t.description.toLowerCase().includes(filters.search.toLowerCase())
-        ) {
+        if (filters.search && !t.description.toLowerCase().includes(filters.search.toLowerCase())) {
             return false;
         }
 

@@ -22,6 +22,7 @@ export class TransactionService {
             date,
             isRecurring,
             repeatCount,
+            paysInstallment,
             ...rest
         } = createTransactionDto;
         const transactionDate = new Date(date);
@@ -44,7 +45,9 @@ export class TransactionService {
                             amount,
                             type,
                             date: currentDate,
-                            ...rest,
+                            description: createTransactionDto.description,
+                            category: createTransactionDto.category,
+                            debtId: createTransactionDto.debtId,
                         },
                     });
                     createdTransactions.push(transaction);
@@ -78,12 +81,21 @@ export class TransactionService {
                         if (debt) {
                             const newDebtBalance =
                                 Number(debt.totalAmount) - Number(amount);
+
+                            // Check if paying an installment
+                            let newPaidCount = debt.installmentsPaid || 0;
+                            if (createTransactionDto.paysInstallment) {
+                                newPaidCount += 1;
+                                // Optional cap: if (debt.installmentsTotal && newPaidCount > debt.installmentsTotal) newPaidCount = debt.installmentsTotal;
+                            }
+
                             // Ensure debt doesn't go below zero? Or allow it? Allowing for now.
                             await prisma.debt.update({
                                 where: { id: createTransactionDto.debtId },
                                 data: {
                                     totalAmount:
                                         newDebtBalance < 0 ? 0 : newDebtBalance,
+                                    installmentsPaid: newPaidCount,
                                 },
                             });
                         }

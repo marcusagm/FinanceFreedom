@@ -1,9 +1,14 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { format } from "date-fns";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { api } from "../../lib/api";
-import { format } from "date-fns";
+import type { Category } from "../../services/category.service";
+import type { Account, Transaction } from "../../types";
+import { Button } from "../ui/Button";
+import { Checkbox } from "../ui/Checkbox";
+import { DatePicker } from "../ui/DatePicker";
 import {
     Dialog,
     DialogContent,
@@ -12,21 +17,9 @@ import {
     DialogHeader,
     DialogTitle,
 } from "../ui/Dialog";
-import { Button } from "../ui/Button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/Form";
 import { Input } from "../ui/Input";
-import { DatePicker } from "../ui/DatePicker";
 import { Select } from "../ui/Select";
-import { Checkbox } from "../ui/Checkbox";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "../ui/Form";
-import type { Account, Transaction } from "../../types";
-import type { Category } from "../../services/category.service";
 
 interface NewTransactionDialogProps {
     isOpen: boolean;
@@ -133,12 +126,8 @@ export function NewTransactionDialog({
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>
-                        {initialData ? "Editar Transação" : "Nova Transação"}
-                    </DialogTitle>
-                    <DialogDescription>
-                        Preencha os detalhes da transação abaixo.
-                    </DialogDescription>
+                    <DialogTitle>{initialData ? "Editar Transação" : "Nova Transação"}</DialogTitle>
+                    <DialogDescription>Preencha os detalhes da transação abaixo.</DialogDescription>
                 </DialogHeader>
 
                 <Form {...form}>
@@ -153,10 +142,7 @@ export function NewTransactionDialog({
                                 <FormItem>
                                     <FormLabel>Descrição</FormLabel>
                                     <FormControl>
-                                        <Input
-                                            placeholder="Ex: Mercado, Salário"
-                                            {...field}
-                                        />
+                                        <Input placeholder="Ex: Mercado, Salário" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -167,9 +153,7 @@ export function NewTransactionDialog({
                             <FormField
                                 control={form.control}
                                 name="amount"
-                                render={({
-                                    field: { onChange, value, ...field },
-                                }) => (
+                                render={({ field: { onChange, value, ...field } }) => (
                                     <FormItem>
                                         <FormLabel>Valor</FormLabel>
                                         <FormControl>
@@ -178,9 +162,7 @@ export function NewTransactionDialog({
                                                 currency
                                                 value={value}
                                                 onValueChange={(values) => {
-                                                    onChange(
-                                                        values.floatValue || 0
-                                                    );
+                                                    onChange(values.floatValue || 0);
                                                 }}
                                                 {...field}
                                             />
@@ -198,6 +180,7 @@ export function NewTransactionDialog({
                                         <FormLabel>Tipo</FormLabel>
                                         <FormControl>
                                             <Select
+                                                label="Tipo"
                                                 value={field.value}
                                                 options={transactionTypes}
                                                 onChange={field.onChange}
@@ -220,20 +203,12 @@ export function NewTransactionDialog({
                                             <DatePicker
                                                 date={
                                                     field.value
-                                                        ? new Date(
-                                                              field.value +
-                                                                  "T00:00:00"
-                                                          )
+                                                        ? new Date(field.value + "T00:00:00")
                                                         : undefined
                                                 }
                                                 setDate={(date) =>
                                                     field.onChange(
-                                                        date
-                                                            ? format(
-                                                                  date,
-                                                                  "yyyy-MM-dd"
-                                                              )
-                                                            : ""
+                                                        date ? format(date, "yyyy-MM-dd") : "",
                                                     )
                                                 }
                                                 className="w-full"
@@ -253,6 +228,7 @@ export function NewTransactionDialog({
                                         <FormLabel>Conta</FormLabel>
                                         <FormControl>
                                             <Select
+                                                label="Conta"
                                                 value={field.value}
                                                 options={accountOptions}
                                                 onChange={field.onChange}
@@ -273,7 +249,8 @@ export function NewTransactionDialog({
                                     <FormLabel>Categoria (Opcional)</FormLabel>
                                     <FormControl>
                                         <Select
-                                            value={field.value}
+                                            label="Categoria"
+                                            value={field.value || ""}
                                             options={[
                                                 {
                                                     label: "Sem categoria",
@@ -303,9 +280,7 @@ export function NewTransactionDialog({
                                             <FormControl className="w-auto">
                                                 <Checkbox
                                                     checked={field.value}
-                                                    onCheckedChange={
-                                                        field.onChange
-                                                    }
+                                                    onCheckedChange={field.onChange}
                                                 />
                                             </FormControl>
                                             <div className="space-y-1 leading-none">
@@ -323,20 +298,13 @@ export function NewTransactionDialog({
                                         name="repeatCount"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>
-                                                    Número de vezes
-                                                </FormLabel>
+                                                <FormLabel>Número de vezes</FormLabel>
                                                 <FormControl>
                                                     <Input
                                                         type="number"
                                                         {...field}
                                                         onChange={(e) =>
-                                                            field.onChange(
-                                                                Number(
-                                                                    e.target
-                                                                        .value
-                                                                )
-                                                            )
+                                                            field.onChange(Number(e.target.value))
                                                         }
                                                     />
                                                 </FormControl>

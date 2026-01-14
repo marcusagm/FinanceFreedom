@@ -1,30 +1,31 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Accounts } from "./pages/Accounts";
-import Debts from "./pages/Debts";
-import { Transactions } from "./pages/Transactions";
-import { ImportPage } from "./pages/ImportPage";
-import { ImapConfigPage } from "./pages/ImapConfigPage";
 import Dashboard from "./pages/Dashboard";
+import Debts from "./pages/Debts";
+import { ImapConfigPage } from "./pages/ImapConfigPage";
+import { ImportPage } from "./pages/ImportPage";
 import IncomePage from "./pages/Income";
 import IncomeProjection from "./pages/IncomeProjection";
+import InvestmentAccounts from "./pages/InvestmentAccounts";
+import SavingsGoals from "./pages/SavingsGoals";
+import { Transactions } from "./pages/Transactions";
 import "./App.css";
-import { ThemeProvider } from "./components/providers/ThemeProvider";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 import { Layout } from "./components/layout/Layout";
-import { PrivacyProvider } from "./contexts/PrivacyContext";
+import { ThemeProvider } from "./components/providers/ThemeProvider";
 import { Toaster } from "./components/ui/Sonner";
 import { AuthProvider } from "./contexts/AuthContext";
-import { Login } from "./pages/Login";
-import { Register } from "./pages/Register";
-import { Profile } from "./pages/Profile";
-import { ForgotPassword } from "./pages/ForgotPassword";
-import { ResetPassword } from "./pages/ResetPassword";
-import { Settings } from "./pages/Settings";
+import { PrivacyProvider } from "./contexts/PrivacyContext";
 import { Categories } from "./pages/Categories";
 import { FixedExpenses } from "./pages/FixedExpenses";
-import { ProtectedRoute } from "./components/ProtectedRoute";
+import { ForgotPassword } from "./pages/ForgotPassword";
+import { Login } from "./pages/Login";
+import { Profile } from "./pages/Profile";
+import { Register } from "./pages/Register";
+import { ResetPassword } from "./pages/ResetPassword";
+import { Settings } from "./pages/Settings";
 
 function App() {
-    console.log("App component rendering");
     return (
         <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
             <PrivacyProvider>
@@ -73,6 +74,16 @@ function App() {
                                                 <Route
                                                     path="/transactions"
                                                     element={<Transactions />}
+                                                />
+                                                <Route
+                                                    path="/investments"
+                                                    element={
+                                                        <InvestmentAccounts />
+                                                    }
+                                                />
+                                                <Route
+                                                    path="/goals"
+                                                    element={<SavingsGoals />}
                                                 />
                                                 <Route
                                                     path="/import"

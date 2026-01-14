@@ -1,6 +1,6 @@
+import { AlertCircle, AlertTriangle, CheckCircle2, Info } from "lucide-react";
 import type { ReactNode } from "react";
 import { Alert, AlertDescription, AlertTitle } from "./Alert";
-import { AlertTriangle, AlertCircle, CheckCircle2, Info } from "lucide-react";
 
 import { cn } from "../../lib/utils";
 
@@ -37,9 +37,7 @@ export function AppAlert({
     const getIcon = () => {
         switch (variant) {
             case "destructive":
-                return (
-                    <AlertTriangle className="h-4 w-4 text-red-600 dark:text-red-400" />
-                );
+                return <AlertTriangle className="h-4 w-4 text-red-600 dark:text-red-400" />;
             case "success":
                 return <CheckCircle2 className="h-4 w-4" />;
             case "warning":

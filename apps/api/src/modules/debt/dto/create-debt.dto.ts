@@ -37,4 +37,20 @@ export class CreateDebtDto {
     @IsOptional()
     @IsNumber()
     priority?: number;
+
+    @IsOptional()
+    @IsNumber()
+    installmentsTotal?: number;
+
+    @IsOptional()
+    @IsNumber()
+    installmentsPaid?: number;
+
+    @IsOptional()
+    @IsNumber()
+    originalAmount?: number;
+
+    @IsOptional()
+    @IsString()
+    firstInstallmentDate?: string; // ISO Date String
 }

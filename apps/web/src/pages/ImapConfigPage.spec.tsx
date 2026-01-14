@@ -1,11 +1,11 @@
-import { render, screen, waitFor, fireEvent } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { ImapConfigPage } from "./ImapConfigPage";
-import * as apiModule from "../lib/api";
-import { BrowserRouter } from "react-router-dom";
 import { PrivacyProvider } from "@/contexts/PrivacyContext";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import React from "react";
+import { BrowserRouter } from "react-router-dom";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import * as apiModule from "../lib/api";
+import { ImapConfigPage } from "./ImapConfigPage";
 
 const { api } = apiModule;
 
@@ -45,21 +45,14 @@ vi.mock("../components/import/ImapConfigForm", () => ({
 
         const handleLocalTest = async () => {
             const res = await onTest(initialData);
-            setTestResult(
-                res.message ||
-                    (res.success ? "Connection successful!" : "Failed")
-            );
+            setTestResult(res.message || (res.success ? "Connection successful!" : "Failed"));
         };
 
         return isOpen ? (
             <div data-testid="imap-config-form">
-                <button onClick={() => onSubmit(initialData)}>
-                    Save Config
-                </button>
+                <button onClick={() => onSubmit(initialData)}>Save Config</button>
                 <button onClick={handleLocalTest}>Test Connection</button>
-                {testResult && (
-                    <div data-testid="test-result">{testResult}</div>
-                )}
+                {testResult && <div data-testid="test-result">{testResult}</div>}
             </div>
         ) : null;
     },
@@ -70,7 +63,7 @@ const renderWithRouter = (ui: React.ReactElement) => {
     return render(
         <PrivacyProvider>
             <BrowserRouter>{ui}</BrowserRouter>
-        </PrivacyProvider>
+        </PrivacyProvider>,
     );
 };
 
@@ -105,30 +98,21 @@ describe("ImapConfigPage", () => {
 
     it("renders and loads configuration", async () => {
         renderWithRouter(<ImapConfigPage />);
-        await waitFor(() =>
-            expect(screen.getByText("test@test.com")).toBeInTheDocument()
-        );
+        await waitFor(() => expect(screen.getByText("test@test.com")).toBeInTheDocument());
     });
 
     it("saves configuration", async () => {
         (api.post as any).mockResolvedValue({ data: {} });
         renderWithRouter(<ImapConfigPage />);
 
-        await waitFor(() =>
-            expect(screen.getByLabelText("Edit")).toBeInTheDocument()
-        );
+        await waitFor(() => expect(screen.getByLabelText("Edit")).toBeInTheDocument());
         fireEvent.click(screen.getByLabelText("Edit"));
 
-        await waitFor(() =>
-            expect(screen.getByTestId("imap-config-form")).toBeInTheDocument()
-        );
+        await waitFor(() => expect(screen.getByTestId("imap-config-form")).toBeInTheDocument());
         fireEvent.click(screen.getByText("Save Config"));
 
         await waitFor(() => {
-            expect(api.post).toHaveBeenCalledWith(
-                "/import/imap-config",
-                expect.anything()
-            );
+            expect(api.post).toHaveBeenCalledWith("/import/imap-config", expect.anything());
             expect(screen.getByText("Success")).toBeInTheDocument();
         });
     });
@@ -137,20 +121,14 @@ describe("ImapConfigPage", () => {
         (api.post as any).mockResolvedValue({ data: { success: true } });
         renderWithRouter(<ImapConfigPage />);
 
-        await waitFor(() =>
-            expect(screen.getByLabelText("Edit")).toBeInTheDocument()
-        );
+        await waitFor(() => expect(screen.getByLabelText("Edit")).toBeInTheDocument());
         fireEvent.click(screen.getByLabelText("Edit"));
 
-        await waitFor(() =>
-            expect(screen.getByText("Test Connection")).toBeInTheDocument()
-        );
+        await waitFor(() => expect(screen.getByText("Test Connection")).toBeInTheDocument());
         fireEvent.click(screen.getByText("Test Connection"));
 
         await waitFor(() => {
-            expect(screen.getByTestId("test-result")).toHaveTextContent(
-                "Connection successful!"
-            );
+            expect(screen.getByTestId("test-result")).toHaveTextContent("Connection successful!");
         });
     });
 
@@ -165,9 +143,7 @@ describe("ImapConfigPage", () => {
 
         await waitFor(() => {
             expect(screen.getByText("Sync Complete")).toBeInTheDocument();
-            expect(
-                screen.getByText("Synced 5 transactions!")
-            ).toBeInTheDocument();
+            expect(screen.getByText("Synced 5 transactions!")).toBeInTheDocument();
         });
     });
 

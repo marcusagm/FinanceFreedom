@@ -27,6 +27,24 @@ export class DashboardService {
             0
         );
 
+        // 1b. Total Invested
+        const investments = await this.prisma.investmentAccount.findMany({
+            where: { userId },
+        });
+        const totalInvested = investments.reduce(
+            (sum, inv) => sum + Number(inv.balance),
+            0
+        );
+
+        // 1c. Total Debt
+        const allDebts = await this.prisma.debt.findMany({ where: { userId } });
+        const totalDebt = allDebts.reduce(
+            (sum, d) => sum + Number(d.totalAmount),
+            0
+        );
+
+        const netWorth = totalBalance + totalInvested - totalDebt;
+
         // 2. Monthly Income & Expenses
         const transactions = await this.prisma.transaction.findMany({
             where: {
@@ -150,6 +168,9 @@ export class DashboardService {
 
         return {
             totalBalance,
+            totalInvested,
+            totalDebt,
+            netWorth,
             monthlyIncome: income,
             monthlyExpenses: expenses,
             chartData: balanceEvolution.reverse(),

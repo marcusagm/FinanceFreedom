@@ -1,10 +1,10 @@
-import * as React from "react";
-import { useState, useEffect, useRef } from "react";
-import { format, parse, isValid, startOfDay } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
+import { type ClassValue, clsx } from "clsx";
+import { format, isValid, parse, startOfDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { Calendar as CalendarIcon } from "lucide-react";
+import * as React from "react";
+import { useEffect, useRef, useState } from "react";
 import { PatternFormat } from "react-number-format";
-import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 import { Button } from "./Button";
@@ -24,25 +24,18 @@ interface DatePickerProps {
 }
 
 export const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
-    (
-        { date, setDate, className, placeholder = "dd/mm/aaaa", disabled },
-        ref
-    ) => {
-        const [inputValue, setInputValue] = useState(
-            date ? format(date, "dd/MM/yyyy") : ""
-        );
+    ({ date, setDate, className, placeholder = "dd/mm/aaaa", disabled }, ref) => {
+        const [inputValue, setInputValue] = useState(date ? format(date, "dd/MM/yyyy") : "");
         const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
         // Track the last valid date timestamp to prevent overwriting input during typing
         const lastDateRef = useRef<number | undefined>(
-            date ? startOfDay(date).getTime() : undefined
+            date ? startOfDay(date).getTime() : undefined,
         );
 
         // Sync input with date prop only when the date effectively changes
         useEffect(() => {
-            const normalizedTimestamp = date
-                ? startOfDay(date).getTime()
-                : undefined;
+            const normalizedTimestamp = date ? startOfDay(date).getTime() : undefined;
 
             if (normalizedTimestamp !== lastDateRef.current) {
                 lastDateRef.current = normalizedTimestamp;
@@ -68,14 +61,11 @@ export const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
                     // Verify if it's actually different to avoid unnecessary updates
                     // Normalize both to start of day for comparison
                     const normalizedParsed = startOfDay(parsedDate);
-                    const normalizedCurrent = date
-                        ? startOfDay(date)
-                        : undefined;
+                    const normalizedCurrent = date ? startOfDay(date) : undefined;
 
                     if (
                         !normalizedCurrent ||
-                        normalizedParsed.getTime() !==
-                            normalizedCurrent.getTime()
+                        normalizedParsed.getTime() !== normalizedCurrent.getTime()
                     ) {
                         setDate(normalizedParsed);
                     }
@@ -114,7 +104,7 @@ export const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
                     disabled={disabled}
                     className={cn(
                         "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-                        "pr-10"
+                        "pr-10",
                     )}
                 />
                 <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
@@ -140,7 +130,7 @@ export const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
                 </Popover>
             </div>
         );
-    }
+    },
 );
 
 DatePicker.displayName = "DatePicker";

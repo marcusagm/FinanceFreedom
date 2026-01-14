@@ -1,23 +1,13 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Modal } from "../ui/Modal";
-import { Button } from "../ui/Button";
-import { Input } from "../ui/Input";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "../ui/Form";
-import {
-    createIncomeSource,
-    type IncomeSource,
-} from "../../services/income.service";
 import { api } from "../../lib/api";
+import { type IncomeSource, createIncomeSource } from "../../services/income.service";
+import { Button } from "../ui/Button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/Form";
+import { Input } from "../ui/Input";
+import { Modal } from "../ui/Modal";
 
 interface CreateIncomeSourceDialogProps {
     isOpen: boolean;
@@ -87,10 +77,7 @@ export function CreateIncomeSourceDialog({
             onClose={onClose}
         >
             <Form {...form}>
-                <form
-                    onSubmit={form.handleSubmit(handleSubmit)}
-                    className="space-y-4"
-                >
+                <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
                     <FormField
                         control={form.control}
                         name="name"
@@ -98,10 +85,7 @@ export function CreateIncomeSourceDialog({
                             <FormItem>
                                 <FormLabel>Nome (ex: Salário)</FormLabel>
                                 <FormControl>
-                                    <Input
-                                        placeholder="Nome da fonte"
-                                        {...field}
-                                    />
+                                    <Input placeholder="Nome da fonte" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -143,11 +127,7 @@ export function CreateIncomeSourceDialog({
                                         max="31"
                                         placeholder="5"
                                         {...field}
-                                        onChange={(e) =>
-                                            field.onChange(
-                                                Number(e.target.value)
-                                            )
-                                        }
+                                        onChange={(e) => field.onChange(Number(e.target.value))}
                                     />
                                 </FormControl>
                                 <FormMessage />
@@ -156,21 +136,11 @@ export function CreateIncomeSourceDialog({
                     />
 
                     <div className="flex justify-end pt-4">
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={onClose}
-                            className="mr-2"
-                        >
+                        <Button type="button" variant="outline" onClick={onClose} className="mr-2">
                             Cancelar
                         </Button>
-                        <Button
-                            type="submit"
-                            disabled={form.formState.isSubmitting}
-                        >
-                            {form.formState.isSubmitting
-                                ? "Salvando..."
-                                : "Salvar"}
+                        <Button type="submit" disabled={form.formState.isSubmitting}>
+                            {form.formState.isSubmitting ? "Salvando..." : "Salvar"}
                         </Button>
                     </div>
                 </form>

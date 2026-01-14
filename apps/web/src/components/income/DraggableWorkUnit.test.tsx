@@ -1,6 +1,6 @@
 import React from "react";
+import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "../../utils/test-utils";
-import { describe, it, expect, vi } from "vitest";
 import { DraggableWorkUnit } from "./DraggableWorkUnit";
 
 // Mock @dnd-kit/core

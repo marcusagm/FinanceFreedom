@@ -1,11 +1,9 @@
-import React, { useState } from "react";
+import type React from "react";
+import { useState } from "react";
+import { type DelayCostResponse, calculateDelayCost } from "../../services/simulator.service";
+import { AppAlert } from "../ui/AppAlert";
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
-import { AppAlert } from "../ui/AppAlert";
-import {
-    calculateDelayCost,
-    type DelayCostResponse,
-} from "../../services/simulator.service";
 
 interface DebtDelayCardProps {
     debtName: string;
@@ -25,11 +23,7 @@ export const DebtDelayCard: React.FC<DebtDelayCardProps> = ({
     const handleSimulate = async () => {
         setLoading(true);
         try {
-            const data = await calculateDelayCost(
-                balance,
-                interestRate,
-                daysLate
-            );
+            const data = await calculateDelayCost(balance, interestRate, daysLate);
             setResult(data);
         } catch (error) {
             console.error("Failed to simulate", error);
@@ -54,24 +48,14 @@ export const DebtDelayCard: React.FC<DebtDelayCardProps> = ({
                     min={1}
                     max={60}
                 />
-                <span className="text-sm text-gray-600 dark:text-gray-400">
-                    dias de atraso
-                </span>
-                <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={handleSimulate}
-                    disabled={loading}
-                >
+                <span className="text-sm text-gray-600 dark:text-gray-400">dias de atraso</span>
+                <Button size="sm" variant="outline" onClick={handleSimulate} disabled={loading}>
                     {loading ? "..." : "Simular"}
                 </Button>
             </div>
 
             {result && (
-                <AppAlert
-                    variant="destructive"
-                    className="animate-in fade-in slide-in-from-top-2"
-                >
+                <AppAlert variant="destructive" className="animate-in fade-in slide-in-from-top-2">
                     <div className="text-lg font-bold">
                         +{" "}
                         {result.totalCost.toLocaleString("pt-BR", {
@@ -82,8 +66,7 @@ export const DebtDelayCard: React.FC<DebtDelayCardProps> = ({
                     <div className="text-xs opacity-90 mt-1">
                         Isso é {result.comparison.toLowerCase()}!
                         <br />
-                        (Juros: {result.interest.toFixed(2)} + Multa:{" "}
-                        {result.fine.toFixed(2)})
+                        (Juros: {result.interest.toFixed(2)} + Multa: {result.fine.toFixed(2)})
                     </div>
                 </AppAlert>
             )}

@@ -1,8 +1,8 @@
-import React from "react";
 import { render, screen } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
-import { Layout } from "./Layout";
+import React from "react";
 import { MemoryRouter } from "react-router-dom";
+import { describe, expect, it, vi } from "vitest";
+import { Layout } from "./Layout";
 
 // Mock Header because we test it separately
 vi.mock("./Header", () => ({
@@ -16,7 +16,7 @@ describe("Layout", () => {
                 <Layout>
                     <div data-testid="child-content">Child</div>
                 </Layout>
-            </MemoryRouter>
+            </MemoryRouter>,
         );
         expect(screen.getByTestId("mock-header")).toBeInTheDocument();
         expect(screen.getByTestId("child-content")).toBeInTheDocument();
@@ -26,7 +26,7 @@ describe("Layout", () => {
         render(
             <MemoryRouter>
                 <Layout>Child</Layout>
-            </MemoryRouter>
+            </MemoryRouter>,
         );
         // Check for mobile nav links by icon names or text
         expect(screen.getByText("Início")).toBeInTheDocument();
@@ -39,7 +39,7 @@ describe("Layout", () => {
         render(
             <MemoryRouter initialEntries={["/income"]}>
                 <Layout>Child</Layout>
-            </MemoryRouter>
+            </MemoryRouter>,
         );
 
         // Find the link that contains "Renda"

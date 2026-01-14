@@ -1,6 +1,6 @@
+import { fireEvent, render, screen } from "@testing-library/react";
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { DeleteAccountDialog } from "./DeleteAccountDialog";
 
 describe("DeleteAccountDialog", () => {
@@ -15,9 +15,7 @@ describe("DeleteAccountDialog", () => {
     it("renders dialog content", () => {
         render(<DeleteAccountDialog {...mockProps} />);
         expect(screen.getByText("Excluir Conta")).toBeInTheDocument();
-        expect(
-            screen.getByText(/esta ação não pode ser desfeita/i)
-        ).toBeInTheDocument();
+        expect(screen.getByText(/esta ação não pode ser desfeita/i)).toBeInTheDocument();
         expect(screen.getByText("My Bank")).toBeInTheDocument();
     });
 

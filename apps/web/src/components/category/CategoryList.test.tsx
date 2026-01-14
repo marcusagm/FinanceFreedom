@@ -1,24 +1,16 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 import { CategoryList } from "./CategoryList";
-import { vi, describe, it, expect } from "vitest";
 
 describe("CategoryList", () => {
     const mockOnEdit = vi.fn();
     const mockOnDelete = vi.fn();
 
     it("should render empty state", () => {
-        render(
-            <CategoryList
-                categories={[]}
-                onEdit={mockOnEdit}
-                onDelete={mockOnDelete}
-            />
-        );
+        render(<CategoryList categories={[]} onEdit={mockOnEdit} onDelete={mockOnDelete} />);
 
         expect(
-            screen.getByText(
-                "Nenhuma categoria encontrada. Crie sua primeira categoria!"
-            )
+            screen.getByText("Nenhuma categoria encontrada. Crie sua primeira categoria!"),
         ).toBeInTheDocument();
     });
 
@@ -29,11 +21,7 @@ describe("CategoryList", () => {
         ];
 
         render(
-            <CategoryList
-                categories={categories}
-                onEdit={mockOnEdit}
-                onDelete={mockOnDelete}
-            />
+            <CategoryList categories={categories} onEdit={mockOnEdit} onDelete={mockOnDelete} />,
         );
 
         expect(screen.getByText("Food")).toBeInTheDocument();
@@ -43,16 +31,10 @@ describe("CategoryList", () => {
     });
 
     it("should call onEdit when edit button is clicked", () => {
-        const categories = [
-            { id: "1", name: "Food", color: "#FF0000", budgetLimit: 1000 },
-        ];
+        const categories = [{ id: "1", name: "Food", color: "#FF0000", budgetLimit: 1000 }];
 
         render(
-            <CategoryList
-                categories={categories}
-                onEdit={mockOnEdit}
-                onDelete={mockOnDelete}
-            />
+            <CategoryList categories={categories} onEdit={mockOnEdit} onDelete={mockOnDelete} />,
         );
 
         // Assuming edit button is the first button in the row's actions
@@ -72,16 +54,10 @@ describe("CategoryList", () => {
     });
 
     it("should call onDelete when delete button is clicked", () => {
-        const categories = [
-            { id: "1", name: "Food", color: "#FF0000", budgetLimit: 1000 },
-        ];
+        const categories = [{ id: "1", name: "Food", color: "#FF0000", budgetLimit: 1000 }];
 
         render(
-            <CategoryList
-                categories={categories}
-                onEdit={mockOnEdit}
-                onDelete={mockOnDelete}
-            />
+            <CategoryList categories={categories} onEdit={mockOnEdit} onDelete={mockOnDelete} />,
         );
 
         const deleteButtons = screen.getAllByRole("button");

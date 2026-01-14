@@ -1,8 +1,8 @@
-import React from "react";
 import { render, screen } from "@testing-library/react";
-import { describe, it, expect } from "vitest";
-import { PageHeader } from "./PageHeader";
+import type React from "react";
 import { BrowserRouter } from "react-router-dom";
+import { describe, expect, it } from "vitest";
+import { PageHeader } from "./PageHeader";
 
 describe("PageHeader", () => {
     const renderWithRouter = (ui: React.ReactNode) => {
@@ -12,25 +12,16 @@ describe("PageHeader", () => {
     it("renders title correctly", () => {
         renderWithRouter(<PageHeader title="Test Title" />);
         expect(screen.getByText("Test Title")).toBeInTheDocument();
-        expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-            "Test Title"
-        );
+        expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Test Title");
     });
 
     it("renders description when provided", () => {
-        renderWithRouter(
-            <PageHeader title="Title" description="Test Description" />
-        );
+        renderWithRouter(<PageHeader title="Title" description="Test Description" />);
         expect(screen.getByText("Test Description")).toBeInTheDocument();
     });
 
     it("renders actions when provided", () => {
-        renderWithRouter(
-            <PageHeader
-                title="Title"
-                actions={<button>Action Button</button>}
-            />
-        );
+        renderWithRouter(<PageHeader title="Title" actions={<button>Action Button</button>} />);
         expect(screen.getByText("Action Button")).toBeInTheDocument();
     });
 

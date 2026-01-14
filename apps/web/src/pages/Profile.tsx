@@ -1,10 +1,8 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useAuth } from "../contexts/AuthContext";
-import { api } from "../lib/api";
-import { PageHeader } from "../components/ui/PageHeader";
+import { Button } from "../components/ui/Button";
 import {
     Card,
     CardContent,
@@ -13,9 +11,11 @@ import {
     CardHeader,
     CardTitle,
 } from "../components/ui/Card";
-import { Label } from "../components/ui/Label";
 import { Input } from "../components/ui/Input";
-import { Button } from "../components/ui/Button";
+import { Label } from "../components/ui/Label";
+import { PageHeader } from "../components/ui/PageHeader";
+import { useAuth } from "../contexts/AuthContext";
+import { api } from "../lib/api";
 import { notify } from "../lib/notification";
 
 const profileSchema = z.object({

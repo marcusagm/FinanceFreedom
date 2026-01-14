@@ -1,8 +1,8 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { CategoryDialog } from "./CategoryDialog";
-import { categoryService } from "../../services/category.service";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { toast } from "sonner";
-import { vi, describe, it, expect, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { categoryService } from "../../services/category.service";
+import { CategoryDialog } from "./CategoryDialog";
 
 // Mock dependencies
 vi.mock("../../services/category.service");
@@ -28,13 +28,11 @@ describe("CategoryDialog", () => {
                 onClose={mockOnClose}
                 onSuccess={mockOnSuccess}
                 categoryToEdit={null}
-            />
+            />,
         );
 
         expect(screen.getByText(/Nova Categoria/i)).toBeInTheDocument();
-        expect(
-            screen.getByPlaceholderText(/Ex: Alimentação/i)
-        ).toBeInTheDocument();
+        expect(screen.getByPlaceholderText(/Ex: Alimentação/i)).toBeInTheDocument();
         // Color input text field
         expect(screen.getByDisplayValue("#3B82F6")).toBeInTheDocument();
         // Budget limit
@@ -57,7 +55,7 @@ describe("CategoryDialog", () => {
                 onClose={mockOnClose}
                 onSuccess={mockOnSuccess}
                 categoryToEdit={category}
-            />
+            />,
         );
 
         expect(screen.getByText("Editar Categoria")).toBeInTheDocument();
@@ -72,7 +70,7 @@ describe("CategoryDialog", () => {
                 onClose={mockOnClose}
                 onSuccess={mockOnSuccess}
                 categoryToEdit={null}
-            />
+            />,
         );
 
         fireEvent.click(screen.getByText("Salvar"));
@@ -90,7 +88,7 @@ describe("CategoryDialog", () => {
                 onClose={mockOnClose}
                 onSuccess={mockOnSuccess}
                 categoryToEdit={null}
-            />
+            />,
         );
 
         fireEvent.change(screen.getByPlaceholderText("Ex: Alimentação"), {
@@ -133,7 +131,7 @@ describe("CategoryDialog", () => {
                 onClose={mockOnClose}
                 onSuccess={mockOnSuccess}
                 categoryToEdit={category}
-            />
+            />,
         );
 
         fireEvent.change(screen.getByPlaceholderText("Ex: Alimentação"), {
@@ -148,7 +146,7 @@ describe("CategoryDialog", () => {
                 expect.objectContaining({
                     name: "Food Updated",
                     budgetLimit: 1000,
-                })
+                }),
             );
             expect(mockOnSuccess).toHaveBeenCalled();
             expect(mockOnClose).toHaveBeenCalled();

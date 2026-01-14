@@ -1,13 +1,11 @@
+import { fireEvent, render, screen } from "@testing-library/react";
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { ColorInput } from "./ColorInput";
 
 describe("ColorInput", () => {
     it("renders with label and initial value", () => {
-        render(
-            <ColorInput label="Color" value="#ff0000" onChange={() => {}} />
-        );
+        render(<ColorInput label="Color" value="#ff0000" onChange={() => {}} />);
         expect(screen.getByText("Color")).toBeInTheDocument();
         // Since there are two inputs (color and text) with the same value, we use getAll
         const inputs = screen.getAllByDisplayValue(/#FF0000/i);

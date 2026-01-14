@@ -1,6 +1,6 @@
-import React from "react";
 import { render, screen } from "@testing-library/react";
-import { describe, it, expect } from "vitest";
+import React from "react";
+import { describe, expect, it } from "vitest";
 import { AppAlert } from "./AppAlert";
 
 describe("AppAlert", () => {
@@ -14,7 +14,7 @@ describe("AppAlert", () => {
         render(
             <AppAlert title="Notice">
                 <span>Child Content</span>
-            </AppAlert>
+            </AppAlert>,
         );
         expect(screen.getByText("Child Content")).toBeInTheDocument();
     });
@@ -22,9 +22,7 @@ describe("AppAlert", () => {
     it("renders correct icons for variants", () => {
         // We can't easily check icon content svg paths without snapshots,
         // but we can check if it renders without crashing and applies style classes.
-        const { rerender } = render(
-            <AppAlert title="Test" variant="destructive" />
-        );
+        const { rerender } = render(<AppAlert title="Test" variant="destructive" />);
         // Destructive
         expect(screen.getByRole("alert")).toHaveClass("border-red-200");
 

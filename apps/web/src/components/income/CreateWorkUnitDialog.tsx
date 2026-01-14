@@ -1,20 +1,13 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Modal } from "../ui/Modal";
-import { Button } from "../ui/Button";
-import { Input } from "../ui/Input";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "../ui/Form";
-import { createWorkUnit, type WorkUnit } from "../../services/income.service";
 import { api } from "../../lib/api";
+import { type WorkUnit, createWorkUnit } from "../../services/income.service";
+import { Button } from "../ui/Button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/Form";
+import { Input } from "../ui/Input";
+import { Modal } from "../ui/Modal";
 
 interface CreateWorkUnitDialogProps {
     isOpen: boolean;
@@ -27,12 +20,7 @@ const formSchema = z.object({
     name: z.string().min(1, "Nome é obrigatório"),
     defaultPrice: z.number().min(0.01, "Preço deve ser maior que zero"),
     estimatedTime: z.number().min(1, "Tempo inválido"),
-    taxRate: z
-        .number()
-        .min(0, "Mínimo 0%")
-        .max(100, "Máximo 100%")
-        .optional()
-        .default(0),
+    taxRate: z.number().min(0, "Mínimo 0%").max(100, "Máximo 100%").optional().default(0),
 });
 
 export function CreateWorkUnitDialog({
@@ -93,10 +81,7 @@ export function CreateWorkUnitDialog({
             onClose={onClose}
         >
             <Form {...form}>
-                <form
-                    onSubmit={form.handleSubmit(handleSubmit)}
-                    className="space-y-4"
-                >
+                <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
                     <FormField
                         control={form.control}
                         name="name"
@@ -104,10 +89,7 @@ export function CreateWorkUnitDialog({
                             <FormItem>
                                 <FormLabel>Nome do Serviço</FormLabel>
                                 <FormControl>
-                                    <Input
-                                        placeholder="Ex: Logo Design"
-                                        {...field}
-                                    />
+                                    <Input placeholder="Ex: Logo Design" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -148,11 +130,7 @@ export function CreateWorkUnitDialog({
                                         min="1"
                                         placeholder="Hrs"
                                         {...field}
-                                        onChange={(e) =>
-                                            field.onChange(
-                                                Number(e.target.value)
-                                            )
-                                        }
+                                        onChange={(e) => field.onChange(Number(e.target.value))}
                                     />
                                 </FormControl>
                                 <FormMessage />
@@ -173,11 +151,7 @@ export function CreateWorkUnitDialog({
                                         max="100"
                                         placeholder="%"
                                         {...field}
-                                        onChange={(e) =>
-                                            field.onChange(
-                                                Number(e.target.value)
-                                            )
-                                        }
+                                        onChange={(e) => field.onChange(Number(e.target.value))}
                                     />
                                 </FormControl>
                                 <FormMessage />
@@ -186,21 +160,11 @@ export function CreateWorkUnitDialog({
                     />
 
                     <div className="flex justify-end pt-4">
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={onClose}
-                            className="mr-2"
-                        >
+                        <Button type="button" variant="outline" onClick={onClose} className="mr-2">
                             Cancelar
                         </Button>
-                        <Button
-                            type="submit"
-                            disabled={form.formState.isSubmitting}
-                        >
-                            {form.formState.isSubmitting
-                                ? "Salvando..."
-                                : "Salvar"}
+                        <Button type="submit" disabled={form.formState.isSubmitting}>
+                            {form.formState.isSubmitting ? "Salvando..." : "Salvar"}
                         </Button>
                     </div>
                 </form>

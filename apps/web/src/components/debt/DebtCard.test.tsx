@@ -1,18 +1,31 @@
-import React from "react";
-import { render, screen, fireEvent, waitFor } from "../../utils/test-utils";
-import { describe, it, expect, vi } from "vitest";
+import "@testing-library/jest-dom/vitest";
+import { cleanup } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { fireEvent, render, screen } from "../../utils/test-utils";
 import { DebtCard } from "./DebtCard";
+
+afterEach(() => {
+    cleanup();
+});
 
 // Mock children simulators
 vi.mock("../simulators/DebtDelayCard", () => ({
-    DebtDelayCard: () => (
-        <div data-testid="delay-simulator">DelaySimulator</div>
-    ),
+    DebtDelayCard: () => <div data-testid="delay-simulator">DelaySimulator</div>,
 }));
 
 vi.mock("../simulators/PrepaymentOpportunity", () => ({
-    PrepaymentOpportunity: () => (
-        <div data-testid="prepayment-simulator">PrepaymentSimulator</div>
+    PrepaymentOpportunity: () => <div data-testid="prepayment-simulator">PrepaymentSimulator</div>,
+}));
+
+vi.mock("../ui/AppCard", () => ({
+    AppCard: ({ children, actions, footer, title, badge }: any) => (
+        <div data-testid="app-card">
+            <h1>{title}</h1>
+            <div data-testid="badge">{badge}</div>
+            <div data-testid="actions">{actions}</div>
+            <div data-testid="content">{children}</div>
+            <div data-testid="footer">{footer}</div>
+        </div>
     ),
 }));
 

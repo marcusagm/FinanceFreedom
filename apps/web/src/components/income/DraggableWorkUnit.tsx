@@ -1,6 +1,6 @@
 import { useDraggable } from "@dnd-kit/core";
-import { Card } from "../ui/Card";
 import { Badge } from "../ui/Badge";
+import { Card } from "../ui/Card";
 
 import { MoneyDisplay } from "../ui/MoneyDisplay";
 

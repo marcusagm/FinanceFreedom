@@ -1,15 +1,8 @@
-import { Button } from "../ui/Button";
 import { Edit2, Trash2 } from "lucide-react";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "../ui/Table";
-import { Card, CardContent } from "../ui/Card";
 import type { Category } from "../../services/category.service";
+import { Button } from "../ui/Button";
+import { Card, CardContent } from "../ui/Card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/Table";
 
 interface CategoryListProps {
     categories: Category[];
@@ -17,11 +10,7 @@ interface CategoryListProps {
     onDelete: (id: string) => void;
 }
 
-export function CategoryList({
-    categories,
-    onEdit,
-    onDelete,
-}: CategoryListProps) {
+export function CategoryList({ categories, onEdit, onDelete }: CategoryListProps) {
     if (categories.length === 0) {
         return (
             <div className="text-center py-12 text-muted-foreground border rounded-lg bg-card">
@@ -49,14 +38,11 @@ export function CategoryList({
                                     <div
                                         className="w-6 h-6 rounded-full border"
                                         style={{
-                                            backgroundColor:
-                                                category.color || "#ccc",
+                                            backgroundColor: category.color || "#ccc",
                                         }}
                                     />
                                 </TableCell>
-                                <TableCell className="font-medium">
-                                    {category.name}
-                                </TableCell>
+                                <TableCell className="font-medium">{category.name}</TableCell>
                                 <TableCell>
                                     {category.budgetLimit
                                         ? new Intl.NumberFormat("pt-BR", {

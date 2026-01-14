@@ -1,6 +1,6 @@
-import { render, screen, waitFor, fireEvent } from "../utils/test-utils";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { fireEvent, render, screen, waitFor } from "../utils/test-utils";
 import Debts from "./Debts";
-import { vi, describe, it, expect, beforeEach, beforeAll } from "vitest";
 import "@testing-library/jest-dom";
 
 // Mock API
@@ -60,9 +60,7 @@ describe("Debts Page", () => {
         render(<Debts />);
 
         await waitFor(() => {
-            expect(
-                screen.getByText(/Nenhuma dívida cadastrada/i)
-            ).toBeInTheDocument();
+            expect(screen.getByText(/Nenhuma dívida cadastrada/i)).toBeInTheDocument();
         });
     });
 });

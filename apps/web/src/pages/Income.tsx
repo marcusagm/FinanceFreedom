@@ -1,25 +1,20 @@
 import { useEffect, useState } from "react";
-import { PageHeader } from "../components/ui/PageHeader";
-import { Button } from "../components/ui/Button";
-import {
-    Tabs,
-    TabsContent,
-    TabsList,
-    TabsTrigger,
-} from "../components/ui/Tabs";
-import {
-    getIncomeSources,
-    getWorkUnits,
-    deleteIncomeSource,
-    deleteWorkUnit,
-    type IncomeSource,
-    type WorkUnit,
-} from "../services/income.service";
-import { IncomeSourceCard } from "../components/income/IncomeSourceCard";
-import { WorkUnitCard } from "../components/income/WorkUnitCard";
 import { CreateIncomeSourceDialog } from "../components/income/CreateIncomeSourceDialog";
 import { CreateWorkUnitDialog } from "../components/income/CreateWorkUnitDialog";
 import { DeleteIncomeDialog } from "../components/income/DeleteIncomeDialog";
+import { IncomeSourceCard } from "../components/income/IncomeSourceCard";
+import { WorkUnitCard } from "../components/income/WorkUnitCard";
+import { Button } from "../components/ui/Button";
+import { PageHeader } from "../components/ui/PageHeader";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/Tabs";
+import {
+    type IncomeSource,
+    type WorkUnit,
+    deleteIncomeSource,
+    deleteWorkUnit,
+    getIncomeSources,
+    getWorkUnits,
+} from "../services/income.service";
 
 export default function IncomePage() {
     const [activeTab, setActiveTab] = useState("sources");
@@ -114,23 +109,15 @@ export default function IncomePage() {
                 description="Gerencie suas fontes de renda fixa e catálogo de serviços."
                 actions={
                     <Button onClick={handleCreateClick}>
-                        {activeTab === "sources"
-                            ? "+ Nova Fonte"
-                            : "+ Novo Serviço"}
+                        {activeTab === "sources" ? "+ Nova Fonte" : "+ Novo Serviço"}
                     </Button>
                 }
             />
 
-            <Tabs
-                defaultValue="sources"
-                value={activeTab}
-                onValueChange={setActiveTab}
-            >
+            <Tabs defaultValue="sources" value={activeTab} onValueChange={setActiveTab}>
                 <TabsList>
                     <TabsTrigger value="sources">Fontes Fixas</TabsTrigger>
-                    <TabsTrigger value="workUnits">
-                        Catálogo de Serviços
-                    </TabsTrigger>
+                    <TabsTrigger value="workUnits">Catálogo de Serviços</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="sources">
@@ -146,8 +133,8 @@ export default function IncomePage() {
                     </div>
                     {sources.length === 0 && (
                         <div className="text-center py-10 text-muted-foreground border rounded-lg bg-card/50">
-                            Nenhuma fonte de renda cadastrada. Adicione seu
-                            salário ou renda recorrente!
+                            Nenhuma fonte de renda cadastrada. Adicione seu salário ou renda
+                            recorrente!
                         </div>
                     )}
                 </TabsContent>
@@ -165,8 +152,7 @@ export default function IncomePage() {
                     </div>
                     {workUnits.length === 0 && (
                         <div className="text-center py-10 text-muted-foreground border rounded-lg bg-card/50">
-                            Nenhum serviço cadastrado. Liste seus serviços de
-                            freelance aqui!
+                            Nenhum serviço cadastrado. Liste seus serviços de freelance aqui!
                         </div>
                     )}
                 </TabsContent>

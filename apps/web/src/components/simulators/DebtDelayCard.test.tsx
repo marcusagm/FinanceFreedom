@@ -1,6 +1,6 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 import { DebtDelayCard } from "./DebtDelayCard";
-import { vi, describe, it, expect } from "vitest";
 import "@testing-library/jest-dom";
 
 // Mock Service
@@ -26,9 +26,7 @@ describe("DebtDelayCard", () => {
             fine: 50,
             comparison: "Caro",
         };
-        (SimulatorService.calculateDelayCost as any).mockResolvedValue(
-            mockResult
-        );
+        (SimulatorService.calculateDelayCost as any).mockResolvedValue(mockResult);
 
         render(<DebtDelayCard {...defaultProps} />);
 

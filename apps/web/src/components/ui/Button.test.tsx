@@ -1,7 +1,7 @@
+import { fireEvent, render, screen } from "@testing-library/react";
 // @vitest-environment jsdom
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { Button } from "./Button";
 
 describe("Button", () => {
@@ -14,9 +14,7 @@ describe("Button", () => {
     });
 
     it("renders with different variants", () => {
-        const { rerender } = render(
-            <Button variant="secondary">Secondary</Button>
-        );
+        const { rerender } = render(<Button variant="secondary">Secondary</Button>);
         expect(screen.getByRole("button")).toHaveClass("bg-secondary");
 
         rerender(<Button variant="destructive">Destructive</Button>);

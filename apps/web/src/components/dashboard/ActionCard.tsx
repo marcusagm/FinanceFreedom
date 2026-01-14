@@ -1,13 +1,8 @@
-import type { ActionRecommendation } from "../../services/dashboard.service";
+import { AlertTriangle, ArrowRight, CheckCircle, TrendingUp } from "lucide-react";
 import { Link } from "react-router-dom";
+import type { ActionRecommendation } from "../../services/dashboard.service";
 import { AppCard } from "../ui/AppCard";
 import { Button } from "../ui/Button";
-import {
-    ArrowRight,
-    TrendingUp,
-    AlertTriangle,
-    CheckCircle,
-} from "lucide-react";
 
 interface ActionCardProps {
     recommendation: ActionRecommendation;
@@ -64,9 +59,7 @@ export function ActionCard({ recommendation }: ActionCardProps) {
             }
             footer={footer}
         >
-            <p className="text-sm text-gray-600 dark:text-gray-300">
-                {recommendation.description}
-            </p>
+            <p className="text-sm text-gray-600 dark:text-gray-300">{recommendation.description}</p>
         </AppCard>
     );
 }

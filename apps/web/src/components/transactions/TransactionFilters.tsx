@@ -1,11 +1,11 @@
-import { Input } from "../ui/Input";
-import { Select } from "../ui/Select";
+import { format } from "date-fns";
+import { X } from "lucide-react";
+import type { Category } from "../../services/category.service";
+import type { Account } from "../../types";
 import { Button } from "../ui/Button";
 import { DatePicker } from "../ui/DatePicker";
-import { X } from "lucide-react";
-import { format } from "date-fns";
-import type { Account } from "../../types";
-import type { Category } from "../../services/category.service";
+import { Input } from "../ui/Input";
+import { Select } from "../ui/Select";
 
 export interface FilterState {
     search: string;
@@ -89,32 +89,18 @@ export function TransactionFilters({
             {/* Dates - Grouped */}
             <div className="flex items-center gap-2 w-full md:w-auto">
                 <DatePicker
-                    date={
-                        filters.startDate
-                            ? new Date(filters.startDate + "T00:00:00")
-                            : undefined
-                    }
+                    date={filters.startDate ? new Date(filters.startDate + "T00:00:00") : undefined}
                     setDate={(date) =>
-                        handleChange(
-                            "startDate",
-                            date ? format(date, "yyyy-MM-dd") : ""
-                        )
+                        handleChange("startDate", date ? format(date, "yyyy-MM-dd") : "")
                     }
                     className="w-full md:w-37.5"
                     placeholder="Início"
                 />
                 <span className="text-muted-foreground">-</span>
                 <DatePicker
-                    date={
-                        filters.endDate
-                            ? new Date(filters.endDate + "T00:00:00")
-                            : undefined
-                    }
+                    date={filters.endDate ? new Date(filters.endDate + "T00:00:00") : undefined}
                     setDate={(date) =>
-                        handleChange(
-                            "endDate",
-                            date ? format(date, "yyyy-MM-dd") : ""
-                        )
+                        handleChange("endDate", date ? format(date, "yyyy-MM-dd") : "")
                     }
                     className="w-full md:w-37.5"
                     placeholder="Fim"

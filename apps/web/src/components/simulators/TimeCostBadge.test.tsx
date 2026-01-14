@@ -1,6 +1,6 @@
-import React from "react";
 import { render, screen } from "@testing-library/react";
-import { describe, it, expect } from "vitest";
+import React from "react";
+import { describe, expect, it } from "vitest";
 import { TimeCostBadge } from "./TimeCostBadge";
 
 describe("TimeCostBadge", () => {
@@ -10,9 +10,7 @@ describe("TimeCostBadge", () => {
     });
 
     it("renders nothing if rate is 0", () => {
-        const { container } = render(
-            <TimeCostBadge amount={100} hourlyRate={0} />
-        );
+        const { container } = render(<TimeCostBadge amount={100} hourlyRate={0} />);
         expect(container).toBeEmptyDOMElement();
     });
 

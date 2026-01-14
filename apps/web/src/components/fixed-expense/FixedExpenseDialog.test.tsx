@@ -1,7 +1,7 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { FixedExpenseDialog } from "./FixedExpenseDialog";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { fixedExpenseService } from "../../services/fixed-expense.service";
-import { vi, describe, it, expect, beforeEach } from "vitest";
+import { FixedExpenseDialog } from "./FixedExpenseDialog";
 
 // Mock dependencies
 vi.mock("../../services/fixed-expense.service");
@@ -21,9 +21,7 @@ vi.mock("sonner", () => ({
 describe("FixedExpenseDialog", () => {
     const mockOnClose = vi.fn();
     const mockOnSuccess = vi.fn();
-    const categories = [
-        { id: "c1", name: "Category 1", color: "#fff", budgetLimit: 100 },
-    ];
+    const categories = [{ id: "c1", name: "Category 1", color: "#fff", budgetLimit: 100 }];
     const accounts = [{ id: "a1", name: "Account 1" }];
 
     beforeEach(() => {
@@ -39,7 +37,7 @@ describe("FixedExpenseDialog", () => {
                 expenseToEdit={null}
                 categories={categories}
                 accounts={accounts}
-            />
+            />,
         );
 
         expect(screen.getByText("Nova Despesa Fixa")).toBeInTheDocument();
@@ -56,19 +54,15 @@ describe("FixedExpenseDialog", () => {
                 expenseToEdit={null}
                 categories={categories}
                 accounts={accounts}
-            />
+            />,
         );
 
         fireEvent.click(screen.getByText("Salvar"));
 
         await waitFor(() => {
-            expect(
-                screen.getByText("Descrição é obrigatória")
-            ).toBeInTheDocument();
+            expect(screen.getByText("Descrição é obrigatória")).toBeInTheDocument();
             // Amount is 0 by default, check min requirement
-            expect(
-                screen.getByText("Valor deve ser maior que 0")
-            ).toBeInTheDocument();
+            expect(screen.getByText("Valor deve ser maior que 0")).toBeInTheDocument();
         });
     });
 
@@ -83,7 +77,7 @@ describe("FixedExpenseDialog", () => {
                 expenseToEdit={null}
                 categories={categories}
                 accounts={accounts}
-            />
+            />,
         );
 
         // Fill description

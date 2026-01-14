@@ -1,6 +1,6 @@
+import { fireEvent, render, screen } from "@testing-library/react";
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { Select } from "./Select";
 
 const options = [
@@ -10,38 +10,17 @@ const options = [
 
 describe("Select", () => {
     it("renders placeholder when no value", () => {
-        render(
-            <Select
-                value=""
-                onChange={() => {}}
-                options={options}
-                placeholder="Choose"
-            />
-        );
+        render(<Select value="" onChange={() => {}} options={options} placeholder="Choose" />);
         expect(screen.getByText("Choose")).toBeInTheDocument();
     });
 
     it("renders selected label", () => {
-        render(
-            <Select
-                value="opt1"
-                onChange={() => {}}
-                options={options}
-                placeholder="Choose"
-            />
-        );
+        render(<Select value="opt1" onChange={() => {}} options={options} placeholder="Choose" />);
         expect(screen.getByText("Option 1")).toBeInTheDocument();
     });
 
     it("opens dropdown on click", () => {
-        render(
-            <Select
-                value=""
-                onChange={() => {}}
-                options={options}
-                placeholder="Choose"
-            />
-        );
+        render(<Select value="" onChange={() => {}} options={options} placeholder="Choose" />);
         const trigger = screen.getByText("Choose");
         fireEvent.click(trigger);
         expect(screen.getByText("Option 1")).toBeInTheDocument();
@@ -50,14 +29,7 @@ describe("Select", () => {
 
     it("calls onChange when option selected", () => {
         const handleChange = vi.fn();
-        render(
-            <Select
-                value=""
-                onChange={handleChange}
-                options={options}
-                placeholder="Choose"
-            />
-        );
+        render(<Select value="" onChange={handleChange} options={options} placeholder="Choose" />);
 
         fireEvent.click(screen.getByText("Choose"));
         fireEvent.click(screen.getByText("Option 2"));
@@ -69,13 +41,8 @@ describe("Select", () => {
         render(
             <div>
                 <span data-testid="outside">Outside</span>
-                <Select
-                    value=""
-                    onChange={() => {}}
-                    options={options}
-                    placeholder="Choose"
-                />
-            </div>
+                <Select value="" onChange={() => {}} options={options} placeholder="Choose" />
+            </div>,
         );
 
         const trigger = screen.getByText("Choose");

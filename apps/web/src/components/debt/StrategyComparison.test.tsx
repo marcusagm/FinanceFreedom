@@ -1,12 +1,12 @@
+import { PrivacyProvider } from "@/contexts/PrivacyContext";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 /**
  * @vitest-environment jsdom
  */
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { StrategyComparison } from "./StrategyComparison";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { api } from "../../lib/api";
-import { PrivacyProvider } from "@/contexts/PrivacyContext";
+import { StrategyComparison } from "./StrategyComparison";
 
 // Mock api
 vi.mock("../../lib/api", () => ({
@@ -65,15 +65,11 @@ describe("StrategyComparison", () => {
         render(
             <PrivacyProvider>
                 <StrategyComparison />
-            </PrivacyProvider>
+            </PrivacyProvider>,
         );
-        expect(
-            screen.getByText("❄️ Bola de Neve (Psicológico)")
-        ).toBeInTheDocument();
+        expect(screen.getByText("❄️ Bola de Neve (Psicológico)")).toBeInTheDocument();
         await waitFor(() => {
-            expect(api.get).toHaveBeenCalledWith(
-                "/debts/strategy?type=SNOWBALL&monthlyExtra=0"
-            );
+            expect(api.get).toHaveBeenCalledWith("/debts/strategy?type=SNOWBALL&monthlyExtra=0");
         });
     });
 
@@ -81,16 +77,14 @@ describe("StrategyComparison", () => {
         render(
             <PrivacyProvider>
                 <StrategyComparison />
-            </PrivacyProvider>
+            </PrivacyProvider>,
         );
 
         const input = screen.getByLabelText("Valor Extra Mensal (Opcional)");
         fireEvent.change(input, { target: { value: "500" } });
 
         await waitFor(() => {
-            expect(localStorage.getItem("debt_strategy_extra_value")).toBe(
-                "500"
-            );
+            expect(localStorage.getItem("debt_strategy_extra_value")).toBe("500");
         });
     });
 
@@ -99,12 +93,10 @@ describe("StrategyComparison", () => {
         render(
             <PrivacyProvider>
                 <StrategyComparison />
-            </PrivacyProvider>
+            </PrivacyProvider>,
         );
 
-        const input = screen.getByLabelText(
-            "Valor Extra Mensal (Opcional)"
-        ) as HTMLInputElement;
+        const input = screen.getByLabelText("Valor Extra Mensal (Opcional)") as HTMLInputElement;
         expect(input.value).toBe("R$ 300,00"); // Currency input formatting
     });
 
@@ -118,7 +110,7 @@ describe("StrategyComparison", () => {
         render(
             <PrivacyProvider>
                 <StrategyComparison />
-            </PrivacyProvider>
+            </PrivacyProvider>,
         );
 
         await waitFor(() => {
@@ -139,8 +131,6 @@ describe("StrategyComparison", () => {
 
         // Expect Dialog to open
         expect(screen.getByTestId("payment-dialog")).toBeInTheDocument();
-        expect(
-            screen.getByText("Payment Dialog for Debt 1")
-        ).toBeInTheDocument();
+        expect(screen.getByText("Payment Dialog for Debt 1")).toBeInTheDocument();
     });
 });

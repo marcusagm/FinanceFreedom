@@ -1,9 +1,9 @@
-import { render, screen, waitFor, fireEvent } from "@testing-library/react";
-import { FixedExpenses } from "./FixedExpenses";
-import { fixedExpenseService } from "../services/fixed-expense.service";
-import { categoryService } from "../services/category.service";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { api } from "../lib/api";
-import { vi, describe, it, expect, beforeEach } from "vitest";
+import { categoryService } from "../services/category.service";
+import { fixedExpenseService } from "../services/fixed-expense.service";
+import { FixedExpenses } from "./FixedExpenses";
 
 vi.mock("../services/fixed-expense.service");
 vi.mock("../services/category.service");
@@ -50,9 +50,7 @@ describe("FixedExpenses Page", () => {
 
         render(<FixedExpenses />);
 
-        await waitFor(() =>
-            expect(fixedExpenseService.getAll).toHaveBeenCalled()
-        );
+        await waitFor(() => expect(fixedExpenseService.getAll).toHaveBeenCalled());
 
         fireEvent.click(screen.getByText("Nova Despesa Fixa"));
 

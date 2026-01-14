@@ -1,10 +1,10 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { describe, it, vi, expect } from "vitest";
-import { Register } from "./Register";
 import { BrowserRouter } from "react-router-dom";
+import { describe, expect, it, vi } from "vitest";
 import { AuthContext } from "../contexts/AuthContext";
 import { api } from "../lib/api";
+import { Register } from "./Register";
 
 // Mock API
 vi.mock("../lib/api", () => ({
@@ -41,21 +41,17 @@ describe("Register Component", () => {
                 <BrowserRouter>
                     <Register />
                 </BrowserRouter>
-            </AuthContext.Provider>
+            </AuthContext.Provider>,
         );
     };
 
     it("renders register form", () => {
         renderComponent();
-        expect(
-            screen.getByRole("heading", { name: "Create Account" })
-        ).toBeInTheDocument();
+        expect(screen.getByRole("heading", { name: "Create Account" })).toBeInTheDocument();
         expect(screen.getByTestId("name-input")).toBeInTheDocument();
         expect(screen.getByTestId("email-input")).toBeInTheDocument();
         expect(screen.getByTestId("password-input")).toBeInTheDocument();
-        expect(
-            screen.getByTestId("confirm-password-input")
-        ).toBeInTheDocument();
+        expect(screen.getByTestId("confirm-password-input")).toBeInTheDocument();
     });
 
     it("validates password mismatch", async () => {
@@ -69,9 +65,7 @@ describe("Register Component", () => {
         fireEvent.click(screen.getByRole("button", { name: "Create Account" }));
 
         await waitFor(() => {
-            expect(
-                screen.getByText("Passwords do not match")
-            ).toBeInTheDocument();
+            expect(screen.getByText("Passwords do not match")).toBeInTheDocument();
         });
     });
 
@@ -98,14 +92,8 @@ describe("Register Component", () => {
         fireEvent.click(screen.getByRole("button", { name: "Create Account" }));
 
         await waitFor(() => {
-            expect(mockedApiPost).toHaveBeenCalledWith(
-                "/auth/register",
-                expect.any(Object)
-            );
-            expect(mockedApiPost).toHaveBeenCalledWith(
-                "/auth/login",
-                expect.any(Object)
-            );
+            expect(mockedApiPost).toHaveBeenCalledWith("/auth/register", expect.any(Object));
+            expect(mockedApiPost).toHaveBeenCalledWith("/auth/login", expect.any(Object));
             expect(loginMock).toHaveBeenCalled();
         });
     });

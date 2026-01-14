@@ -18,15 +18,14 @@
 ### A. Página de Configurações Gerais
 
 -   [x] **Geral (Parâmetros do Sistema):**
-    -   Dia Padrão de Fechamento (Faturas/Relatórios).
-    -   Juros Médios Padrão (%) para novas dívidas.
-    -   Valor Extra Mensal Padrão (Estratégia de Dívidas).
-    -   Limite de Projeção (Meses) - default: 360.
-    -   Horas Diárias Padrão (Distribuição de Renda) - default: 8.
-    -   Trabalhar nos Fins de Semana (Sim/Não) - default: Não.
-    -   Categoria Padrão p/ Recebimentos - default: "Trabalho".
-    -   Número Padrão de Recorrências - default: 12.
-    -   Conta Padrão p/ Lançamentos Automáticos.
+    -   [x] Dia Padrão de Fechamento (Faturas/Relatórios).
+    -   [x] Juros Médios Padrão (%) para novas dívidas.
+    -   [x] Valor Extra Mensal Padrão (Estratégia de Dívidas).
+    -   [x] Limite de Projeção (Meses) - default: 360.
+    -   [x] Horas Diárias Padrão (Distribuição de Renda) - default: 8.
+    -   [x] Trabalhar nos Fins de Semana (Sim/Não) - default: Não.
+    -   [x] Categoria Padrão p/ Recebimentos - default: "Trabalho".
+    -   [x] Número Padrão de Recorrências - default: 12.
 -   [x] **Preferências (Apenas Placeholders Visuais):**
     -   [x] _Aparência (Design System - Ver Plan-029)_
     -   [x] _Idioma e Localização (i18n - Ver Plan-030)_
@@ -56,3 +55,19 @@
 -   [x] Cadastrar Despesa Fixa "Aluguel" (Dia 10) de R$ 2.000,00 na página de Despesas Fixas.
 -   [x] Visualizar na tela de **Projeções** que o saldo estimado para o próximo mês já considera a saída do "Aluguel", mesmo sem transação criada ainda.
 -   [x] Sistema sugere ou cria a transação de Aluguel quando chega o dia configurado.
+
+## 4. Melhorias Técnicas e Testes (Adicional)
+
+-   [x] **Refatoração de Formulários:** Padronização completa utilizando `react-hook-form` e `zod` em:
+    -   `Settings` e `GeneralSettingsCard`.
+    -   `CategoryDialog`.
+    -   `FixedExpenseDialog`.
+    -   `NewTransactionDialog` (Correções de data e timezone).
+-   [x] **Cobertura de Testes (Frontend):**
+    -   Criação de testes unitários e de integração para Categorias (`CategoryDialog.test.tsx`, `CategoryList.test.tsx`, `Categories.test.tsx`).
+    -   Criação de testes unitários e de integração para Despesas Fixas (`FixedExpenseDialog.test.tsx`, `FixedExpenseList.test.tsx`, `FixedExpenses.test.tsx`).
+    -   Criação de testes de integração para Configurações (`Settings.test.tsx`).
+    -   Correção de testes existentes (`NewTransactionDialog`, `IncomeProjection`).
+-   [x] **UX/UI:**
+    -   Diálogos de confirmação de exclusão (`DeleteCategoryDialog`, `DeleteFixedExpenseDialog`).
+    -   Feedback visual aprimorado (Toasts, Spinners).

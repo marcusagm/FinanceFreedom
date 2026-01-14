@@ -1,10 +1,10 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { describe, it, vi, expect, beforeEach, afterEach } from "vitest";
-import { Profile } from "./Profile";
+import { BrowserRouter } from "react-router-dom";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { AuthContext } from "../contexts/AuthContext";
 import { api } from "../lib/api";
-import { BrowserRouter } from "react-router-dom";
+import { Profile } from "./Profile";
 
 // Mock API
 vi.mock("../lib/api", () => ({

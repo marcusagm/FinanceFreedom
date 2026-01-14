@@ -1,39 +1,33 @@
 import { useEffect, useState } from "react";
-import { usePrivacy } from "../contexts/PrivacyContext";
-import { PageHeader } from "../components/ui/PageHeader";
 import {
-    LineChart,
+    CartesianGrid,
     Line,
+    LineChart,
+    ReferenceLine,
+    ResponsiveContainer,
+    Tooltip,
     XAxis,
     YAxis,
-    CartesianGrid,
-    Tooltip,
-    ResponsiveContainer,
-    ReferenceLine,
 } from "recharts";
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from "../components/ui/Card";
 import { TimeCostBadge } from "../components/simulators/TimeCostBadge";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/Card";
+import { PageHeader } from "../components/ui/PageHeader";
+import { usePrivacy } from "../contexts/PrivacyContext";
+import { type DashboardSummary, getDashboardSummary } from "../services/dashboard.service";
 import { getHourlyRate } from "../services/simulator.service";
-import {
-    getDashboardSummary,
-    type DashboardSummary,
-} from "../services/dashboard.service";
 
+import { RefreshCw } from "lucide-react";
+import { QuickActionFAB } from "../components/common/QuickActionFAB";
 // import { cn } from "../lib/utils";
 import { ActionFeed } from "../components/dashboard/ActionFeed";
-import { ChartTooltip } from "../components/ui/ChartTooltip";
-import { MoneyDisplay } from "../components/ui/MoneyDisplay";
-import { QuickActionFAB } from "../components/common/QuickActionFAB";
+import { UpcomingInstallmentsWidget } from "../components/dashboard/UpcomingInstallmentsWidget";
+import { WealthWidget } from "../components/dashboard/WealthWidget";
 import { Button } from "../components/ui/Button";
-import { RefreshCw } from "lucide-react";
-import { ImportService } from "../services/import.service";
+import { ChartTooltip } from "../components/ui/ChartTooltip";
 import { Modal } from "../components/ui/Modal";
+import { MoneyDisplay } from "../components/ui/MoneyDisplay";
 import { notify } from "../lib/notification";
+import { ImportService } from "../services/import.service";
 
 export default function Dashboard() {
     const [summary, setSummary] = useState<DashboardSummary | null>(null);
@@ -86,14 +80,14 @@ export default function Dashboard() {
             notify.dismiss(toastId);
             notify.success(
                 "Sincronização Concluída",
-                `Foram importadas ${count} novas transações.`
+                `Foram importadas ${count} novas transações.`,
             );
         } catch (error: any) {
             console.error("Sync failed", error);
             notify.dismiss(toastId);
             notify.error(
                 "Erro na Sincronização",
-                error.message || "Falha ao conectar com o servidor de e-mail."
+                error.message || "Falha ao conectar com o servidor de e-mail.",
             );
         } finally {
             setSyncing(false);
@@ -115,9 +109,7 @@ export default function Dashboard() {
     if (error) {
         return (
             <div className="flex flex-col items-center justify-center min-h-screen gap-4">
-                <div className="text-destructive text-lg font-medium">
-                    {error}
-                </div>
+                <div className="text-destructive text-lg font-medium">{error}</div>
                 <Button onClick={fetchData}>Tentar Novamente</Button>
             </div>
         );
@@ -159,50 +151,11 @@ export default function Dashboard() {
                         <Button
                             variant="outline"
                             size="sm"
-                            onClick={() =>
-                                notify.success(
-                                    "Success",
-                                    "Operation completed successfully"
-                                )
-                            }
-                        >
-                            Success
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() =>
-                                notify.error("Error", "Something went wrong")
-                            }
-                        >
-                            Error
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() =>
-                                notify.info("Info", "Some information")
-                            }
-                        >
-                            Info
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => notify.loading("Loading")}
-                        >
-                            Loading
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="sm"
                             onClick={handleSyncClick}
                             disabled={syncing}
                         >
                             <RefreshCw
-                                className={`mr-2 h-4 w-4 ${
-                                    syncing ? "animate-spin" : ""
-                                }`}
+                                className={`mr-2 h-4 w-4 ${syncing ? "animate-spin" : ""}`}
                             />
                             {syncing ? "Sincronizando..." : "Sincronizar"}
                         </Button>
@@ -212,44 +165,17 @@ export default function Dashboard() {
 
             {/* Summary Cards */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <div className="col-span-2">
+                    <WealthWidget
+                        totalInvested={summary.totalInvested || 0}
+                        netWorth={summary.netWorth || summary.totalBalance}
+                        totalDebt={summary.totalDebt || 0}
+                        totalBalance={summary.totalBalance}
+                    />
+                </div>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">
-                            Saldo Total
-                        </CardTitle>
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            className="h-4 w-4 text-muted-foreground"
-                        >
-                            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                        </svg>
-                    </CardHeader>
-                    <CardContent>
-                        <div
-                            className={`text-2xl font-bold ${
-                                summary.totalBalance >= 0
-                                    ? "text-emerald-500"
-                                    : "text-red-500"
-                            }`}
-                        >
-                            <MoneyDisplay value={summary.totalBalance} />
-                        </div>
-                        <p className="text-xs text-muted-foreground">
-                            Visão geral de todas as contas
-                        </p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">
-                            Receitas (Mês)
-                        </CardTitle>
+                        <CardTitle className="text-sm font-medium">Receitas (Mês)</CardTitle>
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 24 24"
@@ -271,9 +197,7 @@ export default function Dashboard() {
                 </Card>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">
-                            Despesas (Mês)
-                        </CardTitle>
+                        <CardTitle className="text-sm font-medium">Despesas (Mês)</CardTitle>
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 24 24"
@@ -291,93 +215,81 @@ export default function Dashboard() {
                         <div className="text-2xl font-bold text-red-500">
                             <MoneyDisplay value={summary.monthlyExpenses} />
                         </div>
-                        <TimeCostBadge
-                            amount={summary.monthlyExpenses}
-                            hourlyRate={hourlyRate}
-                        />
+                        <TimeCostBadge amount={summary.monthlyExpenses} hourlyRate={hourlyRate} />
                     </CardContent>
                 </Card>
+            </div>
+
+            {/* Main Content Grid: Chart + Upcoming Installments */}
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+                <div className="col-span-4 max-h-100">
+                    <Card className="h-full">
+                        <CardHeader>
+                            <CardTitle>Evolução do Saldo (30 dias)</CardTitle>
+                        </CardHeader>
+                        <CardContent className="pl-2 h-75">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <LineChart data={summary.chartData}>
+                                    <defs>
+                                        <linearGradient id="splitColor" x1="0" y1="0" x2="0" y2="1">
+                                            <stop
+                                                offset={off}
+                                                stopColor="#10b981"
+                                                stopOpacity={1}
+                                            />
+                                            <stop
+                                                offset={off}
+                                                stopColor="#ef4444"
+                                                stopOpacity={1}
+                                            />
+                                        </linearGradient>
+                                    </defs>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                    <XAxis
+                                        dataKey="date"
+                                        stroke="#888888"
+                                        fontSize={12}
+                                        tickLine={false}
+                                        axisLine={false}
+                                        tickFormatter={(value) => {
+                                            const date = new Date(value);
+                                            return `${date.getDate()}/${date.getMonth() + 1}`;
+                                        }}
+                                    />
+                                    <YAxis
+                                        stroke="#888888"
+                                        fontSize={12}
+                                        tickLine={false}
+                                        axisLine={false}
+                                        tickFormatter={(value) =>
+                                            isObfuscated ? "••••••" : `R$ ${value}`
+                                        }
+                                    />
+                                    <Tooltip
+                                        content={<ChartTooltip formatter={chartFormatter} />}
+                                    />
+                                    <ReferenceLine y={0} stroke="#000" />
+                                    <Line
+                                        type="monotone"
+                                        dataKey="balance"
+                                        stroke="url(#splitColor)"
+                                        strokeWidth={2}
+                                        dot={false}
+                                    />
+                                </LineChart>
+                            </ResponsiveContainer>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                <div className="col-span-3 space-y-4">
+                    <UpcomingInstallmentsWidget />
+                </div>
             </div>
 
             {/* Action Feed */}
             <div className="grid gap-4 md:grid-cols-1">
                 <ActionFeed recommendations={summary.recommendations} />
-            </div>
-
-            {/* Chart */}
-            <div className="grid gap-4 md:grid-cols-1">
-                <Card className="col-span-1">
-                    <CardHeader>
-                        <CardTitle>Evolução do Saldo (30 dias)</CardTitle>
-                    </CardHeader>
-                    <CardContent className="pl-2">
-                        <ResponsiveContainer width="100%" height={350}>
-                            <LineChart data={summary.chartData}>
-                                <defs>
-                                    <linearGradient
-                                        id="splitColor"
-                                        x1="0"
-                                        y1="0"
-                                        x2="0"
-                                        y2="1"
-                                    >
-                                        <stop
-                                            offset={off}
-                                            stopColor="#10b981"
-                                            stopOpacity={1}
-                                        />
-                                        <stop
-                                            offset={off}
-                                            stopColor="#ef4444"
-                                            stopOpacity={1}
-                                        />
-                                    </linearGradient>
-                                </defs>
-                                <CartesianGrid
-                                    strokeDasharray="3 3"
-                                    vertical={false}
-                                />
-                                <XAxis
-                                    dataKey="date"
-                                    stroke="#888888"
-                                    fontSize={12}
-                                    tickLine={false}
-                                    axisLine={false}
-                                    tickFormatter={(value) => {
-                                        const date = new Date(value);
-                                        return `${date.getDate()}/${
-                                            date.getMonth() + 1
-                                        }`;
-                                    }}
-                                />
-                                <YAxis
-                                    stroke="#888888"
-                                    fontSize={12}
-                                    tickLine={false}
-                                    axisLine={false}
-                                    tickFormatter={(value) =>
-                                        isObfuscated ? "••••••" : `R$ ${value}`
-                                    }
-                                />
-                                <Tooltip
-                                    content={
-                                        <ChartTooltip
-                                            formatter={chartFormatter}
-                                        />
-                                    }
-                                />
-                                <ReferenceLine y={0} stroke="#000" />
-                                <Line
-                                    type="monotone"
-                                    dataKey="balance"
-                                    stroke="url(#splitColor)"
-                                    strokeWidth={2}
-                                    dot={false}
-                                />
-                            </LineChart>
-                        </ResponsiveContainer>
-                    </CardContent>
-                </Card>
             </div>
 
             <QuickActionFAB />
@@ -388,10 +300,7 @@ export default function Dashboard() {
                 title="Sincronizar Contas"
                 footer={
                     <div className="flex justify-end gap-2">
-                        <Button
-                            variant="outline"
-                            onClick={() => setIsSyncConfirmOpen(false)}
-                        >
+                        <Button variant="outline" onClick={() => setIsSyncConfirmOpen(false)}>
                             Cancelar
                         </Button>
                         <Button variant="primary" onClick={confirmSync}>
@@ -401,8 +310,8 @@ export default function Dashboard() {
                 }
             >
                 <p>
-                    Deseja verificar manualmente a caixa de entrada de todos os
-                    e-mails cadastrados em busca de novas transações?
+                    Deseja verificar manualmente a caixa de entrada de todos os e-mails cadastrados
+                    em busca de novas transações?
                 </p>
                 <p className="text-sm text-muted-foreground mt-2">
                     Isso pode levar alguns segundos.

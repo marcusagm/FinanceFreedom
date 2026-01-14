@@ -1,7 +1,7 @@
-import { render, screen, waitFor, fireEvent } from "../utils/test-utils";
-import IncomeProjection from "./IncomeProjection";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { api } from "../lib/api";
-import { vi, describe, it, expect, beforeEach } from "vitest";
+import { fireEvent, render, screen, waitFor } from "../utils/test-utils";
+import IncomeProjection from "./IncomeProjection";
 
 // Mock API
 vi.mock("../lib/api", () => ({
@@ -18,11 +18,7 @@ vi.mock("../components/income/DistributeIncomeDialog", () => ({
         if (!open) return null;
         return (
             <div data-testid="distribute-dialog">
-                <button
-                    onClick={() =>
-                        onConfirm({ hoursPerDay: 4, skipWeekends: true })
-                    }
-                >
+                <button onClick={() => onConfirm({ hoursPerDay: 4, skipWeekends: true })}>
                     Confirm Distribute
                 </button>
             </div>
@@ -82,9 +78,7 @@ describe("IncomeProjection Page", () => {
         // Real CalendarDay renders the button if onDistribute is passed.
 
         // Let's try to find the scissors button by title
-        const scissorsBtns = screen.queryAllByTitle(
-            "Distribuir (Dividir em vários dias)"
-        );
+        const scissorsBtns = screen.queryAllByTitle("Distribuir (Dividir em vários dias)");
         if (scissorsBtns.length > 0) {
             fireEvent.click(scissorsBtns[0]);
 
@@ -101,7 +95,7 @@ describe("IncomeProjection Page", () => {
                     expect.objectContaining({
                         hoursPerDay: 4,
                         skipWeekends: true,
-                    })
+                    }),
                 );
             });
         }

@@ -1,12 +1,12 @@
+import { Loader2, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
-import { PageHeader } from "../components/ui/PageHeader";
-import { Button } from "../components/ui/Button";
-import { Plus, Loader2 } from "lucide-react";
-import { categoryService, type Category } from "../services/category.service";
 import { toast } from "sonner";
-import { CategoryList } from "../components/category/CategoryList";
 import { CategoryDialog } from "../components/category/CategoryDialog";
+import { CategoryList } from "../components/category/CategoryList";
 import { DeleteCategoryDialog } from "../components/category/DeleteCategoryDialog";
+import { Button } from "../components/ui/Button";
+import { PageHeader } from "../components/ui/PageHeader";
+import { type Category, categoryService } from "../services/category.service";
 
 export function Categories() {
     const [categories, setCategories] = useState<Category[]>([]);
@@ -14,15 +14,11 @@ export function Categories() {
 
     // Dialog states
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [editingCategory, setEditingCategory] = useState<Category | null>(
-        null
-    );
+    const [editingCategory, setEditingCategory] = useState<Category | null>(null);
 
     // Delete states
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-    const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(
-        null
-    );
+    const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {

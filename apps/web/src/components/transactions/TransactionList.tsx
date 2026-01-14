@@ -1,18 +1,11 @@
-import { Edit2, Trash2, Split } from "lucide-react";
-import type { Transaction } from "../../types";
+import { Edit2, Split, Trash2 } from "lucide-react";
+import { useState } from "react";
 import { useHourlyRate } from "../../hooks/useHourlyRate";
+import type { Transaction } from "../../types";
 import { TimeCostBadge } from "../simulators/TimeCostBadge";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "../ui/Table";
 import { Button } from "../ui/Button";
 import { MoneyDisplay } from "../ui/MoneyDisplay";
-import { useState } from "react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/Table";
 import { SplitTransactionDialog } from "./SplitTransactionDialog";
 
 interface TransactionListProps {
@@ -29,8 +22,7 @@ export function TransactionList({
     onTransactionUpdated,
 }: TransactionListProps) {
     const { hourlyRate } = useHourlyRate();
-    const [splitDialogTransaction, setSplitDialogTransaction] =
-        useState<Transaction | null>(null);
+    const [splitDialogTransaction, setSplitDialogTransaction] = useState<Transaction | null>(null);
 
     return (
         <div className="rounded-md border bg-card">
@@ -48,14 +40,8 @@ export function TransactionList({
                 <TableBody>
                     {transactions.map((transaction) => (
                         <TableRow key={transaction.id}>
-                            <TableCell>
-                                {new Date(
-                                    transaction.date
-                                ).toLocaleDateString()}
-                            </TableCell>
-                            <TableCell className="text-left">
-                                {transaction.description}
-                            </TableCell>
+                            <TableCell>{new Date(transaction.date).toLocaleDateString()}</TableCell>
+                            <TableCell className="text-left">{transaction.description}</TableCell>
                             <TableCell>{transaction.category || "-"}</TableCell>
                             <TableCell>{transaction.account.name}</TableCell>
                             <TableCell
@@ -67,13 +53,9 @@ export function TransactionList({
                             >
                                 <div className="flex flex-col items-end gap-1">
                                     <span className="font-medium">
-                                        {transaction.type === "INCOME"
-                                            ? "+"
-                                            : "-"}
+                                        {transaction.type === "INCOME" ? "+" : "-"}
                                         <MoneyDisplay
-                                            value={Math.abs(
-                                                Number(transaction.amount)
-                                            )}
+                                            value={Math.abs(Number(transaction.amount))}
                                         />
                                     </span>
                                     {transaction.type === "EXPENSE" && (
@@ -89,11 +71,7 @@ export function TransactionList({
                                     <Button
                                         variant="ghost"
                                         size="icon"
-                                        onClick={() =>
-                                            setSplitDialogTransaction(
-                                                transaction
-                                            )
-                                        }
+                                        onClick={() => setSplitDialogTransaction(transaction)}
                                         className="h-8 w-8 text-blue-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/20"
                                         title="Dividir Transação"
                                     >

@@ -1,8 +1,8 @@
-import { render, screen, waitFor, fireEvent } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { DebtForm } from "./DebtForm";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { api } from "../../lib/api";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { DebtForm } from "./DebtForm";
 
 // Mock API
 vi.mock("../../lib/api", () => ({
@@ -22,26 +22,14 @@ describe("DebtForm", () => {
     });
 
     it("renders new debt form", () => {
-        render(
-            <DebtForm
-                isOpen={true}
-                onClose={mockOnClose}
-                onSuccess={mockOnSuccess}
-            />
-        );
+        render(<DebtForm isOpen={true} onClose={mockOnClose} onSuccess={mockOnSuccess} />);
         expect(screen.getByText("New Debt")).toBeInTheDocument();
         expect(screen.getByText("Debt Name")).toBeInTheDocument();
     });
 
     it("shows validation error for empty name", async () => {
         const user = userEvent.setup();
-        render(
-            <DebtForm
-                isOpen={true}
-                onClose={mockOnClose}
-                onSuccess={mockOnSuccess}
-            />
-        );
+        render(<DebtForm isOpen={true} onClose={mockOnClose} onSuccess={mockOnSuccess} />);
 
         const submitBtn = screen.getByRole("button", { name: /save/i });
         await user.click(submitBtn);
@@ -55,13 +43,7 @@ describe("DebtForm", () => {
         const user = userEvent.setup();
         mockPost.mockResolvedValueOnce({ data: {} });
 
-        render(
-            <DebtForm
-                isOpen={true}
-                onClose={mockOnClose}
-                onSuccess={mockOnSuccess}
-            />
-        );
+        render(<DebtForm isOpen={true} onClose={mockOnClose} onSuccess={mockOnSuccess} />);
 
         // Fill Name - Using placeholder or just choosing input
         const nameInput = screen.getByPlaceholderText("Ex: Credit Card");
@@ -96,10 +78,10 @@ describe("DebtForm", () => {
                         interestRate: 5,
                         minimumPayment: 100,
                         dueDate: 15,
-                    })
+                    }),
                 );
             },
-            { timeout: 4000 }
+            { timeout: 4000 },
         );
 
         expect(mockOnSuccess).toHaveBeenCalled();

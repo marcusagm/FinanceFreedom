@@ -1,8 +1,11 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { api } from "../../lib/api";
+import type { Account } from "../../types";
+import { Button } from "../ui/Button";
+import { Checkbox } from "../ui/Checkbox";
 import {
     Dialog,
     DialogContent,
@@ -11,18 +14,9 @@ import {
     DialogHeader,
     DialogTitle,
 } from "../ui/Dialog";
-import { Button } from "../ui/Button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/Form";
 import { Input } from "../ui/Input";
 import { Select } from "../ui/Select";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "../ui/Form";
-import type { Account } from "../../types";
 import type { Debt } from "./DebtForm";
 
 interface DebtPaymentDialogProps {
@@ -38,14 +32,10 @@ const formSchema = z.object({
         .min(0.01, "Valor deve ser maior que 0"),
     date: z.string().min(1, "Data é obrigatória"),
     accountId: z.string().min(1, "Conta é obrigatória"),
+    paysInstallment: z.boolean().default(false).optional(),
 });
 
-export function DebtPaymentDialog({
-    isOpen,
-    onClose,
-    onSuccess,
-    debt,
-}: DebtPaymentDialogProps) {
+export function DebtPaymentDialog({ isOpen, onClose, onSuccess, debt }: DebtPaymentDialogProps) {
     const [accounts, setAccounts] = useState<Account[]>([]);
     const [loadingAccounts, setLoadingAccounts] = useState(false);
 
@@ -55,6 +45,7 @@ export function DebtPaymentDialog({
             amount: 0,
             date: new Date().toISOString().split("T")[0],
             accountId: "",
+            paysInstallment: false,
         },
     });
 
@@ -66,6 +57,9 @@ export function DebtPaymentDialog({
                 amount: Number(debt.minimumPayment) || 0,
                 date: new Date().toISOString().split("T")[0],
                 accountId: accounts.length > 0 ? accounts[0].id : "",
+                paysInstallment: !!(debt.installmentsTotal && debt.installmentsTotal > 0), // Auto-check if it has installments? Maybe safer to default false.
+                // Let's default to FALSE to avoid accidental double counting if user isn't paying full installment.
+                // Or true if amount matches min payment? Too complex. Default false.
             });
 
             // Fetch accounts if not already loaded or if we want fresh data
@@ -100,6 +94,7 @@ export function DebtPaymentDialog({
                 accountId: values.accountId,
                 category: "Pagamento de Dívida", // Hardcoded per plan requirement
                 debtId: debt.id,
+                paysInstallment: values.paysInstallment,
             });
 
             onSuccess();
@@ -134,13 +129,9 @@ export function DebtPaymentDialog({
                             <FormField
                                 control={form.control}
                                 name="amount"
-                                render={({
-                                    field: { onChange, value, ...field },
-                                }) => (
+                                render={({ field: { onChange, value, ...field } }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            Valor do Pagamento
-                                        </FormLabel>
+                                        <FormLabel>Valor do Pagamento</FormLabel>
                                         <FormControl>
                                             <Input
                                                 data-testid="amount-input"
@@ -148,9 +139,7 @@ export function DebtPaymentDialog({
                                                 currency
                                                 value={value}
                                                 onValueChange={(values) => {
-                                                    onChange(
-                                                        values.floatValue || 0
-                                                    );
+                                                    onChange(values.floatValue || 0);
                                                 }}
                                                 {...field}
                                             />
@@ -197,6 +186,28 @@ export function DebtPaymentDialog({
                                     </FormItem>
                                 )}
                             />
+
+                            {debt.installmentsTotal && debt.installmentsTotal > 0 && (
+                                <FormField
+                                    control={form.control}
+                                    name="paysInstallment"
+                                    render={({ field }) => (
+                                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                                            <FormControl>
+                                                <Checkbox
+                                                    checked={field.value}
+                                                    onCheckedChange={field.onChange}
+                                                />
+                                            </FormControl>
+                                            <div className="space-y-1 leading-none">
+                                                <FormLabel>
+                                                    Este pagamento quita uma parcela?
+                                                </FormLabel>
+                                            </div>
+                                        </FormItem>
+                                    )}
+                                />
+                            )}
                         </div>
                     </form>
                 </Form>
@@ -208,9 +219,7 @@ export function DebtPaymentDialog({
                         onClick={form.handleSubmit(handleSubmit)}
                         disabled={form.formState.isSubmitting}
                     >
-                        {form.formState.isSubmitting
-                            ? "Registrando..."
-                            : "Confirmar Pagamento"}
+                        {form.formState.isSubmitting ? "Registrando..." : "Confirmar Pagamento"}
                     </Button>
                 </DialogFooter>
             </DialogContent>

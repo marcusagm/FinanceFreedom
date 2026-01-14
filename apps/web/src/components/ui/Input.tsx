@@ -28,6 +28,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
                 className={inputClass}
                 thousandSeparator="."
                 decimalSeparator=","
+                allowedDecimalSeparators={[",", "."]}
                 prefix="R$ "
                 decimalScale={2}
                 fixedDecimalScale

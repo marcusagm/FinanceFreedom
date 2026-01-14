@@ -1,8 +1,8 @@
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "../utils/test-utils";
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { Accounts } from "./Accounts";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { api } from "../lib/api";
+import { fireEvent, render, screen, waitFor } from "../utils/test-utils";
+import { Accounts } from "./Accounts";
 
 // Mock api
 vi.mock("../lib/api", () => ({
@@ -24,8 +24,7 @@ vi.mock("../components/account/AccountCard", () => ({
 }));
 
 vi.mock("../components/account/CreateAccountDialog", () => ({
-    CreateAccountDialog: ({ isOpen }: any) =>
-        isOpen ? <div>CreateDialog</div> : null,
+    CreateAccountDialog: ({ isOpen }: any) => (isOpen ? <div>CreateDialog</div> : null),
 }));
 
 vi.mock("../components/account/DeleteAccountDialog", () => ({
@@ -48,9 +47,7 @@ describe("Accounts Page", () => {
 
     it("renders empty state", async () => {
         renderPage();
-        expect(
-            await screen.findByText(/nenhuma conta encontrada/i)
-        ).toBeInTheDocument();
+        expect(await screen.findByText(/nenhuma conta encontrada/i)).toBeInTheDocument();
     });
 
     it("renders accounts list", async () => {
@@ -75,9 +72,7 @@ describe("Accounts Page", () => {
 
     it("opens delete dialog and confirms", async () => {
         (api.get as any).mockResolvedValue({
-            data: [
-                { id: "1", name: "Account 1", type: "WALLET", balance: 100 },
-            ],
+            data: [{ id: "1", name: "Account 1", type: "WALLET", balance: 100 }],
         });
 
         renderPage();

@@ -2,14 +2,8 @@
  * @vitest-environment jsdom
  */
 import "@testing-library/jest-dom/vitest";
-import {
-    render,
-    screen,
-    fireEvent,
-    waitFor,
-    cleanup,
-} from "@testing-library/react";
-import { describe, it, expect, vi, afterEach } from "vitest";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { NewTransactionDialog } from "./NewTransactionDialog";
 
 afterEach(() => {
@@ -33,11 +27,7 @@ vi.mock("../ui/DatePicker", () => ({
             placeholder={placeholder}
             value={date ? date.toISOString().split("T")[0] : ""}
             onChange={(e) =>
-                setDate(
-                    e.target.value
-                        ? new Date(e.target.value + "T00:00:00")
-                        : undefined
-                )
+                setDate(e.target.value ? new Date(e.target.value + "T00:00:00") : undefined)
             }
         />
     ),
@@ -57,9 +47,7 @@ describe("NewTransactionDialog", () => {
         render(<NewTransactionDialog {...mockProps} />);
         expect(screen.getByText("Nova Transação")).toBeInTheDocument();
         // Use placeholders which are explicit in the component
-        expect(
-            screen.getByPlaceholderText("Ex: Mercado, Salário")
-        ).toBeInTheDocument();
+        expect(screen.getByPlaceholderText("Ex: Mercado, Salário")).toBeInTheDocument();
         expect(screen.getByPlaceholderText("R$ 0,00")).toBeInTheDocument();
     });
 

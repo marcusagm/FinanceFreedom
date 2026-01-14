@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { PageHeader } from "../components/ui/PageHeader";
-import { api } from "../lib/api";
 import { AccountCard } from "../components/account/AccountCard";
 import { CreateAccountDialog } from "../components/account/CreateAccountDialog";
 import { DeleteAccountDialog } from "../components/account/DeleteAccountDialog";
 import { Button } from "../components/ui/Button";
+import { PageHeader } from "../components/ui/PageHeader";
+import { api } from "../lib/api";
 
 interface Account {
     id: string;
@@ -19,9 +19,7 @@ export function Accounts() {
     const [isCreateOpen, setIsCreateOpen] = useState(false);
 
     const [editingAccount, setEditingAccount] = useState<Account | null>(null);
-    const [deletingAccount, setDeletingAccount] = useState<Account | null>(
-        null
-    );
+    const [deletingAccount, setDeletingAccount] = useState<Account | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
 
     const fetchAccounts = async () => {

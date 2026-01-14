@@ -1,11 +1,11 @@
-import React from "react";
-import { render, type RenderOptions } from "@testing-library/react";
-import { PrivacyProvider } from "../contexts/PrivacyContext";
+import { type RenderOptions, render } from "@testing-library/react";
+import type React from "react";
 import { BrowserRouter } from "react-router-dom";
+import { PrivacyProvider } from "../contexts/PrivacyContext";
 
 export const renderWithProviders = (
     ui: React.ReactElement,
-    options?: Omit<RenderOptions, "wrapper">
+    options?: Omit<RenderOptions, "wrapper">,
 ) => {
     const Wrapper = ({ children }: { children: React.ReactNode }) => {
         return (

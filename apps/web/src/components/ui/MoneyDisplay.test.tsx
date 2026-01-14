@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
-import { MoneyDisplay } from "./MoneyDisplay";
+import { describe, expect, it, vi } from "vitest";
 import { PrivacyProvider } from "../../contexts/PrivacyContext";
 import * as PrivacyContextModule from "../../contexts/PrivacyContext";
+import { MoneyDisplay } from "./MoneyDisplay";
 
 // Mock the usage of usePrivacy to control state in tests without full provider logic if needed,
 // but using the real provider is better for integration testing.

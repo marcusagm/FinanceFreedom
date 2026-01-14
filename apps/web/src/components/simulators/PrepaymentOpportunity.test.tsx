@@ -1,8 +1,8 @@
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
-import { PrepaymentOpportunity } from "./PrepaymentOpportunity";
+import { describe, expect, it, vi } from "vitest";
 import { calculatePrepaymentSavings } from "../../services/simulator.service";
+import { PrepaymentOpportunity } from "./PrepaymentOpportunity";
 
 // Mock service
 vi.mock("../../services/simulator.service", () => ({
@@ -19,9 +19,7 @@ describe("PrepaymentOpportunity", () => {
 
     it("renders simulation form", () => {
         render(<PrepaymentOpportunity {...mockProps} />);
-        expect(
-            screen.getByText("Oportunidade de Antecipação")
-        ).toBeInTheDocument();
+        expect(screen.getByText("Oportunidade de Antecipação")).toBeInTheDocument();
         expect(screen.getByText("Simular")).toBeInTheDocument();
     });
 

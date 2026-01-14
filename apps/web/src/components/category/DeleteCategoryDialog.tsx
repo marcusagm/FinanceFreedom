@@ -1,3 +1,5 @@
+import { Loader2 } from "lucide-react";
+import { Button } from "../ui/Button";
 import {
     Dialog,
     DialogContent,
@@ -6,8 +8,6 @@ import {
     DialogHeader,
     DialogTitle,
 } from "../ui/Dialog";
-import { Button } from "../ui/Button";
-import { Loader2 } from "lucide-react";
 
 interface DeleteCategoryDialogProps {
     isOpen: boolean;

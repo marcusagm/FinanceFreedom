@@ -1,40 +1,23 @@
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "../ui/Card";
-import { Input } from "../ui/Input";
-import { Checkbox } from "../ui/Checkbox";
-import { Select } from "../ui/Select";
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "../ui/Form";
-import type { Category } from "../../services/category.service";
 import type { UseFormReturn } from "react-hook-form";
 import type { SettingsFormValues } from "../../pages/Settings";
+import type { Category } from "../../services/category.service";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/Card";
+import { Checkbox } from "../ui/Checkbox";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/Form";
+import { Input } from "../ui/Input";
+import { Select } from "../ui/Select";
 
 interface GeneralSettingsCardProps {
     form: UseFormReturn<SettingsFormValues>;
     categories: Category[];
 }
 
-export function GeneralSettingsCard({
-    form,
-    categories,
-}: GeneralSettingsCardProps) {
+export function GeneralSettingsCard({ form, categories }: GeneralSettingsCardProps) {
     return (
         <Card>
             <CardHeader>
                 <CardTitle>Parâmetros Gerais</CardTitle>
-                <CardDescription>
-                    Defina os padrões de comportamento do sistema.
-                </CardDescription>
+                <CardDescription>Defina os padrões de comportamento do sistema.</CardDescription>
             </CardHeader>
             <CardContent className="grid gap-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -51,9 +34,7 @@ export function GeneralSettingsCard({
                                         max="31"
                                         placeholder="Ex: 5"
                                         {...field}
-                                        onChange={(e) =>
-                                            field.onChange(e.target.value)
-                                        }
+                                        onChange={(e) => field.onChange(e.target.value)}
                                     />
                                 </FormControl>
                                 <p className="text-sm text-muted-foreground">
@@ -76,14 +57,10 @@ export function GeneralSettingsCard({
                                         step="0.01"
                                         placeholder="Ex: 2.5"
                                         {...field}
-                                        onChange={(e) =>
-                                            field.onChange(e.target.value)
-                                        }
+                                        onChange={(e) => field.onChange(e.target.value)}
                                     />
                                 </FormControl>
-                                <p className="text-sm text-muted-foreground">
-                                    Para novas dívidas.
-                                </p>
+                                <p className="text-sm text-muted-foreground">Para novas dívidas.</p>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -119,16 +96,12 @@ export function GeneralSettingsCard({
                         name="projectionLimit"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>
-                                    Limite de Projeção (Meses)
-                                </FormLabel>
+                                <FormLabel>Limite de Projeção (Meses)</FormLabel>
                                 <FormControl>
                                     <Input
                                         type="number"
                                         {...field}
-                                        onChange={(e) =>
-                                            field.onChange(e.target.value)
-                                        }
+                                        onChange={(e) => field.onChange(e.target.value)}
                                     />
                                 </FormControl>
                                 <FormMessage />
@@ -146,9 +119,7 @@ export function GeneralSettingsCard({
                                     <Input
                                         type="number"
                                         {...field}
-                                        onChange={(e) =>
-                                            field.onChange(e.target.value)
-                                        }
+                                        onChange={(e) => field.onChange(e.target.value)}
                                     />
                                 </FormControl>
                                 <FormMessage />
@@ -161,16 +132,12 @@ export function GeneralSettingsCard({
                         name="defaultRecurrence"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>
-                                    Número Padrão de Recorrências
-                                </FormLabel>
+                                <FormLabel>Número Padrão de Recorrências</FormLabel>
                                 <FormControl>
                                     <Input
                                         type="number"
                                         {...field}
-                                        onChange={(e) =>
-                                            field.onChange(e.target.value)
-                                        }
+                                        onChange={(e) => field.onChange(e.target.value)}
                                     />
                                 </FormControl>
                                 <FormMessage />
@@ -183,9 +150,7 @@ export function GeneralSettingsCard({
                         name="defaultIncomeCategory"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>
-                                    Categoria Padrão p/ Recebimentos
-                                </FormLabel>
+                                <FormLabel>Categoria Padrão p/ Recebimentos</FormLabel>
                                 <FormControl>
                                     <Select
                                         value={field.value}
@@ -212,9 +177,7 @@ export function GeneralSettingsCard({
                                 <Checkbox
                                     checked={field.value === "true"}
                                     onCheckedChange={(checked) =>
-                                        field.onChange(
-                                            checked ? "true" : "false"
-                                        )
+                                        field.onChange(checked ? "true" : "false")
                                     }
                                 />
                             </FormControl>

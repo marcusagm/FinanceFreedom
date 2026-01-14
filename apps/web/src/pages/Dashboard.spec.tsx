@@ -1,8 +1,8 @@
-import { render, screen, waitFor } from "../utils/test-utils";
-import Dashboard from "./Dashboard";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getDashboardSummary } from "../services/dashboard.service";
 import { getHourlyRate } from "../services/simulator.service";
-import { vi, describe, it, expect, beforeEach } from "vitest";
+import { render, screen, waitFor } from "../utils/test-utils";
+import Dashboard from "./Dashboard";
 
 // Mock the services
 vi.mock("../services/dashboard.service", () => ({
@@ -15,9 +15,7 @@ vi.mock("../services/simulator.service", () => ({
 
 // Mock Recharts components
 vi.mock("recharts", () => ({
-    LineChart: ({ children }: any) => (
-        <svg data-testid="line-chart">{children}</svg>
-    ),
+    LineChart: ({ children }: any) => <svg data-testid="line-chart">{children}</svg>,
     Line: () => <g data-name="Line" />,
     XAxis: () => <g data-name="XAxis" />,
     YAxis: () => <g data-name="YAxis" />,
@@ -31,15 +29,11 @@ describe("Dashboard", () => {
     beforeEach(() => {
         vi.clearAllMocks();
         // Default mock for getHourlyRate to avoid crashes
-        (getHourlyRate as any).mockImplementation(() =>
-            Promise.resolve({ hourlyRate: 0 })
-        );
+        (getHourlyRate as any).mockImplementation(() => Promise.resolve({ hourlyRate: 0 }));
     });
 
     it("renders loading state initially", () => {
-        (getDashboardSummary as any).mockImplementation(
-            () => new Promise(() => {})
-        );
+        (getDashboardSummary as any).mockImplementation(() => new Promise(() => {}));
         render(<Dashboard />);
         expect(screen.getByText("Carregando dashboard...")).toBeInTheDocument();
     });
@@ -77,19 +71,13 @@ describe("Dashboard", () => {
     });
 
     it("renders error message on failure", async () => {
-        (getDashboardSummary as any).mockRejectedValue(
-            new Error("Failed to load dashboard data")
-        );
+        (getDashboardSummary as any).mockRejectedValue(new Error("Failed to load dashboard data"));
 
         render(<Dashboard />);
 
         await waitFor(() => {
-            expect(
-                screen.getByText("Failed to load dashboard data")
-            ).toBeInTheDocument();
-            expect(
-                screen.getByRole("button", { name: "Tentar Novamente" })
-            ).toBeInTheDocument();
+            expect(screen.getByText("Failed to load dashboard data")).toBeInTheDocument();
+            expect(screen.getByRole("button", { name: "Tentar Novamente" })).toBeInTheDocument();
         });
     });
 });

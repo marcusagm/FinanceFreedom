@@ -1,15 +1,8 @@
-import React from "react";
 import { render, screen } from "@testing-library/react";
-import { describe, it, expect } from "vitest";
+import React from "react";
 import { useForm } from "react-hook-form";
-import {
-    Form,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormControl,
-    FormMessage,
-} from "./Form";
+import { describe, expect, it } from "vitest";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "./Form";
 import { Input } from "./Input";
 
 const TestForm = () => {

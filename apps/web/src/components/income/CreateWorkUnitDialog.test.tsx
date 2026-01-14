@@ -1,9 +1,9 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { CreateWorkUnitDialog } from "./CreateWorkUnitDialog";
-import { vi, describe, it, expect, beforeEach, beforeAll } from "vitest";
 import "@testing-library/jest-dom";
-import * as IncomeService from "../../services/income.service";
 import { api } from "../../lib/api";
+import * as IncomeService from "../../services/income.service";
 
 vi.mock("../../services/income.service", () => ({
     createWorkUnit: vi.fn(),
@@ -23,7 +23,7 @@ vi.mock("../ui/Input", () => ({
             onChange={(e) => {
                 onChange?.(e);
                 if (onValueChange) {
-                    const floatValue = parseFloat(e.target.value) || 0;
+                    const floatValue = Number.parseFloat(e.target.value) || 0;
                     onValueChange({ floatValue, value: e.target.value });
                 }
             }}
@@ -75,7 +75,7 @@ describe("CreateWorkUnitDialog", () => {
                     defaultPrice: 500,
                     estimatedTime: 10,
                     taxRate: 10,
-                })
+                }),
             );
         });
     });

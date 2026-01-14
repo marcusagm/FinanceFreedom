@@ -1,8 +1,8 @@
-import { render, screen, waitFor, fireEvent } from "@testing-library/react";
-import { Categories } from "./Categories";
-import { categoryService } from "../services/category.service";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { toast } from "sonner";
-import { vi, describe, it, expect, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { categoryService } from "../services/category.service";
+import { Categories } from "./Categories";
 
 // Mock dependencies
 vi.mock("../services/category.service");
@@ -19,9 +19,7 @@ describe("Categories Page", () => {
     });
 
     it("should fetch and display categories on load", async () => {
-        const categories = [
-            { id: "1", name: "Food", color: "#FF0000", budgetLimit: 1000 },
-        ];
+        const categories = [{ id: "1", name: "Food", color: "#FF0000", budgetLimit: 1000 }];
         (categoryService.getAll as any).mockResolvedValue(categories);
 
         render(<Categories />);
@@ -44,7 +42,7 @@ describe("Categories Page", () => {
         await waitFor(() => {
             // Radix dialogs might be tricky with roles in some test envs, checking content is safer
             expect(
-                screen.getByText("Configure o nome e a cor da sua categoria.")
+                screen.getByText("Configure o nome e a cor da sua categoria."),
             ).toBeInTheDocument();
         });
     });
@@ -54,9 +52,7 @@ describe("Categories Page", () => {
         render(<Categories />);
 
         await waitFor(() => {
-            expect(toast.error).toHaveBeenCalledWith(
-                "Erro ao carregar categorias"
-            );
+            expect(toast.error).toHaveBeenCalledWith("Erro ao carregar categorias");
         });
     });
 });

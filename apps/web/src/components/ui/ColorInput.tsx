@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { clsx, type ClassValue } from "clsx";
+import { type ClassValue, clsx } from "clsx";
+import type React from "react";
+import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
 function cn(...inputs: ClassValue[]) {
@@ -15,14 +16,7 @@ interface ColorInputProps {
     className?: string;
 }
 
-export function ColorInput({
-    label,
-    value,
-    onChange,
-    onBlur,
-    name,
-    className,
-}: ColorInputProps) {
+export function ColorInput({ label, value, onChange, onBlur, name, className }: ColorInputProps) {
     const [inputValue, setInputValue] = useState(value);
 
     // Sync input value if external value changes (and is valid)
@@ -84,12 +78,7 @@ export function ColorInput({
     };
 
     return (
-        <div
-            className={cn(
-                "flex flex-col items-start gap-1.5 w-full",
-                className
-            )}
-        >
+        <div className={cn("flex flex-col items-start gap-1.5 w-full", className)}>
             {label && (
                 <label className="text-sm font-medium leading-none text-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                     {label}

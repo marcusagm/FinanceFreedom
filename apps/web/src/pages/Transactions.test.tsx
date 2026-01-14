@@ -1,17 +1,11 @@
 // @vitest-environment jsdom
 import React from "react";
 import "@testing-library/jest-dom/vitest";
-import {
-    render,
-    screen,
-    waitFor,
-    fireEvent,
-    cleanup,
-} from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { Transactions } from "./Transactions";
-import { api } from "../lib/api";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { api } from "../lib/api";
+import { Transactions } from "./Transactions";
 
 afterEach(() => {
     cleanup();
@@ -41,8 +35,7 @@ vi.mock("../components/transactions/TransactionList", () => ({
 }));
 
 vi.mock("../components/transactions/NewTransactionDialog", () => ({
-    NewTransactionDialog: ({ isOpen }: any) =>
-        isOpen ? <div>NewTxDialog</div> : null,
+    NewTransactionDialog: ({ isOpen }: any) => (isOpen ? <div>NewTxDialog</div> : null),
 }));
 
 vi.mock("../components/transactions/DeleteTransactionDialog", () => ({
@@ -56,9 +49,7 @@ vi.mock("../components/transactions/DeleteTransactionDialog", () => ({
 }));
 
 vi.mock("../components/transactions/TransactionFilters", () => ({
-    TransactionFilters: () => (
-        <div data-testid="transaction-filters">Filters</div>
-    ),
+    TransactionFilters: () => <div data-testid="transaction-filters">Filters</div>,
 }));
 
 describe("Transactions Page", () => {
@@ -75,7 +66,7 @@ describe("Transactions Page", () => {
         render(
             <BrowserRouter>
                 <Transactions />
-            </BrowserRouter>
+            </BrowserRouter>,
         );
 
     it("fetches and displays transactions", async () => {

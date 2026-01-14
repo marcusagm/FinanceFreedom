@@ -1,6 +1,6 @@
+import { act, render, screen } from "@testing-library/react";
 import React from "react";
-import { render, screen, act } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ThemeProvider, useTheme } from "./ThemeProvider";
 
 // Mock localStorage
@@ -60,7 +60,7 @@ describe("ThemeProvider", () => {
         render(
             <ThemeProvider>
                 <div>Child Content</div>
-            </ThemeProvider>
+            </ThemeProvider>,
         );
         expect(screen.getByText("Child Content")).toBeInTheDocument();
     });
@@ -69,7 +69,7 @@ describe("ThemeProvider", () => {
         render(
             <ThemeProvider defaultTheme="light">
                 <TestComponent />
-            </ThemeProvider>
+            </ThemeProvider>,
         );
         expect(screen.getByTestId("theme-value")).toHaveTextContent("light");
         expect(document.documentElement).toHaveClass("light");
@@ -79,7 +79,7 @@ describe("ThemeProvider", () => {
         render(
             <ThemeProvider>
                 <TestComponent />
-            </ThemeProvider>
+            </ThemeProvider>,
         );
 
         act(() => {
@@ -88,9 +88,6 @@ describe("ThemeProvider", () => {
 
         expect(screen.getByTestId("theme-value")).toHaveTextContent("dark");
         expect(document.documentElement).toHaveClass("dark");
-        expect(localStorageMock.setItem).toHaveBeenCalledWith(
-            "vite-ui-theme",
-            "dark"
-        );
+        expect(localStorageMock.setItem).toHaveBeenCalledWith("vite-ui-theme", "dark");
     });
 });

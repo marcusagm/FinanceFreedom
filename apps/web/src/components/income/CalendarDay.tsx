@@ -1,5 +1,5 @@
-import React from "react";
 import { useDroppable } from "@dnd-kit/core";
+import type React from "react";
 import { cn } from "../../lib/utils";
 
 import { MoneyDisplay } from "../ui/MoneyDisplay";
@@ -47,11 +47,7 @@ export function CalendarDay({
         PAID: "PLANNED",
     };
 
-    const handleStatusClick = (
-        e: React.MouseEvent,
-        id: string,
-        currentStatus: string
-    ) => {
+    const handleStatusClick = (e: React.MouseEvent, id: string, currentStatus: string) => {
         e.stopPropagation();
         const newStatus = nextStatus[currentStatus] || "PLANNED";
         onStatusChange(id, newStatus);
@@ -66,7 +62,7 @@ export function CalendarDay({
                     "bg-slate-50 text-slate-400 dark:bg-zinc-900/50! dark:text-muted-foreground",
                 isOver &&
                     "bg-emerald-50 border-emerald-500 ring-2 ring-emerald-200 dark:bg-emerald-500/10 dark:ring-emerald-500/30",
-                isCurrentMonth && "bg-white dark:bg-zinc-950!"
+                isCurrentMonth && "bg-white dark:bg-zinc-950!",
             )}
         >
             <span className="text-xs font-semibold mb-1 block dark:text-foreground">
@@ -83,22 +79,18 @@ export function CalendarDay({
                         proj.status === "DONE" &&
                             "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20",
                         proj.status === "PAID" &&
-                            "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20"
+                            "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20",
                     )}
                     onClick={(e) => handleStatusClick(e, proj.id, proj.status)}
                     title="Clique para alterar status (Plano -> Feito -> Pago)"
                 >
                     <div className="flex justify-between items-center">
-                        <span className="truncate font-medium flex-1">
-                            {proj.workUnit.name}
-                        </span>
+                        <span className="truncate font-medium flex-1">{proj.workUnit.name}</span>
                         <span className="font-bold ml-1">
                             <MoneyDisplay
                                 value={
                                     Number(proj.amount) *
-                                    (1 -
-                                        Number(proj.workUnit.taxRate || 0) /
-                                            100)
+                                    (1 - Number(proj.workUnit.taxRate || 0) / 100)
                                 }
                             />
                         </span>

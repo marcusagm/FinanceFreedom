@@ -1,6 +1,6 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 import { ImapConfigForm } from "./ImapConfigForm";
-import { describe, it, expect, vi } from "vitest";
 
 describe("ImapConfigForm", () => {
     const mockSubmit = vi.fn();
@@ -23,13 +23,7 @@ describe("ImapConfigForm", () => {
     };
 
     it("should render form fields", () => {
-        render(
-            <ImapConfigForm
-                isOpen={true}
-                onClose={mockClose}
-                onSubmit={mockSubmit}
-            />
-        );
+        render(<ImapConfigForm isOpen={true} onClose={mockClose} onSubmit={mockSubmit} />);
 
         expect(screen.getByLabelText(/host/i)).toBeInTheDocument();
         expect(screen.getByLabelText(/port/i)).toBeInTheDocument();
@@ -38,13 +32,7 @@ describe("ImapConfigForm", () => {
     });
 
     it("should call onSubmit with data", async () => {
-        render(
-            <ImapConfigForm
-                isOpen={true}
-                onClose={mockClose}
-                onSubmit={mockSubmit}
-            />
-        );
+        render(<ImapConfigForm isOpen={true} onClose={mockClose} onSubmit={mockSubmit} />);
 
         fillForm();
 
@@ -55,7 +43,7 @@ describe("ImapConfigForm", () => {
             () => {
                 expect(mockSubmit).toHaveBeenCalled();
             },
-            { timeout: 3000 }
+            { timeout: 3000 },
         );
 
         expect(mockSubmit.mock.calls[0][0]).toMatchObject({
@@ -74,7 +62,7 @@ describe("ImapConfigForm", () => {
                 onClose={mockClose}
                 onSubmit={mockSubmit}
                 onTest={mockTest}
-            />
+            />,
         );
 
         fillForm();
@@ -96,7 +84,7 @@ describe("ImapConfigForm", () => {
                 onClose={mockClose}
                 onSubmit={mockSubmit}
                 onTest={mockTest}
-            />
+            />,
         );
 
         fillForm();

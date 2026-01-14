@@ -1,9 +1,9 @@
-import { render, screen, waitFor, fireEvent } from "@testing-library/react";
-import { Settings } from "./Settings";
-import { systemConfigService } from "../services/system-config.service";
-import { categoryService } from "../services/category.service";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { toast } from "sonner";
-import { vi, describe, it, expect, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { categoryService } from "../services/category.service";
+import { systemConfigService } from "../services/system-config.service";
+import { Settings } from "./Settings";
 
 // Mock dependencies
 vi.mock("../services/system-config.service");
@@ -30,9 +30,7 @@ describe("Settings Page", () => {
 
         render(<Settings />);
 
-        expect(
-            screen.getByText("Configurações do Sistema")
-        ).toBeInTheDocument();
+        expect(screen.getByText("Configurações do Sistema")).toBeInTheDocument();
 
         await waitFor(() => {
             expect(screen.getByDisplayValue("10")).toBeInTheDocument();
@@ -51,9 +49,7 @@ describe("Settings Page", () => {
 
         render(<Settings />);
 
-        await waitFor(() =>
-            expect(systemConfigService.getAll).toHaveBeenCalled()
-        );
+        await waitFor(() => expect(systemConfigService.getAll).toHaveBeenCalled());
 
         // Change closing day
         fireEvent.change(screen.getByLabelText("Dia Padrão de Fechamento"), {
@@ -67,11 +63,9 @@ describe("Settings Page", () => {
             expect(systemConfigService.setMany).toHaveBeenCalledWith(
                 expect.objectContaining({
                     closingDay: "15",
-                })
+                }),
             );
-            expect(toast.success).toHaveBeenCalledWith(
-                "Configurações salvas com sucesso!"
-            );
+            expect(toast.success).toHaveBeenCalledWith("Configurações salvas com sucesso!");
         });
     });
 });

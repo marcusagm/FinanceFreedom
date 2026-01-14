@@ -1,16 +1,21 @@
 import { useEffect, useState } from "react";
 import { api } from "../../lib/api";
-import type { Debt } from "./DebtForm";
-import { DebtCard } from "./DebtCard";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
 import { Label } from "../ui/Label";
+import { DebtCard } from "./DebtCard";
+import type { Debt } from "./DebtForm";
 import { DebtPaymentDialog } from "./DebtPaymentDialog";
 
 type StrategyType = "SNOWBALL" | "AVALANCHE";
 
-export function StrategyComparison() {
+interface StrategyComparisonProps {
+    onEdit: (debt: Debt) => void;
+    onDelete: (debt: Debt) => void;
+}
+
+export function StrategyComparison({ onEdit, onDelete }: StrategyComparisonProps) {
     const [activeTab, setActiveTab] = useState<StrategyType>("SNOWBALL");
     const [debts, setDebts] = useState<Debt[]>([]);
     const [loading, setLoading] = useState(false);
@@ -18,15 +23,10 @@ export function StrategyComparison() {
         const saved = localStorage.getItem("debt_strategy_extra_value");
         return saved ? Number(saved) : 0;
     });
-    const [paymentDialogDebt, setPaymentDialogDebt] = useState<Debt | null>(
-        null
-    );
+    const [paymentDialogDebt, setPaymentDialogDebt] = useState<Debt | null>(null);
 
     useEffect(() => {
-        localStorage.setItem(
-            "debt_strategy_extra_value",
-            monthlyExtra.toString()
-        );
+        localStorage.setItem("debt_strategy_extra_value", monthlyExtra.toString());
     }, [monthlyExtra]);
 
     const [projection, setProjection] = useState<{
@@ -39,7 +39,7 @@ export function StrategyComparison() {
             setLoading(true);
             try {
                 const response = await api.get(
-                    `/debts/strategy?type=${activeTab}&monthlyExtra=${monthlyExtra}`
+                    `/debts/strategy?type=${activeTab}&monthlyExtra=${monthlyExtra}`,
                 );
                 // Handle new response structure
                 // Handle new response structure
@@ -47,13 +47,9 @@ export function StrategyComparison() {
                     setDebts(response.data.debts);
                     setProjection(response.data.projection);
                 } else if (Array.isArray(response.data)) {
-                    // Fallback for backward compatibility
                     setDebts(response.data);
                 } else {
-                    console.error(
-                        "Invalid debts data received:",
-                        response.data
-                    );
+                    console.error("Invalid debts data received:", response.data);
                     setDebts([]);
                 }
             } catch (error) {
@@ -75,8 +71,7 @@ export function StrategyComparison() {
                     onClick={() => setActiveTab("SNOWBALL")}
                     className={cn(
                         "justify-start",
-                        activeTab === "SNOWBALL" &&
-                            "bg-blue-600 hover:bg-blue-700"
+                        activeTab === "SNOWBALL" && "bg-blue-600 hover:bg-blue-700",
                     )}
                 >
                     ❄️ Bola de Neve (Psicológico)
@@ -86,8 +81,7 @@ export function StrategyComparison() {
                     onClick={() => setActiveTab("AVALANCHE")}
                     className={cn(
                         "justify-start",
-                        activeTab === "AVALANCHE" &&
-                            "bg-red-600 hover:bg-red-700"
+                        activeTab === "AVALANCHE" && "bg-red-600 hover:bg-red-700",
                     )}
                 >
                     ⛰️ Avalanche (Matemático)
@@ -95,9 +89,7 @@ export function StrategyComparison() {
             </div>
 
             <div className="bg-card border border-border p-4 rounded-lg space-y-2">
-                <Label htmlFor="monthlyExtra">
-                    Valor Extra Mensal (Opcional)
-                </Label>
+                <Label htmlFor="monthlyExtra">Valor Extra Mensal (Opcional)</Label>
                 <div className="flex items-center gap-2">
                     <div className="max-w-50">
                         <Input
@@ -105,9 +97,7 @@ export function StrategyComparison() {
                             placeholder="R$ 0,00"
                             currency
                             value={monthlyExtra}
-                            onValueChange={(values) =>
-                                setMonthlyExtra(values.floatValue || 0)
-                            }
+                            onValueChange={(values) => setMonthlyExtra(values.floatValue || 0)}
                         />
                     </div>
                     {projection ? (
@@ -117,12 +107,8 @@ export function StrategyComparison() {
                                     Tempo Estimado
                                 </p>
                                 <p className="text-xl font-bold text-primary">
-                                    {Math.floor(
-                                        projection.monthsToPayoff / 12
-                                    ) > 0 &&
-                                        `${Math.floor(
-                                            projection.monthsToPayoff / 12
-                                        )} anos e `}
+                                    {Math.floor(projection.monthsToPayoff / 12) > 0 &&
+                                        `${Math.floor(projection.monthsToPayoff / 12)} anos e `}
                                     {projection.monthsToPayoff % 12} meses
                                 </p>
                             </div>
@@ -140,8 +126,8 @@ export function StrategyComparison() {
                         </div>
                     ) : (
                         <p className="text-sm text-muted-foreground">
-                            Definir um valor extra ajuda a calcular quanto tempo
-                            você economizará (Simulação visual em breve).
+                            Definir um valor extra ajuda a calcular quanto tempo você economizará
+                            (Simulação visual em breve).
                         </p>
                     )}
                 </div>
@@ -150,18 +136,17 @@ export function StrategyComparison() {
             <div className="bg-muted/50 p-4 rounded-lg text-sm text-muted-foreground border border-border">
                 {activeTab === "SNOWBALL" ? (
                     <p>
-                        O método <strong>Bola de Neve</strong> foca em pagar as
-                        dívidas <strong>menores primeiro</strong>. Embora não
-                        seja o mais eficiente matematicamente, ele gera{" "}
-                        <strong>vitórias rápidas</strong> que motivam você a
-                        continuar pagando.
+                        O método <strong>Bola de Neve</strong> foca em pagar as dívidas{" "}
+                        <strong>menores primeiro</strong>. Embora não seja o mais eficiente
+                        matematicamente, ele gera <strong>vitórias rápidas</strong> que motivam você
+                        a continuar pagando.
                     </p>
                 ) : (
                     <p>
-                        O método <strong>Avalanche</strong> foca em pagar as
-                        dívidas com <strong>maiores juros primeiro</strong>. É o
-                        método que <strong>economiza mais dinheiro</strong> a
-                        longo prazo, eliminando o custo do dinheiro mais caro.
+                        O método <strong>Avalanche</strong> foca em pagar as dívidas com{" "}
+                        <strong>maiores juros primeiro</strong>. É o método que{" "}
+                        <strong>economiza mais dinheiro</strong> a longo prazo, eliminando o custo
+                        do dinheiro mais caro.
                     </p>
                 )}
             </div>
@@ -183,7 +168,7 @@ export function StrategyComparison() {
                                 <div
                                     className={cn(
                                         index === 0 &&
-                                            "ring-2 ring-green-500 ring-offset-2 rounded-xl"
+                                            "ring-2 ring-green-500 ring-offset-2 rounded-xl",
                                     )}
                                 >
                                     <DebtCard
@@ -193,23 +178,19 @@ export function StrategyComparison() {
                                         interestRate={debt.interestRate}
                                         minimumPayment={debt.minimumPayment}
                                         dueDate={debt.dueDate}
-                                        // Disable actions in strategy view to keep focus on viewing
-                                        onEdit={undefined}
-                                        onDelete={undefined}
+                                        onEdit={() => onEdit(debt)}
+                                        onDelete={() => onDelete(debt)}
                                     />
                                 </div>
                                 {index === 0 && (
                                     <div className="mt-4 flex flex-col gap-2">
                                         <p className="text-center text-xs text-green-600 font-medium">
-                                            Pague o máximo possível nesta
-                                            dívida!
+                                            Pague o máximo possível nesta dívida!
                                         </p>
                                         <Button
                                             size="sm"
                                             className="w-full bg-green-600 hover:bg-green-700 text-white"
-                                            onClick={() =>
-                                                setPaymentDialogDebt(debt)
-                                            }
+                                            onClick={() => setPaymentDialogDebt(debt)}
                                         >
                                             Registrar Pagamento
                                         </Button>
@@ -242,14 +223,19 @@ export function StrategyComparison() {
                             setLoading(true);
                             try {
                                 const response = await api.get(
-                                    `/debts/strategy?type=${activeTab}`
+                                    `/debts/strategy?type=${activeTab}&monthlyExtra=${monthlyExtra}`,
                                 );
-                                setDebts(response.data);
+                                // Fix: Handle response structure same as main useEffect
+                                if (response.data.debts && Array.isArray(response.data.debts)) {
+                                    setDebts(response.data.debts);
+                                    setProjection(response.data.projection);
+                                } else if (Array.isArray(response.data)) {
+                                    setDebts(response.data);
+                                } else {
+                                    setDebts([]);
+                                }
                             } catch (error) {
-                                console.error(
-                                    "Failed to fetch strategy",
-                                    error
-                                );
+                                console.error("Failed to fetch strategy", error);
                             } finally {
                                 setLoading(false);
                             }

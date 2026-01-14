@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
-import { ActionCard } from "./ActionCard";
 import type { ActionRecommendation } from "../../services/dashboard.service";
+import { ActionCard } from "./ActionCard";
 
 describe("ActionCard", () => {
     const mockRecommendation: ActionRecommendation = {
@@ -17,7 +17,7 @@ describe("ActionCard", () => {
         return render(
             <BrowserRouter>
                 <ActionCard recommendation={props} />
-            </BrowserRouter>
+            </BrowserRouter>,
         );
     };
 

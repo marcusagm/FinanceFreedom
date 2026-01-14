@@ -10,11 +10,7 @@ interface IncomeSourceCardProps {
     onDelete: (source: IncomeSource) => void;
 }
 
-export function IncomeSourceCard({
-    source,
-    onEdit,
-    onDelete,
-}: IncomeSourceCardProps) {
+export function IncomeSourceCard({ source, onEdit, onDelete }: IncomeSourceCardProps) {
     const actions = (
         <>
             <Button

@@ -1,14 +1,14 @@
-import React from "react";
-import { useForm } from "react-hook-form";
-import { Button } from "../ui/Button";
 import {
     Dialog,
     DialogContent,
+    DialogDescription,
     DialogHeader,
     DialogTitle,
-    DialogDescription,
 } from "@/components/ui/Dialog";
-import { CheckCircle, AlertCircle } from "lucide-react";
+import { AlertCircle, CheckCircle } from "lucide-react";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { Button } from "../ui/Button";
 
 interface ImapConfigFormData {
     id?: string;
@@ -26,9 +26,7 @@ interface ImapConfigFormProps {
     isOpen: boolean;
     onClose: () => void;
     onSubmit: (data: ImapConfigFormData) => void;
-    onTest?: (
-        data: ImapConfigFormData
-    ) => Promise<{ success: boolean; message?: string }>;
+    onTest?: (data: ImapConfigFormData) => Promise<{ success: boolean; message?: string }>;
     initialData?: Partial<ImapConfigFormData>;
     isTesting?: boolean;
     isSaving?: boolean;
@@ -82,9 +80,7 @@ export const ImapConfigForm: React.FC<ImapConfigFormProps> = ({
             if (result) {
                 setTestResult({
                     success: result.success,
-                    result:
-                        result.message ||
-                        (result.success ? "Success" : "Failed"),
+                    result: result.message || (result.success ? "Success" : "Failed"),
                 });
             }
         }
@@ -95,13 +91,10 @@ export const ImapConfigForm: React.FC<ImapConfigFormProps> = ({
             <DialogContent className="sm:max-w-xl">
                 <DialogHeader>
                     <DialogTitle>
-                        {initialData?.id
-                            ? "Edit Configuration"
-                            : "New Configuration"}
+                        {initialData?.id ? "Edit Configuration" : "New Configuration"}
                     </DialogTitle>
                     <DialogDescription>
-                        Configure your IMAP connection details and filters
-                        below.
+                        Configure your IMAP connection details and filters below.
                     </DialogDescription>
                 </DialogHeader>
 
@@ -132,10 +125,7 @@ export const ImapConfigForm: React.FC<ImapConfigFormProps> = ({
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <label
-                                    htmlFor="host"
-                                    className="text-sm font-medium"
-                                >
+                                <label htmlFor="host" className="text-sm font-medium">
                                     Host (IMAP)
                                 </label>
                                 <input
@@ -146,10 +136,7 @@ export const ImapConfigForm: React.FC<ImapConfigFormProps> = ({
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label
-                                    htmlFor="port"
-                                    className="text-sm font-medium"
-                                >
+                                <label htmlFor="port" className="text-sm font-medium">
                                     Port
                                 </label>
                                 <input
@@ -167,10 +154,7 @@ export const ImapConfigForm: React.FC<ImapConfigFormProps> = ({
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <label
-                                    htmlFor="email"
-                                    className="text-sm font-medium"
-                                >
+                                <label htmlFor="email" className="text-sm font-medium">
                                     Email / User
                                 </label>
                                 <input
@@ -181,10 +165,7 @@ export const ImapConfigForm: React.FC<ImapConfigFormProps> = ({
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label
-                                    htmlFor="password"
-                                    className="text-sm font-medium"
-                                >
+                                <label htmlFor="password" className="text-sm font-medium">
                                     Password
                                 </label>
                                 <input
@@ -192,11 +173,7 @@ export const ImapConfigForm: React.FC<ImapConfigFormProps> = ({
                                     type="password"
                                     {...register("password")}
                                     className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                                    placeholder={
-                                        initialData?.id
-                                            ? "********"
-                                            : "Enter password"
-                                    }
+                                    placeholder={initialData?.id ? "********" : "Enter password"}
                                 />
                             </div>
                         </div>
@@ -208,10 +185,7 @@ export const ImapConfigForm: React.FC<ImapConfigFormProps> = ({
                                 id="secure"
                                 className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                             />
-                            <label
-                                htmlFor="secure"
-                                className="text-sm font-medium"
-                            >
+                            <label htmlFor="secure" className="text-sm font-medium">
                                 Use SSL/TLS
                             </label>
                         </div>
@@ -224,10 +198,7 @@ export const ImapConfigForm: React.FC<ImapConfigFormProps> = ({
                         </h3>
 
                         <div className="space-y-2">
-                            <label
-                                htmlFor="folder"
-                                className="text-sm font-medium"
-                            >
+                            <label htmlFor="folder" className="text-sm font-medium">
                                 Source Folder
                             </label>
                             <input
@@ -237,17 +208,13 @@ export const ImapConfigForm: React.FC<ImapConfigFormProps> = ({
                                 placeholder="INBOX"
                             />
                             <p className="text-xs text-muted-foreground">
-                                The mailbox folder to check for emails (e.g.
-                                INBOX, Archive, Bills)
+                                The mailbox folder to check for emails (e.g. INBOX, Archive, Bills)
                             </p>
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <label
-                                    htmlFor="sender"
-                                    className="text-sm font-medium"
-                                >
+                                <label htmlFor="sender" className="text-sm font-medium">
                                     Sender (From){" "}
                                     <span className="text-xs text-muted-foreground">
                                         (Optional)
@@ -261,10 +228,7 @@ export const ImapConfigForm: React.FC<ImapConfigFormProps> = ({
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label
-                                    htmlFor="subject"
-                                    className="text-sm font-medium"
-                                >
+                                <label htmlFor="subject" className="text-sm font-medium">
                                     Subject Contains{" "}
                                     <span className="text-xs text-muted-foreground">
                                         (Optional)
@@ -281,11 +245,7 @@ export const ImapConfigForm: React.FC<ImapConfigFormProps> = ({
                     </div>
 
                     <div className="flex justify-end gap-3 pt-4">
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={onClose}
-                        >
+                        <Button type="button" variant="outline" onClick={onClose}>
                             Cancel
                         </Button>
                         <Button

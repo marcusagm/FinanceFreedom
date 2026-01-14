@@ -1,16 +1,17 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { DebtService } from "./debt.service";
 import { PrismaService } from "../../prisma/prisma.service";
+import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
 
 const mockPrismaService = {
     debt: {
-        create: jest.fn(),
-        findMany: jest.fn(),
-        findUnique: jest.fn(),
-        findFirst: jest.fn(),
-        findFirstOrThrow: jest.fn(),
-        update: jest.fn(),
-        delete: jest.fn(),
+        create: vi.fn(),
+        findMany: vi.fn(),
+        findUnique: vi.fn(),
+        findFirst: vi.fn(),
+        findFirstOrThrow: vi.fn(),
+        update: vi.fn(),
+        delete: vi.fn(),
     },
 };
 
@@ -19,22 +20,12 @@ describe("DebtService", () => {
     let prisma: typeof mockPrismaService;
 
     beforeEach(async () => {
-        const module: TestingModule = await Test.createTestingModule({
-            providers: [
-                DebtService,
-                {
-                    provide: PrismaService,
-                    useValue: mockPrismaService,
-                },
-            ],
-        }).compile();
-
-        service = module.get<DebtService>(DebtService);
-        prisma = module.get(PrismaService);
+        service = new DebtService(mockPrismaService as any);
+        prisma = mockPrismaService;
     });
 
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it("should be defined", () => {
@@ -63,7 +54,41 @@ describe("DebtService", () => {
 
             expect(await service.create("1", dto)).toEqual(result);
             expect(prisma.debt.create).toHaveBeenCalledWith({
-                data: { ...dto, userId: "1" },
+                data: { ...dto, userId: "1", originalAmount: 1000 },
+            });
+        });
+
+        it("should create a debt with installment fields", async () => {
+            const dto = {
+                name: "Installment Debt",
+                totalAmount: 1000,
+                interestRate: 0,
+                minimumPayment: 100,
+                dueDate: 15,
+                installmentsTotal: 10,
+                installmentsPaid: 0,
+                firstInstallmentDate: "2026-01-15",
+            };
+            const result = {
+                id: "uuid",
+                ...dto,
+                firstInstallmentDate: new Date("2026-01-15"),
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            };
+
+            // @ts-ignore
+            prisma.debt.create.mockResolvedValue(result);
+
+            const created = await service.create("1", dto);
+            expect(created).toEqual(result);
+            expect(prisma.debt.create).toHaveBeenCalledWith({
+                data: {
+                    ...dto,
+                    firstInstallmentDate: new Date("2026-01-15"),
+                    originalAmount: 1000,
+                    userId: "1",
+                },
             });
         });
     });

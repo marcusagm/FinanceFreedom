@@ -1,12 +1,13 @@
-import React, { useState } from "react";
 import { TrendingUp } from "lucide-react";
+import type React from "react";
+import { useState } from "react";
+import {
+    type PrepaymentSavingsResponse,
+    calculatePrepaymentSavings,
+} from "../../services/simulator.service";
+import { AppAlert } from "../ui/AppAlert";
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
-import { AppAlert } from "../ui/AppAlert";
-import {
-    calculatePrepaymentSavings,
-    type PrepaymentSavingsResponse,
-} from "../../services/simulator.service";
 
 interface PrepaymentOpportunityProps {
     debtName: string;
@@ -24,9 +25,7 @@ export const PrepaymentOpportunity: React.FC<PrepaymentOpportunityProps> = ({
     initialAmount = 500,
 }) => {
     const [amount, setAmount] = useState(initialAmount);
-    const [result, setResult] = useState<PrepaymentSavingsResponse | null>(
-        null
-    );
+    const [result, setResult] = useState<PrepaymentSavingsResponse | null>(null);
     const [loading, setLoading] = useState(false);
 
     const handleSimulate = async () => {
@@ -36,7 +35,7 @@ export const PrepaymentOpportunity: React.FC<PrepaymentOpportunityProps> = ({
                 balance,
                 interestRate,
                 minimumPayment,
-                amount
+                amount,
             );
             setResult(data);
         } catch (error) {
@@ -57,8 +56,7 @@ export const PrepaymentOpportunity: React.FC<PrepaymentOpportunityProps> = ({
                         Oportunidade de Antecipação
                     </h3>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                        Economize antecipando parcelas de{" "}
-                        <strong>{debtName}</strong>.
+                        Economize antecipando parcelas de <strong>{debtName}</strong>.
                     </p>
                 </div>
             </div>
@@ -77,21 +75,13 @@ export const PrepaymentOpportunity: React.FC<PrepaymentOpportunityProps> = ({
                     />
                 </div>
 
-                <Button
-                    size="sm"
-                    variant="primary"
-                    onClick={handleSimulate}
-                    disabled={loading}
-                >
+                <Button size="sm" variant="primary" onClick={handleSimulate} disabled={loading}>
                     {loading ? "..." : "Simular"}
                 </Button>
             </div>
 
             {result && (
-                <AppAlert
-                    variant="success"
-                    className="animate-in fade-in slide-in-from-top-2"
-                >
+                <AppAlert variant="success" className="animate-in fade-in slide-in-from-top-2">
                     <div className="text-lg font-bold">
                         Economia de{" "}
                         {result.interestSaved.toLocaleString("pt-BR", {

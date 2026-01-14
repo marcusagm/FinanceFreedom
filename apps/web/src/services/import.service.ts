@@ -10,23 +10,16 @@ export interface ImportedTransaction {
 }
 
 export const ImportService = {
-    uploadFile: async (
-        file: File,
-        accountId: string
-    ): Promise<ImportedTransaction[]> => {
+    uploadFile: async (file: File, accountId: string): Promise<ImportedTransaction[]> => {
         const formData = new FormData();
         formData.append("file", file);
         formData.append("accountId", accountId);
 
-        const response = await api.post<ImportedTransaction[]>(
-            "/import/upload",
-            formData,
-            {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            }
-        );
+        const response = await api.post<ImportedTransaction[]>("/import/upload", formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
         return response.data;
     },
 

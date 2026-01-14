@@ -1,5 +1,9 @@
-import { useState, useEffect } from "react";
-import { Plus, CreditCard, Wallet } from "lucide-react";
+import { CreditCard, Plus, Wallet } from "lucide-react";
+import { useEffect, useState } from "react";
+import { api } from "../../lib/api";
+import type { Account } from "../../types";
+import { DebtForm } from "../debt/DebtForm";
+import { NewTransactionDialog } from "../transactions/NewTransactionDialog";
 import { Button } from "../ui/Button";
 import {
     DropdownMenu,
@@ -7,10 +11,6 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "../ui/DropdownMenu";
-import { NewTransactionDialog } from "../transactions/NewTransactionDialog";
-import { DebtForm } from "../debt/DebtForm";
-import { api } from "../../lib/api";
-import type { Account } from "../../types";
 
 export function QuickActionFAB() {
     const [isTransactionOpen, setIsTransactionOpen] = useState(false);
@@ -38,9 +38,7 @@ export function QuickActionFAB() {
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="mb-2 w-48">
-                        <DropdownMenuItem
-                            onClick={() => setIsTransactionOpen(true)}
-                        >
+                        <DropdownMenuItem onClick={() => setIsTransactionOpen(true)}>
                             <Wallet className="mr-2 h-4 w-4" />
                             <span>Nova Transação</span>
                         </DropdownMenuItem>

@@ -1,8 +1,8 @@
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
-import { CreateAccountDialog } from "./CreateAccountDialog";
+import { describe, expect, it, vi } from "vitest";
 import { api } from "../../lib/api";
+import { CreateAccountDialog } from "./CreateAccountDialog";
 
 // Mock api
 vi.mock("../../lib/api", () => ({

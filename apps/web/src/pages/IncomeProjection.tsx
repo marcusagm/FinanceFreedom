@@ -1,32 +1,32 @@
-import { useEffect, useState } from "react";
 import {
     DndContext,
+    type DragEndEvent,
     DragOverlay,
+    PointerSensor,
     useSensor,
     useSensors,
-    PointerSensor,
-    type DragEndEvent,
 } from "@dnd-kit/core";
 import {
-    format,
-    startOfMonth,
-    endOfMonth,
-    eachDayOfInterval,
-    isSameMonth,
-    isSameDay,
     addMonths,
+    eachDayOfInterval,
+    endOfMonth,
+    format,
+    isSameDay,
+    isSameMonth,
+    startOfMonth,
     subMonths,
 } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { DraggableWorkUnit } from "../components/income/DraggableWorkUnit";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useEffect, useState } from "react";
 import { CalendarDay } from "../components/income/CalendarDay";
+import { DraggableWorkUnit } from "../components/income/DraggableWorkUnit";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 
-import { api } from "../lib/api";
 import { DistributeIncomeDialog } from "../components/income/DistributeIncomeDialog";
 import { MoneyDisplay } from "../components/ui/MoneyDisplay";
+import { api } from "../lib/api";
 import { fixedExpenseService } from "../services/fixed-expense.service";
 
 export default function IncomeProjection() {
@@ -41,7 +41,7 @@ export default function IncomeProjection() {
             activationConstraint: {
                 distance: 8,
             },
-        })
+        }),
     );
 
     useEffect(() => {
@@ -134,11 +134,7 @@ export default function IncomeProjection() {
     // Fill start/end of grid
     const startDay = monthStart.getDay();
     const prefixDays = Array.from({ length: startDay }).map((_, i) => {
-        return new Date(
-            monthStart.getFullYear(),
-            monthStart.getMonth(),
-            -startDay + i + 1
-        );
+        return new Date(monthStart.getFullYear(), monthStart.getMonth(), -startDay + i + 1);
     });
 
     const calendarGrid = [...prefixDays, ...daysInMonth];
@@ -201,11 +197,7 @@ export default function IncomeProjection() {
     };
 
     return (
-        <DndContext
-            sensors={sensors}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-        >
+        <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
             <div className="flex h-[calc(100vh-64px)] overflow-hidden">
                 {/* Sidebar: Available Work Units */}
                 <div className="w-80 border-r bg-slate-50 dark:bg-zinc-900! dark:border-zinc-800 p-4 overflow-y-auto transition-colors">
@@ -229,9 +221,7 @@ export default function IncomeProjection() {
                             <Button
                                 variant="outline"
                                 size="icon"
-                                onClick={() =>
-                                    setCurrentDate(subMonths(currentDate, 1))
-                                }
+                                onClick={() => setCurrentDate(subMonths(currentDate, 1))}
                             >
                                 <ChevronLeft className="h-4 w-4" />
                             </Button>
@@ -243,9 +233,7 @@ export default function IncomeProjection() {
                             <Button
                                 variant="outline"
                                 size="icon"
-                                onClick={() =>
-                                    setCurrentDate(addMonths(currentDate, 1))
-                                }
+                                onClick={() => setCurrentDate(addMonths(currentDate, 1))}
                             >
                                 <ChevronRight className="h-4 w-4" />
                             </Button>
@@ -275,11 +263,7 @@ export default function IncomeProjection() {
                                     Saldo Previsto:
                                 </span>
                                 <span className="text-blue-800 dark:text-blue-400 text-xl font-bold">
-                                    <MoneyDisplay
-                                        value={
-                                            totalProjected - totalFixedExpenses
-                                        }
-                                    />
+                                    <MoneyDisplay value={totalProjected - totalFixedExpenses} />
                                 </span>
                             </div>
                         </div>
@@ -287,28 +271,23 @@ export default function IncomeProjection() {
 
                     {/* Calendar Grid */}
                     <div className="grid grid-cols-7 gap-px bg-slate-200 dark:bg-zinc-800! border border-slate-200 dark:border-zinc-800 rounded-lg overflow-hidden flex-1">
-                        {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"].map(
-                            (day) => (
-                                <div
-                                    key={day}
-                                    className="bg-slate-50 dark:bg-zinc-900! p-2 text-center text-xs font-semibold text-slate-500 dark:text-muted-foreground uppercase"
-                                >
-                                    {day}
-                                </div>
-                            )
-                        )}
+                        {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"].map((day) => (
+                            <div
+                                key={day}
+                                className="bg-slate-50 dark:bg-zinc-900! p-2 text-center text-xs font-semibold text-slate-500 dark:text-muted-foreground uppercase"
+                            >
+                                {day}
+                            </div>
+                        ))}
                         {calendarGrid.map((date) => {
                             const dateProjections = projections.filter((p) =>
-                                isSameDay(new Date(p.date), date)
+                                isSameDay(new Date(p.date), date),
                             );
                             return (
                                 <CalendarDay
                                     key={date.toISOString()}
                                     date={date}
-                                    isCurrentMonth={isSameMonth(
-                                        date,
-                                        currentDate
-                                    )}
+                                    isCurrentMonth={isSameMonth(date, currentDate)}
                                     projections={dateProjections}
                                     onRemove={handleRemoveProjection}
                                     onStatusChange={handleStatusChange}
@@ -328,9 +307,7 @@ export default function IncomeProjection() {
                                 {activeDragItem.name}
                             </div>
                             <div className="font-bold text-emerald-600 dark:text-emerald-400 text-sm">
-                                <MoneyDisplay
-                                    value={Number(activeDragItem.defaultPrice)}
-                                />
+                                <MoneyDisplay value={Number(activeDragItem.defaultPrice)} />
                             </div>
                         </Card>
                     </div>
@@ -339,9 +316,7 @@ export default function IncomeProjection() {
 
             <DistributeIncomeDialog
                 open={distributeDialog.open}
-                onOpenChange={(open) =>
-                    setDistributeDialog((prev) => ({ ...prev, open }))
-                }
+                onOpenChange={(open) => setDistributeDialog((prev) => ({ ...prev, open }))}
                 onConfirm={handleConfirmDistribute}
                 workUnitName={distributeDialog.item?.workUnit.name || ""}
             />

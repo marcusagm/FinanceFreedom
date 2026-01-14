@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
-import { Header } from "./Header";
 import { MemoryRouter } from "react-router-dom";
+import { describe, expect, it, vi } from "vitest";
 import { PrivacyProvider } from "../../contexts/PrivacyContext";
+import { Header } from "./Header";
 
 // Mock ModeToggle
 vi.mock("../ui/ModeToggle", () => ({
@@ -24,7 +24,7 @@ describe("Header", () => {
                 <PrivacyProvider>
                     <Header />
                 </PrivacyProvider>
-            </MemoryRouter>
+            </MemoryRouter>,
         );
         expect(screen.getByText("FinanceFreedom")).toBeInTheDocument();
         expect(screen.getByTestId("mode-toggle")).toBeInTheDocument();
@@ -37,7 +37,7 @@ describe("Header", () => {
                 <PrivacyProvider>
                     <Header />
                 </PrivacyProvider>
-            </MemoryRouter>
+            </MemoryRouter>,
         );
 
         // Desktop nav check
@@ -55,7 +55,7 @@ describe("Header", () => {
                 <PrivacyProvider>
                     <Header />
                 </PrivacyProvider>
-            </MemoryRouter>
+            </MemoryRouter>,
         );
 
         const dashboardLink = screen.getByRole("link", { name: "Dashboard" });

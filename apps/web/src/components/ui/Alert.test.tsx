@@ -1,7 +1,7 @@
-import React from "react";
 import { render, screen } from "@testing-library/react";
-import { describe, it, expect } from "vitest";
-import { Alert, AlertTitle, AlertDescription } from "./Alert";
+import React from "react";
+import { describe, expect, it } from "vitest";
+import { Alert, AlertDescription, AlertTitle } from "./Alert";
 
 describe("Alert", () => {
     it("renders alert with title and description", () => {
@@ -9,7 +9,7 @@ describe("Alert", () => {
             <Alert>
                 <AlertTitle>Warning</AlertTitle>
                 <AlertDescription>Something went wrong</AlertDescription>
-            </Alert>
+            </Alert>,
         );
         expect(screen.getByText("Warning")).toBeInTheDocument();
         expect(screen.getByText("Something went wrong")).toBeInTheDocument();
@@ -19,10 +19,8 @@ describe("Alert", () => {
         render(
             <Alert variant="destructive" data-testid="alert">
                 Error
-            </Alert>
+            </Alert>,
         );
-        expect(screen.getByTestId("alert")).toHaveClass(
-            "border-destructive/50"
-        );
+        expect(screen.getByTestId("alert")).toHaveClass("border-destructive/50");
     });
 });

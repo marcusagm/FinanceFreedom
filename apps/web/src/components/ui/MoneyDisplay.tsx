@@ -1,5 +1,5 @@
+import { usePrivacy } from "../../contexts/PrivacyContext";
 import { cn } from "../../lib/utils";
-import { usePrivacy } from "@/contexts/PrivacyContext";
 
 interface MoneyDisplayProps {
     value: number;
@@ -7,11 +7,7 @@ interface MoneyDisplayProps {
     className?: string;
 }
 
-export function MoneyDisplay({
-    value,
-    currency = "BRL",
-    className,
-}: MoneyDisplayProps) {
+export function MoneyDisplay({ value, currency = "BRL", className }: MoneyDisplayProps) {
     const { isObfuscated } = usePrivacy();
 
     const formattedValue = new Intl.NumberFormat("pt-BR", {

@@ -1,9 +1,12 @@
-import { useState, useEffect } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import { Plus, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
+import * as z from "zod";
 import { api } from "../../lib/api";
+import type { Transaction } from "../../types";
+import { Button } from "../ui/Button";
 import {
     Dialog,
     DialogContent,
@@ -12,18 +15,8 @@ import {
     DialogHeader,
     DialogTitle,
 } from "../ui/Dialog";
-import { Button } from "../ui/Button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/Form";
 import { Input } from "../ui/Input";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "../ui/Form";
-import type { Transaction } from "../../types";
-import { Plus, Trash2 } from "lucide-react";
 
 interface SplitTransactionDialogProps {
     isOpen: boolean;
@@ -39,7 +32,7 @@ const splitSchema = z.object({
                 amount: z.number().min(0.01, "Valor deve ser maior que 0"),
                 description: z.string().min(1, "Descrição é obrigatória"),
                 category: z.string().optional(),
-            })
+            }),
         )
         .min(2, "Deve haver pelo menos 2 divisões"),
 });
@@ -93,18 +86,13 @@ export function SplitTransactionDialog({
     const handleSubmit = async (values: z.infer<typeof splitSchema>) => {
         if (!transaction) return;
 
-        const totalSplit = values.splits.reduce(
-            (sum, item) => sum + item.amount,
-            0
-        );
+        const totalSplit = values.splits.reduce((sum, item) => sum + item.amount, 0);
 
         if (Math.abs(totalSplit - originalAmount) > 0.01) {
             form.setError("root", {
                 message: `A soma das divisões (R$ ${totalSplit.toFixed(
-                    2
-                )}) deve ser igual ao valor original (R$ ${originalAmount.toFixed(
-                    2
-                )})`,
+                    2,
+                )}) deve ser igual ao valor original (R$ ${originalAmount.toFixed(2)})`,
             });
             return;
         }
@@ -122,9 +110,7 @@ export function SplitTransactionDialog({
         }
     };
 
-    const currentTotal = form
-        .watch("splits")
-        .reduce((sum, item) => sum + (item.amount || 0), 0);
+    const currentTotal = form.watch("splits").reduce((sum, item) => sum + (item.amount || 0), 0);
     const remaining = originalAmount - currentTotal;
 
     return (
@@ -133,8 +119,8 @@ export function SplitTransactionDialog({
                 <DialogHeader>
                     <DialogTitle>Dividir Transação</DialogTitle>
                     <DialogDescription>
-                        Divida o valor total (R$ {originalAmount.toFixed(2)}) em
-                        várias transações menores.
+                        Divida o valor total (R$ {originalAmount.toFixed(2)}) em várias transações
+                        menores.
                     </DialogDescription>
                 </DialogHeader>
 
@@ -146,8 +132,8 @@ export function SplitTransactionDialog({
                                 remaining === 0
                                     ? "text-emerald-500"
                                     : remaining > 0
-                                    ? "text-amber-500"
-                                    : "text-rose-500"
+                                      ? "text-amber-500"
+                                      : "text-rose-500"
                             }
                         >
                             R$ {remaining.toFixed(2)}
@@ -172,9 +158,7 @@ export function SplitTransactionDialog({
                                             name={`splits.${index}.amount`}
                                             render={({ field: inputField }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-xs">
-                                                        Valor
-                                                    </FormLabel>
+                                                    <FormLabel className="text-xs">Valor</FormLabel>
                                                     <FormControl>
                                                         <Input
                                                             type="number"
@@ -183,10 +167,9 @@ export function SplitTransactionDialog({
                                                             {...inputField}
                                                             onChange={(e) =>
                                                                 inputField.onChange(
-                                                                    parseFloat(
-                                                                        e.target
-                                                                            .value
-                                                                    ) || 0
+                                                                    Number.parseFloat(
+                                                                        e.target.value,
+                                                                    ) || 0,
                                                                 )
                                                             }
                                                         />
@@ -206,10 +189,7 @@ export function SplitTransactionDialog({
                                                         Descrição
                                                     </FormLabel>
                                                     <FormControl>
-                                                        <Input
-                                                            placeholder="Descr."
-                                                            {...field}
-                                                        />
+                                                        <Input placeholder="Descr." {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -226,10 +206,7 @@ export function SplitTransactionDialog({
                                                         Categoria
                                                     </FormLabel>
                                                     <FormControl>
-                                                        <Input
-                                                            placeholder="Cat."
-                                                            {...field}
-                                                        />
+                                                        <Input placeholder="Cat." {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -275,23 +252,14 @@ export function SplitTransactionDialog({
                         )}
 
                         <DialogFooter className="mt-4">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={onClose}
-                            >
+                            <Button type="button" variant="outline" onClick={onClose}>
                                 Cancelar
                             </Button>
                             <Button
                                 type="submit"
-                                disabled={
-                                    form.formState.isSubmitting ||
-                                    Math.abs(remaining) > 0.01
-                                }
+                                disabled={form.formState.isSubmitting || Math.abs(remaining) > 0.01}
                             >
-                                {form.formState.isSubmitting
-                                    ? "Dividindo..."
-                                    : "Confirmar Divisão"}
+                                {form.formState.isSubmitting ? "Dividindo..." : "Confirmar Divisão"}
                             </Button>
                         </DialogFooter>
                     </form>

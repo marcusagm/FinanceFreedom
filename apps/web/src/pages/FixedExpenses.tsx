@@ -1,18 +1,15 @@
+import { Loader2, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
-import { PageHeader } from "../components/ui/PageHeader";
-import { Button } from "../components/ui/Button";
-import { Plus, Loader2 } from "lucide-react";
-import {
-    fixedExpenseService,
-    type FixedExpense,
-} from "../services/fixed-expense.service";
-import { categoryService, type Category } from "../services/category.service";
-import { api } from "../lib/api";
 import { toast } from "sonner";
-import type { Account } from "../types";
-import { FixedExpenseList } from "../components/fixed-expense/FixedExpenseList";
-import { FixedExpenseDialog } from "../components/fixed-expense/FixedExpenseDialog";
 import { DeleteFixedExpenseDialog } from "../components/fixed-expense/DeleteFixedExpenseDialog";
+import { FixedExpenseDialog } from "../components/fixed-expense/FixedExpenseDialog";
+import { FixedExpenseList } from "../components/fixed-expense/FixedExpenseList";
+import { Button } from "../components/ui/Button";
+import { PageHeader } from "../components/ui/PageHeader";
+import { api } from "../lib/api";
+import { type Category, categoryService } from "../services/category.service";
+import { type FixedExpense, fixedExpenseService } from "../services/fixed-expense.service";
+import type { Account } from "../types";
 
 export function FixedExpenses() {
     const [expenses, setExpenses] = useState<FixedExpense[]>([]);
@@ -22,15 +19,11 @@ export function FixedExpenses() {
 
     // Dialog State
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [editingExpense, setEditingExpense] = useState<FixedExpense | null>(
-        null
-    );
+    const [editingExpense, setEditingExpense] = useState<FixedExpense | null>(null);
 
     // Delete State
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-    const [expenseToDelete, setExpenseToDelete] = useState<FixedExpense | null>(
-        null
-    );
+    const [expenseToDelete, setExpenseToDelete] = useState<FixedExpense | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
@@ -40,12 +33,11 @@ export function FixedExpenses() {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const [expensesData, categoriesData, accountsRes] =
-                await Promise.all([
-                    fixedExpenseService.getAll(),
-                    categoryService.getAll(),
-                    api.get("/accounts"),
-                ]);
+            const [expensesData, categoriesData, accountsRes] = await Promise.all([
+                fixedExpenseService.getAll(),
+                categoryService.getAll(),
+                api.get("/accounts"),
+            ]);
             setExpenses(expensesData);
             setCategories(categoriesData);
             setAccounts(accountsRes.data);

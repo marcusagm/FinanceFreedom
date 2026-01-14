@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
-import { ActionFeed } from "./ActionFeed";
 import type { ActionRecommendation } from "../../services/dashboard.service";
+import { ActionFeed } from "./ActionFeed";
 
 describe("ActionFeed", () => {
     const mockRecommendations: ActionRecommendation[] = [
@@ -27,7 +27,7 @@ describe("ActionFeed", () => {
         return render(
             <BrowserRouter>
                 <ActionFeed recommendations={recs} />
-            </BrowserRouter>
+            </BrowserRouter>,
         );
     };
 

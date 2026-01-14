@@ -1,9 +1,9 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { describe, it, vi, expect } from "vitest";
-import { ResetPassword } from "./ResetPassword";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { describe, expect, it, vi } from "vitest";
 import { api } from "../lib/api";
+import { ResetPassword } from "./ResetPassword";
 
 vi.mock("../lib/api", () => ({
     api: {
@@ -28,15 +28,13 @@ describe("ResetPassword Component", () => {
                     <Route path="/reset-password" element={<ResetPassword />} />
                     <Route path="/login" element={<div>Login Page</div>} />
                 </Routes>
-            </MemoryRouter>
+            </MemoryRouter>,
         );
     };
 
     it("renders form when token present", () => {
         renderComponent();
-        expect(
-            screen.getByRole("heading", { name: "Reset Password" })
-        ).toBeInTheDocument();
+        expect(screen.getByRole("heading", { name: "Reset Password" })).toBeInTheDocument();
         expect(screen.getByLabelText("New Password")).toBeInTheDocument();
         expect(screen.getByLabelText("Confirm Password")).toBeInTheDocument();
     });
@@ -44,9 +42,7 @@ describe("ResetPassword Component", () => {
     it("shows invalid token message when token missing", () => {
         renderComponent(""); // Empty token
         expect(screen.getByText("Invalid Link")).toBeInTheDocument();
-        expect(
-            screen.getByText("The password reset token is missing.")
-        ).toBeInTheDocument();
+        expect(screen.getByText("The password reset token is missing.")).toBeInTheDocument();
     });
 
     it("validates password mismatch", async () => {
@@ -60,9 +56,7 @@ describe("ResetPassword Component", () => {
         fireEvent.click(screen.getByRole("button", { name: "Reset Password" }));
 
         await waitFor(() => {
-            expect(
-                screen.getByText("Passwords do not match")
-            ).toBeInTheDocument();
+            expect(screen.getByText("Passwords do not match")).toBeInTheDocument();
         });
     });
 

@@ -1,9 +1,9 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { ImportPage } from "./ImportPage";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { BrowserRouter } from "react-router-dom";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { api } from "../lib/api";
 import { ImportService } from "../services/import.service";
-import { BrowserRouter } from "react-router-dom";
+import { ImportPage } from "./ImportPage";
 
 // Mock dependencies
 vi.mock("../lib/api");
@@ -101,9 +101,7 @@ describe("ImportPage", () => {
         // Expect review step
         await waitFor(() => {
             expect(screen.getByText("Review Transactions")).toBeInTheDocument();
-            expect(
-                screen.getByText("1 new transactions found.")
-            ).toBeInTheDocument();
+            expect(screen.getByText("1 new transactions found.")).toBeInTheDocument();
         });
     });
 
@@ -111,9 +109,7 @@ describe("ImportPage", () => {
         (api.get as any).mockResolvedValue({
             data: [{ id: "1", name: "Bank A", type: "CHECKING" }],
         });
-        (ImportService.uploadFile as any).mockRejectedValue(
-            new Error("Parse error")
-        );
+        (ImportService.uploadFile as any).mockRejectedValue(new Error("Parse error"));
 
         renderWithRouter(<ImportPage />);
 
@@ -126,9 +122,7 @@ describe("ImportPage", () => {
 
         await waitFor(() => {
             expect(screen.getByRole("dialog")).toBeInTheDocument();
-            expect(
-                screen.getByText("Failed to parse file")
-            ).toBeInTheDocument();
+            expect(screen.getByText("Failed to parse file")).toBeInTheDocument();
         });
     });
 
@@ -147,15 +141,11 @@ describe("ImportPage", () => {
         (ImportService.confirmImport as any).mockResolvedValue(true);
 
         renderWithRouter(<ImportPage />);
-        await waitFor(() =>
-            expect(screen.getByText("Bank A (CHECKING)")).toBeInTheDocument()
-        );
+        await waitFor(() => expect(screen.getByText("Bank A (CHECKING)")).toBeInTheDocument());
 
         // Go to review
         fireEvent.click(screen.getByText("Drag & drop an OFX file here"));
-        await waitFor(() =>
-            expect(screen.getByText("Review Transactions")).toBeInTheDocument()
-        );
+        await waitFor(() => expect(screen.getByText("Review Transactions")).toBeInTheDocument());
 
         // Confirm
         fireEvent.click(screen.getByText("Confirm Import"));
@@ -167,9 +157,7 @@ describe("ImportPage", () => {
 
         // Should return to upload step
         fireEvent.click(screen.getByText("OK")); // Close alert
-        expect(
-            screen.queryByText("Review Transactions")
-        ).not.toBeInTheDocument();
+        expect(screen.queryByText("Review Transactions")).not.toBeInTheDocument();
     });
 
     it("handles confirm error", async () => {
@@ -179,26 +167,18 @@ describe("ImportPage", () => {
         (ImportService.uploadFile as any).mockResolvedValue([
             { date: new Date(), amount: 100, description: "Test" },
         ]);
-        (ImportService.confirmImport as any).mockRejectedValue(
-            new Error("API Error")
-        );
+        (ImportService.confirmImport as any).mockRejectedValue(new Error("API Error"));
 
         renderWithRouter(<ImportPage />);
-        await waitFor(() =>
-            expect(screen.getByText("Bank A (CHECKING)")).toBeInTheDocument()
-        );
+        await waitFor(() => expect(screen.getByText("Bank A (CHECKING)")).toBeInTheDocument());
         fireEvent.click(screen.getByText("Drag & drop an OFX file here"));
-        await waitFor(() =>
-            expect(screen.getByText("Review Transactions")).toBeInTheDocument()
-        );
+        await waitFor(() => expect(screen.getByText("Review Transactions")).toBeInTheDocument());
 
         fireEvent.click(screen.getByText("Confirm Import"));
 
         await waitFor(() => {
             expect(screen.getByRole("dialog")).toBeInTheDocument();
-            expect(
-                screen.getByText("Failed to confirm import")
-            ).toBeInTheDocument();
+            expect(screen.getByText("Failed to confirm import")).toBeInTheDocument();
         });
     });
 
@@ -211,23 +191,15 @@ describe("ImportPage", () => {
         ]);
 
         renderWithRouter(<ImportPage />);
-        await waitFor(() =>
-            expect(screen.getByText("Bank A (CHECKING)")).toBeInTheDocument()
-        );
+        await waitFor(() => expect(screen.getByText("Bank A (CHECKING)")).toBeInTheDocument());
         fireEvent.click(screen.getByText("Drag & drop an OFX file here"));
-        await waitFor(() =>
-            expect(screen.getByText("Review Transactions")).toBeInTheDocument()
-        );
+        await waitFor(() => expect(screen.getByText("Review Transactions")).toBeInTheDocument());
 
         fireEvent.click(screen.getByText("Cancel"));
 
         await waitFor(() => {
-            expect(
-                screen.queryByText("Review Transactions")
-            ).not.toBeInTheDocument();
-            expect(
-                screen.getByText("Drag & drop an OFX file here")
-            ).toBeInTheDocument();
+            expect(screen.queryByText("Review Transactions")).not.toBeInTheDocument();
+            expect(screen.getByText("Drag & drop an OFX file here")).toBeInTheDocument();
         });
     });
 });

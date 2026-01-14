@@ -3,17 +3,11 @@
  */
 import React from "react";
 import "@testing-library/jest-dom/vitest";
-import {
-    render,
-    screen,
-    fireEvent,
-    waitFor,
-    cleanup,
-} from "@testing-library/react";
-import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
-import { SplitTransactionDialog } from "./SplitTransactionDialog";
-import { api } from "../../lib/api";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { toast } from "sonner";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { api } from "../../lib/api";
+import { SplitTransactionDialog } from "./SplitTransactionDialog";
 
 afterEach(() => {
     cleanup();
@@ -67,9 +61,7 @@ describe("SplitTransactionDialog", () => {
         expect(descriptionInputs).toHaveLength(2);
 
         // Initial values: 100 split into 50 and 50
-        const amountInputs = screen.getAllByPlaceholderText(
-            "0.00"
-        ) as HTMLInputElement[];
+        const amountInputs = screen.getAllByPlaceholderText("0.00") as HTMLInputElement[];
         expect(amountInputs[0].value).toBe("50");
         expect(amountInputs[1].value).toBe("50");
     });
@@ -150,7 +142,7 @@ describe("SplitTransactionDialog", () => {
                             description: "Part 2",
                         }),
                     ]),
-                })
+                }),
             );
         });
 

@@ -1,6 +1,6 @@
-import { render, screen, fireEvent } from "@testing-library/react";
-import { ImapConfigList, ImapConfig } from "./ImapConfigList";
-import { describe, it, expect, vi } from "vitest";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import { type ImapConfig, ImapConfigList } from "./ImapConfigList";
 
 const mockConfigs: ImapConfig[] = [
     {
@@ -28,13 +28,7 @@ const mockConfigs: ImapConfig[] = [
 
 describe("ImapConfigList", () => {
     it("should render configurations", () => {
-        render(
-            <ImapConfigList
-                configs={mockConfigs}
-                onEdit={() => {}}
-                onDelete={() => {}}
-            />
-        );
+        render(<ImapConfigList configs={mockConfigs} onEdit={() => {}} onDelete={() => {}} />);
 
         expect(screen.getByText("test@test.com")).toBeInTheDocument();
         expect(screen.getByText("other@test.com")).toBeInTheDocument();
@@ -46,13 +40,7 @@ describe("ImapConfigList", () => {
 
     it("should call onEdit when edit button is clicked", () => {
         const onEdit = vi.fn();
-        render(
-            <ImapConfigList
-                configs={mockConfigs}
-                onEdit={onEdit}
-                onDelete={() => {}}
-            />
-        );
+        render(<ImapConfigList configs={mockConfigs} onEdit={onEdit} onDelete={() => {}} />);
 
         const editButtons = screen.getAllByRole("button", { name: /edit/i }); // Assuming title="Edit" or aria-label="Edit"
         // Since we didn't add aria-labels, we might need to rely on the icon or add them.
@@ -68,13 +56,7 @@ describe("ImapConfigList", () => {
 
     it("should call onDelete when delete button is clicked", () => {
         const onDelete = vi.fn();
-        render(
-            <ImapConfigList
-                configs={mockConfigs}
-                onEdit={() => {}}
-                onDelete={onDelete}
-            />
-        );
+        render(<ImapConfigList configs={mockConfigs} onEdit={() => {}} onDelete={onDelete} />);
 
         const deleteButtons = screen.getAllByRole("button", {
             name: /delete/i,
@@ -84,15 +66,7 @@ describe("ImapConfigList", () => {
     });
 
     it("should verify empty state", () => {
-        render(
-            <ImapConfigList
-                configs={[]}
-                onEdit={() => {}}
-                onDelete={() => {}}
-            />
-        );
-        expect(
-            screen.getByText(/no imap configurations found/i)
-        ).toBeInTheDocument();
+        render(<ImapConfigList configs={[]} onEdit={() => {}} onDelete={() => {}} />);
+        expect(screen.getByText(/no imap configurations found/i)).toBeInTheDocument();
     });
 });

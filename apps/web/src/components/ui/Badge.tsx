@@ -1,6 +1,6 @@
-import * as React from "react";
-import { cva, type VariantProps } from "class-variance-authority";
-import { clsx, type ClassValue } from "clsx";
+import { type VariantProps, cva } from "class-variance-authority";
+import { type ClassValue, clsx } from "clsx";
+import type * as React from "react";
 import { twMerge } from "tailwind-merge";
 
 function cn(...inputs: ClassValue[]) {
@@ -25,7 +25,7 @@ const badgeVariants = cva(
         defaultVariants: {
             variant: "default",
         },
-    }
+    },
 );
 
 export interface BadgeProps
@@ -33,9 +33,7 @@ export interface BadgeProps
         VariantProps<typeof badgeVariants> {}
 
 function Badge({ className, variant, ...props }: BadgeProps) {
-    return (
-        <div className={cn(badgeVariants({ variant }), className)} {...props} />
-    );
+    return <div className={cn(badgeVariants({ variant }), className)} {...props} />;
 }
 
 export { Badge, badgeVariants };

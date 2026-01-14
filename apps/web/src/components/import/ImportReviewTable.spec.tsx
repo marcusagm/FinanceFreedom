@@ -1,5 +1,5 @@
-import { render, screen, fireEvent } from "../../utils/test-utils";
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
+import { fireEvent, render, screen } from "../../utils/test-utils";
 import { ImportReviewTable } from "./ImportReviewTable";
 import "@testing-library/jest-dom";
 import type { ImportedTransaction } from "../../services/import.service";
@@ -29,7 +29,7 @@ describe("ImportReviewTable", () => {
             <ImportReviewTable
                 transactions={mockTransactions}
                 accounts={[{ id: "acc1", name: "Test Account" }]}
-            />
+            />,
         );
 
         expect(screen.getByText("Test Grocery")).toBeInTheDocument();

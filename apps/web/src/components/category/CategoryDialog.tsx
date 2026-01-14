@@ -1,7 +1,13 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 import * as z from "zod";
+import type { Category } from "../../services/category.service";
+import { categoryService } from "../../services/category.service";
+import { Button } from "../ui/Button";
+import { ColorInput } from "../ui/ColorInput";
 import {
     Dialog,
     DialogContent,
@@ -10,8 +16,6 @@ import {
     DialogHeader,
     DialogTitle,
 } from "../ui/Dialog";
-import { Button } from "../ui/Button";
-import { Input } from "../ui/Input";
 import {
     Form,
     FormControl,
@@ -20,11 +24,7 @@ import {
     FormLabel,
     FormMessage,
 } from "../ui/Form";
-import { ColorInput } from "../ui/ColorInput";
-import { Loader2 } from "lucide-react";
-import type { Category } from "../../services/category.service";
-import { categoryService } from "../../services/category.service";
-import { toast } from "sonner";
+import { Input } from "../ui/Input";
 
 interface CategoryDialogProps {
     isOpen: boolean;

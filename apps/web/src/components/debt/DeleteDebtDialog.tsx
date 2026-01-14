@@ -1,3 +1,4 @@
+import { AppAlert } from "../ui/AppAlert";
 import { Button } from "../ui/Button";
 import {
     Dialog,
@@ -7,7 +8,6 @@ import {
     DialogHeader,
     DialogTitle,
 } from "../ui/Dialog";
-import { AppAlert } from "../ui/AppAlert";
 
 interface DeleteDebtDialogProps {
     isOpen: boolean;
@@ -29,29 +29,18 @@ export function DeleteDebtDialog({
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Excluir Dívida</DialogTitle>
-                    <DialogDescription>
-                        Esta ação não pode ser desfeita.
-                    </DialogDescription>
+                    <DialogDescription>Esta ação não pode ser desfeita.</DialogDescription>
                 </DialogHeader>
 
                 <AppAlert variant="destructive" title="Atenção">
-                    A dívida <strong>{debtName}</strong> será permanentemente
-                    removida.
+                    A dívida <strong>{debtName}</strong> será permanentemente removida.
                 </AppAlert>
 
                 <DialogFooter>
-                    <Button
-                        variant="outline"
-                        onClick={onClose}
-                        disabled={isDeleting}
-                    >
+                    <Button variant="outline" onClick={onClose} disabled={isDeleting}>
                         Cancelar
                     </Button>
-                    <Button
-                        variant="destructive"
-                        onClick={onConfirm}
-                        disabled={isDeleting}
-                    >
+                    <Button variant="destructive" onClick={onConfirm} disabled={isDeleting}>
                         {isDeleting ? "Excluindo..." : "Sim, excluir dívida"}
                     </Button>
                 </DialogFooter>

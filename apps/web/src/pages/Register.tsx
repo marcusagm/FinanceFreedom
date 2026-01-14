@@ -1,22 +1,22 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAuth } from "../contexts/AuthContext";
-import { api } from "../lib/api";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
+import { z } from "zod";
+import { Alert, AlertDescription } from "../components/ui/Alert";
 import { Button } from "../components/ui/Button";
-import { Input } from "../components/ui/Input";
-import { Label } from "../components/ui/Label";
 import {
     Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
     CardHeader,
     CardTitle,
-    CardContent,
-    CardFooter,
-    CardDescription,
 } from "../components/ui/Card";
-import { Alert, AlertDescription } from "../components/ui/Alert";
+import { Input } from "../components/ui/Input";
+import { Label } from "../components/ui/Label";
+import { useAuth } from "../contexts/AuthContext";
+import { api } from "../lib/api";
 import { notify } from "../lib/notification";
 
 const registerSchema = z
@@ -65,18 +65,14 @@ export function Register() {
             });
             const { access_token } = loginRes.data;
 
-            api.defaults.headers.common[
-                "Authorization"
-            ] = `Bearer ${access_token}`;
+            api.defaults.headers.common["Authorization"] = `Bearer ${access_token}`;
             const profileRes = await api.get("/auth/profile");
 
             login(access_token, profileRes.data);
             navigate("/");
         } catch (err: any) {
             console.error("Registration failed", err);
-            const message =
-                err.response?.data?.message ||
-                "Registration failed. Please try again.";
+            const message = err.response?.data?.message || "Registration failed. Please try again.";
             setAuthError(Array.isArray(message) ? message.join(", ") : message);
             delete api.defaults.headers.common["Authorization"];
         }
@@ -108,9 +104,7 @@ export function Register() {
                                 {...register("name")}
                             />
                             {errors.name && (
-                                <p className="text-sm text-destructive">
-                                    {errors.name.message}
-                                </p>
+                                <p className="text-sm text-destructive">{errors.name.message}</p>
                             )}
                         </div>
                         <div className="space-y-2">
@@ -123,9 +117,7 @@ export function Register() {
                                 {...register("email")}
                             />
                             {errors.email && (
-                                <p className="text-sm text-destructive">
-                                    {errors.email.message}
-                                </p>
+                                <p className="text-sm text-destructive">{errors.email.message}</p>
                             )}
                         </div>
                         <div className="space-y-2">
@@ -143,9 +135,7 @@ export function Register() {
                             )}
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="confirmPassword">
-                                Confirm Password
-                            </Label>
+                            <Label htmlFor="confirmPassword">Confirm Password</Label>
                             <Input
                                 id="confirmPassword"
                                 type="password"
@@ -160,21 +150,12 @@ export function Register() {
                         </div>
                     </CardContent>
                     <CardFooter className="flex flex-col space-y-4">
-                        <Button
-                            type="submit"
-                            className="w-full"
-                            disabled={isSubmitting}
-                        >
-                            {isSubmitting
-                                ? "Creating account..."
-                                : "Create Account"}
+                        <Button type="submit" className="w-full" disabled={isSubmitting}>
+                            {isSubmitting ? "Creating account..." : "Create Account"}
                         </Button>
                         <div className="text-center text-sm">
                             Already have an account?{" "}
-                            <Link
-                                to="/login"
-                                className="text-primary hover:underline"
-                            >
+                            <Link to="/login" className="text-primary hover:underline">
                                 Sign In
                             </Link>
                         </div>

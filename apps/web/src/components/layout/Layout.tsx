@@ -1,13 +1,14 @@
-import { Link, useLocation } from "react-router-dom";
 import {
-    Home,
-    Wallet,
     ArrowRightLeft,
     DollarSign,
+    Home,
     Settings as SettingsIcon,
+    TrendingUp,
+    Wallet,
 } from "lucide-react";
-import { Header } from "./Header";
+import { Link, useLocation } from "react-router-dom";
 import { cn } from "../../lib/utils";
+import { Header } from "./Header";
 
 export function Layout({ children }: { children: React.ReactNode }) {
     const location = useLocation();
@@ -30,7 +31,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                             "flex flex-col items-center justify-center w-full h-full space-y-1 text-xs font-medium transition-colors",
                             isActive("/")
                                 ? "text-primary"
-                                : "text-muted-foreground hover:text-primary"
+                                : "text-muted-foreground hover:text-primary",
                         )}
                     >
                         <Home className="h-5 w-5" />
@@ -42,7 +43,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                             "flex flex-col items-center justify-center w-full h-full space-y-1 text-xs font-medium transition-colors",
                             isActive("/accounts")
                                 ? "text-primary"
-                                : "text-muted-foreground hover:text-primary"
+                                : "text-muted-foreground hover:text-primary",
                         )}
                     >
                         <Wallet className="h-5 w-5" />
@@ -54,7 +55,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                             "flex flex-col items-center justify-center w-full h-full space-y-1 text-xs font-medium transition-colors",
                             isActive("/transactions")
                                 ? "text-primary"
-                                : "text-muted-foreground hover:text-primary"
+                                : "text-muted-foreground hover:text-primary",
                         )}
                     >
                         <ArrowRightLeft className="h-5 w-5" />
@@ -66,11 +67,35 @@ export function Layout({ children }: { children: React.ReactNode }) {
                             "flex flex-col items-center justify-center w-full h-full space-y-1 text-xs font-medium transition-colors",
                             isActive("/income")
                                 ? "text-primary"
-                                : "text-muted-foreground hover:text-primary"
+                                : "text-muted-foreground hover:text-primary",
                         )}
                     >
                         <DollarSign className="h-5 w-5" />
                         <span>Renda</span>
+                    </Link>
+                    <Link
+                        to="/investments"
+                        className={cn(
+                            "flex flex-col items-center justify-center w-full h-full space-y-1 text-xs font-medium transition-colors",
+                            isActive("/investments")
+                                ? "text-primary"
+                                : "text-muted-foreground hover:text-primary",
+                        )}
+                    >
+                        <TrendingUp className="h-5 w-5" />
+                        <span>Investimentos</span>
+                    </Link>
+                    <Link
+                        to="/goals"
+                        className={cn(
+                            "flex flex-col items-center justify-center w-full h-full space-y-1 text-xs font-medium transition-colors",
+                            isActive("/goals")
+                                ? "text-primary"
+                                : "text-muted-foreground hover:text-primary",
+                        )}
+                    >
+                        <TrendingUp className="h-5 w-5" />
+                        <span>Metas</span>
                     </Link>
                     <Link
                         to="/settings"
@@ -78,7 +103,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                             "flex flex-col items-center justify-center w-full h-full space-y-1 text-xs font-medium transition-colors",
                             isActive("/settings")
                                 ? "text-primary"
-                                : "text-muted-foreground hover:text-primary"
+                                : "text-muted-foreground hover:text-primary",
                         )}
                     >
                         <SettingsIcon className="h-5 w-5" />

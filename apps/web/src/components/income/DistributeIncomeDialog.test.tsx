@@ -1,6 +1,6 @@
-import { render, screen, fireEvent } from "@testing-library/react";
-import { DistributeIncomeDialog } from "./DistributeIncomeDialog";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { vi } from "vitest";
+import { DistributeIncomeDialog } from "./DistributeIncomeDialog";
 
 describe("DistributeIncomeDialog", () => {
     const mockOnOpenChange = vi.fn();
@@ -25,9 +25,7 @@ describe("DistributeIncomeDialog", () => {
 
     it("should not render when closed", () => {
         render(<DistributeIncomeDialog {...defaultProps} open={false} />);
-        expect(
-            screen.queryByText('Distribuir "Test Unit"')
-        ).not.toBeInTheDocument();
+        expect(screen.queryByText('Distribuir "Test Unit"')).not.toBeInTheDocument();
     });
 
     it("should update hours input", () => {

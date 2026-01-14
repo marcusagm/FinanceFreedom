@@ -42,4 +42,7 @@ export class CreateTransactionDto {
     @IsOptional()
     @IsNumber()
     repeatCount?: number;
+
+    @IsOptional()
+    paysInstallment?: boolean;
 }

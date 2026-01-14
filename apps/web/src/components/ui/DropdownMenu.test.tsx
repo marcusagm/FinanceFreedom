@@ -1,12 +1,12 @@
-import React from "react";
 import { render, screen } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
 import userEvent from "@testing-library/user-event";
+import React from "react";
+import { describe, expect, it, vi } from "vitest";
 import {
     DropdownMenu,
-    DropdownMenuTrigger,
     DropdownMenuContent,
     DropdownMenuItem,
+    DropdownMenuTrigger,
 } from "./DropdownMenu";
 
 // Local stateful mock for DropdownMenu
@@ -35,9 +35,7 @@ vi.mock("./DropdownMenu", () => {
         DropdownMenu: MockDropdown,
         DropdownMenuTrigger: MockTrigger,
         DropdownMenuContent: MockContent,
-        DropdownMenuItem: ({ children, onClick }: any) => (
-            <div onClick={onClick}>{children}</div>
-        ),
+        DropdownMenuItem: ({ children, onClick }: any) => <div onClick={onClick}>{children}</div>,
     };
 });
 
@@ -51,7 +49,7 @@ describe("DropdownMenu", () => {
                     <DropdownMenuItem>Item 1</DropdownMenuItem>
                     <DropdownMenuItem>Item 2</DropdownMenuItem>
                 </DropdownMenuContent>
-            </DropdownMenu>
+            </DropdownMenu>,
         );
 
         expect(screen.queryByText("Item 1")).not.toBeInTheDocument();

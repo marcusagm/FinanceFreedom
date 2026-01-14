@@ -1,14 +1,7 @@
-import React from "react";
 import { render, screen } from "@testing-library/react";
-import { describe, it, expect } from "vitest";
-import {
-    Card,
-    CardHeader,
-    CardTitle,
-    CardDescription,
-    CardContent,
-    CardFooter,
-} from "./Card";
+import React from "react";
+import { describe, expect, it } from "vitest";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./Card";
 
 describe("Card", () => {
     it("renders card with all subcomponents", () => {
@@ -20,7 +13,7 @@ describe("Card", () => {
                 </CardHeader>
                 <CardContent>Content</CardContent>
                 <CardFooter>Footer</CardFooter>
-            </Card>
+            </Card>,
         );
 
         expect(screen.getByText("Card Title")).toBeInTheDocument();

@@ -1,14 +1,14 @@
-import React from "react";
 import { render, screen } from "@testing-library/react";
-import { describe, it, expect } from "vitest";
+import React from "react";
+import { describe, expect, it } from "vitest";
 import {
     Table,
-    TableHeader,
     TableBody,
-    TableRow,
-    TableHead,
-    TableCell,
     TableCaption,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
 } from "./Table";
 
 describe("Table", () => {
@@ -26,7 +26,7 @@ describe("Table", () => {
                         <TableCell>INV001</TableCell>
                     </TableRow>
                 </TableBody>
-            </Table>
+            </Table>,
         );
 
         expect(screen.getByText("A list of invoices")).toBeInTheDocument();

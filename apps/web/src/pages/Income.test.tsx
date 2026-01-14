@@ -1,6 +1,6 @@
-import { render, screen, waitFor, fireEvent } from "../utils/test-utils";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { fireEvent, render, screen, waitFor } from "../utils/test-utils";
 import IncomePage from "./Income";
-import { vi, describe, it, expect, beforeEach } from "vitest";
 import "@testing-library/jest-dom";
 
 // Mock API and Services
@@ -21,8 +21,7 @@ vi.mock("../components/income/CreateIncomeSourceDialog", () => ({
     CreateIncomeSourceDialog: ({ isOpen, onClose }: any) =>
         isOpen ? (
             <div role="dialog">
-                Mock Create Source Dialog{" "}
-                <button onClick={onClose}>Close</button>
+                Mock Create Source Dialog <button onClick={onClose}>Close</button>
             </div>
         ) : null,
 }));
@@ -31,8 +30,7 @@ vi.mock("../components/income/CreateWorkUnitDialog", () => ({
     CreateWorkUnitDialog: ({ isOpen, onClose }: any) =>
         isOpen ? (
             <div role="dialog">
-                Mock Create Work Unit Dialog{" "}
-                <button onClick={onClose}>Close</button>
+                Mock Create Work Unit Dialog <button onClick={onClose}>Close</button>
             </div>
         ) : null,
 }));
@@ -43,9 +41,7 @@ describe("Income Page", () => {
     });
 
     it("should load and display data", async () => {
-        mockGetSources.mockResolvedValue([
-            { id: "1", name: "Salary", amount: 5000, payDay: 5 },
-        ]);
+        mockGetSources.mockResolvedValue([{ id: "1", name: "Salary", amount: 5000, payDay: 5 }]);
         mockGetWorkUnits.mockResolvedValue([
             {
                 id: "2",
@@ -78,9 +74,7 @@ describe("Income Page", () => {
         const createButton = screen.getByText("+ Nova Fonte");
         fireEvent.click(createButton);
 
-        expect(
-            screen.getByText("Mock Create Source Dialog")
-        ).toBeInTheDocument();
+        expect(screen.getByText("Mock Create Source Dialog")).toBeInTheDocument();
 
         // Switch tabs and check button change
         const catalogTab = screen.getByText("Catálogo de Serviços");
@@ -89,8 +83,6 @@ describe("Income Page", () => {
         const createServiceButton = screen.getByText("+ Novo Serviço");
         fireEvent.click(createServiceButton);
 
-        expect(
-            screen.getByText("Mock Create Work Unit Dialog")
-        ).toBeInTheDocument();
+        expect(screen.getByText("Mock Create Work Unit Dialog")).toBeInTheDocument();
     });
 });

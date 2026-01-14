@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "./Card";
 import { cn } from "../../lib/utils";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "./Card";
 
 interface AppCardProps {
     title: string;
@@ -28,7 +28,7 @@ export function AppCard({
             className={cn(
                 "group relative transition-all hover:shadow-md dark:hover:border-primary/50 overflow-hidden",
                 onClick && "cursor-pointer active:scale-[0.99]",
-                className
+                className,
             )}
             onClick={onClick}
         >
@@ -51,22 +51,14 @@ export function AppCard({
                         {title}
                     </CardTitle>
                 </div>
-                {badge && (
-                    <div className="text-sm font-medium text-muted-foreground">
-                        {badge}
-                    </div>
-                )}
+                {badge && <div className="text-sm font-medium text-muted-foreground">{badge}</div>}
             </CardHeader>
             <CardContent>{children}</CardContent>
 
             {/* Footer Area */}
             {footer && (
-                <CardFooter
-                    className={cn("flex items-center pt-0", "justify-between")}
-                >
-                    <div className="text-xs text-muted-foreground w-full">
-                        {footer}
-                    </div>
+                <CardFooter className={cn("flex items-center pt-0", "justify-between")}>
+                    <div className="text-xs text-muted-foreground w-full">{footer}</div>
                 </CardFooter>
             )}
         </Card>

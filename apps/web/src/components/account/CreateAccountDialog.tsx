@@ -1,20 +1,17 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { api } from "../../lib/api";
+import { Button } from "../../components/ui/Button";
+import { ColorInput } from "../../components/ui/ColorInput";
 import {
     Dialog,
     DialogContent,
+    DialogDescription,
+    DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogFooter,
-    DialogDescription,
 } from "../../components/ui/Dialog";
-import { Button } from "../../components/ui/Button";
-import { Input } from "../../components/ui/Input";
-import { Select } from "../../components/ui/Select";
-import { ColorInput } from "../../components/ui/ColorInput";
 import {
     Form,
     FormControl,
@@ -23,6 +20,9 @@ import {
     FormLabel,
     FormMessage,
 } from "../../components/ui/Form";
+import { Input } from "../../components/ui/Input";
+import { Select } from "../../components/ui/Select";
+import { api } from "../../lib/api";
 
 interface Account {
     id: string;
@@ -81,7 +81,7 @@ export function CreateAccountDialog({
                 form.reset({
                     name: accountToEdit.name,
                     type: accountToEdit.type,
-                    balance: parseFloat(String(accountToEdit.balance)),
+                    balance: Number.parseFloat(String(accountToEdit.balance)),
                     color: accountToEdit.color || "#000000",
                 });
             } else {

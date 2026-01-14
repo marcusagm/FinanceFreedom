@@ -1,7 +1,7 @@
+import { fireEvent, render, screen } from "@testing-library/react";
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
-import { describe, it, expect } from "vitest";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "./Tabs";
+import { describe, expect, it } from "vitest";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./Tabs";
 
 describe("Tabs", () => {
     it("renders tabs and switches content", async () => {
@@ -13,7 +13,7 @@ describe("Tabs", () => {
                 </TabsList>
                 <TabsContent value="tab1">Content 1</TabsContent>
                 <TabsContent value="tab2">Content 2</TabsContent>
-            </Tabs>
+            </Tabs>,
         );
 
         expect(screen.getByText("Content 1")).toBeInTheDocument();

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { api } from "../lib/api";
 
@@ -17,9 +17,7 @@ interface AuthContextType {
     isLoading: boolean;
 }
 
-export const AuthContext = createContext<AuthContextType | undefined>(
-    undefined
-);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
@@ -33,9 +31,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (storedToken && storedUser) {
             setToken(storedToken);
             setUser(JSON.parse(storedUser));
-            api.defaults.headers.common[
-                "Authorization"
-            ] = `Bearer ${storedToken}`;
+            api.defaults.headers.common["Authorization"] = `Bearer ${storedToken}`;
         }
         setIsLoading(false);
     }, []);

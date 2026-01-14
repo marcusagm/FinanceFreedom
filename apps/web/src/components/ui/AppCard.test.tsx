@@ -1,6 +1,6 @@
+import { fireEvent, render, screen } from "@testing-library/react";
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { AppCard } from "./AppCard";
 
 describe("AppCard", () => {
@@ -14,7 +14,7 @@ describe("AppCard", () => {
         render(
             <AppCard title="Card" badge="New">
                 Content
-            </AppCard>
+            </AppCard>,
         );
         expect(screen.getByText("New")).toBeInTheDocument();
     });
@@ -23,18 +23,16 @@ describe("AppCard", () => {
         render(
             <AppCard title="Card" actions={<button>Action</button>}>
                 Content
-            </AppCard>
+            </AppCard>,
         );
-        expect(
-            screen.getByRole("button", { name: "Action" })
-        ).toBeInTheDocument();
+        expect(screen.getByRole("button", { name: "Action" })).toBeInTheDocument();
     });
 
     it("renders footer if provided", () => {
         render(
             <AppCard title="Card" footer="Footer Info">
                 Content
-            </AppCard>
+            </AppCard>,
         );
         expect(screen.getByText("Footer Info")).toBeInTheDocument();
     });
@@ -44,7 +42,7 @@ describe("AppCard", () => {
         const { container } = render(
             <AppCard title="Card" onClick={handleClick}>
                 Content
-            </AppCard>
+            </AppCard>,
         );
 
         // Find the specific card element - using the first child which is the Card div

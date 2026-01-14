@@ -34,6 +34,8 @@ model User {
   categories       Category[]
   systemConfigs    SystemConfig[]
   fixedExpenses    FixedExpense[]
+  investmentAccounts InvestmentAccount[]
+  savingsGoals     SavingsGoal[]
 }
 
 model Account {
@@ -120,6 +122,11 @@ model Debt {
   minimumPayment  Decimal  @default(0.0)
   dueDate         Int      // Day of month (1-31)
   
+  installmentsTotal Int?
+  installmentsPaid  Int      @default(0)
+  originalAmount    Decimal?
+  firstInstallmentDate DateTime?
+
   categoryId      String?
   categoryRel     Category? @relation(fields: [categoryId], references: [id])
   
@@ -207,4 +214,36 @@ model FixedExpense {
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model InvestmentAccount {
+  id            String   @id @default(uuid())
+  name          String
+  type          String   // FIXED_INCOME, VARIABLE_INCOME, CRYPTO, CASH, OTHER
+  balance       Decimal  @default(0.0)
+  profitability Decimal? // e.g. 100.0, 12.5
+  profitabilityType String? // e.g. "CDI", "FIXED_YEARLY", "IPCA"
+  maturityDate  DateTime?
+  description   String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model SavingsGoal {
+  id            String   @id @default(uuid())
+  name          String
+  targetAmount  Decimal
+  currentAmount Decimal  @default(0.0)
+  deadline      DateTime?
+  description   String?
+  priority      Int      @default(0)
+  status        String   @default("IN_PROGRESS") // IN_PROGRESS, COMPLETED, PAUSED
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

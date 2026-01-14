@@ -1,6 +1,6 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 import { FixedExpenseList } from "./FixedExpenseList";
-import { vi, describe, it, expect } from "vitest";
 
 describe("FixedExpenseList", () => {
     const mockOnEdit = vi.fn();
@@ -27,25 +27,13 @@ describe("FixedExpenseList", () => {
     ];
 
     it("should render empty state", () => {
-        render(
-            <FixedExpenseList
-                expenses={[]}
-                onEdit={mockOnEdit}
-                onDelete={mockOnDelete}
-            />
-        );
-        expect(
-            screen.getByText(/Nenhuma despesa fixa encontrada/i)
-        ).toBeInTheDocument();
+        render(<FixedExpenseList expenses={[]} onEdit={mockOnEdit} onDelete={mockOnDelete} />);
+        expect(screen.getByText(/Nenhuma despesa fixa encontrada/i)).toBeInTheDocument();
     });
 
     it("should render expenses", () => {
         render(
-            <FixedExpenseList
-                expenses={expenses}
-                onEdit={mockOnEdit}
-                onDelete={mockOnDelete}
-            />
+            <FixedExpenseList expenses={expenses} onEdit={mockOnEdit} onDelete={mockOnDelete} />,
         );
         expect(screen.getByText("Rent")).toBeInTheDocument();
         expect(screen.getByText("R$ 1.000,00")).toBeInTheDocument();
@@ -54,11 +42,7 @@ describe("FixedExpenseList", () => {
 
     it("should trigger actions", () => {
         render(
-            <FixedExpenseList
-                expenses={expenses}
-                onEdit={mockOnEdit}
-                onDelete={mockOnDelete}
-            />
+            <FixedExpenseList expenses={expenses} onEdit={mockOnEdit} onDelete={mockOnDelete} />,
         );
         const buttons = screen.getAllByRole("button");
         fireEvent.click(buttons[0]); // Edit

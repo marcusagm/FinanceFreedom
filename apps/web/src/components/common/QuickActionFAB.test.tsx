@@ -1,6 +1,6 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { QuickActionFAB } from "./QuickActionFAB";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { vi } from "vitest";
+import { QuickActionFAB } from "./QuickActionFAB";
 
 // Mock child components to avoid complex rendering and focus on FAB logic
 vi.mock("../transactions/NewTransactionDialog", () => ({
@@ -49,9 +49,7 @@ describe("QuickActionFAB", () => {
         await waitFor(() => screen.getByText("Nova Transação"));
         fireEvent.click(screen.getByText("Nova Transação"));
 
-        expect(
-            await screen.findByTestId("new-transaction-dialog")
-        ).toBeInTheDocument();
+        expect(await screen.findByTestId("new-transaction-dialog")).toBeInTheDocument();
     });
 
     it("opens debt form when clicked", async () => {

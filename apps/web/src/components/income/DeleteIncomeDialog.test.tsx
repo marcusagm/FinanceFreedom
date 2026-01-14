@@ -1,6 +1,6 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 import { DeleteIncomeDialog } from "./DeleteIncomeDialog";
-import { vi, describe, it, expect, beforeAll } from "vitest";
 import "@testing-library/jest-dom";
 
 describe("DeleteIncomeDialog", () => {
@@ -23,9 +23,7 @@ describe("DeleteIncomeDialog", () => {
 
     it("should display correct message", () => {
         render(<DeleteIncomeDialog {...defaultProps} />);
-        expect(
-            screen.getByText(/será permanentemente removida/i)
-        ).toBeInTheDocument();
+        expect(screen.getByText(/será permanentemente removida/i)).toBeInTheDocument();
         expect(screen.getByText("Test Item")).toBeInTheDocument();
     });
 

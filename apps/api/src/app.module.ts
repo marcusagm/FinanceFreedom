@@ -17,6 +17,8 @@ import { IncomeModule } from "./modules/income/income.module";
 import { SystemConfigModule } from "./modules/system-config/system-config.module";
 import { FixedExpenseModule } from "./modules/fixed-expense/fixed-expense.module";
 import { CategoryModule } from "./modules/category/category.module";
+import { InvestmentAccountModule } from './modules/investment-account/investment-account.module';
+import { SavingsGoalModule } from './modules/savings-goal/savings-goal.module';
 
 @Module({
     imports: [
@@ -41,6 +43,8 @@ import { CategoryModule } from "./modules/category/category.module";
         SystemConfigModule,
         FixedExpenseModule,
         CategoryModule,
+        InvestmentAccountModule,
+        SavingsGoalModule,
     ],
     controllers: [AppController],
     providers: [

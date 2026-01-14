@@ -23,12 +23,8 @@ interface TabsProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(
-    (
-        { defaultValue, value, onValueChange, className, children, ...props },
-        ref
-    ) => {
-        const [activeTabState, setActiveTabState] =
-            React.useState(defaultValue);
+    ({ defaultValue, value, onValueChange, className, children, ...props }, ref) => {
+        const [activeTabState, setActiveTabState] = React.useState(defaultValue);
 
         const activeTab = value !== undefined ? value : activeTabState;
         const setActiveTab = React.useCallback(
@@ -38,7 +34,7 @@ const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(
                 }
                 setActiveTabState(newValue);
             },
-            [onValueChange]
+            [onValueChange],
         );
 
         return (
@@ -48,27 +44,25 @@ const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(
                 </div>
             </TabsContext.Provider>
         );
-    }
+    },
 );
 Tabs.displayName = "Tabs";
 
-const TabsList = React.forwardRef<
-    HTMLDivElement,
-    React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-    <div
-        ref={ref}
-        className={cn(
-            "inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground mb-4",
-            className
-        )}
-        {...props}
-    />
-));
+const TabsList = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+    ({ className, ...props }, ref) => (
+        <div
+            ref={ref}
+            className={cn(
+                "inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground mb-4",
+                className,
+            )}
+            {...props}
+        />
+    ),
+);
 TabsList.displayName = "TabsList";
 
-interface TabsTriggerProps
-    extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface TabsTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     value: string;
 }
 
@@ -86,13 +80,13 @@ const TabsTrigger = React.forwardRef<HTMLButtonElement, TabsTriggerProps>(
                     isActive
                         ? "bg-background text-foreground shadow-sm"
                         : "hover:bg-background/50 hover:text-foreground/70",
-                    className
+                    className,
                 )}
                 onClick={() => setActiveTab(value)}
                 {...props}
             />
         );
-    }
+    },
 );
 TabsTrigger.displayName = "TabsTrigger";
 
@@ -111,12 +105,12 @@ const TabsContent = React.forwardRef<HTMLDivElement, TabsContentProps>(
                 ref={ref}
                 className={cn(
                     "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 animate-in fade-in slide-in-from-bottom-2 duration-300",
-                    className
+                    className,
                 )}
                 {...props}
             />
         );
-    }
+    },
 );
 TabsContent.displayName = "TabsContent";
 
