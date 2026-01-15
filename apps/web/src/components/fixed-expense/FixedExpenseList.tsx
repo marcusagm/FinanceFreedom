@@ -2,7 +2,15 @@ import { Edit2, Trash2 } from "lucide-react";
 import type { FixedExpense } from "../../services/fixed-expense.service";
 import { Button } from "../ui/Button";
 import { Card, CardContent } from "../ui/Card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/Table";
+import { MoneyDisplay } from "../ui/MoneyDisplay";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "../ui/Table";
 
 interface FixedExpenseListProps {
     expenses: FixedExpense[];
@@ -10,7 +18,11 @@ interface FixedExpenseListProps {
     onDelete: (id: string) => void;
 }
 
-export function FixedExpenseList({ expenses, onEdit, onDelete }: FixedExpenseListProps) {
+export function FixedExpenseList({
+    expenses,
+    onEdit,
+    onDelete,
+}: FixedExpenseListProps) {
     if (expenses.length === 0) {
         return (
             <div className="text-center py-12 text-muted-foreground border rounded-lg bg-card">
@@ -37,12 +49,13 @@ export function FixedExpenseList({ expenses, onEdit, onDelete }: FixedExpenseLis
                     <TableBody>
                         {expenses.map((expense) => (
                             <TableRow key={expense.id}>
-                                <TableCell className="font-medium">{expense.description}</TableCell>
+                                <TableCell className="font-medium">
+                                    {expense.description}
+                                </TableCell>
                                 <TableCell>
-                                    {new Intl.NumberFormat("pt-BR", {
-                                        style: "currency",
-                                        currency: "BRL",
-                                    }).format(Number(expense.amount))}
+                                    <MoneyDisplay
+                                        value={Number(expense.amount)}
+                                    />
                                 </TableCell>
                                 <TableCell>{expense.dueDay}</TableCell>
                                 <TableCell>
@@ -52,7 +65,8 @@ export function FixedExpenseList({ expenses, onEdit, onDelete }: FixedExpenseLis
                                                 className="w-3 h-3 rounded-full"
                                                 style={{
                                                     backgroundColor:
-                                                        expense.category.color || "#999",
+                                                        expense.category
+                                                            .color || "#999",
                                                 }}
                                             />
                                             {expense.category.name}
@@ -61,8 +75,12 @@ export function FixedExpenseList({ expenses, onEdit, onDelete }: FixedExpenseLis
                                         "-"
                                     )}
                                 </TableCell>
-                                <TableCell>{expense.account?.name || "-"}</TableCell>
-                                <TableCell>{expense.autoCreate ? "Sim" : "Não"}</TableCell>
+                                <TableCell>
+                                    {expense.account?.name || "-"}
+                                </TableCell>
+                                <TableCell>
+                                    {expense.autoCreate ? "Sim" : "Não"}
+                                </TableCell>
                                 <TableCell className="text-right">
                                     <Button
                                         variant="ghost"

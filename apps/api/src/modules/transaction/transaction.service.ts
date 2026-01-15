@@ -47,6 +47,7 @@ export class TransactionService {
                             date: currentDate,
                             description: createTransactionDto.description,
                             category: createTransactionDto.category,
+                            categoryId: createTransactionDto.categoryId,
                             debtId: createTransactionDto.debtId,
                         },
                     });

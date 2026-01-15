@@ -6,33 +6,57 @@ import { CategoryList } from "../components/category/CategoryList";
 import { DeleteCategoryDialog } from "../components/category/DeleteCategoryDialog";
 import { Button } from "../components/ui/Button";
 import { PageHeader } from "../components/ui/PageHeader";
+import {
+    analyticsService,
+    type BudgetStatus,
+    type IncomeStatus,
+} from "../services/analytics.service";
 import { type Category, categoryService } from "../services/category.service";
 
 export function Categories() {
     const [categories, setCategories] = useState<Category[]>([]);
+    const [budgetData, setBudgetData] = useState<BudgetStatus[]>([]);
+    const [incomeData, setIncomeData] = useState<IncomeStatus[]>([]);
     const [loading, setLoading] = useState(true);
 
     // Dialog states
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+    const [editingCategory, setEditingCategory] = useState<Category | null>(
+        null
+    );
 
     // Delete states
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-    const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
+    const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(
+        null
+    );
     const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
-        fetchCategories();
+        fetchData();
     }, []);
 
-    const fetchCategories = async () => {
+    const fetchData = async () => {
         setLoading(true);
         try {
-            const data = await categoryService.getAll();
-            setCategories(data);
+            const [categoriesData, budgetsData, incomesData] =
+                await Promise.all([
+                    categoryService.getAll(),
+                    analyticsService.getBudgets().catch((err) => {
+                        console.error("Failed to fetch budgets", err);
+                        return [];
+                    }),
+                    analyticsService.getIncomes().catch((err) => {
+                        console.error("Failed to fetch incomes", err);
+                        return [];
+                    }),
+                ]);
+            setCategories(categoriesData);
+            setBudgetData(budgetsData);
+            setIncomeData(incomesData);
         } catch (error) {
             console.error("Failed to fetch categories", error);
-            toast.error("Erro ao carregar categorias");
+            toast.error("Erro ao carregar dados");
         } finally {
             setLoading(false);
         }
@@ -59,7 +83,7 @@ export function Categories() {
         try {
             await categoryService.delete(categoryToDelete.id);
             toast.success("Categoria removida!");
-            await fetchCategories();
+            await fetchData();
             setIsDeleteDialogOpen(false);
             setCategoryToDelete(null);
         } catch (error) {
@@ -89,6 +113,8 @@ export function Categories() {
             ) : (
                 <CategoryList
                     categories={categories}
+                    budgetData={budgetData}
+                    incomeData={incomeData}
                     onEdit={handleEdit}
                     onDelete={(id) => {
                         const cat = categories.find((c) => c.id === id);
@@ -100,7 +126,7 @@ export function Categories() {
             <CategoryDialog
                 isOpen={isDialogOpen}
                 onClose={() => setIsDialogOpen(false)}
-                onSuccess={fetchCategories}
+                onSuccess={fetchData}
                 categoryToEdit={editingCategory}
             />
 

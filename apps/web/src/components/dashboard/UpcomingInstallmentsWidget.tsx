@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../../lib/api";
 import { type Installment, generateInstallments } from "../../lib/installments";
-import { Badge } from "../ui/Badge";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/Card";
 import { MoneyDisplay } from "../ui/MoneyDisplay";
 
@@ -37,7 +36,8 @@ export function UpcomingInstallmentsWidget() {
                 const allUpcoming: UpcomingInstallment[] = [];
 
                 debts.forEach((debt) => {
-                    if (!debt.installmentsTotal || debt.installmentsTotal <= 0) return;
+                    if (!debt.installmentsTotal || debt.installmentsTotal <= 0)
+                        return;
 
                     const debtInstallments = generateInstallments({
                         installmentsTotal: debt.installmentsTotal,
@@ -47,7 +47,9 @@ export function UpcomingInstallmentsWidget() {
                     });
 
                     // Filter pending
-                    const pending = debtInstallments.filter((i) => i.status === "PENDING");
+                    const pending = debtInstallments.filter(
+                        (i) => i.status === "PENDING"
+                    );
 
                     // Add metadata
                     pending.forEach((p) => {
@@ -57,7 +59,8 @@ export function UpcomingInstallmentsWidget() {
                             debtId: debt.id,
                             amount:
                                 debt.totalAmount /
-                                (debt.installmentsTotal! - debt.installmentsPaid), // This is an approximation if totalAmount decreases. Ideally we'd know original amount.
+                                (debt.installmentsTotal! -
+                                    debt.installmentsPaid), // This is an approximation if totalAmount decreases. Ideally we'd know original amount.
                             // Wait, schema has 'originalAmount'. Let's check api. If not available, we use totalAmount (current balance) divided by remaining installments?
                             // Usually 'totalAmount' is remaining balance. So yes: balance / remaining.
                         });
@@ -65,7 +68,9 @@ export function UpcomingInstallmentsWidget() {
                 });
 
                 // Sort by date
-                allUpcoming.sort((a, b) => a.dueDate.getTime() - b.dueDate.getTime());
+                allUpcoming.sort(
+                    (a, b) => a.dueDate.getTime() - b.dueDate.getTime()
+                );
 
                 // Take top 5
                 setUpcoming(allUpcoming.slice(0, 5));
@@ -83,10 +88,14 @@ export function UpcomingInstallmentsWidget() {
         return (
             <Card>
                 <CardHeader>
-                    <CardTitle className="text-sm font-medium">Próximas Parcelas</CardTitle>
+                    <CardTitle className="text-sm font-medium">
+                        Próximas Parcelas
+                    </CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <div className="text-sm text-muted-foreground">Carregando...</div>
+                    <div className="text-sm text-muted-foreground">
+                        Carregando...
+                    </div>
                 </CardContent>
             </Card>
         );
@@ -99,7 +108,10 @@ export function UpcomingInstallmentsWidget() {
                     <CalendarClock className="h-4 w-4 text-orange-500" />
                     Próximas Parcelas
                 </CardTitle>
-                <Link to="/debts" className="text-xs text-muted-foreground hover:underline">
+                <Link
+                    to="/debts"
+                    className="text-xs text-muted-foreground hover:underline"
+                >
                     Ver todas
                 </Link>
             </CardHeader>
@@ -110,7 +122,7 @@ export function UpcomingInstallmentsWidget() {
                     </div>
                 ) : (
                     <div className="space-y-4 pt-2">
-                        {upcoming.map((inst, index) => (
+                        {upcoming.map((inst) => (
                             <div
                                 key={`${inst.debtId}-${inst.number}`}
                                 className="flex items-center justify-between border-b last:border-0 pb-2 last:pb-0"

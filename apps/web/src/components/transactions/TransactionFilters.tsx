@@ -76,10 +76,21 @@ export function TransactionFilters({
                         onChange={(value) => handleChange("category", value)}
                         options={[
                             { value: "all", label: "Todas as Categorias" },
-                            ...categories.map((cat) => ({
-                                value: cat.name,
-                                label: cat.name,
-                            })),
+                            ...categories
+                                .sort((a, b) => {
+                                    if (a.type === b.type)
+                                        return a.name.localeCompare(b.name);
+                                    return (a.type || "EXPENSE") === "INCOME"
+                                        ? -1
+                                        : 1;
+                                })
+                                .map((cat) => ({
+                                    value: cat.name,
+                                    label:
+                                        cat.type === "INCOME"
+                                            ? `💰 ${cat.name}`
+                                            : `💸 ${cat.name}`,
+                                })),
                         ]}
                         placeholder="Categoria"
                     />
@@ -89,18 +100,32 @@ export function TransactionFilters({
             {/* Dates - Grouped */}
             <div className="flex items-center gap-2 w-full md:w-auto">
                 <DatePicker
-                    date={filters.startDate ? new Date(filters.startDate + "T00:00:00") : undefined}
+                    date={
+                        filters.startDate
+                            ? new Date(filters.startDate + "T00:00:00")
+                            : undefined
+                    }
                     setDate={(date) =>
-                        handleChange("startDate", date ? format(date, "yyyy-MM-dd") : "")
+                        handleChange(
+                            "startDate",
+                            date ? format(date, "yyyy-MM-dd") : ""
+                        )
                     }
                     className="w-full md:w-37.5"
                     placeholder="Início"
                 />
                 <span className="text-muted-foreground">-</span>
                 <DatePicker
-                    date={filters.endDate ? new Date(filters.endDate + "T00:00:00") : undefined}
+                    date={
+                        filters.endDate
+                            ? new Date(filters.endDate + "T00:00:00")
+                            : undefined
+                    }
                     setDate={(date) =>
-                        handleChange("endDate", date ? format(date, "yyyy-MM-dd") : "")
+                        handleChange(
+                            "endDate",
+                            date ? format(date, "yyyy-MM-dd") : ""
+                        )
                     }
                     className="w-full md:w-37.5"
                     placeholder="Fim"

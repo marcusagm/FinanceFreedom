@@ -3,6 +3,10 @@ import { useEffect, useState } from "react";
 import { api } from "../../lib/api";
 import type { Account } from "../../types";
 import { DebtForm } from "../debt/DebtForm";
+import {
+    categoryService,
+    type Category,
+} from "../../services/category.service";
 import { NewTransactionDialog } from "../transactions/NewTransactionDialog";
 import { Button } from "../ui/Button";
 import {
@@ -16,12 +20,15 @@ export function QuickActionFAB() {
     const [isTransactionOpen, setIsTransactionOpen] = useState(false);
     const [isDebtOpen, setIsDebtOpen] = useState(false);
     const [accounts, setAccounts] = useState<Account[]>([]);
+    const [categories, setCategories] = useState<Category[]>([]);
 
     useEffect(() => {
         if (isTransactionOpen) {
             api.get("/accounts")
                 .then((res) => setAccounts(res.data))
                 .catch(console.error);
+
+            categoryService.getAll().then(setCategories).catch(console.error);
         }
     }, [isTransactionOpen]);
 
@@ -38,7 +45,9 @@ export function QuickActionFAB() {
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="mb-2 w-48">
-                        <DropdownMenuItem onClick={() => setIsTransactionOpen(true)}>
+                        <DropdownMenuItem
+                            onClick={() => setIsTransactionOpen(true)}
+                        >
                             <Wallet className="mr-2 h-4 w-4" />
                             <span>Nova Transação</span>
                         </DropdownMenuItem>
@@ -57,6 +66,7 @@ export function QuickActionFAB() {
                     window.location.reload();
                 }}
                 accounts={accounts}
+                categories={categories}
             />
 
             <DebtForm

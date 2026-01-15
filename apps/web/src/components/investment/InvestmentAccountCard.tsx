@@ -1,8 +1,8 @@
 import { Bitcoin, Landmark, PiggyBank, TrendingUp, Wallet } from "lucide-react";
 import { Pencil, Trash2 } from "lucide-react";
-import { formatMoney } from "../../lib/utils";
 import { AppCard } from "../ui/AppCard";
 import { Button } from "../ui/Button";
+import { MoneyDisplay } from "../ui/MoneyDisplay";
 
 export type InvestmentAccount = {
     id: string;
@@ -51,7 +51,11 @@ const getTypeLabel = (type: string) => {
     }
 };
 
-export function InvestmentAccountCard({ account, onEdit, onDelete }: InvestmentAccountCardProps) {
+export function InvestmentAccountCard({
+    account,
+    onEdit,
+    onDelete,
+}: InvestmentAccountCardProps) {
     const actions = (
         <>
             {onEdit && (
@@ -90,13 +94,17 @@ export function InvestmentAccountCard({ account, onEdit, onDelete }: InvestmentA
             badge={
                 <div className="flex items-center gap-2">
                     {getTypeIcon(account.type)}
-                    <span className="text-xs font-medium">{getTypeLabel(account.type)}</span>
+                    <span className="text-xs font-medium">
+                        {getTypeLabel(account.type)}
+                    </span>
                 </div>
             }
             actions={actions}
         >
             <div className="space-y-2">
-                <div className="text-2xl font-bold">{formatMoney(Number(account.balance))}</div>
+                <div className="text-2xl font-bold">
+                    <MoneyDisplay value={Number(account.balance)} />
+                </div>
                 {(account.profitability || account.maturityDate) && (
                     <div className="text-xs text-muted-foreground flex flex-col gap-1">
                         {account.profitability && (
@@ -112,7 +120,9 @@ export function InvestmentAccountCard({ account, onEdit, onDelete }: InvestmentA
                             <span className="flex items-center gap-1">
                                 <Landmark className="h-3 w-3" />
                                 Vence em:{" "}
-                                {new Date(account.maturityDate).toLocaleDateString(undefined, {
+                                {new Date(
+                                    account.maturityDate
+                                ).toLocaleDateString(undefined, {
                                     timeZone: "UTC",
                                 })}
                             </span>

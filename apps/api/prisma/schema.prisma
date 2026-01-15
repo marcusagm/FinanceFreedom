@@ -36,6 +36,7 @@ model User {
   fixedExpenses    FixedExpense[]
   investmentAccounts InvestmentAccount[]
   savingsGoals     SavingsGoal[]
+  dailyHealthScores DailyHealthScore[]
 }
 
 model Account {
@@ -90,6 +91,7 @@ model Category {
   transactions Transaction[]
   debts        Debt[]
   fixedExpenses FixedExpense[]
+  incomeSources IncomeSource[]
   
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -149,6 +151,9 @@ model IncomeSource {
 
   userId       String
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  categoryId   String?
+  category     Category? @relation(fields: [categoryId], references: [id])
 }
 
 
@@ -244,6 +249,23 @@ model SavingsGoal {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  userId        String
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String?
+  user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model DailyHealthScore {
+  id        String   @id @default(uuid())
+  score     Int      // 0-1000
+  date      DateTime @default(now())
+  
+  // Breakdown for analytics
+  debtPenalty       Int @default(0)
+  investmentBonus   Int @default(0)
+  reserveBonus      Int @default(0)
+  
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

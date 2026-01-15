@@ -25,6 +25,7 @@ import {
     FormMessage,
 } from "../ui/Form";
 import { Input } from "../ui/Input";
+import { Select } from "../ui/Select";
 
 interface CategoryDialogProps {
     isOpen: boolean;
@@ -37,6 +38,7 @@ const formSchema = z.object({
     name: z.string().min(1, "Nome é obrigatório"),
     color: z.string().min(1, "Cor é obrigatória"),
     budgetLimit: z.number().min(0, "O limite deve ser positivo"),
+    type: z.enum(["EXPENSE", "INCOME"]),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -53,6 +55,7 @@ export function CategoryDialog({
             name: "",
             color: "#3B82F6",
             budgetLimit: 0,
+            type: "EXPENSE",
         },
     });
 
@@ -63,12 +66,16 @@ export function CategoryDialog({
                     name: categoryToEdit.name,
                     color: categoryToEdit.color,
                     budgetLimit: Number(categoryToEdit.budgetLimit),
+                    type:
+                        (categoryToEdit.type as "EXPENSE" | "INCOME") ||
+                        "EXPENSE",
                 });
             } else {
                 form.reset({
                     name: "",
                     color: "#3B82F6",
                     budgetLimit: 0,
+                    type: "EXPENSE",
                 });
             }
         }
@@ -127,6 +134,35 @@ export function CategoryDialog({
 
                         <FormField
                             control={form.control}
+                            name="type"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Tipo</FormLabel>
+                                    <FormControl>
+                                        <Select
+                                            label="Tipo"
+                                            value={field.value}
+                                            options={[
+                                                {
+                                                    label: "Despesa",
+                                                    value: "EXPENSE",
+                                                },
+                                                {
+                                                    label: "Receita",
+                                                    value: "INCOME",
+                                                },
+                                            ]}
+                                            onChange={field.onChange}
+                                            placeholder="Selecione o tipo"
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
                             name="color"
                             render={({ field }) => (
                                 <FormItem>
@@ -150,7 +186,9 @@ export function CategoryDialog({
                             }) => (
                                 <FormItem>
                                     <FormLabel>
-                                        Limite de Orçamento (Mensal)
+                                        {form.watch("type") === "INCOME"
+                                            ? "Meta de Receita (Mensal)"
+                                            : "Limite de Orçamento (Mensal)"}
                                     </FormLabel>
                                     <FormControl>
                                         <Input

@@ -5,6 +5,7 @@ import {
     Min,
     Max,
     IsPositive,
+    IsOptional,
 } from "class-validator";
 import { Type } from "class-transformer";
 
@@ -23,4 +24,8 @@ export class CreateIncomeSourceDto {
     @Max(31)
     @Type(() => Number)
     payDay: number;
+
+    @IsString()
+    @IsOptional()
+    categoryId?: string;
 }

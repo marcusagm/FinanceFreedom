@@ -1,8 +1,8 @@
 import { Award, Calendar, Target } from "lucide-react";
 import { Pencil, Trash2 } from "lucide-react";
-import { formatMoney } from "../../lib/utils";
 import { AppCard } from "../ui/AppCard";
 import { Button } from "../ui/Button";
+import { MoneyDisplay } from "../ui/MoneyDisplay";
 
 export type SavingsGoal = {
     id: string;
@@ -26,7 +26,11 @@ const getProgress = (current: number, target: number) => {
     return Math.min(progress, 100);
 };
 
-export function SavingsGoalCard({ goal, onEdit, onDelete }: SavingsGoalCardProps) {
+export function SavingsGoalCard({
+    goal,
+    onEdit,
+    onDelete,
+}: SavingsGoalCardProps) {
     const current = Number(goal.currentAmount);
     const target = Number(goal.targetAmount);
     const progress = getProgress(current, target);
@@ -75,8 +79,12 @@ export function SavingsGoalCard({ goal, onEdit, onDelete }: SavingsGoalCardProps
             actions={actions}
         >
             <div className="flex justify-between items-baseline mb-2">
-                <span className="text-2xl font-bold">{formatMoney(current)}</span>
-                <span className="text-xs text-muted-foreground mr-1">de {formatMoney(target)}</span>
+                <span className="text-2xl font-bold">
+                    <MoneyDisplay value={current} />
+                </span>
+                <span className="text-xs text-muted-foreground mr-1">
+                    de <MoneyDisplay value={target} />
+                </span>
             </div>
 
             {/* Progress Bar */}

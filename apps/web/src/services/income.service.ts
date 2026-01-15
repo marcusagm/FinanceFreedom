@@ -5,6 +5,7 @@ export interface IncomeSource {
     name: string;
     amount: number;
     payDay: number;
+    categoryId?: string;
 }
 
 export interface WorkUnit {
@@ -19,6 +20,7 @@ export interface CreateIncomeSourceDto {
     name: string;
     amount: number;
     payDay: number;
+    categoryId?: string;
 }
 
 export interface CreateWorkUnitDto {

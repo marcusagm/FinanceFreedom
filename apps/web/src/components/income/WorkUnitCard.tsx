@@ -2,6 +2,7 @@ import { Pencil, Trash2 } from "lucide-react";
 import type { WorkUnit } from "../../services/income.service";
 import { AppCard } from "../ui/AppCard";
 import { Button } from "../ui/Button";
+import { MoneyDisplay } from "../ui/MoneyDisplay";
 
 interface WorkUnitCardProps {
     unit: WorkUnit;
@@ -46,10 +47,7 @@ export function WorkUnitCard({ unit, onEdit, onDelete }: WorkUnitCardProps) {
             footer={`Tempo Estimado: ${unit.estimatedTime}h`}
         >
             <div className="text-2xl font-bold tracking-tight text-blue-600 dark:text-blue-400">
-                {new Intl.NumberFormat("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                }).format(unit.defaultPrice)}
+                <MoneyDisplay value={unit.defaultPrice} />
             </div>
         </AppCard>
     );

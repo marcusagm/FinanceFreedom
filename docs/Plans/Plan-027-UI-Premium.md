@@ -34,6 +34,7 @@
 -   [ ] **Tabelas (Transactions/Accounts):** Melhorar densidade de informação, alinhamento de colunas e clareza de badges/tags.
 -   [ ] **Formulários:** Padronizar labels, helpers e feedbacks de erro para reduzir carga cognitiva.
 -   [ ] **Fluxos de Autenticação:** Tornar as telas de Login/Register mais convidativas e modernas.
+-   [ ] **Formatar componentes:** Dialog para que o conteúdo não estrapole a tela, deixando sempre o cabeçalho e o rodapé visível, criando barra de rolagem para a area de conteúdo.
 
 ## 3. Critérios de Aceite
 
