@@ -1,4 +1,9 @@
-import { AlertTriangle, ArrowRight, CheckCircle, TrendingUp } from "lucide-react";
+import {
+    AlertTriangle,
+    ArrowRight,
+    CheckCircle,
+    TrendingUp,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import type { ActionRecommendation } from "../../services/dashboard.service";
 import { AppCard } from "../ui/AppCard";
@@ -12,11 +17,17 @@ export function ActionCard({ recommendation }: ActionCardProps) {
     const getIcon = () => {
         switch (recommendation.type) {
             case "PAY_DEBT":
-                return <CheckCircle className="h-5 w-5 text-indigo-500" />;
+                return (
+                    <CheckCircle className="h-5 w-5 text-priority-high-foreground" />
+                );
             case "INVEST":
-                return <TrendingUp className="h-5 w-5 text-emerald-500" />;
+                return (
+                    <TrendingUp className="h-5 w-5 text-priority-medium-foreground" />
+                );
             case "INCOME_GAP":
-                return <AlertTriangle className="h-5 w-5 text-amber-500" />;
+                return (
+                    <AlertTriangle className="h-5 w-5 text-priority-critical-foreground" />
+                );
             default:
                 return <CheckCircle className="h-5 w-5 text-blue-500" />;
         }
@@ -25,13 +36,13 @@ export function ActionCard({ recommendation }: ActionCardProps) {
     const getBorderColor = () => {
         switch (recommendation.priority) {
             case "CRITICAL":
-                return "border-amber-200 bg-amber-50 dark:bg-amber-950 dark:border-amber-900";
+                return "border-priority-critical-border bg-priority-critical-bg text-priority-critical-foreground";
             case "HIGH":
-                return "border-indigo-200 bg-indigo-50 dark:bg-indigo-950 dark:border-indigo-900";
+                return "border-priority-high-border bg-priority-high-bg text-priority-high-foreground";
             case "MEDIUM":
-                return "border-emerald-200 bg-emerald-50 dark:bg-emerald-950 dark:border-emerald-900";
+                return "border-priority-medium-border bg-priority-medium-bg text-priority-medium-foreground";
             default:
-                return "border-gray-200 bg-card dark:border-border";
+                return "border-border bg-card text-card-foreground";
         }
     };
 
@@ -50,7 +61,7 @@ export function ActionCard({ recommendation }: ActionCardProps) {
             className={getBorderColor()}
             badge={
                 recommendation.priority === "CRITICAL" ? (
-                    <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-900 dark:text-amber-200">
+                    <span className="inline-flex items-center rounded-full bg-priority-critical-border/50 px-2.5 py-0.5 text-xs font-medium text-priority-critical-foreground">
                         Crítico
                     </span>
                 ) : (
@@ -59,7 +70,7 @@ export function ActionCard({ recommendation }: ActionCardProps) {
             }
             footer={footer}
         >
-            <p className="text-sm text-gray-600 dark:text-gray-300">{recommendation.description}</p>
+            <p className="text-sm opacity-90">{recommendation.description}</p>
         </AppCard>
     );
 }

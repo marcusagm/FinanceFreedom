@@ -102,7 +102,7 @@ export function NewTransactionDialog({
                     amount: Number(initialData.amount),
                     type: initialData.type,
                     date: initialData.date
-                        ? format(new Date(initialData.date), "yyyy-MM-dd")
+                        ? String(initialData.date).split("T")[0]
                         : format(new Date(), "yyyy-MM-dd"),
                     accountId: initialData.accountId,
                     categoryId: initialData.categoryId || "",

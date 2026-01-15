@@ -34,6 +34,19 @@
     --sidebar-accent-foreground: hsl(240, 5.9%, 10%);
     --sidebar-border: hsl(220, 13%, 91%);
     --sidebar-ring: hsl(142, 71%, 45%);
+
+    /* Action Priority Variables - Light Mode */
+    --priority-critical-bg: hsl(0, 85%, 96%); /* Red 50 */
+    --priority-critical-border: hsl(0, 90%, 90%); /* Red 200 */
+    --priority-critical-foreground: hsl(0, 75%, 40%); /* Red 700 */
+
+    --priority-high-bg: hsl(35, 100%, 96%); /* Orange 50 */
+    --priority-high-border: hsl(35, 90%, 88%); /* Orange 200 */
+    --priority-high-foreground: hsl(30, 80%, 35%); /* Orange 700 */
+
+    --priority-medium-bg: hsl(150, 80%, 98%); /* Emerald 50 */
+    --priority-medium-border: hsl(150, 70%, 90%); /* Emerald 200 */
+    --priority-medium-foreground: hsl(160, 80%, 30%); /* Emerald 700/Text */
 }
 
 .dark {
@@ -71,4 +84,17 @@
     --sidebar-accent-foreground: hsl(210, 40%, 98%);
     --sidebar-border: hsl(217, 32%, 17%);
     --sidebar-ring: hsl(142, 71%, 45%);
+
+    /* Action Priority Variables - Dark Mode */
+    --priority-critical-bg: hsl(0, 62%, 15%); /* Red 950 approx */
+    --priority-critical-border: hsl(0, 62%, 25%); /* Red 900 approx */
+    --priority-critical-foreground: hsl(0, 80%, 85%); /* Red 200 */
+
+    --priority-high-bg: hsl(30, 80%, 15%); /* Orange/Amber 950 approx */
+    --priority-high-border: hsl(30, 80%, 25%); /* Orange/Amber 900 approx */
+    --priority-high-foreground: hsl(35, 90%, 85%); /* Orange 200 */
+
+    --priority-medium-bg: hsl(150, 60%, 10%); /* Emerald 950 approx */
+    --priority-medium-border: hsl(150, 60%, 20%); /* Emerald 900 approx */
+    --priority-medium-foreground: hsl(150, 80%, 80%); /* Emerald 200 approx */
 }

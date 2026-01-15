@@ -8,6 +8,7 @@ import { ExpenseSummaryWidget } from "../components/dashboard/ExpenseSummaryWidg
 import { HealthScoreWidget } from "../components/dashboard/HealthScoreWidget";
 import { IncomeSummaryWidget } from "../components/dashboard/IncomeSummaryWidget";
 import { IncomeWidget } from "../components/dashboard/IncomeWidget";
+import { RecentTransactionsWidget } from "../components/dashboard/RecentTransactionsWidget";
 import { UpcomingInstallmentsWidget } from "../components/dashboard/UpcomingInstallmentsWidget";
 import { WealthWidget } from "../components/dashboard/WealthWidget";
 import { SyncTransactionsDialog } from "../components/import/SyncTransactionsDialog";
@@ -192,27 +193,24 @@ export default function Dashboard() {
             </div>
 
             {/* Main Content Grid: Chart + Upcoming Installments */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-                <div className="col-span-4 max-h-100">
-                    <BalanceChartWidget
-                        data={summary.chartData}
-                        isObfuscated={isObfuscated}
-                    />
-                </div>
-
-                <div className="col-span-3 space-y-4">
-                    <HealthScoreWidget />
-                </div>
+            <div className="grid gap-4 md:grid-cols-1">
+                <BalanceChartWidget
+                    dailyData={summary.chartData}
+                    annualData={summary.annualChartData || []}
+                    isObfuscated={isObfuscated}
+                />
             </div>
 
             {/* Financial Health Row */}
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-3">
+                <HealthScoreWidget />
                 <IncomeWidget />
                 <BudgetWidget />
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
                 <UpcomingInstallmentsWidget />
+                <RecentTransactionsWidget />
             </div>
 
             {/* Action Feed */}

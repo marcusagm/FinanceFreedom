@@ -2,6 +2,15 @@ import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../../prisma/prisma.service";
 import { DebtService } from "../debt/debt.service";
 
+export interface ActionRecommendation {
+    type: "PAY_DEBT" | "INVEST" | "INCOME_GAP";
+    title: string;
+    description: string;
+    actionLabel: string;
+    actionLink: string;
+    priority: "HIGH" | "MEDIUM" | "CRITICAL";
+}
+
 @Injectable()
 export class DashboardService {
     constructor(
@@ -66,7 +75,7 @@ export class DashboardService {
 
         // 3. Recommendations
         const freeCashFlow = income - expenses;
-        const recommendations = [];
+        const recommendations: ActionRecommendation[] = [];
 
         if (freeCashFlow > 0) {
             const { debts } = await this.debtService.getSortedDebts(
@@ -122,6 +131,7 @@ export class DashboardService {
                 userId,
                 date: {
                     gte: thirtyDaysAgo,
+                    lte: new Date(),
                 },
             },
             orderBy: {
@@ -153,17 +163,86 @@ export class DashboardService {
             date.setDate(today.getDate() - i);
             const dateKey = formatDate(date);
 
-            balanceEvolution.push({
-                date: dateKey,
-                balance: currentCalcBalance,
-            });
-
             const dayTrans = transactionsMap.get(dateKey) || {
                 income: 0,
                 expense: 0,
             };
+
+            balanceEvolution.push({
+                date: dateKey,
+                balance: currentCalcBalance,
+                income: dayTrans.income,
+                expense: dayTrans.expense,
+            });
+
             currentCalcBalance =
                 currentCalcBalance - dayTrans.income + dayTrans.expense;
+        }
+
+        // 5. Annual Chart Data (Last 12 months)
+        const oneYearAgo = new Date();
+        oneYearAgo.setFullYear(today.getFullYear() - 1);
+        oneYearAgo.setDate(1); // Start from the beginning of that month
+
+        const last12MonthsTransactions = await this.prisma.transaction.findMany(
+            {
+                where: {
+                    userId,
+                    date: {
+                        gte: oneYearAgo,
+                        lte: new Date(),
+                    },
+                },
+                orderBy: {
+                    date: "asc",
+                },
+            }
+        );
+
+        const annualMap = new Map<
+            string,
+            { income: number; expense: number }
+        >();
+        const formatMonth = (date: Date) =>
+            `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+                2,
+                "0"
+            )}`;
+
+        for (const t of last12MonthsTransactions) {
+            const monthKey = formatMonth(t.date);
+            if (!annualMap.has(monthKey)) {
+                annualMap.set(monthKey, { income: 0, expense: 0 });
+            }
+            const entry = annualMap.get(monthKey)!;
+            if (t.type === "INCOME") entry.income += Number(t.amount);
+            else entry.expense += Number(t.amount);
+        }
+
+        let currentAnnualBalance = totalBalance;
+        const annualEvolution = [];
+
+        for (let i = 0; i < 12; i++) {
+            const date = new Date();
+            date.setMonth(today.getMonth() - i);
+            const monthKey = formatMonth(date);
+
+            const monthTrans = annualMap.get(monthKey) || {
+                income: 0,
+                expense: 0,
+            };
+
+            annualEvolution.push({
+                date: monthKey,
+                balance: currentAnnualBalance,
+                income: monthTrans.income,
+                expense: monthTrans.expense,
+            });
+
+            // For annual, we are going backwards from current balance.
+            // Previous month balance = Current - Net Income of Current Month
+            currentAnnualBalance =
+                currentAnnualBalance - monthTrans.income + monthTrans.expense;
         }
 
         return {
@@ -174,6 +253,7 @@ export class DashboardService {
             monthlyIncome: income,
             monthlyExpenses: expenses,
             chartData: balanceEvolution.reverse(),
+            annualChartData: annualEvolution.reverse(),
             recommendations,
         };
     }

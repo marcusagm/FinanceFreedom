@@ -5,7 +5,11 @@ interface ChartTooltipProps {
     active?: boolean;
     payload?: any[];
     label?: string;
-    formatter?: (value: number) => string | ReactNode;
+    formatter?: (
+        value: number,
+        name?: string,
+        props?: any
+    ) => string | ReactNode;
 }
 
 export function ChartTooltip({
@@ -33,7 +37,7 @@ export function ChartTooltip({
                             </span>
                             <span className="font-medium font-mono">
                                 {formatter
-                                    ? formatter(entry.value)
+                                    ? formatter(entry.value, entry.name, entry)
                                     : entry.value}
                             </span>
                         </div>

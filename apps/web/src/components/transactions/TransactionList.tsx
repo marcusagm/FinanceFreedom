@@ -51,9 +51,16 @@ export function TransactionList({
                     {transactions.map((transaction) => (
                         <TableRow key={transaction.id}>
                             <TableCell className="text-left">
-                                {new Date(
-                                    transaction.date
-                                ).toLocaleDateString()}
+                                {(() => {
+                                    if (!transaction.date) return "-";
+                                    const dateStr = transaction.date.toString();
+                                    const datePart = dateStr.includes("T")
+                                        ? dateStr.split("T")[0]
+                                        : dateStr;
+                                    const [year, month, day] =
+                                        datePart.split("-");
+                                    return `${day}/${month}/${year}`;
+                                })()}
                             </TableCell>
                             <TableCell className="text-left">
                                 {transaction.description}

@@ -16,7 +16,18 @@ export interface DashboardSummary {
     netWorth: number;
     monthlyIncome: number;
     monthlyExpenses: number;
-    chartData: { date: string; balance: number }[];
+    chartData: {
+        date: string;
+        balance: number;
+        income: number;
+        expense: number;
+    }[];
+    annualChartData: {
+        date: string;
+        balance: number;
+        income: number;
+        expense: number;
+    }[];
     recommendations: ActionRecommendation[];
 }
 

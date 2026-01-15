@@ -207,14 +207,14 @@ export function Sidebar({ className }: SidebarProps) {
                         collapsed ? "justify-center p-0 bg-transparent" : ""
                     )}
                 >
-                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                        <User className="h-4 w-4" />
-                    </div>
-                    {!collapsed && (
-                        <Link
-                            to="/profile"
-                            className="flex-1 overflow-hidden flex items-center gap-2 hover:bg-sidebar-accent/50 rounded p-1 -ml-1 transition-colors"
-                        >
+                    <Link
+                        to="/profile"
+                        className="flex-1 overflow-hidden flex items-center gap-2 hover:bg-sidebar-accent/50 rounded p-1 -ml-1 transition-colors"
+                    >
+                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                            <User className="h-4 w-4" />
+                        </div>
+                        {!collapsed && (
                             <div className="flex-1 overflow-hidden">
                                 <p className="text-sm font-medium truncate">
                                     {user?.email}
@@ -223,8 +223,8 @@ export function Sidebar({ className }: SidebarProps) {
                                     Free Plan
                                 </p>
                             </div>
-                        </Link>
-                    )}
+                        )}
+                    </Link>
                     {!collapsed && (
                         <Button
                             variant="ghost"

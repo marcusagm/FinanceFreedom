@@ -109,9 +109,7 @@ export function DebtForm({
                     installmentsTotal: debtToEdit.installmentsTotal,
                     installmentsPaid: debtToEdit.installmentsPaid,
                     firstInstallmentDate: debtToEdit.firstInstallmentDate
-                        ? new Date(debtToEdit.firstInstallmentDate)
-                              .toISOString()
-                              .split("T")[0]
+                        ? String(debtToEdit.firstInstallmentDate).split("T")[0]
                         : undefined,
                 });
             } else {
