@@ -65,22 +65,26 @@ export function Register() {
             });
             const { access_token } = loginRes.data;
 
-            api.defaults.headers.common["Authorization"] = `Bearer ${access_token}`;
+            api.defaults.headers.common[
+                "Authorization"
+            ] = `Bearer ${access_token}`;
             const profileRes = await api.get("/auth/profile");
 
             login(access_token, profileRes.data);
             navigate("/");
         } catch (err: any) {
             console.error("Registration failed", err);
-            const message = err.response?.data?.message || "Registration failed. Please try again.";
+            const message =
+                err.response?.data?.message ||
+                "Registration failed. Please try again.";
             setAuthError(Array.isArray(message) ? message.join(", ") : message);
             delete api.defaults.headers.common["Authorization"];
         }
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-background p-4">
-            <Card className="w-full max-w-md">
+        <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-primary/10 via-background to-muted p-4">
+            <Card className="w-full max-w-md shadow-lg border-primary/10">
                 <CardHeader className="text-center">
                     <CardTitle className="text-2xl">Create Account</CardTitle>
                     <CardDescription>
@@ -104,7 +108,9 @@ export function Register() {
                                 {...register("name")}
                             />
                             {errors.name && (
-                                <p className="text-sm text-destructive">{errors.name.message}</p>
+                                <p className="text-sm text-destructive">
+                                    {errors.name.message}
+                                </p>
                             )}
                         </div>
                         <div className="space-y-2">
@@ -117,7 +123,9 @@ export function Register() {
                                 {...register("email")}
                             />
                             {errors.email && (
-                                <p className="text-sm text-destructive">{errors.email.message}</p>
+                                <p className="text-sm text-destructive">
+                                    {errors.email.message}
+                                </p>
                             )}
                         </div>
                         <div className="space-y-2">
@@ -135,7 +143,9 @@ export function Register() {
                             )}
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="confirmPassword">Confirm Password</Label>
+                            <Label htmlFor="confirmPassword">
+                                Confirm Password
+                            </Label>
                             <Input
                                 id="confirmPassword"
                                 type="password"
@@ -150,12 +160,21 @@ export function Register() {
                         </div>
                     </CardContent>
                     <CardFooter className="flex flex-col space-y-4">
-                        <Button type="submit" className="w-full" disabled={isSubmitting}>
-                            {isSubmitting ? "Creating account..." : "Create Account"}
+                        <Button
+                            type="submit"
+                            className="w-full"
+                            disabled={isSubmitting}
+                        >
+                            {isSubmitting
+                                ? "Creating account..."
+                                : "Create Account"}
                         </Button>
                         <div className="text-center text-sm">
                             Already have an account?{" "}
-                            <Link to="/login" className="text-primary hover:underline">
+                            <Link
+                                to="/login"
+                                className="text-primary hover:underline"
+                            >
                                 Sign In
                             </Link>
                         </div>

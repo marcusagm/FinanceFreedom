@@ -2,6 +2,7 @@ import { AppAlert } from "../../components/ui/AppAlert";
 import { Button } from "../../components/ui/Button";
 import {
     Dialog,
+    DialogBody,
     DialogContent,
     DialogDescription,
     DialogFooter,
@@ -29,18 +30,31 @@ export function DeleteAccountDialog({
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Excluir Conta</DialogTitle>
-                    <DialogDescription>Esta ação não pode ser desfeita.</DialogDescription>
+                    <DialogDescription>
+                        Esta ação não pode ser desfeita.
+                    </DialogDescription>
                 </DialogHeader>
 
-                <AppAlert variant="destructive" title="Atenção">
-                    A conta <strong>{accountName}</strong> será permanentemente removida.
-                </AppAlert>
+                <DialogBody>
+                    <AppAlert variant="destructive" title="Atenção">
+                        A conta <strong>{accountName}</strong> será
+                        permanentemente removida.
+                    </AppAlert>
+                </DialogBody>
 
                 <DialogFooter>
-                    <Button variant="outline" onClick={onClose} disabled={isDeleting}>
+                    <Button
+                        variant="outline"
+                        onClick={onClose}
+                        disabled={isDeleting}
+                    >
                         Cancelar
                     </Button>
-                    <Button variant="destructive" onClick={onConfirm} disabled={isDeleting}>
+                    <Button
+                        variant="destructive"
+                        onClick={onConfirm}
+                        disabled={isDeleting}
+                    >
                         {isDeleting ? "Excluindo..." : "Sim, excluir conta"}
                     </Button>
                 </DialogFooter>

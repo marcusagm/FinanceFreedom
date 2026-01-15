@@ -4,14 +4,23 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { api } from "../../lib/api";
 import {
-    type IncomeSource,
-    createIncomeSource,
-} from "../../services/income.service";
-import {
     type Category,
     categoryService,
 } from "../../services/category.service";
+import {
+    createIncomeSource,
+    type IncomeSource,
+} from "../../services/income.service";
 import { Button } from "../ui/Button";
+import {
+    Dialog,
+    DialogBody,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "../ui/Dialog";
 import {
     Form,
     FormControl,
@@ -22,7 +31,6 @@ import {
 } from "../ui/Form";
 import { Input } from "../ui/Input";
 import { Select } from "../ui/Select";
-import { Modal } from "../ui/Modal";
 
 interface CreateIncomeSourceDialogProps {
     isOpen: boolean;
@@ -34,7 +42,7 @@ interface CreateIncomeSourceDialogProps {
 const formSchema = z.object({
     name: z.string().min(1, "Nome é obrigatório"),
     amount: z.number().min(0.01, "Valor deve ser maior que zero"),
-    payDay: z.number().min(1, "Dia inválido").max(31, "Dia inválido"),
+    payDay: z.number().min(1).max(31, "Dia inválido"),
     categoryId: z.string().optional(),
 });
 
@@ -44,6 +52,8 @@ export function CreateIncomeSourceDialog({
     onSuccess,
     itemToEdit,
 }: CreateIncomeSourceDialogProps) {
+    const [categories, setCategories] = useState<Category[]>([]);
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -54,17 +64,9 @@ export function CreateIncomeSourceDialog({
         },
     });
 
-    const [categories, setCategories] = useState<Category[]>([]);
-
     useEffect(() => {
-        if (isOpen) {
-            categoryService.getAll().then((data) => {
-                setCategories(
-                    data.filter((c: Category) => c.type === "INCOME")
-                );
-            });
-        }
-    }, [isOpen]);
+        categoryService.getAll().then(setCategories);
+    }, []);
 
     useEffect(() => {
         if (isOpen) {
@@ -97,136 +99,151 @@ export function CreateIncomeSourceDialog({
             onClose();
         } catch (error) {
             console.error(error);
-            alert("Erro ao salvar. Tente novamente.");
+            // toast error?
         }
     };
 
     return (
-        <Modal
-            title={itemToEdit ? "Editar Fonte de Renda" : "Nova Fonte de Renda"}
-            isOpen={isOpen}
-            onClose={onClose}
-        >
-            <Form {...form}>
-                <form
-                    onSubmit={form.handleSubmit(handleSubmit)}
-                    className="space-y-4"
-                >
-                    <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Nome (ex: Salário)</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        placeholder="Nome da fonte"
-                                        {...field}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+        <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>
+                        {itemToEdit
+                            ? "Editar Fonte de Renda"
+                            : "Nova Fonte de Renda"}
+                    </DialogTitle>
+                    <DialogDescription className="sr-only">
+                        Preencha os dados abaixo para salvar a fonte de renda.
+                    </DialogDescription>
+                </DialogHeader>
 
-                    <FormField
-                        control={form.control}
-                        name="amount"
-                        render={({ field: { onChange, value, ...field } }) => (
-                            <FormItem>
-                                <FormLabel>Valor (R$)</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        placeholder="0,00"
-                                        currency
-                                        value={value}
-                                        onValueChange={(values) => {
-                                            onChange(values.floatValue || 0);
-                                        }}
-                                        {...field}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                <Form {...form}>
+                    <form
+                        onSubmit={form.handleSubmit(handleSubmit)}
+                        className="flex flex-col flex-1 min-h-0"
+                    >
+                        <DialogBody className="space-y-4">
+                            <FormField
+                                control={form.control}
+                                name="name"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Nome (ex: Salário)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="Nome da fonte"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
-                    <FormField
-                        control={form.control}
-                        name="payDay"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Dia do Pagamento</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        type="number"
-                                        min="1"
-                                        max="31"
-                                        placeholder="5"
-                                        {...field}
-                                        onChange={(e) =>
-                                            field.onChange(
-                                                Number(e.target.value)
-                                            )
-                                        }
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                            <FormField
+                                control={form.control}
+                                name="amount"
+                                render={({
+                                    field: { onChange, value, ...field },
+                                }) => (
+                                    <FormItem>
+                                        <FormLabel>Valor (R$)</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="0,00"
+                                                currency
+                                                value={value}
+                                                onValueChange={(values) => {
+                                                    onChange(
+                                                        values.floatValue || 0
+                                                    );
+                                                }}
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
-                    <FormField
-                        control={form.control}
-                        name="categoryId"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>
-                                    Categoria de Renda (Opcional)
-                                </FormLabel>
-                                <FormControl>
-                                    <Select
-                                        label="Categoria"
-                                        value={field.value || ""}
-                                        options={[
-                                            {
-                                                label: "Sem categoria",
-                                                value: "",
-                                            },
-                                            ...categories.map((c) => ({
-                                                label: c.name,
-                                                value: c.id,
-                                            })),
-                                        ]}
-                                        onChange={field.onChange}
-                                        placeholder="Selecione uma categoria"
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                            <FormField
+                                control={form.control}
+                                name="payDay"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Dia do Pagamento</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="number"
+                                                min="1"
+                                                max="31"
+                                                placeholder="5"
+                                                {...field}
+                                                onChange={(e) =>
+                                                    field.onChange(
+                                                        Number(e.target.value)
+                                                    )
+                                                }
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
-                    <div className="flex justify-end pt-4">
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={onClose}
-                            className="mr-2"
-                        >
-                            Cancelar
-                        </Button>
-                        <Button
-                            type="submit"
-                            disabled={form.formState.isSubmitting}
-                        >
-                            {form.formState.isSubmitting
-                                ? "Salvando..."
-                                : "Salvar"}
-                        </Button>
-                    </div>
-                </form>
-            </Form>
-        </Modal>
+                            <FormField
+                                control={form.control}
+                                name="categoryId"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Categoria de Renda (Opcional)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Select
+                                                value={field.value || ""}
+                                                options={[
+                                                    {
+                                                        label: "Sem categoria",
+                                                        value: "",
+                                                    },
+                                                    ...categories.map((c) => ({
+                                                        label: c.name,
+                                                        value: c.id,
+                                                    })),
+                                                ]}
+                                                onChange={field.onChange}
+                                                placeholder="Selecione uma categoria"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </DialogBody>
+
+                        <DialogFooter>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={onClose}
+                            >
+                                Cancelar
+                            </Button>
+                            <Button
+                                type="submit"
+                                disabled={form.formState.isSubmitting}
+                            >
+                                {form.formState.isSubmitting
+                                    ? "Salvando..."
+                                    : "Salvar"}
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                </Form>
+            </DialogContent>
+        </Dialog>
     );
 }

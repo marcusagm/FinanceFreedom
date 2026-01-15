@@ -41,7 +41,7 @@ export default function IncomeProjection() {
             activationConstraint: {
                 distance: 8,
             },
-        }),
+        })
     );
 
     useEffect(() => {
@@ -134,7 +134,11 @@ export default function IncomeProjection() {
     // Fill start/end of grid
     const startDay = monthStart.getDay();
     const prefixDays = Array.from({ length: startDay }).map((_, i) => {
-        return new Date(monthStart.getFullYear(), monthStart.getMonth(), -startDay + i + 1);
+        return new Date(
+            monthStart.getFullYear(),
+            monthStart.getMonth(),
+            -startDay + i + 1
+        );
     });
 
     const calendarGrid = [...prefixDays, ...daysInMonth];
@@ -197,14 +201,18 @@ export default function IncomeProjection() {
     };
 
     return (
-        <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-            <div className="flex h-[calc(100vh-64px)] overflow-hidden">
-                {/* Sidebar: Available Work Units */}
-                <div className="w-80 border-r bg-slate-50 dark:bg-zinc-900! dark:border-zinc-800 p-4 overflow-y-auto transition-colors">
-                    <h2 className="font-bold mb-4 text-lg dark:text-foreground">
+        <DndContext
+            sensors={sensors}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+        >
+            <div className="flex h-[calc(100vh-64px)] overflow-hidden bg-background">
+                {/* Sidebar: Available Work Units - Hidden on mobile for now to prevent clutter */}
+                <div className="hidden md:block w-72 lg:w-80 border-r bg-card border-border p-4 overflow-y-auto transition-colors shrink-0">
+                    <h2 className="font-bold mb-4 text-lg text-foreground">
                         Unidades de Trabalho
                     </h2>
-                    <p className="text-sm text-slate-500 dark:text-muted-foreground mb-4">
+                    <p className="text-sm text-muted-foreground mb-4">
                         Arraste para o calendário para projetar.
                     </p>
                     <div className="space-y-2">
@@ -215,86 +223,121 @@ export default function IncomeProjection() {
                 </div>
 
                 {/* Main: Calendar Area */}
-                <div className="flex-1 flex flex-col p-6 overflow-hidden">
-                    <div className="flex justify-between items-center mb-6">
-                        <div className="flex items-center gap-4">
-                            <Button
-                                variant="outline"
-                                size="icon"
-                                onClick={() => setCurrentDate(subMonths(currentDate, 1))}
-                            >
-                                <ChevronLeft className="h-4 w-4" />
-                            </Button>
-                            <h1 className="text-2xl font-bold capitalize dark:text-foreground">
-                                {format(currentDate, "MMMM yyyy", {
-                                    locale: ptBR,
-                                })}
-                            </h1>
-                            <Button
-                                variant="outline"
-                                size="icon"
-                                onClick={() => setCurrentDate(addMonths(currentDate, 1))}
-                            >
-                                <ChevronRight className="h-4 w-4" />
-                            </Button>
-                        </div>
-
-                        <div className="flex gap-4">
-                            <div className="bg-red-100 dark:bg-red-500/10 px-4 py-2 rounded-lg border border-red-200 dark:border-red-500/20">
-                                <span className="text-red-800 dark:text-red-400 text-sm font-medium mr-2">
-                                    Despesas Fixas:
-                                </span>
-                                <span className="text-red-800 dark:text-red-400 text-xl font-bold">
-                                    <MoneyDisplay value={totalFixedExpenses} />
-                                </span>
+                <div className="flex-1 flex flex-col h-full overflow-hidden bg-background">
+                    {/* Header Area - Fixed */}
+                    <div className="p-4 md:p-6 border-b bg-background z-10 shrink-0">
+                        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 mb-2">
+                            <div className="flex items-center justify-between xl:justify-start gap-4">
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    onClick={() =>
+                                        setCurrentDate(
+                                            subMonths(currentDate, 1)
+                                        )
+                                    }
+                                >
+                                    <ChevronLeft className="h-4 w-4" />
+                                </Button>
+                                <h1 className="text-xl md:text-2xl font-bold capitalize text-foreground">
+                                    {format(currentDate, "MMMM yyyy", {
+                                        locale: ptBR,
+                                    })}
+                                </h1>
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    onClick={() =>
+                                        setCurrentDate(
+                                            addMonths(currentDate, 1)
+                                        )
+                                    }
+                                >
+                                    <ChevronRight className="h-4 w-4" />
+                                </Button>
                             </div>
 
-                            <div className="bg-emerald-100 dark:bg-emerald-500/10 px-4 py-2 rounded-lg border border-emerald-200 dark:border-emerald-500/20">
-                                <span className="text-emerald-800 dark:text-emerald-400 text-sm font-medium mr-2">
-                                    Entradas:
-                                </span>
-                                <span className="text-emerald-800 dark:text-emerald-400 text-xl font-bold">
-                                    <MoneyDisplay value={totalProjected} />
-                                </span>
-                            </div>
+                            <div className="flex flex-wrap items-center gap-2 md:gap-4">
+                                <div className="flex-1 min-w-35 px-3 py-2 rounded-lg border bg-destructive/10 border-destructive/20 text-destructive">
+                                    <span className="text-xs font-medium mr-1 opacity-80 block md:inline">
+                                        Despesas:
+                                    </span>
+                                    <span className="text-lg font-bold">
+                                        <MoneyDisplay
+                                            value={totalFixedExpenses}
+                                        />
+                                    </span>
+                                </div>
 
-                            <div className="bg-blue-100 dark:bg-blue-500/10 px-4 py-2 rounded-lg border border-blue-200 dark:border-blue-500/20">
-                                <span className="text-blue-800 dark:text-blue-400 text-sm font-medium mr-2">
-                                    Saldo Previsto:
-                                </span>
-                                <span className="text-blue-800 dark:text-blue-400 text-xl font-bold">
-                                    <MoneyDisplay value={totalProjected - totalFixedExpenses} />
-                                </span>
+                                <div className="flex-1 min-w-35 px-3 py-2 rounded-lg border bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400">
+                                    <span className="text-xs font-medium mr-1 opacity-80 block md:inline">
+                                        Entradas:
+                                    </span>
+                                    <span className="text-lg font-bold">
+                                        <MoneyDisplay value={totalProjected} />
+                                    </span>
+                                </div>
+
+                                <div className="flex-1 min-w-35 px-3 py-2 rounded-lg border bg-blue-500/10 border-blue-500/20 text-blue-600 dark:text-blue-400">
+                                    <span className="text-xs font-medium mr-1 opacity-80 block md:inline">
+                                        Saldo:
+                                    </span>
+                                    <span className="text-lg font-bold">
+                                        <MoneyDisplay
+                                            value={
+                                                totalProjected -
+                                                totalFixedExpenses
+                                            }
+                                        />
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Calendar Grid */}
-                    <div className="grid grid-cols-7 gap-px bg-slate-200 dark:bg-zinc-800! border border-slate-200 dark:border-zinc-800 rounded-lg overflow-hidden flex-1">
-                        {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"].map((day) => (
-                            <div
-                                key={day}
-                                className="bg-slate-50 dark:bg-zinc-900! p-2 text-center text-xs font-semibold text-slate-500 dark:text-muted-foreground uppercase"
-                            >
-                                {day}
+                    {/* Calendar Grid - Scrollable */}
+                    <div className="flex-1 overflow-auto p-4 md:p-6 bg-muted/10">
+                        <div className="min-w-200 h-full flex flex-col">
+                            <div className="grid grid-cols-7 gap-px bg-border border border-border rounded-t-lg overflow-hidden shrink-0 shadow-sm z-10 sticky top-0">
+                                {[
+                                    "Dom",
+                                    "Seg",
+                                    "Ter",
+                                    "Qua",
+                                    "Qui",
+                                    "Sex",
+                                    "Sáb",
+                                ].map((day) => (
+                                    <div
+                                        key={day}
+                                        className="bg-card p-3 text-center text-xs font-bold text-muted-foreground uppercase tracking-wider"
+                                    >
+                                        {day}
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                        {calendarGrid.map((date) => {
-                            const dateProjections = projections.filter((p) =>
-                                isSameDay(new Date(p.date), date),
-                            );
-                            return (
-                                <CalendarDay
-                                    key={date.toISOString()}
-                                    date={date}
-                                    isCurrentMonth={isSameMonth(date, currentDate)}
-                                    projections={dateProjections}
-                                    onRemove={handleRemoveProjection}
-                                    onStatusChange={handleStatusChange}
-                                    onDistribute={handleOpenDistribute}
-                                />
-                            );
-                        })}
+                            <div className="grid grid-cols-7 auto-rows-fr gap-px bg-border border-x border-b border-border rounded-b-lg overflow-hidden shadow-sm flex-1">
+                                {calendarGrid.map((date) => {
+                                    const dateProjections = projections.filter(
+                                        (p) => isSameDay(new Date(p.date), date)
+                                    );
+                                    return (
+                                        <CalendarDay
+                                            key={date.toISOString()}
+                                            date={date}
+                                            isCurrentMonth={isSameMonth(
+                                                date,
+                                                currentDate
+                                            )}
+                                            projections={dateProjections}
+                                            onRemove={handleRemoveProjection}
+                                            onStatusChange={handleStatusChange}
+                                            onDistribute={handleOpenDistribute}
+                                        />
+                                    );
+                                })}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -307,7 +350,9 @@ export default function IncomeProjection() {
                                 {activeDragItem.name}
                             </div>
                             <div className="font-bold text-emerald-600 dark:text-emerald-400 text-sm">
-                                <MoneyDisplay value={Number(activeDragItem.defaultPrice)} />
+                                <MoneyDisplay
+                                    value={Number(activeDragItem.defaultPrice)}
+                                />
                             </div>
                         </Card>
                     </div>
@@ -316,7 +361,9 @@ export default function IncomeProjection() {
 
             <DistributeIncomeDialog
                 open={distributeDialog.open}
-                onOpenChange={(open) => setDistributeDialog((prev) => ({ ...prev, open }))}
+                onOpenChange={(open) =>
+                    setDistributeDialog((prev) => ({ ...prev, open }))
+                }
                 onConfirm={handleConfirmDistribute}
                 workUnitName={distributeDialog.item?.workUnit.name || ""}
             />

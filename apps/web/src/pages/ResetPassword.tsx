@@ -20,7 +20,9 @@ import { notify } from "../lib/notification";
 
 const resetPasswordSchema = z
     .object({
-        newPassword: z.string().min(6, "Password must be at least 6 characters"),
+        newPassword: z
+            .string()
+            .min(6, "Password must be at least 6 characters"),
         confirmPassword: z.string(),
     })
     .refine((data) => data.newPassword === data.confirmPassword, {
@@ -61,18 +63,23 @@ export function ResetPassword() {
         } catch (err: any) {
             console.error("Reset password failed", err);
             setSubmitError(
-                err.response?.data?.message || "An error occurred while resetting your password.",
+                err.response?.data?.message ||
+                    "An error occurred while resetting your password."
             );
         }
     };
 
     if (!token) {
         return (
-            <div className="flex items-center justify-center min-h-screen bg-background p-4">
-                <Card className="w-full max-w-md">
+            <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-primary/10 via-background to-muted p-4">
+                <Card className="w-full max-w-md shadow-lg border-primary/10">
                     <CardHeader className="text-center">
-                        <CardTitle className="text-destructive">Invalid Link</CardTitle>
-                        <CardDescription>The password reset token is missing.</CardDescription>
+                        <CardTitle className="text-destructive">
+                            Invalid Link
+                        </CardTitle>
+                        <CardDescription>
+                            The password reset token is missing.
+                        </CardDescription>
                     </CardHeader>
                     <CardFooter className="flex justify-center">
                         <Link to="/forgot-password">
@@ -89,13 +96,17 @@ export function ResetPassword() {
             <Card className="w-full max-w-md">
                 <CardHeader className="text-center">
                     <CardTitle className="text-2xl">Reset Password</CardTitle>
-                    <CardDescription>Create a new password for your account.</CardDescription>
+                    <CardDescription>
+                        Create a new password for your account.
+                    </CardDescription>
                 </CardHeader>
                 <form onSubmit={handleSubmit(onSubmit)} noValidate>
                     <CardContent className="space-y-4">
                         {submitError && (
                             <Alert variant="destructive">
-                                <AlertDescription>{submitError}</AlertDescription>
+                                <AlertDescription>
+                                    {submitError}
+                                </AlertDescription>
                             </Alert>
                         )}
                         <div className="space-y-2">
@@ -113,7 +124,9 @@ export function ResetPassword() {
                             )}
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="confirmPassword">Confirm Password</Label>
+                            <Label htmlFor="confirmPassword">
+                                Confirm Password
+                            </Label>
                             <Input
                                 id="confirmPassword"
                                 type="password"
@@ -128,11 +141,18 @@ export function ResetPassword() {
                         </div>
                     </CardContent>
                     <CardFooter className="flex flex-col space-y-4">
-                        <Button type="submit" className="w-full" disabled={isSubmitting}>
+                        <Button
+                            type="submit"
+                            className="w-full"
+                            disabled={isSubmitting}
+                        >
                             {isSubmitting ? "Resetting..." : "Reset Password"}
                         </Button>
                         <div className="text-center text-sm">
-                            <Link to="/login" className="text-primary hover:underline">
+                            <Link
+                                to="/login"
+                                className="text-primary hover:underline"
+                            >
                                 Back to Login
                             </Link>
                         </div>

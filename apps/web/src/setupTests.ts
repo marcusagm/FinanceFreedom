@@ -59,55 +59,96 @@ vi.mock("@/contexts/PrivacyContext", async (importOriginal) => {
             isObfuscated: false,
             toggleObfuscation: vi.fn(),
         }),
-        PrivacyProvider: ({ children }: { children: React.ReactNode }) => children,
+        PrivacyProvider: ({ children }: { children: React.ReactNode }) =>
+            children,
     };
 });
 
 // Mock Dialog globally - Use a simplified version that doesn't use portals
 vi.mock("@/components/ui/Dialog", () => ({
     Dialog: ({ open, children }: any) =>
-        open ? React.createElement("div", { "data-testid": "dialog-root" }, children) : null,
+        open
+            ? React.createElement(
+                  "div",
+                  { "data-testid": "dialog-root" },
+                  children
+              )
+            : null,
     DialogContent: ({ children, className }: any) =>
         React.createElement(
             "div",
             { role: "dialog", className, "data-testid": "dialog-content" },
-            children,
+            children
         ),
-    DialogHeader: ({ children }: any) => React.createElement("div", null, children),
-    DialogTitle: ({ children }: any) => React.createElement("div", null, children),
-    DialogDescription: ({ children }: any) => React.createElement("div", null, children),
-    DialogFooter: ({ children }: any) => React.createElement("div", null, children),
-    DialogTrigger: ({ children }: any) => React.createElement("div", null, children),
+    DialogHeader: ({ children }: any) =>
+        React.createElement("div", null, children),
+    DialogBody: ({ children, className }: any) =>
+        React.createElement("div", { className }, children),
+    DialogTitle: ({ children }: any) =>
+        React.createElement("div", null, children),
+    DialogDescription: ({ children }: any) =>
+        React.createElement("div", null, children),
+    DialogFooter: ({ children }: any) =>
+        React.createElement("div", null, children),
+    DialogTrigger: ({ children }: any) =>
+        React.createElement("div", null, children),
 }));
 
 // Mock DropdownMenu globally - simpler version
 vi.mock("@/components/ui/DropdownMenu", () => {
     return {
         DropdownMenu: ({ children }: any) =>
-            React.createElement("div", { "data-testid": "dropdown-root" }, children),
+            React.createElement(
+                "div",
+                { "data-testid": "dropdown-root" },
+                children
+            ),
         DropdownMenuTrigger: ({ children }: any) =>
-            React.createElement("div", { "data-testid": "dropdown-trigger" }, children),
+            React.createElement(
+                "div",
+                { "data-testid": "dropdown-trigger" },
+                children
+            ),
         DropdownMenuContent: ({ children }: any) =>
-            React.createElement("div", { "data-testid": "dropdown-content" }, children),
+            React.createElement(
+                "div",
+                { "data-testid": "dropdown-content" },
+                children
+            ),
         DropdownMenuItem: ({ children, onClick }: any) =>
-            React.createElement("div", { onClick, "data-testid": "dropdown-item" }, children),
-        DropdownMenuLabel: ({ children }: any) => React.createElement("div", null, children),
+            React.createElement(
+                "div",
+                { onClick, "data-testid": "dropdown-item" },
+                children
+            ),
+        DropdownMenuLabel: ({ children }: any) =>
+            React.createElement("div", null, children),
         DropdownMenuSeparator: () => React.createElement("hr"),
-        DropdownMenuGroup: ({ children }: any) => React.createElement("div", null, children),
+        DropdownMenuGroup: ({ children }: any) =>
+            React.createElement("div", null, children),
         DropdownMenuPortal: ({ children }: any) =>
             React.createElement(React.Fragment, null, children),
-        DropdownMenuSub: ({ children }: any) => React.createElement("div", null, children),
-        DropdownMenuSubContent: ({ children }: any) => React.createElement("div", null, children),
-        DropdownMenuSubTrigger: ({ children }: any) => React.createElement("div", null, children),
-        DropdownMenuRadioGroup: ({ children }: any) => React.createElement("div", null, children),
-        DropdownMenuCheckboxItem: ({ children }: any) => React.createElement("div", null, children),
-        DropdownMenuRadioItem: ({ children }: any) => React.createElement("div", null, children),
-        DropdownMenuShortcut: ({ children }: any) => React.createElement("span", null, children),
+        DropdownMenuSub: ({ children }: any) =>
+            React.createElement("div", null, children),
+        DropdownMenuSubContent: ({ children }: any) =>
+            React.createElement("div", null, children),
+        DropdownMenuSubTrigger: ({ children }: any) =>
+            React.createElement("div", null, children),
+        DropdownMenuRadioGroup: ({ children }: any) =>
+            React.createElement("div", null, children),
+        DropdownMenuCheckboxItem: ({ children }: any) =>
+            React.createElement("div", null, children),
+        DropdownMenuRadioItem: ({ children }: any) =>
+            React.createElement("div", null, children),
+        DropdownMenuShortcut: ({ children }: any) =>
+            React.createElement("span", null, children),
     };
 });
 
 // Mock Radix UI Portals to render in place
 vi.mock("@radix-ui/react-portal", () => ({
-    Portal: ({ children }: any) => React.createElement(React.Fragment, null, children),
-    Root: ({ children }: any) => React.createElement(React.Fragment, null, children),
+    Portal: ({ children }: any) =>
+        React.createElement(React.Fragment, null, children),
+    Root: ({ children }: any) =>
+        React.createElement(React.Fragment, null, children),
 }));

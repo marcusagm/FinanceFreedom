@@ -17,20 +17,23 @@ export function Transactions() {
     const [isNewTransactionOpen, setIsNewTransactionOpen] = useState(false);
     const [loading, setLoading] = useState(true);
 
-    const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
+    const [editingTransaction, setEditingTransaction] =
+        useState<Transaction | null>(null);
 
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-    const [transactionToDelete, setTransactionToDelete] = useState<Transaction | null>(null);
+    const [transactionToDelete, setTransactionToDelete] =
+        useState<Transaction | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
 
     const fetchData = async () => {
         setLoading(true);
         try {
-            const [transactionsRes, accountsRes, categoriesRes] = await Promise.all([
-                api.get("/transactions"),
-                api.get("/accounts"),
-                categoryService.getAll(),
-            ]);
+            const [transactionsRes, accountsRes, categoriesRes] =
+                await Promise.all([
+                    api.get("/transactions"),
+                    api.get("/accounts"),
+                    categoryService.getAll(),
+                ]);
             setTransactions(transactionsRes.data);
             setAccounts(accountsRes.data);
             setCategories(categoriesRes);
@@ -58,7 +61,10 @@ export function Transactions() {
 
     const filteredTransactions = transactions.filter((t) => {
         // Search
-        if (filters.search && !t.description.toLowerCase().includes(filters.search.toLowerCase())) {
+        if (
+            filters.search &&
+            !t.description.toLowerCase().includes(filters.search.toLowerCase())
+        ) {
             return false;
         }
 
@@ -144,12 +150,14 @@ export function Transactions() {
             {loading ? (
                 <div className="text-center py-8">Carregando...</div>
             ) : (
-                <TransactionList
-                    transactions={filteredTransactions}
-                    onEdit={handleEdit}
-                    onDelete={handleDelete}
-                    onTransactionUpdated={fetchData}
-                />
+                <div className="bg-card rounded-xl border shadow">
+                    <TransactionList
+                        transactions={filteredTransactions}
+                        onEdit={handleEdit}
+                        onDelete={handleDelete}
+                        onTransactionUpdated={fetchData}
+                    />
+                </div>
             )}
 
             <NewTransactionDialog

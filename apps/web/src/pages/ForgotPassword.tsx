@@ -54,10 +54,13 @@ export function ForgotPassword() {
             <div className="flex items-center justify-center min-h-screen bg-background p-4">
                 <Card className="w-full max-w-md">
                     <CardHeader className="text-center">
-                        <CardTitle className="text-2xl">Check your email</CardTitle>
+                        <CardTitle className="text-2xl">
+                            Check your email
+                        </CardTitle>
                         <CardDescription>
-                            If an account exists for <strong>{getValues("email")}</strong>, we have
-                            sent a password reset link.
+                            If an account exists for{" "}
+                            <strong>{getValues("email")}</strong>, we have sent
+                            a password reset link.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="text-center space-y-4">
@@ -76,19 +79,22 @@ export function ForgotPassword() {
     }
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-background p-4">
-            <Card className="w-full max-w-md">
+        <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-primary/10 via-background to-muted p-4">
+            <Card className="w-full max-w-md shadow-lg border-primary/10">
                 <CardHeader className="text-center">
                     <CardTitle className="text-2xl">Forgot Password?</CardTitle>
                     <CardDescription>
-                        Enter your email and we'll send you a link to reset your password.
+                        Enter your email and we'll send you a link to reset your
+                        password.
                     </CardDescription>
                 </CardHeader>
                 <form onSubmit={handleSubmit(onSubmit)} noValidate>
                     <CardContent className="space-y-4">
                         {submitError && (
                             <Alert variant="destructive">
-                                <AlertDescription>{submitError}</AlertDescription>
+                                <AlertDescription>
+                                    {submitError}
+                                </AlertDescription>
                             </Alert>
                         )}
                         <div className="space-y-2">
@@ -100,16 +106,25 @@ export function ForgotPassword() {
                                 {...register("email")}
                             />
                             {errors.email && (
-                                <p className="text-sm text-destructive">{errors.email.message}</p>
+                                <p className="text-sm text-destructive">
+                                    {errors.email.message}
+                                </p>
                             )}
                         </div>
                     </CardContent>
                     <CardFooter className="flex flex-col space-y-4">
-                        <Button type="submit" className="w-full" disabled={isSubmitting}>
+                        <Button
+                            type="submit"
+                            className="w-full"
+                            disabled={isSubmitting}
+                        >
                             {isSubmitting ? "Sending..." : "Send Link"}
                         </Button>
                         <div className="text-center text-sm">
-                            <Link to="/login" className="text-primary hover:underline">
+                            <Link
+                                to="/login"
+                                className="text-primary hover:underline"
+                            >
                                 Back to Login
                             </Link>
                         </div>

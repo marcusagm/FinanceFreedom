@@ -49,14 +49,14 @@ export function DraggableWorkUnit({ workUnit }: DraggableWorkUnitProps) {
                         {!!workUnit.taxRate && workUnit.taxRate > 0 && (
                             <Badge
                                 variant="outline"
-                                className="text-xs text-red-600 border-red-200 bg-red-50 dark:bg-red-900/20 dark:text-red-400 dark:border-red-900"
+                                className="text-xs text-destructive border-destructive/20 bg-destructive/5"
                             >
                                 -{workUnit.taxRate}%
                             </Badge>
                         )}
                     </div>
                 </div>
-                <span className="font-bold text-emerald-600 dark:text-emerald-400 text-sm">
+                <span className="font-bold text-primary text-sm">
                     <MoneyDisplay value={Number(workUnit.defaultPrice)} />
                 </span>
             </div>

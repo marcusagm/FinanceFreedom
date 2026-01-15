@@ -9,6 +9,7 @@ import { Button } from "../ui/Button";
 import { DatePicker } from "../ui/DatePicker";
 import {
     Dialog,
+    DialogBody,
     DialogContent,
     DialogFooter,
     DialogHeader,
@@ -117,44 +118,18 @@ export function AddGoalDialog({
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit(handleSubmit)}
-                        className="space-y-4"
+                        className="flex flex-col flex-1 min-h-0"
                     >
-                        <FormField
-                            control={form.control}
-                            name="name"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Nome da Meta</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="Ex: Viagem para Japão"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <div className="grid grid-cols-2 gap-4">
+                        <DialogBody className="space-y-4">
                             <FormField
                                 control={form.control}
-                                name="targetAmount"
-                                render={({
-                                    field: { onChange, value, ...field },
-                                }) => (
+                                name="name"
+                                render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Valor Alvo</FormLabel>
+                                        <FormLabel>Nome da Meta</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="R$ 0,00"
-                                                currency
-                                                value={value}
-                                                onValueChange={(values) => {
-                                                    onChange(
-                                                        values.floatValue || 0
-                                                    );
-                                                }}
+                                                placeholder="Ex: Viagem para Japão"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -163,69 +138,99 @@ export function AddGoalDialog({
                                 )}
                             />
 
+                            <div className="grid grid-cols-2 gap-4">
+                                <FormField
+                                    control={form.control}
+                                    name="targetAmount"
+                                    render={({
+                                        field: { onChange, value, ...field },
+                                    }) => (
+                                        <FormItem>
+                                            <FormLabel>Valor Alvo</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder="R$ 0,00"
+                                                    currency
+                                                    value={value}
+                                                    onValueChange={(values) => {
+                                                        onChange(
+                                                            values.floatValue ||
+                                                                0
+                                                        );
+                                                    }}
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="currentAmount"
+                                    render={({
+                                        field: { onChange, value, ...field },
+                                    }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                Valor Atual (Guardado)
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder="R$ 0,00"
+                                                    currency
+                                                    value={value}
+                                                    onValueChange={(values) => {
+                                                        onChange(
+                                                            values.floatValue ||
+                                                                0
+                                                        );
+                                                    }}
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+
                             <FormField
                                 control={form.control}
-                                name="currentAmount"
-                                render={({
-                                    field: { onChange, value, ...field },
-                                }) => (
-                                    <FormItem>
-                                        <FormLabel>
-                                            Valor Atual (Guardado)
-                                        </FormLabel>
+                                name="deadline"
+                                render={({ field }) => (
+                                    <FormItem className="flex flex-col">
+                                        <FormLabel>Prazo (Opcional)</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder="R$ 0,00"
-                                                currency
-                                                value={value}
-                                                onValueChange={(values) => {
-                                                    onChange(
-                                                        values.floatValue || 0
-                                                    );
-                                                }}
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
-
-                        <FormField
-                            control={form.control}
-                            name="deadline"
-                            render={({ field }) => (
-                                <FormItem className="flex flex-col">
-                                    <FormLabel>Prazo (Opcional)</FormLabel>
-                                    <FormControl>
-                                        <DatePicker
-                                            date={
-                                                field.value
-                                                    ? new Date(
-                                                          field.value +
-                                                              "T00:00:00"
-                                                      )
-                                                    : undefined
-                                            }
-                                            setDate={(date) =>
-                                                field.onChange(
-                                                    date
-                                                        ? format(
-                                                              date,
-                                                              "yyyy-MM-dd"
+                                            <DatePicker
+                                                date={
+                                                    field.value
+                                                        ? new Date(
+                                                              field.value +
+                                                                  "T00:00:00"
                                                           )
-                                                        : ""
-                                                )
-                                            }
-                                            className="w-full"
-                                            placeholder="Selecione a data"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                                                        : undefined
+                                                }
+                                                setDate={(date) =>
+                                                    field.onChange(
+                                                        date
+                                                            ? format(
+                                                                  date,
+                                                                  "yyyy-MM-dd"
+                                                              )
+                                                            : ""
+                                                    )
+                                                }
+                                                className="w-full"
+                                                placeholder="Selecione a data"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </DialogBody>
 
                         <DialogFooter>
                             <Button

@@ -2,9 +2,19 @@ import { AlertCircle, CheckCircle, Plus, RefreshCw } from "lucide-react";
 import type React from "react";
 import { useEffect, useState } from "react";
 import { ImapConfigForm } from "../components/import/ImapConfigForm";
-import { type ImapConfig, ImapConfigList } from "../components/import/ImapConfigList";
+import {
+    type ImapConfig,
+    ImapConfigList,
+} from "../components/import/ImapConfigList";
 import { Button } from "../components/ui/Button";
-import { Modal } from "../components/ui/Modal";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "../components/ui/Dialog";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Select } from "../components/ui/Select";
 import { api } from "../lib/api";
@@ -18,7 +28,9 @@ export const ImapConfigPage: React.FC = () => {
 
     // Form Modal State
     const [isFormOpen, setIsFormOpen] = useState(false);
-    const [editingConfig, setEditingConfig] = useState<Partial<ImapConfig> | undefined>(undefined);
+    const [editingConfig, setEditingConfig] = useState<
+        Partial<ImapConfig> | undefined
+    >(undefined);
     const [isSaving, setIsSaving] = useState(false);
     const [isTesting, setIsTesting] = useState(false);
 
@@ -70,14 +82,19 @@ export const ImapConfigPage: React.FC = () => {
     };
 
     const handleDelete = async (id: string) => {
-        if (!confirm("Are you sure you want to delete this configuration?")) return;
+        if (!confirm("Are you sure you want to delete this configuration?"))
+            return;
 
         try {
             await api.post("/import/imap-config/delete", { id });
             setConfigs((prev) => prev.filter((c) => c.id !== id));
             showFeedback("Success", "Configuration deleted", "success");
         } catch (error: any) {
-            showFeedback("Error", error.response?.data?.message || "Failed to delete", "error");
+            showFeedback(
+                "Error",
+                error.response?.data?.message || "Failed to delete",
+                "error"
+            );
         }
     };
 
@@ -89,16 +106,26 @@ export const ImapConfigPage: React.FC = () => {
                 accountId: selectedAccount,
             });
             setIsFormOpen(false);
-            showFeedback("Success", "Configuration saved successfully", "success");
+            showFeedback(
+                "Success",
+                "Configuration saved successfully",
+                "success"
+            );
             loadConfigs();
         } catch (error: any) {
-            showFeedback("Error", error.response?.data?.message || "Failed to save", "error");
+            showFeedback(
+                "Error",
+                error.response?.data?.message || "Failed to save",
+                "error"
+            );
         } finally {
             setIsSaving(false);
         }
     };
 
-    const handleTest = async (data: any): Promise<{ success: boolean; message?: string }> => {
+    const handleTest = async (
+        data: any
+    ): Promise<{ success: boolean; message?: string }> => {
         setIsTesting(true);
         try {
             const res = await api.post("/import/imap-test", {
@@ -130,15 +157,27 @@ export const ImapConfigPage: React.FC = () => {
             const res = await api.post("/import/sync-now", {
                 accountId: selectedAccount,
             });
-            showFeedback("Sync Complete", `Synced ${res.data.imported} transactions!`, "success");
+            showFeedback(
+                "Sync Complete",
+                `Synced ${res.data.imported} transactions!`,
+                "success"
+            );
         } catch (error: any) {
-            showFeedback("Error", error.response?.data?.message || "Sync failed", "error");
+            showFeedback(
+                "Error",
+                error.response?.data?.message || "Sync failed",
+                "error"
+            );
         } finally {
             setIsSyncing(false);
         }
     };
 
-    const showFeedback = (title: string, message: string, type: "success" | "error") => {
+    const showFeedback = (
+        title: string,
+        message: string,
+        type: "success" | "error"
+    ) => {
         setFeedbackModal({ isOpen: true, title, message, type });
     };
 
@@ -149,12 +188,18 @@ export const ImapConfigPage: React.FC = () => {
 
     return (
         <div className="p-6 max-w-4xl mx-auto">
-            <PageHeader title="IMAP Configuration" backLink="/import" className="mb-6" />
+            <PageHeader
+                title="IMAP Configuration"
+                backLink="/import"
+                className="mb-6"
+            />
 
             <div className="space-y-6">
                 <div className="flex flex-col sm:flex-row gap-4 sm:items-end justify-between">
                     <div className="space-y-2 w-full sm:w-1/3">
-                        <label className="text-sm font-medium">Select Account Scope</label>
+                        <label className="text-sm font-medium">
+                            Select Account Scope
+                        </label>
                         <Select
                             value={selectedAccount}
                             onChange={setSelectedAccount}
@@ -170,11 +215,17 @@ export const ImapConfigPage: React.FC = () => {
                             disabled={isSyncing || !selectedAccount}
                         >
                             <RefreshCw
-                                className={`w-4 h-4 mr-2 ${isSyncing ? "animate-spin" : ""}`}
+                                className={`w-4 h-4 mr-2 ${
+                                    isSyncing ? "animate-spin" : ""
+                                }`}
                             />
                             Sync All
                         </Button>
-                        <Button variant="primary" onClick={handleAdd} disabled={!selectedAccount}>
+                        <Button
+                            variant="primary"
+                            onClick={handleAdd}
+                            disabled={!selectedAccount}
+                        >
                             <Plus className="w-4 h-4 mr-2" />
                             Add Configuration
                         </Button>
@@ -186,7 +237,11 @@ export const ImapConfigPage: React.FC = () => {
                         Loading configurations...
                     </div>
                 ) : (
-                    <ImapConfigList configs={configs} onEdit={handleEdit} onDelete={handleDelete} />
+                    <ImapConfigList
+                        configs={configs}
+                        onEdit={handleEdit}
+                        onDelete={handleDelete}
+                    />
                 )}
             </div>
 
@@ -201,35 +256,50 @@ export const ImapConfigPage: React.FC = () => {
             />
 
             {/* Feedback Modal */}
-            <Modal
-                isOpen={feedbackModal.isOpen}
-                onClose={() => setFeedbackModal((prev) => ({ ...prev, isOpen: false }))}
-                title={feedbackModal.title}
-                footer={
-                    <div className="flex justify-end">
-                        <Button
-                            variant={feedbackModal.type === "success" ? "primary" : "destructive"}
-                            onClick={() =>
-                                setFeedbackModal((prev) => ({
-                                    ...prev,
-                                    isOpen: false,
-                                }))
-                            }
-                        >
-                            Close
-                        </Button>
-                    </div>
+            {/* Feedback Dialog */}
+            <Dialog
+                open={feedbackModal.isOpen}
+                onOpenChange={(open) =>
+                    !open &&
+                    setFeedbackModal((prev) => ({ ...prev, isOpen: false }))
                 }
             >
-                <div className="flex items-center gap-3">
-                    {feedbackModal.type === "success" ? (
-                        <CheckCircle className="text-emerald-500 w-6 h-6" />
-                    ) : (
-                        <AlertCircle className="text-rose-500 w-6 h-6" />
-                    )}
-                    <p>{feedbackModal.message}</p>
-                </div>
-            </Modal>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>{feedbackModal.title}</DialogTitle>
+                        <DialogDescription className="sr-only">
+                            {feedbackModal.message}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="flex items-center gap-3 py-4">
+                        {feedbackModal.type === "success" ? (
+                            <CheckCircle className="text-emerald-500 w-6 h-6" />
+                        ) : (
+                            <AlertCircle className="text-destructive w-6 h-6" />
+                        )}
+                        <p>{feedbackModal.message}</p>
+                    </div>
+                    <DialogFooter>
+                        <div className="flex justify-end">
+                            <Button
+                                variant={
+                                    feedbackModal.type === "success"
+                                        ? "primary"
+                                        : "destructive"
+                                }
+                                onClick={() =>
+                                    setFeedbackModal((prev) => ({
+                                        ...prev,
+                                        isOpen: false,
+                                    }))
+                                }
+                            >
+                                Close
+                            </Button>
+                        </div>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 };

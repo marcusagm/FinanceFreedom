@@ -123,6 +123,43 @@ export default function Dashboard() {
                         <Button
                             variant="outline"
                             size="sm"
+                            onClick={() =>
+                                notify.success(
+                                    "Success",
+                                    "Operation completed successfully"
+                                )
+                            }
+                        >
+                            Success
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() =>
+                                notify.error("Error", "Something went wrong")
+                            }
+                        >
+                            Error
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() =>
+                                notify.info("Info", "Some information")
+                            }
+                        >
+                            Info
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => notify.loading("Loading")}
+                        >
+                            Loading
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="sm"
                             onClick={handleSyncClick}
                             disabled={syncing}
                         >

@@ -38,27 +38,27 @@ export function FixedExpenseList({
                     <TableHeader>
                         <TableRow>
                             <TableHead>Descrição</TableHead>
-                            <TableHead>Valor</TableHead>
-                            <TableHead>Dia Venc.</TableHead>
                             <TableHead>Categoria</TableHead>
                             <TableHead>Conta</TableHead>
-                            <TableHead>Auto-criar</TableHead>
-                            <TableHead className="text-right">Ações</TableHead>
+                            <TableHead className="w-24 text-center">
+                                Auto-criar
+                            </TableHead>
+                            <TableHead className="w-24 text-center">
+                                Dia Venc.
+                            </TableHead>
+                            <TableHead className="text-right">Valor</TableHead>
+                            <TableHead className="w-32 text-center">
+                                Ações
+                            </TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {expenses.map((expense) => (
                             <TableRow key={expense.id}>
-                                <TableCell className="font-medium">
+                                <TableCell className="text-left font-medium">
                                     {expense.description}
                                 </TableCell>
-                                <TableCell>
-                                    <MoneyDisplay
-                                        value={Number(expense.amount)}
-                                    />
-                                </TableCell>
-                                <TableCell>{expense.dueDay}</TableCell>
-                                <TableCell>
+                                <TableCell className="text-left">
                                     {expense.category ? (
                                         <span className="flex items-center gap-2">
                                             <div
@@ -75,11 +75,17 @@ export function FixedExpenseList({
                                         "-"
                                     )}
                                 </TableCell>
-                                <TableCell>
+                                <TableCell className="text-left">
                                     {expense.account?.name || "-"}
                                 </TableCell>
-                                <TableCell>
+                                <TableCell className="text-center">
                                     {expense.autoCreate ? "Sim" : "Não"}
+                                </TableCell>
+                                <TableCell>{expense.dueDay}</TableCell>
+                                <TableCell className="text-right">
+                                    <MoneyDisplay
+                                        value={Number(expense.amount)}
+                                    />
                                 </TableCell>
                                 <TableCell className="text-right">
                                     <Button

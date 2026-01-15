@@ -43,71 +43,76 @@ export function BalanceChartWidget({
             <CardHeader>
                 <CardTitle>Evolução do Saldo (30 dias)</CardTitle>
             </CardHeader>
-            <CardContent className="h-75 pl-2">
-                <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={data}>
-                        <defs>
-                            <linearGradient
-                                id="splitColor"
-                                x1="0"
-                                y1="0"
-                                x2="0"
-                                y2="1"
-                            >
-                                <stop
-                                    offset={off}
-                                    stopColor="#10b981"
-                                    stopOpacity={1}
-                                />
-                                <stop
-                                    offset={off}
-                                    stopColor="#ef4444"
-                                    stopOpacity={1}
-                                />
-                            </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                        <XAxis
-                            dataKey="date"
-                            stroke="#888888"
-                            fontSize={12}
-                            tickLine={false}
-                            axisLine={false}
-                            tickFormatter={(value) => {
-                                const date = new Date(value);
-                                return `${date.getDate()}/${
-                                    date.getMonth() + 1
-                                }`;
-                            }}
-                        />
-                        <YAxis
-                            stroke="#888888"
-                            fontSize={12}
-                            tickLine={false}
-                            axisLine={false}
-                            tickFormatter={(value) =>
-                                isObfuscated ? "••••••" : `R$ ${value}`
-                            }
-                        />
-                        <Tooltip
-                            content={
-                                <ChartTooltip
-                                    formatter={(value: number) => (
-                                        <MoneyDisplay value={value} />
-                                    )}
-                                />
-                            }
-                        />
-                        <ReferenceLine y={0} stroke="#000" />
-                        <Line
-                            type="monotone"
-                            dataKey="balance"
-                            stroke="url(#splitColor)"
-                            strokeWidth={2}
-                            dot={false}
-                        />
-                    </LineChart>
-                </ResponsiveContainer>
+            <CardContent>
+                <div style={{ width: "100%", height: 300 }}>
+                    <ResponsiveContainer>
+                        <LineChart data={data}>
+                            <defs>
+                                <linearGradient
+                                    id="splitColor"
+                                    x1="0"
+                                    y1="0"
+                                    x2="0"
+                                    y2="1"
+                                >
+                                    <stop
+                                        offset={off}
+                                        stopColor="#10b981"
+                                        stopOpacity={1}
+                                    />
+                                    <stop
+                                        offset={off}
+                                        stopColor="#ef4444"
+                                        stopOpacity={1}
+                                    />
+                                </linearGradient>
+                            </defs>
+                            <CartesianGrid
+                                strokeDasharray="3 3"
+                                vertical={false}
+                            />
+                            <XAxis
+                                dataKey="date"
+                                stroke="#888888"
+                                fontSize={12}
+                                tickLine={false}
+                                axisLine={false}
+                                tickFormatter={(value) => {
+                                    const date = new Date(value);
+                                    return `${date.getDate()}/${
+                                        date.getMonth() + 1
+                                    }`;
+                                }}
+                            />
+                            <YAxis
+                                stroke="#888888"
+                                fontSize={12}
+                                tickLine={false}
+                                axisLine={false}
+                                tickFormatter={(value) =>
+                                    isObfuscated ? "••••••" : `R$ ${value}`
+                                }
+                            />
+                            <Tooltip
+                                content={
+                                    <ChartTooltip
+                                        formatter={(value: number) => (
+                                            <MoneyDisplay value={value} />
+                                        )}
+                                    />
+                                }
+                            />
+                            <ReferenceLine y={0} stroke="#000" />
+                            <Line
+                                type="monotone"
+                                dataKey="balance"
+                                stroke="url(#splitColor)"
+                                strokeWidth={2}
+                                dot={false}
+                            />
+                        </LineChart>
+                    </ResponsiveContainer>
+                </div>
             </CardContent>
         </Card>
     );

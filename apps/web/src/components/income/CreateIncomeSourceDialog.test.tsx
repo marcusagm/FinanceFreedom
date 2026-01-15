@@ -10,6 +10,12 @@ vi.mock("../../services/income.service", () => ({
     createWorkUnit: vi.fn(),
 }));
 
+vi.mock("../../services/category.service", () => ({
+    categoryService: {
+        getAll: vi.fn().mockResolvedValue([]),
+    },
+}));
+
 // Mock API
 vi.mock("../../lib/api", () => ({
     api: {
@@ -18,17 +24,16 @@ vi.mock("../../lib/api", () => ({
 }));
 
 // Mock Modal to avoid animation visibility issues
-vi.mock("../ui/Modal", () => ({
-    Modal: ({ isOpen, title, children, footer }: any) => {
-        if (!isOpen) return null;
-        return (
-            <div data-testid="modal">
-                <h2>{title}</h2>
-                {children}
-                {footer}
-            </div>
-        );
+vi.mock("../ui/Dialog", () => ({
+    Dialog: ({ open, children }: any) => {
+        if (!open) return null;
+        return <div data-testid="modal">{children}</div>;
     },
+    DialogContent: ({ children }: any) => <div>{children}</div>,
+    DialogHeader: ({ children }: any) => <div>{children}</div>,
+    DialogBody: ({ children }: any) => <div>{children}</div>,
+    DialogTitle: ({ children }: any) => <h2>{children}</h2>,
+    DialogFooter: ({ children }: any) => <div>{children}</div>,
 }));
 
 // Mock Input
@@ -72,7 +77,9 @@ describe("CreateIncomeSourceDialog", () => {
     it("should render correctly", () => {
         render(<CreateIncomeSourceDialog {...defaultProps} />);
         expect(screen.getByText("Nova Fonte de Renda")).toBeInTheDocument();
-        expect(screen.getByPlaceholderText("Nome da fonte")).toBeInTheDocument();
+        expect(
+            screen.getByPlaceholderText("Nome da fonte")
+        ).toBeInTheDocument();
     });
 
     it("should validate inputs", async () => {
@@ -109,7 +116,7 @@ describe("CreateIncomeSourceDialog", () => {
                     name: "Salário",
                     amount: 5000,
                     payDay: 5,
-                }),
+                })
             );
             expect(defaultProps.onSuccess).toHaveBeenCalled();
         });
@@ -122,7 +129,12 @@ describe("CreateIncomeSourceDialog", () => {
             amount: 1000,
             payDay: 5,
         };
-        render(<CreateIncomeSourceDialog {...defaultProps} itemToEdit={itemToEdit} />);
+        render(
+            <CreateIncomeSourceDialog
+                {...defaultProps}
+                itemToEdit={itemToEdit}
+            />
+        );
 
         expect(screen.getByDisplayValue("Old Name")).toBeInTheDocument();
 
@@ -136,7 +148,7 @@ describe("CreateIncomeSourceDialog", () => {
                 "/income/sources/1",
                 expect.objectContaining({
                     name: "New Name",
-                }),
+                })
             );
         });
     });

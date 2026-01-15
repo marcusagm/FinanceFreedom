@@ -5,21 +5,31 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
 import type { Category } from "../../services/category.service";
-import { type FixedExpense, fixedExpenseService } from "../../services/fixed-expense.service";
+import {
+    type FixedExpense,
+    fixedExpenseService,
+} from "../../services/fixed-expense.service";
 import type { Account } from "../../types";
 import { Button } from "../ui/Button";
 import { Checkbox } from "../ui/Checkbox";
 import {
     Dialog,
+    DialogBody,
     DialogContent,
     DialogDescription,
     DialogFooter,
     DialogHeader,
     DialogTitle,
 } from "../ui/Dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/Form";
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "../ui/Form";
 import { Input } from "../ui/Input";
-import { Label } from "../ui/Label";
 import { Select } from "../ui/Select";
 
 interface FixedExpenseDialogProps {
@@ -116,7 +126,9 @@ export function FixedExpenseDialog({
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>
-                        {expenseToEdit ? "Editar Despesa Fixa" : "Nova Despesa Fixa"}
+                        {expenseToEdit
+                            ? "Editar Despesa Fixa"
+                            : "Nova Despesa Fixa"}
                     </DialogTitle>
                     <DialogDescription>
                         Configure os detalhes do pagamento recorrente.
@@ -124,36 +136,20 @@ export function FixedExpenseDialog({
                 </DialogHeader>
 
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-                        <FormField
-                            control={form.control}
-                            name="description"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Descrição</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Ex: Aluguel" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <div className="grid grid-cols-2 gap-4">
+                    <form
+                        onSubmit={form.handleSubmit(handleSubmit)}
+                        className="flex flex-col flex-1 min-h-0"
+                    >
+                        <DialogBody className="space-y-4">
                             <FormField
                                 control={form.control}
-                                name="amount"
-                                render={({ field: { value, onChange, ...field } }) => (
+                                name="description"
+                                render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Valor (R$)</FormLabel>
+                                        <FormLabel>Descrição</FormLabel>
                                         <FormControl>
                                             <Input
-                                                currency
-                                                placeholder="0,00"
-                                                value={value}
-                                                onValueChange={(values) => {
-                                                    onChange(values.floatValue || 0);
-                                                }}
+                                                placeholder="Ex: Aluguel"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -162,101 +158,152 @@ export function FixedExpenseDialog({
                                 )}
                             />
 
-                            <FormField
-                                control={form.control}
-                                name="dueDay"
-                                render={({ field: { onChange, ...field } }) => (
-                                    <FormItem>
-                                        <FormLabel>Dia de Vencimento</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                type="number"
-                                                min={1}
-                                                max={31}
-                                                onChange={(e) =>
-                                                    onChange(Number.parseInt(e.target.value))
-                                                }
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <FormField
+                                    control={form.control}
+                                    name="amount"
+                                    render={({
+                                        field: { value, onChange, ...field },
+                                    }) => (
+                                        <FormItem>
+                                            <FormLabel>Valor (R$)</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    currency
+                                                    placeholder="0,00"
+                                                    value={value}
+                                                    onValueChange={(values) => {
+                                                        onChange(
+                                                            values.floatValue ||
+                                                                0
+                                                        );
+                                                    }}
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
-                        <div className="grid grid-cols-2 gap-4">
+                                <FormField
+                                    control={form.control}
+                                    name="dueDay"
+                                    render={({
+                                        field: { onChange, ...field },
+                                    }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                Dia de Vencimento
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type="number"
+                                                    min={1}
+                                                    max={31}
+                                                    onChange={(e) =>
+                                                        onChange(
+                                                            Number.parseInt(
+                                                                e.target.value
+                                                            )
+                                                        )
+                                                    }
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <FormField
+                                    control={form.control}
+                                    name="categoryId"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Categoria</FormLabel>
+                                            <FormControl>
+                                                <Select
+                                                    value={field.value}
+                                                    onChange={field.onChange}
+                                                    options={categories.map(
+                                                        (c) => ({
+                                                            value: c.id,
+                                                            label: c.name,
+                                                        })
+                                                    )}
+                                                    placeholder="Selecione"
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="accountId"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Conta</FormLabel>
+                                            <FormControl>
+                                                <Select
+                                                    value={field.value}
+                                                    onChange={field.onChange}
+                                                    options={accounts.map(
+                                                        (a) => ({
+                                                            value: a.id,
+                                                            label: a.name,
+                                                        })
+                                                    )}
+                                                    placeholder="Selecione"
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+
                             <FormField
                                 control={form.control}
-                                name="categoryId"
+                                name="autoCreate"
                                 render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Categoria</FormLabel>
+                                    <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4">
                                         <FormControl>
-                                            <Select
-                                                value={field.value}
-                                                onChange={field.onChange}
-                                                options={categories.map((c) => ({
-                                                    value: c.id,
-                                                    label: c.name,
-                                                }))}
-                                                placeholder="Selecione"
+                                            <Checkbox
+                                                checked={field.value}
+                                                onCheckedChange={field.onChange}
                                             />
                                         </FormControl>
-                                        <FormMessage />
+                                        <div className="space-y-1 leading-none">
+                                            <FormLabel>
+                                                Criar transação automaticamente
+                                            </FormLabel>
+                                            <p className="text-sm text-muted-foreground">
+                                                O sistema irá gerar a despesa no
+                                                dia do vencimento.
+                                            </p>
+                                        </div>
                                     </FormItem>
                                 )}
                             />
-
-                            <FormField
-                                control={form.control}
-                                name="accountId"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Conta</FormLabel>
-                                        <FormControl>
-                                            <Select
-                                                value={field.value}
-                                                onChange={field.onChange}
-                                                options={accounts.map((a) => ({
-                                                    value: a.id,
-                                                    label: a.name,
-                                                }))}
-                                                placeholder="Selecione"
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
-
-                        <FormField
-                            control={form.control}
-                            name="autoCreate"
-                            render={({ field }) => (
-                                <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4">
-                                    <FormControl>
-                                        <Checkbox
-                                            checked={field.value}
-                                            onCheckedChange={field.onChange}
-                                        />
-                                    </FormControl>
-                                    <div className="space-y-1 leading-none">
-                                        <FormLabel>Criar transação automaticamente</FormLabel>
-                                        <p className="text-sm text-muted-foreground">
-                                            O sistema irá gerar a despesa no dia do vencimento.
-                                        </p>
-                                    </div>
-                                </FormItem>
-                            )}
-                        />
+                        </DialogBody>
 
                         <DialogFooter>
-                            <Button type="button" variant="outline" onClick={onClose}>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={onClose}
+                            >
                                 Cancelar
                             </Button>
-                            <Button type="submit" disabled={form.formState.isSubmitting}>
+                            <Button
+                                type="submit"
+                                disabled={form.formState.isSubmitting}
+                            >
                                 {form.formState.isSubmitting ? (
                                     <Loader2 className="h-4 w-4 animate-spin" />
                                 ) : (

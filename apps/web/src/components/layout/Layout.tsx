@@ -1,116 +1,27 @@
-import {
-    ArrowRightLeft,
-    DollarSign,
-    Home,
-    Settings as SettingsIcon,
-    TrendingUp,
-    Wallet,
-} from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
-import { cn } from "../../lib/utils";
-import { Header } from "./Header";
+import { MobileNav } from "./MobileNav";
+import { Sidebar } from "./Sidebar";
 
 export function Layout({ children }: { children: React.ReactNode }) {
-    const location = useLocation();
-
-    const isActive = (path: string) => {
-        return location.pathname === path;
-    };
-
     return (
-        <div className="min-h-screen bg-background text-foreground flex flex-col">
-            <Header />
-            <main className="flex-1 pb-16 md:pb-0">{children}</main>
+        <div className="min-h-screen bg-background text-foreground flex md:flex-row flex-col">
+            {/* Desktop Sidebar */}
+            <Sidebar className="hidden md:flex" />
+
+            {/* Mobile Header (just for logo/menu trigger if needed, currently keeping simple) */}
+            <div className="md:hidden flex items-center justify-between p-4 border-b bg-background sticky top-0 z-50">
+                <span className="font-bold text-lg text-primary">
+                    FinanceFreedom
+                </span>
+                {/* <Button variant="ghost" size="icon"><Menu className="h-5 w-5" /></Button> */}
+            </div>
+
+            {/* Main Content Area */}
+            <main className="flex-1 pb-20 md:pb-0 md:p-6 p-4 overflow-y-auto h-[calc(100vh-64px)] md:h-screen">
+                <div className="max-w-7xl mx-auto space-y-6">{children}</div>
+            </main>
 
             {/* Mobile Bottom Navigation */}
-            <div className="md:hidden fixed bottom-0 left-0 right-0 border-t bg-background z-50">
-                <nav className="flex items-center justify-around h-16">
-                    <Link
-                        to="/"
-                        className={cn(
-                            "flex flex-col items-center justify-center w-full h-full space-y-1 text-xs font-medium transition-colors",
-                            isActive("/")
-                                ? "text-primary"
-                                : "text-muted-foreground hover:text-primary",
-                        )}
-                    >
-                        <Home className="h-5 w-5" />
-                        <span>Início</span>
-                    </Link>
-                    <Link
-                        to="/accounts"
-                        className={cn(
-                            "flex flex-col items-center justify-center w-full h-full space-y-1 text-xs font-medium transition-colors",
-                            isActive("/accounts")
-                                ? "text-primary"
-                                : "text-muted-foreground hover:text-primary",
-                        )}
-                    >
-                        <Wallet className="h-5 w-5" />
-                        <span>Contas</span>
-                    </Link>
-                    <Link
-                        to="/transactions"
-                        className={cn(
-                            "flex flex-col items-center justify-center w-full h-full space-y-1 text-xs font-medium transition-colors",
-                            isActive("/transactions")
-                                ? "text-primary"
-                                : "text-muted-foreground hover:text-primary",
-                        )}
-                    >
-                        <ArrowRightLeft className="h-5 w-5" />
-                        <span>Transações</span>
-                    </Link>
-                    <Link
-                        to="/income"
-                        className={cn(
-                            "flex flex-col items-center justify-center w-full h-full space-y-1 text-xs font-medium transition-colors",
-                            isActive("/income")
-                                ? "text-primary"
-                                : "text-muted-foreground hover:text-primary",
-                        )}
-                    >
-                        <DollarSign className="h-5 w-5" />
-                        <span>Renda</span>
-                    </Link>
-                    <Link
-                        to="/investments"
-                        className={cn(
-                            "flex flex-col items-center justify-center w-full h-full space-y-1 text-xs font-medium transition-colors",
-                            isActive("/investments")
-                                ? "text-primary"
-                                : "text-muted-foreground hover:text-primary",
-                        )}
-                    >
-                        <TrendingUp className="h-5 w-5" />
-                        <span>Investimentos</span>
-                    </Link>
-                    <Link
-                        to="/goals"
-                        className={cn(
-                            "flex flex-col items-center justify-center w-full h-full space-y-1 text-xs font-medium transition-colors",
-                            isActive("/goals")
-                                ? "text-primary"
-                                : "text-muted-foreground hover:text-primary",
-                        )}
-                    >
-                        <TrendingUp className="h-5 w-5" />
-                        <span>Metas</span>
-                    </Link>
-                    <Link
-                        to="/settings"
-                        className={cn(
-                            "flex flex-col items-center justify-center w-full h-full space-y-1 text-xs font-medium transition-colors",
-                            isActive("/settings")
-                                ? "text-primary"
-                                : "text-muted-foreground hover:text-primary",
-                        )}
-                    >
-                        <SettingsIcon className="h-5 w-5" />
-                        <span>Config</span>
-                    </Link>
-                </nav>
-            </div>
+            <MobileNav />
         </div>
     );
 }

@@ -10,6 +10,7 @@ import { Button } from "../ui/Button";
 import { ColorInput } from "../ui/ColorInput";
 import {
     Dialog,
+    DialogBody,
     DialogContent,
     DialogDescription,
     DialogFooter,
@@ -113,100 +114,101 @@ export function CategoryDialog({
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit(handleSubmit)}
-                        className="space-y-4"
+                        className="flex flex-col flex-1 min-h-0"
                     >
-                        <FormField
-                            control={form.control}
-                            name="name"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Nome</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="Ex: Alimentação"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                        <DialogBody className="space-y-4">
+                            <FormField
+                                control={form.control}
+                                name="name"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Nome</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="Ex: Alimentação"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
-                        <FormField
-                            control={form.control}
-                            name="type"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Tipo</FormLabel>
-                                    <FormControl>
-                                        <Select
-                                            label="Tipo"
-                                            value={field.value}
-                                            options={[
-                                                {
-                                                    label: "Despesa",
-                                                    value: "EXPENSE",
-                                                },
-                                                {
-                                                    label: "Receita",
-                                                    value: "INCOME",
-                                                },
-                                            ]}
-                                            onChange={field.onChange}
-                                            placeholder="Selecione o tipo"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                            <FormField
+                                control={form.control}
+                                name="type"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Tipo</FormLabel>
+                                        <FormControl>
+                                            <Select
+                                                value={field.value}
+                                                options={[
+                                                    {
+                                                        label: "Despesa",
+                                                        value: "EXPENSE",
+                                                    },
+                                                    {
+                                                        label: "Receita",
+                                                        value: "INCOME",
+                                                    },
+                                                ]}
+                                                onChange={field.onChange}
+                                                placeholder="Selecione o tipo"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
-                        <FormField
-                            control={form.control}
-                            name="color"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Cor</FormLabel>
-                                    <FormControl>
-                                        <ColorInput
-                                            value={field.value}
-                                            onChange={field.onChange}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                            <FormField
+                                control={form.control}
+                                name="color"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Cor</FormLabel>
+                                        <FormControl>
+                                            <ColorInput
+                                                value={field.value}
+                                                onChange={field.onChange}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
-                        <FormField
-                            control={form.control}
-                            name="budgetLimit"
-                            render={({
-                                field: { value, onChange, ...field },
-                            }) => (
-                                <FormItem>
-                                    <FormLabel>
-                                        {form.watch("type") === "INCOME"
-                                            ? "Meta de Receita (Mensal)"
-                                            : "Limite de Orçamento (Mensal)"}
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            currency
-                                            placeholder="0,00"
-                                            value={value}
-                                            onValueChange={(values) => {
-                                                onChange(
-                                                    values.floatValue || 0
-                                                );
-                                            }}
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                            <FormField
+                                control={form.control}
+                                name="budgetLimit"
+                                render={({
+                                    field: { value, onChange, ...field },
+                                }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            {form.watch("type") === "INCOME"
+                                                ? "Meta de Receita (Mensal)"
+                                                : "Limite de Orçamento (Mensal)"}
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                currency
+                                                placeholder="0,00"
+                                                value={value}
+                                                onValueChange={(values) => {
+                                                    onChange(
+                                                        values.floatValue || 0
+                                                    );
+                                                }}
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </DialogBody>
 
                         <DialogFooter>
                             <Button

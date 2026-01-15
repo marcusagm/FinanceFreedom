@@ -121,7 +121,7 @@ export function HealthScoreWidget() {
                                 stroke="none"
                             >
                                 <Cell key="score" fill={activeColor} />
-                                <Cell key="rest" fill="#e2e8f0" />
+                                <Cell key="rest" fill="var(--muted)" />
                             </Pie>
                         </PieChart>
                     </ResponsiveContainer>

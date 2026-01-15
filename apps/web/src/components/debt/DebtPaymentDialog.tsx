@@ -8,13 +8,21 @@ import { Button } from "../ui/Button";
 import { Checkbox } from "../ui/Checkbox";
 import {
     Dialog,
+    DialogBody,
     DialogContent,
     DialogDescription,
     DialogFooter,
     DialogHeader,
     DialogTitle,
 } from "../ui/Dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/Form";
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "../ui/Form";
 import { Input } from "../ui/Input";
 import { Select } from "../ui/Select";
 import type { Debt } from "./DebtForm";
@@ -35,7 +43,12 @@ const formSchema = z.object({
     paysInstallment: z.boolean().default(false).optional(),
 });
 
-export function DebtPaymentDialog({ isOpen, onClose, onSuccess, debt }: DebtPaymentDialogProps) {
+export function DebtPaymentDialog({
+    isOpen,
+    onClose,
+    onSuccess,
+    debt,
+}: DebtPaymentDialogProps) {
     const [accounts, setAccounts] = useState<Account[]>([]);
     const [loadingAccounts, setLoadingAccounts] = useState(false);
 
@@ -57,7 +70,9 @@ export function DebtPaymentDialog({ isOpen, onClose, onSuccess, debt }: DebtPaym
                 amount: Number(debt.minimumPayment) || 0,
                 date: new Date().toISOString().split("T")[0],
                 accountId: accounts.length > 0 ? accounts[0].id : "",
-                paysInstallment: !!(debt.installmentsTotal && debt.installmentsTotal > 0), // Auto-check if it has installments? Maybe safer to default false.
+                paysInstallment: !!(
+                    debt.installmentsTotal && debt.installmentsTotal > 0
+                ), // Auto-check if it has installments? Maybe safer to default false.
                 // Let's default to FALSE to avoid accidental double counting if user isn't paying full installment.
                 // Or true if amount matches min payment? Too complex. Default false.
             });
@@ -123,105 +138,125 @@ export function DebtPaymentDialog({ isOpen, onClose, onSuccess, debt }: DebtPaym
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit(handleSubmit)}
-                        className="flex flex-col gap-5"
+                        className="flex flex-col flex-1 min-h-0"
                     >
-                        <div className="grid grid-cols-1 gap-4">
-                            <FormField
-                                control={form.control}
-                                name="amount"
-                                render={({ field: { onChange, value, ...field } }) => (
-                                    <FormItem>
-                                        <FormLabel>Valor do Pagamento</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                data-testid="amount-input"
-                                                placeholder="R$ 0,00"
-                                                currency
-                                                value={value}
-                                                onValueChange={(values) => {
-                                                    onChange(values.floatValue || 0);
-                                                }}
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            <FormField
-                                control={form.control}
-                                name="date"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Data</FormLabel>
-                                        <FormControl>
-                                            <Input type="date" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            <FormField
-                                control={form.control}
-                                name="accountId"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Conta de Origem</FormLabel>
-                                        <FormControl>
-                                            <Select
-                                                value={field.value}
-                                                options={accountOptions}
-                                                onChange={field.onChange}
-                                                placeholder={
-                                                    loadingAccounts
-                                                        ? "Carregando contas..."
-                                                        : "Selecione uma conta"
-                                                }
-                                                disabled={loadingAccounts}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            {debt.installmentsTotal && debt.installmentsTotal > 0 && (
+                        <DialogBody className="space-y-4">
+                            <div className="grid grid-cols-1 gap-4">
                                 <FormField
                                     control={form.control}
-                                    name="paysInstallment"
-                                    render={({ field }) => (
-                                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                                    name="amount"
+                                    render={({
+                                        field: { onChange, value, ...field },
+                                    }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                Valor do Pagamento
+                                            </FormLabel>
                                             <FormControl>
-                                                <Checkbox
-                                                    checked={field.value}
-                                                    onCheckedChange={field.onChange}
+                                                <Input
+                                                    data-testid="amount-input"
+                                                    placeholder="R$ 0,00"
+                                                    currency
+                                                    value={value}
+                                                    onValueChange={(values) => {
+                                                        onChange(
+                                                            values.floatValue ||
+                                                                0
+                                                        );
+                                                    }}
+                                                    {...field}
                                                 />
                                             </FormControl>
-                                            <div className="space-y-1 leading-none">
-                                                <FormLabel>
-                                                    Este pagamento quita uma parcela?
-                                                </FormLabel>
-                                            </div>
+                                            <FormMessage />
                                         </FormItem>
                                     )}
                                 />
-                            )}
-                        </div>
+
+                                <FormField
+                                    control={form.control}
+                                    name="date"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Data</FormLabel>
+                                            <FormControl>
+                                                <Input type="date" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="accountId"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                Conta de Origem
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Select
+                                                    value={field.value}
+                                                    options={accountOptions}
+                                                    onChange={field.onChange}
+                                                    placeholder={
+                                                        loadingAccounts
+                                                            ? "Carregando contas..."
+                                                            : "Selecione uma conta"
+                                                    }
+                                                    disabled={loadingAccounts}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                {debt.installmentsTotal &&
+                                    debt.installmentsTotal > 0 && (
+                                        <FormField
+                                            control={form.control}
+                                            name="paysInstallment"
+                                            render={({ field }) => (
+                                                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                                                    <FormControl>
+                                                        <Checkbox
+                                                            checked={
+                                                                field.value
+                                                            }
+                                                            onCheckedChange={
+                                                                field.onChange
+                                                            }
+                                                        />
+                                                    </FormControl>
+                                                    <div className="space-y-1 leading-none">
+                                                        <FormLabel>
+                                                            Este pagamento quita
+                                                            uma parcela?
+                                                        </FormLabel>
+                                                    </div>
+                                                </FormItem>
+                                            )}
+                                        />
+                                    )}
+                            </div>
+                        </DialogBody>
+
+                        <DialogFooter>
+                            <Button variant="outline" onClick={onClose}>
+                                Cancelar
+                            </Button>
+                            <Button
+                                onClick={form.handleSubmit(handleSubmit)}
+                                disabled={form.formState.isSubmitting}
+                            >
+                                {form.formState.isSubmitting
+                                    ? "Registrando..."
+                                    : "Confirmar Pagamento"}
+                            </Button>
+                        </DialogFooter>
                     </form>
                 </Form>
-                <DialogFooter>
-                    <Button variant="outline" onClick={onClose}>
-                        Cancelar
-                    </Button>
-                    <Button
-                        onClick={form.handleSubmit(handleSubmit)}
-                        disabled={form.formState.isSubmitting}
-                    >
-                        {form.formState.isSubmitting ? "Registrando..." : "Confirmar Pagamento"}
-                    </Button>
-                </DialogFooter>
             </DialogContent>
         </Dialog>
     );

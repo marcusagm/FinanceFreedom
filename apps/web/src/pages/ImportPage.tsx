@@ -4,11 +4,21 @@ import { Link } from "react-router-dom";
 import { ImportReviewTable } from "../components/import/ImportReviewTable";
 import { ImportZone } from "../components/import/ImportZone";
 import { Button } from "../components/ui/Button";
-import { Modal } from "../components/ui/Modal";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "../components/ui/Dialog";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Select } from "../components/ui/Select";
 import { api } from "../lib/api";
-import { ImportService, type ImportedTransaction } from "../services/import.service";
+import {
+    ImportService,
+    type ImportedTransaction,
+} from "../services/import.service";
 
 export const ImportPage: React.FC = () => {
     const [accounts, setAccounts] = useState<any[]>([]);
@@ -118,7 +128,11 @@ export const ImportPage: React.FC = () => {
                         onFileSelect={handleFileSelect}
                         disabled={isLoading || !selectedAccount}
                     />
-                    {isLoading && <p className="text-muted-foreground">Processing file...</p>}
+                    {isLoading && (
+                        <p className="text-muted-foreground">
+                            Processing file...
+                        </p>
+                    )}
                 </div>
             )}
 
@@ -131,31 +145,45 @@ export const ImportPage: React.FC = () => {
                         {transactions.length} new transactions found.
                     </p>
 
-                    <ImportReviewTable transactions={transactions} accounts={accounts} />
+                    <ImportReviewTable
+                        transactions={transactions}
+                        accounts={accounts}
+                    />
 
                     <div className="flex justify-end gap-4 mt-6">
-                        <Button variant="secondary" onClick={handleCancel} disabled={isLoading}>
+                        <Button
+                            variant="secondary"
+                            onClick={handleCancel}
+                            disabled={isLoading}
+                        >
                             Cancel
                         </Button>
-                        <Button variant="primary" onClick={handleConfirm} disabled={isLoading}>
+                        <Button
+                            variant="primary"
+                            onClick={handleConfirm}
+                            disabled={isLoading}
+                        >
                             {isLoading ? "Importing..." : "Confirm Import"}
                         </Button>
                     </div>
                 </div>
             )}
 
-            <Modal
-                isOpen={alertState.isOpen}
-                onClose={closeAlert}
-                title={alertState.title}
-                footer={
-                    <Button onClick={closeAlert} variant="primary">
-                        OK
-                    </Button>
-                }
-            >
-                <p>{alertState.message}</p>
-            </Modal>
+            <Dialog open={alertState.isOpen} onOpenChange={closeAlert}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>{alertState.title}</DialogTitle>
+                        <DialogDescription>
+                            {alertState.message}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button onClick={closeAlert} variant="primary">
+                            OK
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 };

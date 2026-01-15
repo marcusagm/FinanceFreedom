@@ -88,8 +88,8 @@ export function TransactionFilters({
                                     value: cat.name,
                                     label:
                                         cat.type === "INCOME"
-                                            ? `💰 ${cat.name}`
-                                            : `💸 ${cat.name}`,
+                                            ? `${cat.name}`
+                                            : `${cat.name}`,
                                 })),
                         ]}
                         placeholder="Categoria"

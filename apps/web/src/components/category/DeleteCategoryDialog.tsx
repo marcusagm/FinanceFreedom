@@ -1,7 +1,9 @@
+import { AppAlert } from "../ui/AppAlert";
 import { Loader2 } from "lucide-react";
 import { Button } from "../ui/Button";
 import {
     Dialog,
+    DialogBody,
     DialogContent,
     DialogDescription,
     DialogFooter,
@@ -30,11 +32,15 @@ export function DeleteCategoryDialog({
                 <DialogHeader>
                     <DialogTitle>Excluir Categoria</DialogTitle>
                     <DialogDescription>
-                        Tem certeza que deseja excluir a categoria{" "}
-                        <span className="font-bold">{categoryName}</span>? Esta
-                        ação não pode ser desfeita.
+                        Esta ação não pode ser desfeita.
                     </DialogDescription>
                 </DialogHeader>
+                <DialogBody>
+                    <AppAlert variant="destructive" title="Atenção">
+                        A categoria <strong>{categoryName}</strong> será
+                        permanentemente removida.
+                    </AppAlert>
+                </DialogBody>
                 <DialogFooter>
                     <Button variant="outline" onClick={onClose}>
                         Cancelar

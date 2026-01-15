@@ -2,8 +2,22 @@ import { format } from "date-fns";
 import { CheckCircle2, Circle } from "lucide-react";
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/Dialog";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/Table";
+import {
+    Dialog,
+    DialogBody,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from "../ui/Dialog";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "../ui/Table";
 
 interface InstallmentsModalProps {
     isOpen: boolean;
@@ -71,73 +85,99 @@ export function InstallmentsModal({
             <DialogContent className="max-w-3xl">
                 <DialogHeader>
                     <DialogTitle>Parcelas: {debtName}</DialogTitle>
+                    <DialogDescription className="text-sm text-muted-foreground">
+                        Visualize e gerencie os status das parcelas.
+                    </DialogDescription>
                 </DialogHeader>
 
-                <div className="flex justify-between items-center text-sm text-muted-foreground mb-4">
-                    <span>{installmentsPaid} pagas</span>
-                    <span>{installmentsTotal - installmentsPaid} restantes</span>
-                </div>
+                <DialogBody>
+                    <div className="flex justify-between items-center text-sm text-muted-foreground mb-4">
+                        <span>{installmentsPaid} pagas</span>
+                        <span>
+                            {installmentsTotal - installmentsPaid} restantes
+                        </span>
+                    </div>
 
-                <div className="border rounded-md">
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead className="w-25">Parcela</TableHead>
-                                <TableHead>Vencimento</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead className="text-right">Ações</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {installments.map((inst) => (
-                                <TableRow key={inst.number}>
-                                    <TableCell className="font-medium">{inst.number}ª</TableCell>
-                                    <TableCell>{format(inst.dueDate, "dd/MM/yyyy")}</TableCell>
-                                    <TableCell>
-                                        <Badge
-                                            variant={
-                                                inst.status === "PAID" ? "default" : "secondary"
-                                            }
-                                            className={
-                                                inst.status === "PAID"
-                                                    ? "bg-emerald-500 hover:bg-emerald-600"
-                                                    : ""
-                                            }
-                                        >
-                                            {inst.status === "PAID" ? "Paga" : "Pendente"}
-                                        </Badge>
-                                    </TableCell>
-                                    <TableCell className="text-right">
-                                        <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            onClick={() => {
-                                                if (onUpdatePaid) {
-                                                    if (inst.status === "PENDING") {
-                                                        onUpdatePaid(inst.number);
-                                                    } else {
-                                                        onUpdatePaid(inst.number - 1);
-                                                    }
-                                                }
-                                            }}
-                                            title={
-                                                inst.status === "PAID"
-                                                    ? "Marcar como pendente"
-                                                    : "Marcar como paga"
-                                            }
-                                        >
-                                            {inst.status === "PAID" ? (
-                                                <CheckCircle2 className="w-5 h-5 text-emerald-500" />
-                                            ) : (
-                                                <Circle className="w-5 h-5 text-muted-foreground" />
-                                            )}
-                                        </Button>
-                                    </TableCell>
+                    <div className="border rounded-md">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead className="w-25">
+                                        Parcela
+                                    </TableHead>
+                                    <TableHead>Vencimento</TableHead>
+                                    <TableHead>Status</TableHead>
+                                    <TableHead className="text-right">
+                                        Ações
+                                    </TableHead>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </div>
+                            </TableHeader>
+                            <TableBody>
+                                {installments.map((inst) => (
+                                    <TableRow key={inst.number}>
+                                        <TableCell className="font-medium">
+                                            {inst.number}ª
+                                        </TableCell>
+                                        <TableCell>
+                                            {format(inst.dueDate, "dd/MM/yyyy")}
+                                        </TableCell>
+                                        <TableCell>
+                                            <Badge
+                                                variant={
+                                                    inst.status === "PAID"
+                                                        ? "default"
+                                                        : "secondary"
+                                                }
+                                                className={
+                                                    inst.status === "PAID"
+                                                        ? "bg-emerald-500 hover:bg-emerald-600"
+                                                        : ""
+                                                }
+                                            >
+                                                {inst.status === "PAID"
+                                                    ? "Paga"
+                                                    : "Pendente"}
+                                            </Badge>
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => {
+                                                    if (onUpdatePaid) {
+                                                        if (
+                                                            inst.status ===
+                                                            "PENDING"
+                                                        ) {
+                                                            onUpdatePaid(
+                                                                inst.number
+                                                            );
+                                                        } else {
+                                                            onUpdatePaid(
+                                                                inst.number - 1
+                                                            );
+                                                        }
+                                                    }
+                                                }}
+                                                title={
+                                                    inst.status === "PAID"
+                                                        ? "Marcar como pendente"
+                                                        : "Marcar como paga"
+                                                }
+                                            >
+                                                {inst.status === "PAID" ? (
+                                                    <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                                                ) : (
+                                                    <Circle className="w-5 h-5 text-muted-foreground" />
+                                                )}
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div>
+                </DialogBody>
             </DialogContent>
         </Dialog>
     );

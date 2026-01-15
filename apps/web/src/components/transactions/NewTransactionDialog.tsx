@@ -11,6 +11,7 @@ import { Checkbox } from "../ui/Checkbox";
 import { DatePicker } from "../ui/DatePicker";
 import {
     Dialog,
+    DialogBody,
     DialogContent,
     DialogDescription,
     DialogFooter,
@@ -171,44 +172,18 @@ export function NewTransactionDialog({
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit(handleSubmit)}
-                        className="flex flex-col gap-5"
+                        className="flex flex-col flex-1 min-h-0"
                     >
-                        <FormField
-                            control={form.control}
-                            name="description"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Descrição</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="Ex: Mercado, Salário"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <div className="grid grid-cols-2 gap-4">
+                        <DialogBody className="space-y-4">
                             <FormField
                                 control={form.control}
-                                name="amount"
-                                render={({
-                                    field: { onChange, value, ...field },
-                                }) => (
+                                name="description"
+                                render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Valor</FormLabel>
+                                        <FormLabel>Descrição</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="R$ 0,00"
-                                                currency
-                                                value={value}
-                                                onValueChange={(values) => {
-                                                    onChange(
-                                                        values.floatValue || 0
-                                                    );
-                                                }}
+                                                placeholder="Ex: Mercado, Salário"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -217,181 +192,216 @@ export function NewTransactionDialog({
                                 )}
                             />
 
-                            <FormField
-                                control={form.control}
-                                name="type"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Tipo</FormLabel>
-                                        <FormControl>
-                                            <Select
-                                                label="Tipo"
-                                                value={field.value}
-                                                options={transactionTypes}
-                                                onChange={field.onChange}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                            <FormField
-                                control={form.control}
-                                name="date"
-                                render={({ field }) => (
-                                    <FormItem className="flex flex-col">
-                                        <FormLabel>Data</FormLabel>
-                                        <FormControl>
-                                            <DatePicker
-                                                date={
-                                                    field.value
-                                                        ? new Date(
-                                                              field.value +
-                                                                  "T00:00:00"
-                                                          )
-                                                        : undefined
-                                                }
-                                                setDate={(date) =>
-                                                    field.onChange(
-                                                        date
-                                                            ? format(
-                                                                  date,
-                                                                  "yyyy-MM-dd"
-                                                              )
-                                                            : ""
-                                                    )
-                                                }
-                                                className="w-full"
-                                                placeholder="Selecione a data"
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            <FormField
-                                control={form.control}
-                                name="accountId"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Conta</FormLabel>
-                                        <FormControl>
-                                            <Select
-                                                label="Conta"
-                                                value={field.value}
-                                                options={accountOptions}
-                                                onChange={field.onChange}
-                                                placeholder="Selecione uma conta"
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
-
-                        <FormField
-                            control={form.control}
-                            name="categoryId"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Categoria (Opcional)</FormLabel>
-                                    <FormControl>
-                                        <Select
-                                            label="Categoria"
-                                            value={field.value || ""}
-                                            options={[
-                                                {
-                                                    label: "Sem categoria",
-                                                    value: "",
-                                                },
-                                                ...filteredCategories.map(
-                                                    (c) => ({
-                                                        label: c.name,
-                                                        value: c.id,
-                                                    })
-                                                ),
-                                            ]}
-                                            onChange={field.onChange}
-                                            placeholder="Selecione uma categoria"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        {!initialData && (
-                            <div className="space-y-4 rounded-lg border p-4">
+                            <div className="grid grid-cols-2 gap-4">
                                 <FormField
                                     control={form.control}
-                                    name="isRecurring"
-                                    render={({ field }) => (
-                                        <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4 shadow-sm">
-                                            <FormControl className="w-auto">
-                                                <Checkbox
-                                                    checked={field.value}
-                                                    onCheckedChange={
-                                                        field.onChange
-                                                    }
+                                    name="amount"
+                                    render={({
+                                        field: { onChange, value, ...field },
+                                    }) => (
+                                        <FormItem>
+                                            <FormLabel>Valor</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder="R$ 0,00"
+                                                    currency
+                                                    value={value || ""}
+                                                    onValueChange={(values) => {
+                                                        onChange(
+                                                            values.floatValue ||
+                                                                0
+                                                        );
+                                                    }}
+                                                    {...field}
                                                 />
                                             </FormControl>
-                                            <div className="space-y-1 leading-none">
-                                                <FormLabel className="w-auto cursor-pointer font-normal">
-                                                    Repetir mensalmente
-                                                </FormLabel>
-                                            </div>
+                                            <FormMessage />
                                         </FormItem>
                                     )}
                                 />
 
-                                {isRecurring && (
+                                <FormField
+                                    control={form.control}
+                                    name="type"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Tipo</FormLabel>
+                                            <FormControl>
+                                                <Select
+                                                    value={field.value}
+                                                    options={transactionTypes}
+                                                    onChange={field.onChange}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <FormField
+                                    control={form.control}
+                                    name="date"
+                                    render={({ field }) => (
+                                        <FormItem className="flex flex-col">
+                                            <FormLabel>Data</FormLabel>
+                                            <FormControl>
+                                                <DatePicker
+                                                    date={
+                                                        field.value
+                                                            ? new Date(
+                                                                  field.value +
+                                                                      "T00:00:00"
+                                                              )
+                                                            : undefined
+                                                    }
+                                                    setDate={(date) =>
+                                                        field.onChange(
+                                                            date
+                                                                ? format(
+                                                                      date,
+                                                                      "yyyy-MM-dd"
+                                                                  )
+                                                                : ""
+                                                        )
+                                                    }
+                                                    className="w-full"
+                                                    placeholder="Selecione a data"
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="accountId"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Conta</FormLabel>
+                                            <FormControl>
+                                                <Select
+                                                    value={field.value}
+                                                    options={accountOptions}
+                                                    onChange={field.onChange}
+                                                    placeholder="Selecione uma conta"
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+
+                            <FormField
+                                control={form.control}
+                                name="categoryId"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Categoria (Opcional)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Select
+                                                value={field.value || ""}
+                                                options={[
+                                                    {
+                                                        label: "Sem categoria",
+                                                        value: "",
+                                                    },
+                                                    ...filteredCategories.map(
+                                                        (c) => ({
+                                                            label: c.name,
+                                                            value: c.id,
+                                                        })
+                                                    ),
+                                                ]}
+                                                onChange={field.onChange}
+                                                placeholder="Selecione uma categoria"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            {!initialData && (
+                                <div className="space-y-4 rounded-lg border p-4">
                                     <FormField
                                         control={form.control}
-                                        name="repeatCount"
+                                        name="isRecurring"
                                         render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    Número de vezes
-                                                </FormLabel>
+                                            <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4 shadow-sm">
                                                 <FormControl>
-                                                    <Input
-                                                        type="number"
-                                                        {...field}
-                                                        onChange={(e) =>
-                                                            field.onChange(
-                                                                Number(
-                                                                    e.target
-                                                                        .value
-                                                                )
-                                                            )
+                                                    <Checkbox
+                                                        checked={field.value}
+                                                        onCheckedChange={
+                                                            field.onChange
                                                         }
                                                     />
                                                 </FormControl>
-                                                <FormMessage />
+                                                <div className="space-y-1 leading-none">
+                                                    <FormLabel className="w-auto cursor-pointer font-normal">
+                                                        Repetir mensalmente
+                                                    </FormLabel>
+                                                </div>
                                             </FormItem>
                                         )}
                                     />
-                                )}
-                            </div>
-                        )}
+
+                                    {isRecurring && (
+                                        <FormField
+                                            control={form.control}
+                                            name="repeatCount"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>
+                                                        Número de vezes
+                                                    </FormLabel>
+                                                    <FormControl>
+                                                        <Input
+                                                            type="number"
+                                                            {...field}
+                                                            onChange={(e) =>
+                                                                field.onChange(
+                                                                    Number(
+                                                                        e.target
+                                                                            .value
+                                                                    )
+                                                                )
+                                                            }
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    )}
+                                </div>
+                            )}
+                        </DialogBody>
+
+                        <DialogFooter>
+                            <Button
+                                variant="outline"
+                                onClick={onClose}
+                                type="button"
+                            >
+                                Cancelar
+                            </Button>
+                            <Button
+                                type="submit"
+                                disabled={form.formState.isSubmitting}
+                            >
+                                {form.formState.isSubmitting
+                                    ? "Salvando..."
+                                    : "Salvar"}
+                            </Button>
+                        </DialogFooter>
                     </form>
                 </Form>
-                <DialogFooter>
-                    <Button variant="outline" onClick={onClose}>
-                        Cancelar
-                    </Button>
-                    <Button
-                        onClick={form.handleSubmit(handleSubmit)}
-                        disabled={form.formState.isSubmitting}
-                    >
-                        {form.formState.isSubmitting ? "Salvando..." : "Salvar"}
-                    </Button>
-                </DialogFooter>
             </DialogContent>
         </Dialog>
     );

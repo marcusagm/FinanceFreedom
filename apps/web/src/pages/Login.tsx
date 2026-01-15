@@ -5,7 +5,13 @@ import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { Alert, AlertDescription } from "../components/ui/Alert";
 import { Button } from "../components/ui/Button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../components/ui/Card";
+import {
+    Card,
+    CardContent,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "../components/ui/Card";
 import { Input } from "../components/ui/Input";
 import { Label } from "../components/ui/Label";
 import { useAuth } from "../contexts/AuthContext";
@@ -38,7 +44,9 @@ export function Login() {
             const response = await api.post("/auth/login", data);
             const { access_token } = response.data;
 
-            api.defaults.headers.common["Authorization"] = `Bearer ${access_token}`;
+            api.defaults.headers.common[
+                "Authorization"
+            ] = `Bearer ${access_token}`;
             const profileRes = await api.get("/auth/profile");
 
             login(access_token, profileRes.data);
@@ -51,10 +59,12 @@ export function Login() {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-background p-4">
-            <Card className="w-full max-w-md">
+        <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-primary/10 via-background to-muted p-4">
+            <Card className="w-full max-w-md shadow-lg border-primary/10">
                 <CardHeader>
-                    <CardTitle className="text-2xl text-center">Finance Freedom</CardTitle>
+                    <CardTitle className="text-2xl text-center">
+                        Finance Freedom
+                    </CardTitle>
                 </CardHeader>
                 <form onSubmit={handleSubmit(onSubmit)} noValidate>
                     <CardContent className="space-y-4">
@@ -73,7 +83,9 @@ export function Login() {
                                 {...register("email")}
                             />
                             {errors.email && (
-                                <p className="text-sm text-destructive">{errors.email.message}</p>
+                                <p className="text-sm text-destructive">
+                                    {errors.email.message}
+                                </p>
                             )}
                         </div>
                         <div className="space-y-2">
@@ -100,12 +112,19 @@ export function Login() {
                         </div>
                     </CardContent>
                     <CardFooter className="flex flex-col">
-                        <Button type="submit" className="w-full" disabled={isSubmitting}>
+                        <Button
+                            type="submit"
+                            className="w-full"
+                            disabled={isSubmitting}
+                        >
                             {isSubmitting ? "Signing in..." : "Sign In"}
                         </Button>
                         <div className="text-center text-sm mt-4">
                             Don't have an account?{" "}
-                            <Link to="/register" className="text-primary hover:underline">
+                            <Link
+                                to="/register"
+                                className="text-primary hover:underline"
+                            >
                                 Register now
                             </Link>
                         </div>

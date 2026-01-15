@@ -5,9 +5,23 @@ import * as z from "zod";
 import { api } from "../../lib/api";
 import { type WorkUnit, createWorkUnit } from "../../services/income.service";
 import { Button } from "../ui/Button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/Form";
+import {
+    Dialog,
+    DialogBody,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "../ui/Dialog";
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "../ui/Form";
 import { Input } from "../ui/Input";
-import { Modal } from "../ui/Modal";
 
 interface CreateWorkUnitDialogProps {
     isOpen: boolean;
@@ -20,7 +34,12 @@ const formSchema = z.object({
     name: z.string().min(1, "Nome é obrigatório"),
     defaultPrice: z.number().min(0.01, "Preço deve ser maior que zero"),
     estimatedTime: z.number().min(1, "Tempo inválido"),
-    taxRate: z.number().min(0, "Mínimo 0%").max(100, "Máximo 100%").optional().default(0),
+    taxRate: z
+        .number()
+        .min(0, "Mínimo 0%")
+        .max(100, "Máximo 100%")
+        .optional()
+        .default(0),
 });
 
 export function CreateWorkUnitDialog({
@@ -75,100 +94,137 @@ export function CreateWorkUnitDialog({
     };
 
     return (
-        <Modal
-            title={itemToEdit ? "Editar Serviço / Job" : "Novo Serviço / Job"}
-            isOpen={isOpen}
-            onClose={onClose}
-        >
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-                    <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Nome do Serviço</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="Ex: Logo Design" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+        <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>
+                        {itemToEdit
+                            ? "Editar Serviço / Job"
+                            : "Novo Serviço / Job"}
+                    </DialogTitle>
+                </DialogHeader>
 
-                    <FormField
-                        control={form.control}
-                        name="defaultPrice"
-                        render={({ field: { onChange, value, ...field } }) => (
-                            <FormItem>
-                                <FormLabel>Preço Base (R$)</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        placeholder="0,00"
-                                        currency
-                                        value={value}
-                                        onValueChange={(values) => {
-                                            onChange(values.floatValue || 0);
-                                        }}
-                                        {...field}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                <Form {...form}>
+                    <form
+                        onSubmit={form.handleSubmit(handleSubmit)}
+                        className="flex flex-col flex-1 min-h-0"
+                    >
+                        <DialogBody className="space-y-4">
+                            <FormField
+                                control={form.control}
+                                name="name"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Nome do Serviço</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="Ex: Logo Design"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
-                    <FormField
-                        control={form.control}
-                        name="estimatedTime"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Tempo Estimado (Horas)</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        type="number"
-                                        min="1"
-                                        placeholder="Hrs"
-                                        {...field}
-                                        onChange={(e) => field.onChange(Number(e.target.value))}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                            <FormField
+                                control={form.control}
+                                name="defaultPrice"
+                                render={({
+                                    field: { onChange, value, ...field },
+                                }) => (
+                                    <FormItem>
+                                        <FormLabel>Preço Base (R$)</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="0,00"
+                                                currency
+                                                value={value}
+                                                onValueChange={(values) => {
+                                                    onChange(
+                                                        values.floatValue || 0
+                                                    );
+                                                }}
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
-                    <FormField
-                        control={form.control}
-                        name="taxRate"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Imposto (%)</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        type="number"
-                                        min="0"
-                                        max="100"
-                                        placeholder="%"
-                                        {...field}
-                                        onChange={(e) => field.onChange(Number(e.target.value))}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                            <FormField
+                                control={form.control}
+                                name="estimatedTime"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Tempo Estimado (Horas)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="number"
+                                                min="1"
+                                                placeholder="Hrs"
+                                                {...field}
+                                                onChange={(e) =>
+                                                    field.onChange(
+                                                        Number(e.target.value)
+                                                    )
+                                                }
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
-                    <div className="flex justify-end pt-4">
-                        <Button type="button" variant="outline" onClick={onClose} className="mr-2">
-                            Cancelar
-                        </Button>
-                        <Button type="submit" disabled={form.formState.isSubmitting}>
-                            {form.formState.isSubmitting ? "Salvando..." : "Salvar"}
-                        </Button>
-                    </div>
-                </form>
-            </Form>
-        </Modal>
+                            <FormField
+                                control={form.control}
+                                name="taxRate"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Imposto (%)</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="number"
+                                                min="0"
+                                                max="100"
+                                                placeholder="%"
+                                                {...field}
+                                                onChange={(e) =>
+                                                    field.onChange(
+                                                        Number(e.target.value)
+                                                    )
+                                                }
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </DialogBody>
+
+                        <DialogFooter>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={onClose}
+                            >
+                                Cancelar
+                            </Button>
+                            <Button
+                                type="submit"
+                                disabled={form.formState.isSubmitting}
+                            >
+                                {form.formState.isSubmitting
+                                    ? "Salvando..."
+                                    : "Salvar"}
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                </Form>
+            </DialogContent>
+        </Dialog>
     );
 }

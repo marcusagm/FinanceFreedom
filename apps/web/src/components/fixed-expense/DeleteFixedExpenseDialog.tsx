@@ -1,7 +1,9 @@
+import { AppAlert } from "../ui/AppAlert";
 import { Loader2 } from "lucide-react";
 import { Button } from "../ui/Button";
 import {
     Dialog,
+    DialogBody,
     DialogContent,
     DialogDescription,
     DialogFooter,
@@ -30,17 +32,27 @@ export function DeleteFixedExpenseDialog({
                 <DialogHeader>
                     <DialogTitle>Excluir Despesa Fixa</DialogTitle>
                     <DialogDescription>
-                        Tem certeza que deseja excluir a despesa fixa{" "}
-                        <span className="font-bold">{description}</span>? Esta ação não pode ser
-                        desfeita.
+                        Esta ação não pode ser desfeita.
                     </DialogDescription>
                 </DialogHeader>
+                <DialogBody>
+                    <AppAlert variant="destructive" title="Atenção">
+                        A despesa fixa <strong>{description}</strong> será
+                        permanentemente removida.
+                    </AppAlert>
+                </DialogBody>
                 <DialogFooter>
                     <Button variant="outline" onClick={onClose}>
                         Cancelar
                     </Button>
-                    <Button variant="destructive" onClick={onConfirm} disabled={isDeleting}>
-                        {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    <Button
+                        variant="destructive"
+                        onClick={onConfirm}
+                        disabled={isDeleting}
+                    >
+                        {isDeleting && (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        )}
                         Excluir
                     </Button>
                 </DialogFooter>

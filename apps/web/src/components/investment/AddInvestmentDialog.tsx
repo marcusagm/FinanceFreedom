@@ -6,6 +6,7 @@ import * as z from "zod";
 import { api } from "../../lib/api";
 import {
     Dialog,
+    DialogBody,
     DialogContent,
     DialogHeader,
     DialogTitle,
@@ -138,115 +139,18 @@ export function AddInvestmentDialog({
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit(handleSubmit)}
-                        className="space-y-4"
+                        className="flex flex-col flex-1 min-h-0"
                     >
-                        <FormField
-                            control={form.control}
-                            name="name"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Nome da Conta</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="Ex: NuBank Caixinha"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="type"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Tipo</FormLabel>
-                                    <FormControl>
-                                        <Select
-                                            value={field.value}
-                                            onChange={field.onChange}
-                                            options={[
-                                                {
-                                                    value: "FIXED_INCOME",
-                                                    label: "Renda Fixa",
-                                                },
-                                                {
-                                                    value: "VARIABLE_INCOME",
-                                                    label: "Renda Variável",
-                                                },
-                                                {
-                                                    value: "CRYPTO",
-                                                    label: "Criptomoedas",
-                                                },
-                                                {
-                                                    value: "CASH",
-                                                    label: "Caixa / Saldo",
-                                                },
-                                                {
-                                                    value: "OTHER",
-                                                    label: "Outro",
-                                                },
-                                            ]}
-                                            placeholder="Selecione o tipo"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="balance"
-                            render={({
-                                field: { onChange, value, ...field },
-                            }) => (
-                                <FormItem>
-                                    <FormLabel>Saldo Atual</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="R$ 0,00"
-                                            currency
-                                            value={value}
-                                            onValueChange={(values) => {
-                                                onChange(
-                                                    values.floatValue || 0
-                                                );
-                                            }}
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <div className="grid grid-cols-2 gap-4">
+                        <DialogBody className="space-y-4">
                             <FormField
                                 control={form.control}
-                                name="profitability"
-                                render={({
-                                    field: { onChange, value, ...field },
-                                }) => (
+                                name="name"
+                                render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Rentabilidade (%)</FormLabel>
+                                        <FormLabel>Nome da Conta</FormLabel>
                                         <FormControl>
                                             <Input
-                                                type="number"
-                                                step="0.01"
-                                                placeholder="Ex: 100"
-                                                value={value || ""}
-                                                onChange={(e) =>
-                                                    onChange(
-                                                        e.target.value
-                                                            ? parseFloat(
-                                                                  e.target.value
-                                                              )
-                                                            : undefined
-                                                    )
-                                                }
+                                                placeholder="Ex: NuBank Caixinha"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -257,93 +161,199 @@ export function AddInvestmentDialog({
 
                             <FormField
                                 control={form.control}
-                                name="profitabilityType"
+                                name="type"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Tipo de Rent.</FormLabel>
+                                        <FormLabel>Tipo</FormLabel>
                                         <FormControl>
                                             <Select
-                                                value={field.value || ""}
+                                                value={field.value}
                                                 onChange={field.onChange}
                                                 options={[
                                                     {
-                                                        value: "CDI",
-                                                        label: "% do CDI",
+                                                        value: "FIXED_INCOME",
+                                                        label: "Renda Fixa",
                                                     },
                                                     {
-                                                        value: "IPCA",
-                                                        label: "IPCA +",
+                                                        value: "VARIABLE_INCOME",
+                                                        label: "Renda Variável",
                                                     },
                                                     {
-                                                        value: "PRE",
-                                                        label: "Prefixado (a.a.)",
+                                                        value: "CRYPTO",
+                                                        label: "Criptomoedas",
                                                     },
                                                     {
-                                                        value: "DY",
-                                                        label: "Dividend Yield",
+                                                        value: "CASH",
+                                                        label: "Caixa / Saldo",
                                                     },
                                                     {
                                                         value: "OTHER",
                                                         label: "Outro",
                                                     },
                                                 ]}
-                                                placeholder="Selecione"
+                                                placeholder="Selecione o tipo"
                                             />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
-                        </div>
 
-                        <FormField
-                            control={form.control}
-                            name="maturityDate"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Vencimento (Opcional)</FormLabel>
-                                    <FormControl>
-                                        <DatePicker
-                                            date={
-                                                field.value
-                                                    ? new Date(
-                                                          field.value +
-                                                              "T00:00:00"
-                                                      )
-                                                    : undefined
-                                            }
-                                            setDate={(date) =>
-                                                field.onChange(
-                                                    date
-                                                        ? format(
-                                                              date,
-                                                              "yyyy-MM-dd"
+                            <FormField
+                                control={form.control}
+                                name="balance"
+                                render={({
+                                    field: { onChange, value, ...field },
+                                }) => (
+                                    <FormItem>
+                                        <FormLabel>Saldo Atual</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="R$ 0,00"
+                                                currency
+                                                value={value}
+                                                onValueChange={(values) => {
+                                                    onChange(
+                                                        values.floatValue || 0
+                                                    );
+                                                }}
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <FormField
+                                    control={form.control}
+                                    name="profitability"
+                                    render={({
+                                        field: { onChange, value, ...field },
+                                    }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                Rentabilidade (%)
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type="number"
+                                                    step="0.01"
+                                                    placeholder="Ex: 100"
+                                                    value={value || ""}
+                                                    onChange={(e) =>
+                                                        onChange(
+                                                            e.target.value
+                                                                ? parseFloat(
+                                                                      e.target
+                                                                          .value
+                                                                  )
+                                                                : undefined
+                                                        )
+                                                    }
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="profitabilityType"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Tipo de Rent.</FormLabel>
+                                            <FormControl>
+                                                <Select
+                                                    value={field.value || ""}
+                                                    onChange={field.onChange}
+                                                    options={[
+                                                        {
+                                                            value: "CDI",
+                                                            label: "% do CDI",
+                                                        },
+                                                        {
+                                                            value: "IPCA",
+                                                            label: "IPCA +",
+                                                        },
+                                                        {
+                                                            value: "PRE",
+                                                            label: "Prefixado (a.a.)",
+                                                        },
+                                                        {
+                                                            value: "DY",
+                                                            label: "Dividend Yield",
+                                                        },
+                                                        {
+                                                            value: "OTHER",
+                                                            label: "Outro",
+                                                        },
+                                                    ]}
+                                                    placeholder="Selecione"
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+
+                            <FormField
+                                control={form.control}
+                                name="maturityDate"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Vencimento (Opcional)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <DatePicker
+                                                date={
+                                                    field.value
+                                                        ? new Date(
+                                                              field.value +
+                                                                  "T00:00:00"
                                                           )
                                                         : undefined
-                                                )
-                                            }
-                                            className="w-full"
-                                            placeholder="Selecione a data"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                                                }
+                                                setDate={(date) =>
+                                                    field.onChange(
+                                                        date
+                                                            ? format(
+                                                                  date,
+                                                                  "yyyy-MM-dd"
+                                                              )
+                                                            : undefined
+                                                    )
+                                                }
+                                                className="w-full"
+                                                placeholder="Selecione a data"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
-                        <FormField
-                            control={form.control}
-                            name="description"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Descrição (Opcional)</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                            <FormField
+                                control={form.control}
+                                name="description"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Descrição (Opcional)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </DialogBody>
 
                         <DialogFooter>
                             <Button
