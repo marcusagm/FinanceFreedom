@@ -5,12 +5,14 @@ import {
     Home,
     Menu,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "../../lib/utils";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/Sheet";
 import { Sidebar } from "./Sidebar";
 
 export function MobileNav() {
+    const { t } = useTranslation();
     const location = useLocation();
 
     const isActive = (path: string) => {
@@ -30,7 +32,7 @@ export function MobileNav() {
                     )}
                 >
                     <Home className="h-5 w-5" />
-                    <span className="scale-[0.9]">Início</span>
+                    <span className="scale-[0.9]">{t("mobileNav.home")}</span>
                 </Link>
                 <Link
                     to="/transactions"
@@ -42,7 +44,9 @@ export function MobileNav() {
                     )}
                 >
                     <ArrowRightLeft className="h-5 w-5" />
-                    <span className="scale-[0.9]">Transações</span>
+                    <span className="scale-[0.9]">
+                        {t("mobileNav.transactions")}
+                    </span>
                 </Link>
                 <Link
                     to="/income"
@@ -54,7 +58,7 @@ export function MobileNav() {
                     )}
                 >
                     <DollarSign className="h-5 w-5" />
-                    <span className="scale-[0.9]">Renda</span>
+                    <span className="scale-[0.9]">{t("mobileNav.income")}</span>
                 </Link>
                 <Link
                     to="/debts"
@@ -66,7 +70,7 @@ export function MobileNav() {
                     )}
                 >
                     <CreditCard className="h-5 w-5" />
-                    <span className="scale-[0.9]">Dívidas</span>
+                    <span className="scale-[0.9]">{t("mobileNav.debts")}</span>
                 </Link>
 
                 <Sheet>
@@ -77,7 +81,9 @@ export function MobileNav() {
                             )}
                         >
                             <Menu className="h-5 w-5" />
-                            <span className="scale-[0.9]">Menu</span>
+                            <span className="scale-[0.9]">
+                                {t("mobileNav.menu")}
+                            </span>
                         </button>
                     </SheetTrigger>
                     <SheetContent

@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/Card";
 import { MoneyDisplay } from "../ui/MoneyDisplay";
 import { TimeCostBadge } from "../simulators/TimeCostBadge";
+import { useTranslation } from "react-i18next";
 
 interface ExpenseSummaryWidgetProps {
     value: number;
@@ -11,11 +12,12 @@ export function ExpenseSummaryWidget({
     value,
     hourlyRate,
 }: ExpenseSummaryWidgetProps) {
+    const { t } = useTranslation();
     return (
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
-                    Despesas (Mês)
+                    {t("dashboard.expenseSummary.title")}
                 </CardTitle>
                 <svg
                     xmlns="http://www.w3.org/2000/svg"

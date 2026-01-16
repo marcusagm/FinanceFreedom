@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import * as z from "zod";
 import { api } from "../../lib/api";
@@ -33,17 +34,28 @@ interface SplitTransactionDialogProps {
     transaction: Transaction | null;
 }
 
-const splitSchema = z.object({
-    splits: z
-        .array(
-            z.object({
-                amount: z.number().min(0.01, "Valor deve ser maior que 0"),
-                description: z.string().min(1, "Descrição é obrigatória"),
-                category: z.string().optional(),
-            })
-        )
-        .min(2, "Deve haver pelo menos 2 divisões"),
-});
+const createSplitSchema = (t: (key: string) => string) =>
+    z.object({
+        splits: z
+            .array(
+                z.object({
+                    amount: z
+                        .number()
+                        .min(
+                            0.01,
+                            t("transactions.split.validation.amountPositive")
+                        ),
+                    description: z
+                        .string()
+                        .min(
+                            1,
+                            t("transactions.split.validation.descRequired")
+                        ),
+                    category: z.string().optional(),
+                })
+            )
+            .min(2, t("transactions.split.validation.minSplits")),
+    });
 
 export function SplitTransactionDialog({
     isOpen,
@@ -51,7 +63,10 @@ export function SplitTransactionDialog({
     onSuccess,
     transaction,
 }: SplitTransactionDialogProps) {
+    const { t } = useTranslation();
     const [originalAmount, setOriginalAmount] = useState(0);
+
+    const splitSchema = createSplitSchema(t);
 
     const form = useForm<z.infer<typeof splitSchema>>({
         resolver: zodResolver(splitSchema),
@@ -78,12 +93,12 @@ export function SplitTransactionDialog({
                 splits: [
                     {
                         amount: half,
-                        description: `${transaction.description} (Parte 1)`,
+                        description: `${transaction.description} (1)`,
                         category: transaction.category || "",
                     },
                     {
                         amount: Number(transaction.amount) - half,
-                        description: `${transaction.description} (Parte 2)`,
+                        description: `${transaction.description} (2)`,
                         category: transaction.category || "",
                     },
                 ],
@@ -101,11 +116,10 @@ export function SplitTransactionDialog({
 
         if (Math.abs(totalSplit - originalAmount) > 0.01) {
             form.setError("root", {
-                message: `A soma das divisões (R$ ${totalSplit.toFixed(
-                    2
-                )}) deve ser igual ao valor original (R$ ${originalAmount.toFixed(
-                    2
-                )})`,
+                message: t("transactions.split.validation.subtotalMismatch", {
+                    total: totalSplit.toFixed(2),
+                    original: originalAmount.toFixed(2),
+                }),
             });
             return;
         }
@@ -114,12 +128,12 @@ export function SplitTransactionDialog({
             await api.post(`/transactions/${transaction.id}/split`, {
                 splits: values.splits,
             });
-            toast.success("Transação dividida com sucesso!");
+            toast.success(t("transactions.split.success"));
             onSuccess();
             onClose();
         } catch (error) {
             console.error("Failed to split transaction", error);
-            toast.error("Erro ao dividir transação.");
+            toast.error(t("transactions.split.error"));
         }
     };
 
@@ -132,10 +146,11 @@ export function SplitTransactionDialog({
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
             <DialogContent className="max-w-2xl">
                 <DialogHeader>
-                    <DialogTitle>Dividir Transação</DialogTitle>
+                    <DialogTitle>{t("transactions.split.title")}</DialogTitle>
                     <DialogDescription>
-                        Divida o valor total (R$ {originalAmount.toFixed(2)}) em
-                        várias transações menores.
+                        {t("transactions.split.description", {
+                            amount: originalAmount.toFixed(2),
+                        })}
                     </DialogDescription>
                 </DialogHeader>
 
@@ -147,7 +162,9 @@ export function SplitTransactionDialog({
                         <DialogBody className="space-y-4">
                             <div className="mb-4 p-4 border rounded-lg bg-muted/50">
                                 <div className="flex justify-between items-center text-sm font-medium">
-                                    <span>Restante para alocar:</span>
+                                    <span>
+                                        {t("transactions.split.remaining")}:
+                                    </span>
                                     <span
                                         className={
                                             remaining === 0
@@ -177,7 +194,9 @@ export function SplitTransactionDialog({
                                                 }) => (
                                                     <FormItem>
                                                         <FormLabel className="text-xs">
-                                                            Valor
+                                                            {t(
+                                                                "transactions.table.amount"
+                                                            )}
                                                         </FormLabel>
                                                         <FormControl>
                                                             <Input
@@ -208,7 +227,9 @@ export function SplitTransactionDialog({
                                                 render={({ field }) => (
                                                     <FormItem>
                                                         <FormLabel className="text-xs">
-                                                            Descrição
+                                                            {t(
+                                                                "transactions.table.description"
+                                                            )}
                                                         </FormLabel>
                                                         <FormControl>
                                                             <Input
@@ -228,7 +249,9 @@ export function SplitTransactionDialog({
                                                 render={({ field }) => (
                                                     <FormItem>
                                                         <FormLabel className="text-xs">
-                                                            Categoria
+                                                            {t(
+                                                                "transactions.table.category"
+                                                            )}
                                                         </FormLabel>
                                                         <FormControl>
                                                             <Input
@@ -270,8 +293,8 @@ export function SplitTransactionDialog({
                                     })
                                 }
                             >
-                                <Plus className="w-4 h-4 mr-2" /> Adicionar
-                                Divisão
+                                <Plus className="w-4 h-4 mr-2" />{" "}
+                                {t("transactions.split.addSplit")}
                             </Button>
 
                             {form.formState.errors.root && (
@@ -287,7 +310,7 @@ export function SplitTransactionDialog({
                                 variant="outline"
                                 onClick={onClose}
                             >
-                                Cancelar
+                                {t("common.cancel")}
                             </Button>
                             <Button
                                 type="submit"
@@ -297,8 +320,8 @@ export function SplitTransactionDialog({
                                 }
                             >
                                 {form.formState.isSubmitting
-                                    ? "Dividindo..."
-                                    : "Confirmar Divisão"}
+                                    ? t("transactions.split.splitting")
+                                    : t("transactions.split.confirm")}
                             </Button>
                         </DialogFooter>
                     </form>

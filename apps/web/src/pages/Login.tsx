@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { Alert, AlertDescription } from "../components/ui/Alert";
@@ -17,14 +18,17 @@ import { Label } from "../components/ui/Label";
 import { useAuth } from "../contexts/AuthContext";
 import { api } from "../lib/api";
 
-const loginSchema = z.object({
-    email: z.string().email("Please enter a valid email"),
-    password: z.string().min(1, "Password is required"),
-});
+const createLoginSchema = (t: any) =>
+    z.object({
+        email: z.string().email(t("auth.validation.emailRequired")),
+        password: z.string().min(1, t("auth.validation.passwordRequired")),
+    });
 
-type LoginForm = z.infer<typeof loginSchema>;
+type LoginForm = z.infer<ReturnType<typeof createLoginSchema>>;
 
 export function Login() {
+    const { t } = useTranslation();
+    const loginSchema = useMemo(() => createLoginSchema(t), [t]);
     const [authError, setAuthError] = useState("");
     const { login } = useAuth();
     const navigate = useNavigate();
@@ -53,7 +57,7 @@ export function Login() {
             navigate("/");
         } catch (err: any) {
             console.error("Login failed", err);
-            setAuthError("Invalid credentials. Please try again.");
+            setAuthError(t("auth.login.invalidCredentials"));
             delete api.defaults.headers.common["Authorization"];
         }
     };
@@ -74,11 +78,13 @@ export function Login() {
                             </Alert>
                         )}
                         <div className="space-y-2">
-                            <Label htmlFor="email">Email</Label>
+                            <Label htmlFor="email">
+                                {t("auth.login.emailLabel")}
+                            </Label>
                             <Input
                                 id="email"
                                 type="email"
-                                placeholder="name@example.com"
+                                placeholder={t("auth.login.emailPlaceholder")}
                                 data-testid="email-input"
                                 {...register("email")}
                             />
@@ -89,7 +95,9 @@ export function Login() {
                             )}
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="password">Password</Label>
+                            <Label htmlFor="password">
+                                {t("auth.login.passwordLabel")}
+                            </Label>
                             <Input
                                 id="password"
                                 type="password"
@@ -106,7 +114,7 @@ export function Login() {
                                     to="/forgot-password"
                                     className="text-sm text-muted-foreground hover:text-primary"
                                 >
-                                    Forgot password?
+                                    {t("auth.login.forgotPassword")}
                                 </Link>
                             </div>
                         </div>
@@ -117,15 +125,17 @@ export function Login() {
                             className="w-full"
                             disabled={isSubmitting}
                         >
-                            {isSubmitting ? "Signing in..." : "Sign In"}
+                            {isSubmitting
+                                ? t("auth.login.signingIn")
+                                : t("auth.login.signIn")}
                         </Button>
                         <div className="text-center text-sm mt-4">
-                            Don't have an account?{" "}
+                            {t("auth.login.noAccount")}{" "}
                             <Link
                                 to="/register"
                                 className="text-primary hover:underline"
                             >
-                                Register now
+                                {t("auth.login.registerLink")}
                             </Link>
                         </div>
                     </CardFooter>

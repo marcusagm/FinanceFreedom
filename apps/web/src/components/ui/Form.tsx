@@ -18,16 +18,18 @@ const Form = FormProvider;
 
 type FormFieldContextValue<
     TFieldValues extends FieldValues = FieldValues,
-    TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+    TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 > = {
     name: TName;
 };
 
-const FormFieldContext = React.createContext<FormFieldContextValue>({} as FormFieldContextValue);
+const FormFieldContext = React.createContext<FormFieldContextValue>(
+    {} as FormFieldContextValue
+);
 
 const FormField = <
     TFieldValues extends FieldValues = FieldValues,
-    TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+    TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 >({
     ...props
 }: ControllerProps<TFieldValues, TName>) => {
@@ -65,43 +67,50 @@ type FormItemContextValue = {
     id: string;
 };
 
-const FormItemContext = React.createContext<FormItemContextValue>({} as FormItemContextValue);
-
-const FormItem = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-    ({ className, ...props }, ref) => {
-        const id = React.useId();
-
-        return (
-            <FormItemContext.Provider value={{ id }}>
-                <div
-                    ref={ref}
-                    className={cn("space-y-2 flex flex-col items-start gap-1 w-full", className)}
-                    {...props}
-                />
-            </FormItemContext.Provider>
-        );
-    },
+const FormItemContext = React.createContext<FormItemContextValue>(
+    {} as FormItemContextValue
 );
-FormItem.displayName = "FormItem";
 
-const FormLabel = React.forwardRef<HTMLLabelElement, React.LabelHTMLAttributes<HTMLLabelElement>>(
-    ({ className, ...props }, ref) => {
-        const { error, formItemId } = useFormField();
+const FormItem = React.forwardRef<
+    HTMLDivElement,
+    React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => {
+    const id = React.useId();
 
-        return (
-            <label
+    return (
+        <FormItemContext.Provider value={{ id }}>
+            <div
                 ref={ref}
                 className={cn(
-                    "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-left w-full",
-                    error && "text-destructive",
-                    className,
+                    "space-y-2 flex flex-col items-start gap-1 w-full",
+                    className
                 )}
-                htmlFor={formItemId}
                 {...props}
             />
-        );
-    },
-);
+        </FormItemContext.Provider>
+    );
+});
+FormItem.displayName = "FormItem";
+
+const FormLabel = React.forwardRef<
+    HTMLLabelElement,
+    React.LabelHTMLAttributes<HTMLLabelElement>
+>(({ className, ...props }, ref) => {
+    const { error, formItemId } = useFormField();
+
+    return (
+        <label
+            ref={ref}
+            className={cn(
+                "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-left w-full",
+                error && "text-destructive",
+                className
+            )}
+            htmlFor={formItemId}
+            {...props}
+        />
+    );
+});
 FormLabel.displayName = "FormLabel";
 
 import { Slot } from "@radix-ui/react-slot";
@@ -109,23 +118,27 @@ import { Slot } from "@radix-ui/react-slot";
 
 // ...
 
-const FormControl = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-    ({ ...props }, ref) => {
-        const { error, formItemId, formDescriptionId, formMessageId } = useFormField();
+const FormControl = React.forwardRef<
+    HTMLDivElement,
+    React.HTMLAttributes<HTMLDivElement>
+>(({ ...props }, ref) => {
+    const { error, formItemId, formDescriptionId, formMessageId } =
+        useFormField();
 
-        return (
-            <Slot
-                ref={ref}
-                id={formItemId}
-                aria-describedby={
-                    !error ? `${formDescriptionId}` : `${formDescriptionId} ${formMessageId}`
-                }
-                aria-invalid={!!error}
-                {...props}
-            />
-        );
-    },
-);
+    return (
+        <Slot
+            ref={ref}
+            id={formItemId}
+            aria-describedby={
+                !error
+                    ? `${formDescriptionId}`
+                    : `${formDescriptionId} ${formMessageId}`
+            }
+            aria-invalid={!!error}
+            {...props}
+        />
+    );
+});
 FormControl.displayName = "FormControl";
 
 const FormMessage = React.forwardRef<
@@ -143,7 +156,10 @@ const FormMessage = React.forwardRef<
         <p
             ref={ref}
             id={formMessageId}
-            className={cn("text-xs font-medium text-red-500 text-left w-full", className)}
+            className={cn(
+                "text-xs font-medium text-red-500 text-left w-full",
+                className
+            )}
             {...props}
         >
             {body}
@@ -152,4 +168,12 @@ const FormMessage = React.forwardRef<
 });
 FormMessage.displayName = "FormMessage";
 
-export { useFormField, Form, FormItem, FormLabel, FormControl, FormMessage, FormField };
+export {
+    useFormField,
+    Form,
+    FormItem,
+    FormLabel,
+    FormControl,
+    FormMessage,
+    FormField,
+};

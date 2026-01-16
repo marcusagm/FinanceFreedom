@@ -14,7 +14,10 @@ interface Props {
     accounts: any[]; // Or specific type
 }
 
-export const ImportReviewTable: React.FC<Props> = ({ transactions, accounts }) => {
+export const ImportReviewTable: React.FC<Props> = ({
+    transactions,
+    accounts,
+}) => {
     const getAccountName = (id: string) => {
         const acc = accounts.find((a) => a.id === id);
         return acc ? acc.name : "Unknown";
@@ -35,7 +38,9 @@ export const ImportReviewTable: React.FC<Props> = ({ transactions, accounts }) =
                 <TableBody>
                     {transactions.map((t, index) => (
                         <TableRow key={index}>
-                            <TableCell>{new Date(t.date).toLocaleDateString()}</TableCell>
+                            <TableCell>
+                                {new Date(t.date).toLocaleDateString()}
+                            </TableCell>
                             <TableCell>{getAccountName(t.accountId)}</TableCell>
                             <TableCell>{t.description}</TableCell>
                             <TableCell>{t.category}</TableCell>

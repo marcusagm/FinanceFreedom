@@ -1,3 +1,4 @@
+import { useTranslation, Trans } from "react-i18next";
 import { AppAlert } from "../ui/AppAlert";
 import { Button } from "../ui/Button";
 import {
@@ -27,24 +28,38 @@ export function DeleteIncomeDialog({
     itemType,
     isDeleting,
 }: DeleteIncomeDialogProps) {
-    const typeLabel = itemType === "SOURCE" ? "Fonte de Renda" : "Serviço";
-    const typeLabelStrong =
-        itemType === "SOURCE" ? "A fonte de renda" : "O serviço";
+    const { t } = useTranslation();
+    const typeLabel =
+        itemType === "SOURCE"
+            ? t("income.deleteDialog.typeSource")
+            : t("income.deleteDialog.typeWorkUnit");
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Excluir {typeLabel}</DialogTitle>
+                    <DialogTitle>
+                        {t("income.deleteDialog.title", { type: typeLabel })}
+                    </DialogTitle>
                     <DialogDescription>
-                        Esta ação não pode ser desfeita.
+                        {t("income.deleteDialog.desc")}
                     </DialogDescription>
                 </DialogHeader>
 
                 <DialogBody>
-                    <AppAlert variant="destructive" title="Atenção">
-                        {typeLabelStrong} <strong>{itemName}</strong> será
-                        permanentemente removida.
+                    <AppAlert
+                        variant="destructive"
+                        title={t("income.deleteDialog.attention")}
+                    >
+                        <Trans
+                            i18nKey={
+                                itemType === "SOURCE"
+                                    ? "income.deleteDialog.messageSource"
+                                    : "income.deleteDialog.messageWorkUnit"
+                            }
+                            values={{ name: itemName }}
+                            components={{ strong: <strong /> }}
+                        />
                     </AppAlert>
                 </DialogBody>
 
@@ -54,14 +69,16 @@ export function DeleteIncomeDialog({
                         onClick={onClose}
                         disabled={isDeleting}
                     >
-                        Cancelar
+                        {t("common.cancel")}
                     </Button>
                     <Button
                         variant="destructive"
                         onClick={onConfirm}
                         disabled={isDeleting}
                     >
-                        {isDeleting ? "Excluindo..." : "Sim, excluir"}
+                        {isDeleting
+                            ? t("income.deleteDialog.deleting")
+                            : t("income.deleteDialog.confirm")}
                     </Button>
                 </DialogFooter>
             </DialogContent>

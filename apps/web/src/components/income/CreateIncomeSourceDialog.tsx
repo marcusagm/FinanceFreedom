@@ -1,6 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import * as z from "zod";
 import { api } from "../../lib/api";
 import {
@@ -39,19 +41,27 @@ interface CreateIncomeSourceDialogProps {
     itemToEdit?: IncomeSource | null;
 }
 
-const formSchema = z.object({
-    name: z.string().min(1, "Nome é obrigatório"),
-    amount: z.number().min(0.01, "Valor deve ser maior que zero"),
-    payDay: z.number().min(1).max(31, "Dia inválido"),
-    categoryId: z.string().optional(),
-});
-
 export function CreateIncomeSourceDialog({
     isOpen,
     onClose,
     onSuccess,
     itemToEdit,
 }: CreateIncomeSourceDialogProps) {
+    const { t } = useTranslation();
+
+    const formSchema = z.object({
+        name: z
+            .string()
+            .min(1, t("income.sourceDialog.validation.nameRequired")),
+        amount: z
+            .number()
+            .min(0.01, t("income.sourceDialog.validation.amountPositive")),
+        payDay: z
+            .number()
+            .min(1)
+            .max(31, t("income.sourceDialog.validation.dayInvalid")),
+        categoryId: z.string().optional(),
+    });
     const [categories, setCategories] = useState<Category[]>([]);
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -99,7 +109,7 @@ export function CreateIncomeSourceDialog({
             onClose();
         } catch (error) {
             console.error(error);
-            // toast error?
+            toast.error(t("common.error") || "Error saving.");
         }
     };
 
@@ -109,11 +119,11 @@ export function CreateIncomeSourceDialog({
                 <DialogHeader>
                     <DialogTitle>
                         {itemToEdit
-                            ? "Editar Fonte de Renda"
-                            : "Nova Fonte de Renda"}
+                            ? t("income.sourceDialog.titleEdit")
+                            : t("income.sourceDialog.titleNew")}
                     </DialogTitle>
                     <DialogDescription className="sr-only">
-                        Preencha os dados abaixo para salvar a fonte de renda.
+                        {t("income.sourceDialog.desc")}
                     </DialogDescription>
                 </DialogHeader>
 
@@ -129,11 +139,13 @@ export function CreateIncomeSourceDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Nome (ex: Salário)
+                                            {t("income.sourceDialog.nameLabel")}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="Nome da fonte"
+                                                placeholder={t(
+                                                    "income.sourceDialog.namePlaceholder"
+                                                )}
                                                 {...field}
                                             />
                                         </FormControl>
@@ -149,7 +161,11 @@ export function CreateIncomeSourceDialog({
                                     field: { onChange, value, ...field },
                                 }) => (
                                     <FormItem>
-                                        <FormLabel>Valor (R$)</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                "income.sourceDialog.amountLabel"
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="0,00"
@@ -173,7 +189,11 @@ export function CreateIncomeSourceDialog({
                                 name="payDay"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Dia do Pagamento</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                "income.sourceDialog.payDayLabel"
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type="number"
@@ -199,14 +219,18 @@ export function CreateIncomeSourceDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Categoria de Renda (Opcional)
+                                            {t(
+                                                "income.sourceDialog.categoryLabel"
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Select
                                                 value={field.value || ""}
                                                 options={[
                                                     {
-                                                        label: "Sem categoria",
+                                                        label: t(
+                                                            "income.sourceDialog.noCategory"
+                                                        ),
                                                         value: "",
                                                     },
                                                     ...categories.map((c) => ({
@@ -215,7 +239,9 @@ export function CreateIncomeSourceDialog({
                                                     })),
                                                 ]}
                                                 onChange={field.onChange}
-                                                placeholder="Selecione uma categoria"
+                                                placeholder={t(
+                                                    "income.sourceDialog.selectCategory"
+                                                )}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -230,15 +256,15 @@ export function CreateIncomeSourceDialog({
                                 variant="outline"
                                 onClick={onClose}
                             >
-                                Cancelar
+                                {t("common.cancel")}
                             </Button>
                             <Button
                                 type="submit"
                                 disabled={form.formState.isSubmitting}
                             >
                                 {form.formState.isSubmitting
-                                    ? "Salvando..."
-                                    : "Salvar"}
+                                    ? t("common.saving")
+                                    : t("common.save")}
                             </Button>
                         </DialogFooter>
                     </form>

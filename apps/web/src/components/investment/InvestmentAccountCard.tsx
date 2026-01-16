@@ -1,5 +1,6 @@
 import { Bitcoin, Landmark, PiggyBank, TrendingUp, Wallet } from "lucide-react";
 import { Pencil, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { AppCard } from "../ui/AppCard";
 import { Button } from "../ui/Button";
 import { MoneyDisplay } from "../ui/MoneyDisplay";
@@ -36,26 +37,37 @@ const getTypeIcon = (type: string) => {
     }
 };
 
-const getTypeLabel = (type: string) => {
-    switch (type) {
-        case "FIXED_INCOME":
-            return "Renda Fixa";
-        case "VARIABLE_INCOME":
-            return "Renda Variável";
-        case "CRYPTO":
-            return "Cripto";
-        case "CASH":
-            return "Caixa";
-        default:
-            return type;
-    }
-};
+// Removed getTypeLabel from outside and moved inside component to access t
+// Wait, I can't easily remove lines 39-52 with `replace_file_content` if I don't target them.
+// I will target them to remove/replace with empty string, but since I am using multi_replace
+// I need to be careful.
+// Let's just redefine getTypeLabel inside and ignore the outside one, or replace the outside one with nothing?
+// Better to replace the usage inside `InvestmentAccountCard` and remove the function outside if possible.
+// Or just let the outside function be there unused (ts might complain).
+// I will remove the outside function `getTypeLabel`.
 
 export function InvestmentAccountCard({
     account,
     onEdit,
     onDelete,
 }: InvestmentAccountCardProps) {
+    const { t } = useTranslation();
+
+    const getTypeLabel = (type: string) => {
+        switch (type) {
+            case "FIXED_INCOME":
+                return t("investments.types.FIXED_INCOME");
+            case "VARIABLE_INCOME":
+                return t("investments.types.VARIABLE_INCOME");
+            case "CRYPTO":
+                return t("investments.types.CRYPTO");
+            case "CASH":
+                return t("investments.types.CASH");
+            default:
+                return type;
+        }
+    };
+
     const actions = (
         <>
             {onEdit && (
@@ -66,7 +78,7 @@ export function InvestmentAccountCard({
                         e.stopPropagation();
                         onEdit(account);
                     }}
-                    title="Editar"
+                    title={t("common.edit")}
                 >
                     <Pencil className="h-4 w-4" />
                 </Button>
@@ -79,7 +91,7 @@ export function InvestmentAccountCard({
                         e.stopPropagation();
                         onDelete(account.id);
                     }}
-                    title="Excluir"
+                    title={t("common.delete")}
                     className="text-red-500 hover:text-red-600 hover:bg-red-50"
                 >
                     <Trash2 className="h-4 w-4" />
@@ -119,7 +131,7 @@ export function InvestmentAccountCard({
                         {account.maturityDate && (
                             <span className="flex items-center gap-1">
                                 <Landmark className="h-3 w-3" />
-                                Vence em:{" "}
+                                {t("investments.expiresIn")}{" "}
                                 {new Date(
                                     account.maturityDate
                                 ).toLocaleDateString(undefined, {

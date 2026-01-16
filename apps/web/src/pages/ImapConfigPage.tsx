@@ -1,6 +1,7 @@
 import { AlertCircle, CheckCircle, Plus, RefreshCw } from "lucide-react";
 import type React from "react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ImapConfigForm } from "../components/import/ImapConfigForm";
 import {
     type ImapConfig,
@@ -20,6 +21,7 @@ import { Select } from "../components/ui/Select";
 import { api } from "../lib/api";
 
 export const ImapConfigPage: React.FC = () => {
+    const { t } = useTranslation();
     const [accounts, setAccounts] = useState<any[]>([]);
     const [selectedAccount, setSelectedAccount] = useState<string>("");
 
@@ -82,17 +84,20 @@ export const ImapConfigPage: React.FC = () => {
     };
 
     const handleDelete = async (id: string) => {
-        if (!confirm("Are you sure you want to delete this configuration?"))
-            return;
+        if (!confirm(t("imap.list.deleteConfirm"))) return;
 
         try {
             await api.post("/import/imap-config/delete", { id });
             setConfigs((prev) => prev.filter((c) => c.id !== id));
-            showFeedback("Success", "Configuration deleted", "success");
+            showFeedback(
+                t("common.success"),
+                t("imap.list.deleteSuccess"),
+                "success"
+            );
         } catch (error: any) {
             showFeedback(
-                "Error",
-                error.response?.data?.message || "Failed to delete",
+                t("common.error"),
+                error.response?.data?.message || t("imap.list.deleteError"),
                 "error"
             );
         }
@@ -107,8 +112,8 @@ export const ImapConfigPage: React.FC = () => {
             });
             setIsFormOpen(false);
             showFeedback(
-                "Success",
-                "Configuration saved successfully",
+                t("common.success"),
+                t("imap.list.saveSuccess"),
                 "success"
             );
             loadConfigs();
@@ -134,11 +139,11 @@ export const ImapConfigPage: React.FC = () => {
             });
 
             if (res.data.success) {
-                return { success: true, message: "Connection successful!" };
+                return { success: true, message: t("imap.list.testSuccess") };
             } else {
                 return {
                     success: false,
-                    message: res.data.message || "Connection failed",
+                    message: res.data.message || t("imap.list.testFailed"),
                 };
             }
         } catch (error: any) {
@@ -158,14 +163,14 @@ export const ImapConfigPage: React.FC = () => {
                 accountId: selectedAccount,
             });
             showFeedback(
-                "Sync Complete",
-                `Synced ${res.data.imported} transactions!`,
+                t("imap.list.syncComplete"),
+                t("imap.list.syncedCount", { count: res.data.imported }),
                 "success"
             );
         } catch (error: any) {
             showFeedback(
-                "Error",
-                error.response?.data?.message || "Sync failed",
+                t("common.error"),
+                error.response?.data?.message || t("imap.list.syncFailed"),
                 "error"
             );
         } finally {
@@ -189,7 +194,7 @@ export const ImapConfigPage: React.FC = () => {
     return (
         <div className="p-6 max-w-4xl mx-auto">
             <PageHeader
-                title="IMAP Configuration"
+                title={t("imap.list.title")}
                 backLink="/import"
                 className="mb-6"
             />
@@ -198,13 +203,15 @@ export const ImapConfigPage: React.FC = () => {
                 <div className="flex flex-col sm:flex-row gap-4 sm:items-end justify-between">
                     <div className="space-y-2 w-full sm:w-1/3">
                         <label className="text-sm font-medium">
-                            Select Account Scope
+                            {t("imap.list.selectScope")}
                         </label>
                         <Select
                             value={selectedAccount}
                             onChange={setSelectedAccount}
                             options={accountOptions}
-                            placeholder="Select Account"
+                            placeholder={t(
+                                "imap.list.selectAccountPlaceholder"
+                            )}
                         />
                     </div>
 
@@ -219,7 +226,7 @@ export const ImapConfigPage: React.FC = () => {
                                     isSyncing ? "animate-spin" : ""
                                 }`}
                             />
-                            Sync All
+                            {t("imap.list.syncAll")}
                         </Button>
                         <Button
                             variant="primary"
@@ -227,14 +234,14 @@ export const ImapConfigPage: React.FC = () => {
                             disabled={!selectedAccount}
                         >
                             <Plus className="w-4 h-4 mr-2" />
-                            Add Configuration
+                            {t("imap.list.addConfig")}
                         </Button>
                     </div>
                 </div>
 
                 {isLoading ? (
                     <div className="text-center py-8 text-muted-foreground">
-                        Loading configurations...
+                        {t("imap.list.loading")}
                     </div>
                 ) : (
                     <ImapConfigList
@@ -294,7 +301,7 @@ export const ImapConfigPage: React.FC = () => {
                                     }))
                                 }
                             >
-                                Close
+                                {t("common.close")}
                             </Button>
                         </div>
                     </DialogFooter>

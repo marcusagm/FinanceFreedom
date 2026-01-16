@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { RefreshCw } from "lucide-react";
 
 import { ActionFeed } from "../components/dashboard/ActionFeed";
@@ -25,6 +26,7 @@ import {
 import { getHourlyRate } from "../services/simulator.service";
 
 export default function Dashboard() {
+    const { t } = useTranslation();
     const [summary, setSummary] = useState<DashboardSummary | null>(null);
     const [hourlyRate, setHourlyRate] = useState<number>(0);
     const [loading, setLoading] = useState(true);
@@ -46,7 +48,7 @@ export default function Dashboard() {
             setHourlyRate(hourlyData.hourlyRate);
         } catch (err: any) {
             console.error("Failed to fetch dashboard data", err);
-            setError(err.message || "Failed to load dashboard data");
+            setError(err.message || t("dashboard.loadError"));
         } finally {
             setLoading(false);
         }
@@ -59,22 +61,22 @@ export default function Dashboard() {
     const confirmSync = async () => {
         setIsSyncConfirmOpen(false);
         setSyncing(true);
-        const toastId = notify.loading("Sincronizando contas...");
+        const toastId = notify.loading(t("dashboard.sync.loading"));
         try {
             const result = await ImportService.syncNow(); // Sync ALL accounts
             const count = result.imported;
             await fetchData(); // Refresh data
             notify.dismiss(toastId);
             notify.success(
-                "Sincronização Concluída",
-                `Foram importadas ${count} novas transações.`
+                t("dashboard.sync.successTitle"),
+                t("dashboard.sync.successDesc", { count })
             );
         } catch (error: any) {
             console.error("Sync failed", error);
             notify.dismiss(toastId);
             notify.error(
-                "Erro na Sincronização",
-                error.message || "Falha ao conectar com o servidor de e-mail."
+                t("dashboard.sync.errorTitle"),
+                error.message || t("dashboard.sync.errorDesc")
             );
         } finally {
             setSyncing(false);
@@ -99,7 +101,7 @@ export default function Dashboard() {
                 <div className="text-destructive text-lg font-medium">
                     {error}
                 </div>
-                <Button onClick={fetchData}>Tentar Novamente</Button>
+                <Button onClick={fetchData}>{t("common.tryAgain")}</Button>
             </div>
         );
     }
@@ -107,8 +109,8 @@ export default function Dashboard() {
     if (!summary) {
         return (
             <div className="flex flex-col items-center justify-center min-h-screen gap-4">
-                <div className="text-lg">Nenhum dado disponível.</div>
-                <Button onClick={fetchData}>Atualizar</Button>
+                <div className="text-lg">{t("common.noData")}</div>
+                <Button onClick={fetchData}>{t("common.refresh")}</Button>
             </div>
         );
     }
@@ -118,7 +120,7 @@ export default function Dashboard() {
     return (
         <div className="space-y-4 p-8 pt-6 relative min-h-screen">
             <PageHeader
-                title="Dashboard"
+                title={t("dashboard.title")}
                 actions={
                     <div className="flex gap-2">
                         {/* <Button
@@ -169,7 +171,9 @@ export default function Dashboard() {
                                     syncing ? "animate-spin" : ""
                                 }`}
                             />
-                            {syncing ? "Sincronizando..." : "Sincronizar"}
+                            {syncing
+                                ? t("dashboard.sync.syncing")
+                                : t("dashboard.sync.button")}
                         </Button>
                     </div>
                 }

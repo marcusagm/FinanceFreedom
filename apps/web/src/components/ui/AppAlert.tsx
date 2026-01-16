@@ -37,7 +37,9 @@ export function AppAlert({
     const getIcon = () => {
         switch (variant) {
             case "destructive":
-                return <AlertTriangle className="h-4 w-4 text-red-600 dark:text-red-400" />;
+                return (
+                    <AlertTriangle className="h-4 w-4 text-red-600 dark:text-red-400" />
+                );
             case "success":
                 return <CheckCircle2 className="h-4 w-4" />;
             case "warning":

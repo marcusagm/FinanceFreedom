@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import * as z from "zod";
 import type { Category } from "../../services/category.service";
@@ -35,21 +36,23 @@ interface CategoryDialogProps {
     categoryToEdit: Category | null;
 }
 
-const formSchema = z.object({
-    name: z.string().min(1, "Nome é obrigatório"),
-    color: z.string().min(1, "Cor é obrigatória"),
-    budgetLimit: z.number().min(0, "O limite deve ser positivo"),
-    type: z.enum(["EXPENSE", "INCOME"]),
-});
-
-type FormValues = z.infer<typeof formSchema>;
-
 export function CategoryDialog({
     isOpen,
     onClose,
     onSuccess,
     categoryToEdit,
 }: CategoryDialogProps) {
+    const { t } = useTranslation();
+
+    const formSchema = z.object({
+        name: z.string().min(1, t("auth.validation.nameRequired")),
+        color: z.string().min(1, t("common.error")),
+        budgetLimit: z.number().min(0, t("common.error")),
+        type: z.enum(["EXPENSE", "INCOME"]),
+    });
+
+    type FormValues = z.infer<typeof formSchema>;
+
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -86,16 +89,16 @@ export function CategoryDialog({
         try {
             if (categoryToEdit) {
                 await categoryService.update(categoryToEdit.id, values);
-                toast.success("Categoria atualizada!");
+                toast.success(t("common.success"));
             } else {
                 await categoryService.create(values);
-                toast.success("Categoria criada!");
+                toast.success(t("common.success"));
             }
             onSuccess();
             onClose();
         } catch (error) {
             console.error("Failed to save category", error);
-            toast.error("Erro ao salvar categoria");
+            toast.error(t("common.error"));
         }
     };
 
@@ -104,10 +107,12 @@ export function CategoryDialog({
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>
-                        {categoryToEdit ? "Editar Categoria" : "Nova Categoria"}
+                        {categoryToEdit
+                            ? t("categories.editTitle")
+                            : t("categories.createTitle")}
                     </DialogTitle>
                     <DialogDescription>
-                        Configure o nome e a cor da sua categoria.
+                        {t("categories.configureDesc")}
                     </DialogDescription>
                 </DialogHeader>
 
@@ -122,10 +127,14 @@ export function CategoryDialog({
                                 name="name"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Nome</FormLabel>
+                                        <FormLabel>
+                                            {t("categories.nameLabel")}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="Ex: Alimentação"
+                                                placeholder={t(
+                                                    "categories.namePlaceholder"
+                                                )}
                                                 {...field}
                                             />
                                         </FormControl>
@@ -139,22 +148,30 @@ export function CategoryDialog({
                                 name="type"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Tipo</FormLabel>
+                                        <FormLabel>
+                                            {t("accounts.typeLabel")}
+                                        </FormLabel>
                                         <FormControl>
                                             <Select
                                                 value={field.value}
                                                 options={[
                                                     {
-                                                        label: "Despesa",
+                                                        label: t(
+                                                            "categories.typeExpense"
+                                                        ),
                                                         value: "EXPENSE",
                                                     },
                                                     {
-                                                        label: "Receita",
+                                                        label: t(
+                                                            "categories.typeIncome"
+                                                        ),
                                                         value: "INCOME",
                                                     },
                                                 ]}
                                                 onChange={field.onChange}
-                                                placeholder="Selecione o tipo"
+                                                placeholder={t(
+                                                    "settings.general.selectPlaceholder"
+                                                )}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -167,7 +184,9 @@ export function CategoryDialog({
                                 name="color"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Cor</FormLabel>
+                                        <FormLabel>
+                                            {t("categories.colorLabel")}
+                                        </FormLabel>
                                         <FormControl>
                                             <ColorInput
                                                 value={field.value}
@@ -188,8 +207,10 @@ export function CategoryDialog({
                                     <FormItem>
                                         <FormLabel>
                                             {form.watch("type") === "INCOME"
-                                                ? "Meta de Receita (Mensal)"
-                                                : "Limite de Orçamento (Mensal)"}
+                                                ? t(
+                                                      "categories.revenueGoalLabel"
+                                                  )
+                                                : t("categories.budgetLabel")}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -216,7 +237,7 @@ export function CategoryDialog({
                                 variant="outline"
                                 onClick={onClose}
                             >
-                                Cancelar
+                                {t("common.cancel")}
                             </Button>
                             <Button
                                 type="submit"
@@ -225,7 +246,7 @@ export function CategoryDialog({
                                 {form.formState.isSubmitting ? (
                                     <Loader2 className="h-4 w-4 animate-spin" />
                                 ) : (
-                                    "Salvar"
+                                    t("common.save", { defaultValue: "Salvar" })
                                 )}
                             </Button>
                         </DialogFooter>

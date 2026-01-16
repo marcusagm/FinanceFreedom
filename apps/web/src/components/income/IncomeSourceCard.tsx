@@ -1,4 +1,5 @@
 import { Pencil, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import type { IncomeSource } from "../../services/income.service";
 import { AppCard } from "../ui/AppCard";
 import { Button } from "../ui/Button";
@@ -10,7 +11,12 @@ interface IncomeSourceCardProps {
     onDelete: (source: IncomeSource) => void;
 }
 
-export function IncomeSourceCard({ source, onEdit, onDelete }: IncomeSourceCardProps) {
+export function IncomeSourceCard({
+    source,
+    onEdit,
+    onDelete,
+}: IncomeSourceCardProps) {
+    const { t } = useTranslation();
     const actions = (
         <>
             <Button
@@ -20,7 +26,7 @@ export function IncomeSourceCard({ source, onEdit, onDelete }: IncomeSourceCardP
                     e.stopPropagation();
                     onEdit(source);
                 }}
-                title="Editar"
+                title={t("common.edit")}
             >
                 <Pencil className="w-4 h-4" />
             </Button>
@@ -31,7 +37,7 @@ export function IncomeSourceCard({ source, onEdit, onDelete }: IncomeSourceCardP
                     e.stopPropagation();
                     onDelete(source);
                 }}
-                title="Excluir"
+                title={t("common.delete")}
                 className="text-destructive hover:text-destructive hover:bg-destructive/10"
             >
                 <Trash2 className="w-4 h-4" />
@@ -44,7 +50,7 @@ export function IncomeSourceCard({ source, onEdit, onDelete }: IncomeSourceCardP
             title={source.name}
             color="#10b981" // emerald-500
             actions={actions}
-            footer={`Recebe no dia ${source.payDay}`}
+            footer={t("income.receivesOn", { day: source.payDay })}
         >
             <div className="text-2xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400">
                 <MoneyDisplay value={source.amount} />

@@ -4,6 +4,7 @@ import {
     CheckCircle,
     TrendingUp,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import type { ActionRecommendation } from "../../services/dashboard.service";
 import { AppCard } from "../ui/AppCard";
@@ -14,6 +15,8 @@ interface ActionCardProps {
 }
 
 export function ActionCard({ recommendation }: ActionCardProps) {
+    const { t } = useTranslation();
+
     const getIcon = () => {
         switch (recommendation.type) {
             case "PAY_DEBT":
@@ -62,7 +65,7 @@ export function ActionCard({ recommendation }: ActionCardProps) {
             badge={
                 recommendation.priority === "CRITICAL" ? (
                     <span className="inline-flex items-center rounded-full bg-priority-critical-border/50 px-2.5 py-0.5 text-xs font-medium text-priority-critical-foreground">
-                        Crítico
+                        {t("dashboard.actionFeed.critical")}
                     </span>
                 ) : (
                     <div className="flex items-center gap-2">{getIcon()}</div>

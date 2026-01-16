@@ -1,9 +1,8 @@
 import { useDroppable } from "@dnd-kit/core";
+import { useTranslation } from "react-i18next";
 import type React from "react";
 import { cn } from "../../lib/utils";
-
 import { MoneyDisplay } from "../ui/MoneyDisplay";
-
 import { Scissors } from "lucide-react";
 
 interface ProjectedMeta {
@@ -34,6 +33,7 @@ export function CalendarDay({
     onStatusChange,
     onDistribute,
 }: CalendarDayProps) {
+    const { t } = useTranslation();
     const { isOver, setNodeRef } = useDroppable({
         id: `day-${date.toISOString().split("T")[0]}`,
         data: {
@@ -89,7 +89,7 @@ export function CalendarDay({
                             "bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 border-emerald-500/20 hover:bg-emerald-500/20"
                     )}
                     onClick={(e) => handleStatusClick(e, proj.id, proj.status)}
-                    title="Clique para alterar status (Plano -> Feito -> Pago)"
+                    title={t("income.calendar.statusTooltip")}
                 >
                     <div className="flex justify-between items-center gap-1">
                         <span className="truncate font-medium flex-1">
@@ -108,12 +108,10 @@ export function CalendarDay({
                     </div>
                     {/* Tooltip detail (visible on hover via title or custom UI) */}
                     <div className="hidden group-hover:block absolute -top-8 left-0 bg-popover text-popover-foreground border shadow-lg text-[10px] p-1.5 rounded z-10 whitespace-nowrap">
-                        Bruto:{" "}
-                        {new Intl.NumberFormat("pt-BR", {
-                            style: "currency",
-                            currency: "BRL",
-                        }).format(Number(proj.amount))}{" "}
-                        | Taxa: {proj.workUnit.taxRate || 0}%
+                        {t("income.calendar.grossLabel")}:{" "}
+                        <MoneyDisplay value={Number(proj.amount)} /> |{" "}
+                        {t("income.calendar.taxLabel")}:{" "}
+                        {proj.workUnit.taxRate || 0}%
                     </div>
 
                     {/* Hover Actions */}
@@ -125,7 +123,7 @@ export function CalendarDay({
                                     onDistribute(proj);
                                 }}
                                 className="text-blue-500 hover:bg-blue-500/10 rounded-full w-5 h-5 flex items-center justify-center transition-colors"
-                                title="Distribuir (Dividir em vários dias)"
+                                title={t("income.calendar.distributeTooltip")}
                             >
                                 <Scissors className="w-3 h-3" />
                             </button>
@@ -136,7 +134,7 @@ export function CalendarDay({
                                 onRemove(proj.id);
                             }}
                             className="text-destructive hover:bg-destructive/10 rounded-full w-5 h-5 flex items-center justify-center transition-colors"
-                            title="Remover"
+                            title={t("income.calendar.removeTooltip")}
                         >
                             <span className="text-lg leading-none transform -translate-y-px">
                                 ×

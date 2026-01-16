@@ -1,4 +1,5 @@
 import { Edit2, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import type { BudgetStatus } from "../../services/analytics.service";
 import type { Category } from "../../services/category.service";
 import { AppCard } from "../ui/AppCard";
@@ -19,6 +20,8 @@ export function CategoryCard({
     onEdit,
     onDelete,
 }: CategoryCardProps) {
+    const { t } = useTranslation();
+
     const actions = (
         <>
             <Button
@@ -28,7 +31,7 @@ export function CategoryCard({
                     e.stopPropagation();
                     onEdit(category);
                 }}
-                title="Editar"
+                title={t("common.edit")}
             >
                 <Edit2 className="w-4 h-4" />
             </Button>
@@ -40,7 +43,7 @@ export function CategoryCard({
                     onDelete(category.id);
                 }}
                 className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                title="Excluir"
+                title={t("common.delete")}
             >
                 <Trash2 className="w-4 h-4" />
             </Button>
@@ -56,7 +59,9 @@ export function CategoryCard({
             />
             {category.type && (
                 <span className="text-xs font-mono bg-muted px-2 py-0.5 rounded-full">
-                    {category.type === "EXPENSE" ? "Despesa" : "Receita"}
+                    {category.type === "EXPENSE"
+                        ? t("categories.typeExpense")
+                        : t("categories.typeIncome")}
                 </span>
             )}
         </div>
@@ -111,7 +116,9 @@ export function CategoryCard({
                     </div>
                 ) : (
                     <div className="text-xs text-muted-foreground pt-2">
-                        Sem limite definido
+                        {t("categories.noLimit", {
+                            defaultValue: "Sem limite definido",
+                        })}
                     </div>
                 )
             }
@@ -126,7 +133,9 @@ export function CategoryCard({
                     <MoneyDisplay value={category.budgetLimit || 0} />
                 </div>
             </div>
-            <p className="text-xs text-muted-foreground mt-1">Limite Mensal</p>
+            <p className="text-xs text-muted-foreground mt-1">
+                {t("categories.monthlyLimit")}
+            </p>
         </AppCard>
     );
 }

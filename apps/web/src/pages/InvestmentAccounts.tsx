@@ -1,5 +1,6 @@
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { AddInvestmentDialog } from "../components/investment/AddInvestmentDialog";
 import { DeleteInvestmentDialog } from "../components/investment/DeleteInvestmentDialog";
@@ -12,12 +13,15 @@ import { PageHeader } from "../components/ui/PageHeader";
 import { api } from "../lib/api";
 
 export function InvestmentAccounts() {
+    const { t } = useTranslation();
     const [accounts, setAccounts] = useState<InvestmentAccount[]>([]);
     const [isAddAccountOpen, setIsAddAccountOpen] = useState(false);
-    const [accountToEdit, setAccountToEdit] = useState<InvestmentAccount | null>(null);
+    const [accountToEdit, setAccountToEdit] =
+        useState<InvestmentAccount | null>(null);
 
     // Delete states
-    const [accountToDelete, setAccountToDelete] = useState<InvestmentAccount | null>(null);
+    const [accountToDelete, setAccountToDelete] =
+        useState<InvestmentAccount | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
 
     const fetchAccounts = async () => {
@@ -26,7 +30,7 @@ export function InvestmentAccounts() {
             setAccounts(response.data);
         } catch (error) {
             console.error("Error fetching investment accounts:", error);
-            toast.error("Erro ao carregar contas de investimento.");
+            toast.error(t("investments.loadError"));
         }
     };
 
@@ -48,12 +52,12 @@ export function InvestmentAccounts() {
         setIsDeleting(true);
         try {
             await api.delete(`/investment-accounts/${accountToDelete.id}`);
-            toast.success("Conta excluída com sucesso.");
+            toast.success(t("investments.deleteSuccess"));
             fetchAccounts();
             setAccountToDelete(null);
         } catch (error) {
             console.error(error);
-            toast.error("Erro ao excluir conta.");
+            toast.error(t("investments.deleteError"));
         } finally {
             setIsDeleting(false);
         }
@@ -67,12 +71,12 @@ export function InvestmentAccounts() {
     return (
         <div className="container mx-auto p-4 max-w-7xl">
             <PageHeader
-                title="Carteiras de Investimento"
-                description="Gerencie suas contas de investimento e corretoras."
+                title={t("investments.title")}
+                description={t("investments.subtitle")}
                 actions={
                     <Button onClick={handleCreate}>
                         <Plus className="mr-2 h-4 w-4" />
-                        Nova Carteira
+                        {t("investments.newAccount")}
                     </Button>
                 }
             />
@@ -80,7 +84,7 @@ export function InvestmentAccounts() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {accounts.length === 0 ? (
                     <div className="col-span-full text-center py-12 text-muted-foreground">
-                        Nenhuma conta de investimento cadastrada.
+                        {t("investments.empty")}
                     </div>
                 ) : (
                     accounts.map((acc) => (

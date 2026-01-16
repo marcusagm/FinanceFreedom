@@ -1,5 +1,6 @@
 import type React from "react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { ImportReviewTable } from "../components/import/ImportReviewTable";
 import { ImportZone } from "../components/import/ImportZone";
@@ -21,6 +22,7 @@ import {
 } from "../services/import.service";
 
 export const ImportPage: React.FC = () => {
+    const { t } = useTranslation();
     const [accounts, setAccounts] = useState<any[]>([]);
     const [selectedAccount, setSelectedAccount] = useState<string>("");
     const [transactions, setTransactions] = useState<ImportedTransaction[]>([]);
@@ -58,7 +60,7 @@ export const ImportPage: React.FC = () => {
 
     const handleFileSelect = async (file: File) => {
         if (!selectedAccount) {
-            showAlert("Error", "Please select an account first");
+            showAlert(t("common.error"), t("import.selectAccountError"));
             return;
         }
 
@@ -69,7 +71,7 @@ export const ImportPage: React.FC = () => {
             setStep("review");
         } catch (error) {
             console.error("Upload failed", error);
-            showAlert("Error", "Failed to parse file");
+            showAlert(t("common.error"), t("import.parseError"));
         } finally {
             setIsLoading(false);
         }
@@ -79,12 +81,12 @@ export const ImportPage: React.FC = () => {
         setIsLoading(true);
         try {
             await ImportService.confirmImport(transactions);
-            showAlert("Success", "Import successful!");
+            showAlert(t("common.success"), t("import.success"));
             setTransactions([]);
             setStep("upload");
         } catch (error) {
             console.error("Import failed", error);
-            showAlert("Error", "Failed to confirm import");
+            showAlert(t("common.error"), t("import.error"));
         } finally {
             setIsLoading(false);
         }
@@ -103,10 +105,12 @@ export const ImportPage: React.FC = () => {
     return (
         <div className="p-6 max-w-4xl mx-auto">
             <PageHeader
-                title="Smart Import"
+                title={t("import.title")}
                 actions={
                     <Link to="/import/config">
-                        <Button variant="outline">Configure IMAP</Button>
+                        <Button variant="outline">
+                            {t("import.configureImap")}
+                        </Button>
                     </Link>
                 }
                 className="mb-6"
@@ -116,11 +120,11 @@ export const ImportPage: React.FC = () => {
                 <div className="mb-8 space-y-6">
                     <div>
                         <Select
-                            label="Select Account"
+                            label={t("import.selectAccount")}
                             value={selectedAccount}
                             onChange={setSelectedAccount}
                             options={accountOptions}
-                            placeholder="Select an account..."
+                            placeholder={t("import.selectAccountPlaceholder")}
                         />
                     </div>
 
@@ -130,7 +134,7 @@ export const ImportPage: React.FC = () => {
                     />
                     {isLoading && (
                         <p className="text-muted-foreground">
-                            Processing file...
+                            {t("import.processing")}
                         </p>
                     )}
                 </div>
@@ -139,10 +143,12 @@ export const ImportPage: React.FC = () => {
             {step === "review" && (
                 <div className="mb-8">
                     <h2 className="text-2xl font-semibold mb-4 text-foreground">
-                        Review Transactions
+                        {t("import.review.title")}
                     </h2>
                     <p className="text-muted-foreground mb-4">
-                        {transactions.length} new transactions found.
+                        {t("import.review.countFound", {
+                            count: transactions.length,
+                        })}
                     </p>
 
                     <ImportReviewTable
@@ -156,14 +162,16 @@ export const ImportPage: React.FC = () => {
                             onClick={handleCancel}
                             disabled={isLoading}
                         >
-                            Cancel
+                            {t("common.cancel")}
                         </Button>
                         <Button
                             variant="primary"
                             onClick={handleConfirm}
                             disabled={isLoading}
                         >
-                            {isLoading ? "Importing..." : "Confirm Import"}
+                            {isLoading
+                                ? t("import.importing")
+                                : t("import.confirm")}
                         </Button>
                     </div>
                 </div>
@@ -179,7 +187,7 @@ export const ImportPage: React.FC = () => {
                     </DialogHeader>
                     <DialogFooter>
                         <Button onClick={closeAlert} variant="primary">
-                            OK
+                            {t("common.ok")}
                         </Button>
                     </DialogFooter>
                 </DialogContent>

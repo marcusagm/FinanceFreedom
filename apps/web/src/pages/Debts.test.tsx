@@ -24,7 +24,7 @@ describe("Debts Page", () => {
     });
 
     beforeAll(() => {
-        global.ResizeObserver = class ResizeObserver {
+        globalThis.ResizeObserver = class ResizeObserver {
             observe() {}
             unobserve() {}
             disconnect() {}
@@ -60,7 +60,9 @@ describe("Debts Page", () => {
         render(<Debts />);
 
         await waitFor(() => {
-            expect(screen.getByText(/Nenhuma dívida cadastrada/i)).toBeInTheDocument();
+            expect(
+                screen.getByText(/Nenhuma dívida cadastrada/i)
+            ).toBeInTheDocument();
         });
     });
 });

@@ -1,7 +1,8 @@
 import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { enUS, ptBR } from "date-fns/locale";
 import { CalendarClock } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { api } from "../../lib/api";
 import { type Installment, generateInstallments } from "../../lib/installments";
@@ -25,6 +26,7 @@ interface UpcomingInstallment extends Installment {
 }
 
 export function UpcomingInstallmentsWidget() {
+    const { t, i18n } = useTranslation();
     const [upcoming, setUpcoming] = useState<UpcomingInstallment[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -89,12 +91,12 @@ export function UpcomingInstallmentsWidget() {
             <Card>
                 <CardHeader>
                     <CardTitle className="text-sm font-medium">
-                        Próximas Parcelas
+                        {t("dashboard.upcomingInstallments.title")}
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="text-sm text-muted-foreground">
-                        Carregando...
+                        {t("common.loading")}
                     </div>
                 </CardContent>
             </Card>
@@ -106,19 +108,19 @@ export function UpcomingInstallmentsWidget() {
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium flex items-center gap-2">
                     <CalendarClock className="h-4 w-4 text-orange-500" />
-                    Próximas Parcelas
+                    {t("dashboard.upcomingInstallments.title")}
                 </CardTitle>
                 <Link
                     to="/debts"
                     className="text-xs text-muted-foreground hover:underline"
                 >
-                    Ver todas
+                    {t("dashboard.upcomingInstallments.viewAll")}
                 </Link>
             </CardHeader>
             <CardContent>
                 {upcoming.length === 0 ? (
                     <div className="text-sm text-muted-foreground py-4 text-center">
-                        Nenhuma parcela futura encontrada.
+                        {t("dashboard.upcomingInstallments.empty")}
                     </div>
                 ) : (
                     <div className="space-y-4 pt-2">
@@ -132,7 +134,10 @@ export function UpcomingInstallmentsWidget() {
                                         {inst.debtName}
                                     </p>
                                     <p className="text-xs text-muted-foreground">
-                                        Parcela {inst.number}
+                                        {t(
+                                            "dashboard.upcomingInstallments.installment",
+                                            { number: inst.number }
+                                        )}
                                     </p>
                                 </div>
                                 <div className="text-right">
@@ -141,7 +146,10 @@ export function UpcomingInstallmentsWidget() {
                                     </p>
                                     <p className="text-xs text-muted-foreground">
                                         {format(inst.dueDate, "dd/MM", {
-                                            locale: ptBR,
+                                            locale:
+                                                i18n.language === "en"
+                                                    ? enUS
+                                                    : ptBR,
                                         })}
                                     </p>
                                 </div>

@@ -1,5 +1,6 @@
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { AddGoalDialog } from "../components/savings-goal/AddGoalDialog";
 import { DeleteGoalDialog } from "../components/savings-goal/DeleteGoalDialog";
@@ -12,6 +13,7 @@ import { PageHeader } from "../components/ui/PageHeader";
 import { api } from "../lib/api";
 
 export function SavingsGoals() {
+    const { t } = useTranslation();
     const [goals, setGoals] = useState<SavingsGoal[]>([]);
     const [isAddGoalOpen, setIsAddGoalOpen] = useState(false);
     const [goalToEdit, setGoalToEdit] = useState<SavingsGoal | null>(null);
@@ -26,7 +28,7 @@ export function SavingsGoals() {
             setGoals(response.data);
         } catch (error) {
             console.error("Error fetching savings goals:", error);
-            toast.error("Erro ao carregar metas de economia.");
+            toast.error(t("savingsGoals.loadError"));
         }
     };
 
@@ -48,12 +50,12 @@ export function SavingsGoals() {
         setIsDeleting(true);
         try {
             await api.delete(`/savings-goals/${goalToDelete.id}`);
-            toast.success("Meta excluída com sucesso.");
+            toast.success(t("savingsGoals.deleteSuccess"));
             fetchGoals();
             setGoalToDelete(null);
         } catch (error) {
             console.error(error);
-            toast.error("Erro ao excluir meta.");
+            toast.error(t("savingsGoals.deleteError"));
         } finally {
             setIsDeleting(false);
         }
@@ -67,12 +69,12 @@ export function SavingsGoals() {
     return (
         <div className="container mx-auto p-4 max-w-7xl">
             <PageHeader
-                title="Metas de Economia"
-                description="Defina e acompanhe seus objetivos financeiros."
+                title={t("savingsGoals.title")}
+                description={t("savingsGoals.subtitle")}
                 actions={
                     <Button onClick={handleCreate}>
                         <Plus className="mr-2 h-4 w-4" />
-                        Nova Meta
+                        {t("savingsGoals.newGoal")}
                     </Button>
                 }
             />
@@ -80,7 +82,7 @@ export function SavingsGoals() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {goals.length === 0 ? (
                     <div className="col-span-full text-center py-12 text-muted-foreground">
-                        Nenhuma meta cadastrada.
+                        {t("savingsGoals.empty")}
                     </div>
                 ) : (
                     goals.map((goal) => (

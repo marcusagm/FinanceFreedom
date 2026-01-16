@@ -1,4 +1,5 @@
 import { Pencil, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { AppCard } from "../../components/ui/AppCard";
 import { Button } from "../ui/Button";
 import { MoneyDisplay } from "../ui/MoneyDisplay";
@@ -21,6 +22,8 @@ export function AccountCard({
     onEdit,
     onDelete,
 }: AccountCardProps) {
+    const { t } = useTranslation();
+
     const actions = (
         <>
             <Button
@@ -30,7 +33,7 @@ export function AccountCard({
                     e.stopPropagation();
                     onEdit?.(id);
                 }}
-                title="Editar Conta"
+                title={t("accounts.editTitle")}
             >
                 <Pencil className="w-4 h-4" />
             </Button>
@@ -41,7 +44,7 @@ export function AccountCard({
                     e.stopPropagation();
                     onDelete?.(id);
                 }}
-                title="Excluir Conta"
+                title={t("accounts.deleteTitle")}
                 className="text-destructive hover:text-destructive hover:bg-destructive/10"
             >
                 <Trash2 className="w-4 h-4" />
@@ -62,7 +65,7 @@ export function AccountCard({
         >
             <div>
                 <p className="text-sm font-medium text-muted-foreground">
-                    Saldo Atual
+                    {t("accounts.currentBalance")}
                 </p>
                 <p
                     className={`text-2xl font-bold ${

@@ -16,6 +16,7 @@ import {
     User,
     Wallet,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
@@ -30,6 +31,7 @@ interface SidebarProps {
 }
 
 export function Sidebar({ className }: SidebarProps) {
+    const { t } = useTranslation();
     const { logout, user } = useAuth();
     const location = useLocation();
     const [collapsed, setCollapsed] = useState(false);
@@ -46,56 +48,88 @@ export function Sidebar({ className }: SidebarProps) {
 
     const navGroups = [
         {
-            label: "Geral",
+            label: t("sidebar.general.label"),
             items: [
-                { icon: LayoutDashboard, label: "Dashboard", href: "/" },
+                {
+                    icon: LayoutDashboard,
+                    label: t("sidebar.general.dashboard"),
+                    href: "/",
+                },
                 {
                     icon: ArrowRightLeft,
-                    label: "Transações",
+                    label: t("sidebar.general.transactions"),
                     href: "/transactions",
                 },
-                { icon: Wallet, label: "Contas", href: "/accounts" },
+                {
+                    icon: Wallet,
+                    label: t("sidebar.general.accounts"),
+                    href: "/accounts",
+                },
             ],
         },
         {
-            label: "Despesas",
+            label: t("sidebar.expenses.label"),
             items: [
-                { icon: CreditCard, label: "Dívidas", href: "/debts" },
+                {
+                    icon: CreditCard,
+                    label: t("sidebar.expenses.debts"),
+                    href: "/debts",
+                },
                 {
                     icon: Layers,
-                    label: "Despesas Fixas",
+                    label: t("sidebar.expenses.fixed"),
                     href: "/fixed-expenses",
                 },
             ],
         },
         {
-            label: "Faturamento",
+            label: t("sidebar.income.label"),
             items: [
-                { icon: DollarSign, label: "Renda", href: "/income" },
+                {
+                    icon: DollarSign,
+                    label: t("sidebar.income.income"),
+                    href: "/income",
+                },
                 {
                     icon: TrendingUp,
-                    label: "Investimentos",
+                    label: t("sidebar.income.investments"),
                     href: "/investments",
                 },
             ],
         },
         {
-            label: "Planejamento",
+            label: t("sidebar.planning.label"),
             items: [
-                { icon: Tag, label: "Categorias", href: "/categories" },
-                { icon: Target, label: "Metas", href: "/goals" },
+                {
+                    icon: Tag,
+                    label: t("sidebar.planning.categories"),
+                    href: "/categories",
+                },
+                {
+                    icon: Target,
+                    label: t("sidebar.planning.goals"),
+                    href: "/goals",
+                },
                 {
                     icon: BarChart3,
-                    label: "Projeção",
+                    label: t("sidebar.planning.projection"),
                     href: "/income/projection",
                 },
             ],
         },
         {
-            label: "Sistema",
+            label: t("sidebar.system.label"),
             items: [
-                { icon: FileInput, label: "Importações", href: "/import" },
-                { icon: Settings, label: "Configurações", href: "/settings" },
+                {
+                    icon: FileInput,
+                    label: t("sidebar.system.import"),
+                    href: "/import",
+                },
+                {
+                    icon: Settings,
+                    label: t("sidebar.system.settings"),
+                    href: "/settings",
+                },
             ],
         },
     ];
@@ -186,7 +220,11 @@ export function Sidebar({ className }: SidebarProps) {
                         variant="ghost"
                         size="icon"
                         onClick={toggleObfuscation}
-                        title={isObfuscated ? "Show values" : "Hide values"}
+                        title={
+                            isObfuscated
+                                ? t("sidebar.toggleObfuscation.show")
+                                : t("sidebar.toggleObfuscation.hide")
+                        }
                         className="h-8 w-8 text-muted-foreground"
                     >
                         {isObfuscated ? (
@@ -233,7 +271,7 @@ export function Sidebar({ className }: SidebarProps) {
                             size="icon"
                             className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive"
                             onClick={logout}
-                            title="Sair"
+                            title={t("sidebar.logout")}
                         >
                             <LogOut className="h-4 w-4" />
                         </Button>

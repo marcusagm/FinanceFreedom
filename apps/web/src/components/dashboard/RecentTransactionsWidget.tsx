@@ -1,5 +1,8 @@
+import { format } from "date-fns";
+import { enUS, ptBR } from "date-fns/locale";
 import { ArrowRightLeft } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { api } from "../../lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/Card";
@@ -17,6 +20,7 @@ interface Transaction {
 }
 
 export function RecentTransactionsWidget() {
+    const { t, i18n } = useTranslation();
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -55,12 +59,12 @@ export function RecentTransactionsWidget() {
             <Card>
                 <CardHeader>
                     <CardTitle className="text-sm font-medium">
-                        Transações Recentes
+                        {t("dashboard.recentTransactions.title")}
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="text-sm text-muted-foreground">
-                        Carregando...
+                        {t("common.loading")}
                     </div>
                 </CardContent>
             </Card>
@@ -72,19 +76,19 @@ export function RecentTransactionsWidget() {
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium flex items-center gap-2">
                     <ArrowRightLeft className="h-4 w-4 text-blue-500" />
-                    Transações Recentes
+                    {t("dashboard.recentTransactions.title")}
                 </CardTitle>
                 <Link
                     to="/transactions"
                     className="text-xs text-muted-foreground hover:underline"
                 >
-                    Ver todas
+                    {t("dashboard.recentTransactions.viewAll")}
                 </Link>
             </CardHeader>
             <CardContent>
                 {transactions.length === 0 ? (
                     <div className="text-sm text-muted-foreground py-4 text-center">
-                        Nenhuma transação recente.
+                        {t("dashboard.recentTransactions.empty")}
                     </div>
                 ) : (
                     <div className="space-y-4 pt-2">
@@ -100,19 +104,22 @@ export function RecentTransactionsWidget() {
                                     <p className="text-xs text-muted-foreground">
                                         {(() => {
                                             if (!transaction.date) return "";
-                                            // Handle potentially different date formats or ISO strings
-                                            const dateStr =
-                                                transaction.date.toString();
-                                            // Extract YYYY-MM-DD part
-                                            const datePart = dateStr.includes(
-                                                "T"
-                                            )
-                                                ? dateStr.split("T")[0]
-                                                : dateStr;
-
-                                            const [, month, day] =
+                                            const datePart = transaction.date
+                                                .toString()
+                                                .split("T")[0];
+                                            const [year, month, day] =
                                                 datePart.split("-");
-                                            return `${day}/${month}`;
+                                            const date = new Date(
+                                                parseInt(year),
+                                                parseInt(month) - 1,
+                                                parseInt(day)
+                                            );
+                                            return format(date, "dd/MM", {
+                                                locale:
+                                                    i18n.language === "en"
+                                                        ? enUS
+                                                        : ptBR,
+                                            });
                                         })()}{" "}
                                         • {transaction.account?.name}
                                     </p>

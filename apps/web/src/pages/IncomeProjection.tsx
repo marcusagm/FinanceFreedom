@@ -16,9 +16,10 @@ import {
     startOfMonth,
     subMonths,
 } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { ptBR, enUS } from "date-fns/locale";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { CalendarDay } from "../components/income/CalendarDay";
 import { DraggableWorkUnit } from "../components/income/DraggableWorkUnit";
 import { Button } from "../components/ui/Button";
@@ -30,6 +31,7 @@ import { api } from "../lib/api";
 import { fixedExpenseService } from "../services/fixed-expense.service";
 
 export default function IncomeProjection() {
+    const { t, i18n } = useTranslation();
     const [currentDate, setCurrentDate] = useState(new Date());
     const [workUnits, setWorkUnits] = useState<any[]>([]);
     const [projections, setProjections] = useState<any[]>([]);
@@ -210,10 +212,10 @@ export default function IncomeProjection() {
                 {/* Sidebar: Available Work Units - Hidden on mobile for now to prevent clutter */}
                 <div className="hidden md:block w-72 lg:w-80 border-r bg-card border-border p-4 overflow-y-auto transition-colors shrink-0">
                     <h2 className="font-bold mb-4 text-lg text-foreground">
-                        Unidades de Trabalho
+                        {t("incomeProjection.workUnitsTitle")}
                     </h2>
                     <p className="text-sm text-muted-foreground mb-4">
-                        Arraste para o calendário para projetar.
+                        {t("incomeProjection.dragInstructions")}
                     </p>
                     <div className="space-y-2">
                         {workUnits.map((unit) => (
@@ -241,7 +243,9 @@ export default function IncomeProjection() {
                                 </Button>
                                 <h1 className="text-xl md:text-2xl font-bold capitalize text-foreground">
                                     {format(currentDate, "MMMM yyyy", {
-                                        locale: ptBR,
+                                        locale: i18n.language.startsWith("pt")
+                                            ? ptBR
+                                            : enUS,
                                     })}
                                 </h1>
                                 <Button
@@ -260,7 +264,7 @@ export default function IncomeProjection() {
                             <div className="flex flex-wrap items-center gap-2 md:gap-4">
                                 <div className="flex-1 min-w-35 px-3 py-2 rounded-lg border bg-destructive/10 border-destructive/20 text-destructive">
                                     <span className="text-xs font-medium mr-1 opacity-80 block md:inline">
-                                        Despesas:
+                                        {t("incomeProjection.expensesLabel")}
                                     </span>
                                     <span className="text-lg font-bold">
                                         <MoneyDisplay
@@ -271,7 +275,7 @@ export default function IncomeProjection() {
 
                                 <div className="flex-1 min-w-35 px-3 py-2 rounded-lg border bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400">
                                     <span className="text-xs font-medium mr-1 opacity-80 block md:inline">
-                                        Entradas:
+                                        {t("incomeProjection.incomeLabel")}
                                     </span>
                                     <span className="text-lg font-bold">
                                         <MoneyDisplay value={totalProjected} />
@@ -280,7 +284,7 @@ export default function IncomeProjection() {
 
                                 <div className="flex-1 min-w-35 px-3 py-2 rounded-lg border bg-blue-500/10 border-blue-500/20 text-blue-600 dark:text-blue-400">
                                     <span className="text-xs font-medium mr-1 opacity-80 block md:inline">
-                                        Saldo:
+                                        {t("incomeProjection.balanceLabel")}
                                     </span>
                                     <span className="text-lg font-bold">
                                         <MoneyDisplay
@@ -300,13 +304,13 @@ export default function IncomeProjection() {
                         <div className="min-w-200 h-full flex flex-col">
                             <div className="grid grid-cols-7 gap-px bg-border border border-border rounded-t-lg overflow-hidden shrink-0 shadow-sm z-10 sticky top-0">
                                 {[
-                                    "Dom",
-                                    "Seg",
-                                    "Ter",
-                                    "Qua",
-                                    "Qui",
-                                    "Sex",
-                                    "Sáb",
+                                    t("common.days.sun"),
+                                    t("common.days.mon"),
+                                    t("common.days.tue"),
+                                    t("common.days.wed"),
+                                    t("common.days.thu"),
+                                    t("common.days.fri"),
+                                    t("common.days.sat"),
                                 ].map((day) => (
                                     <div
                                         key={day}

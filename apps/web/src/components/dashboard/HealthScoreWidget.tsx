@@ -1,4 +1,6 @@
+import { RefreshCw } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 import {
     analyticsService,
@@ -6,9 +8,9 @@ import {
 } from "../../services/analytics.service";
 import { Button } from "../ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/Card";
-import { RefreshCw } from "lucide-react";
 
 export function HealthScoreWidget() {
+    const { t } = useTranslation();
     const [healthScore, setHealthScore] = useState<HealthScore | null>(null);
     const [loading, setLoading] = useState(true);
     const [recalculating, setRecalculating] = useState(false);
@@ -44,7 +46,7 @@ export function HealthScoreWidget() {
         return (
             <Card>
                 <CardHeader>
-                    <CardTitle>Saúde Financeira</CardTitle>
+                    <CardTitle>{t("dashboard.healthScore.title")}</CardTitle>
                 </CardHeader>
                 <CardContent className="h-75 flex items-center justify-center">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
@@ -56,16 +58,16 @@ export function HealthScoreWidget() {
     const score = healthScore?.score || 0;
 
     // Determine status text/color
-    let statusText = "Necessita Atenção";
+    let statusText = t("dashboard.healthScore.status.attention");
     let statusColor = "text-red-500";
     if (score >= 800) {
-        statusText = "Excelente";
+        statusText = t("dashboard.healthScore.status.excellent");
         statusColor = "text-emerald-500";
     } else if (score >= 600) {
-        statusText = "Bom";
+        statusText = t("dashboard.healthScore.status.good");
         statusColor = "text-blue-500";
     } else if (score >= 400) {
-        statusText = "Regular";
+        statusText = t("dashboard.healthScore.status.regular");
         statusColor = "text-yellow-500";
     }
 
@@ -90,14 +92,14 @@ export function HealthScoreWidget() {
         <Card className="h-full">
             <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
                 <CardTitle className="text-base font-semibold">
-                    Saúde Financeira
+                    {t("dashboard.healthScore.title")}
                 </CardTitle>
                 <Button
                     variant="ghost"
                     size="icon"
                     onClick={handleRecalculate}
                     disabled={recalculating}
-                    title="Recalcular"
+                    title={t("dashboard.healthScore.recalculate")}
                 >
                     <RefreshCw
                         className={`h-4 w-4 ${
@@ -136,7 +138,7 @@ export function HealthScoreWidget() {
                 </div>
 
                 <div className="w-full space-y-1 -mt-5 text-xs text-muted-foreground text-center">
-                    <p>Score Máximo: 1000</p>
+                    <p>{t("dashboard.healthScore.maxScore", { max: 1000 })}</p>
                 </div>
             </CardContent>
         </Card>

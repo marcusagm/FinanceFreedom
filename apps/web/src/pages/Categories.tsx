@@ -1,5 +1,6 @@
 import { Loader2, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { CategoryDialog } from "../components/category/CategoryDialog";
 import { CategoryList } from "../components/category/CategoryList";
@@ -14,6 +15,7 @@ import {
 import { type Category, categoryService } from "../services/category.service";
 
 export function Categories() {
+    const { t } = useTranslation();
     const [categories, setCategories] = useState<Category[]>([]);
     const [budgetData, setBudgetData] = useState<BudgetStatus[]>([]);
     const [incomeData, setIncomeData] = useState<IncomeStatus[]>([]);
@@ -56,7 +58,7 @@ export function Categories() {
             setIncomeData(incomesData);
         } catch (error) {
             console.error("Failed to fetch categories", error);
-            toast.error("Erro ao carregar dados");
+            toast.error(t("categories.loadError"));
         } finally {
             setLoading(false);
         }
@@ -82,13 +84,13 @@ export function Categories() {
         setIsDeleting(true);
         try {
             await categoryService.delete(categoryToDelete.id);
-            toast.success("Categoria removida!");
+            toast.success(t("categories.deleteSuccess"));
             await fetchData();
             setIsDeleteDialogOpen(false);
             setCategoryToDelete(null);
         } catch (error) {
             console.error("Failed to delete category", error);
-            toast.error("Erro ao remover categoria");
+            toast.error(t("categories.deleteError"));
         } finally {
             setIsDeleting(false);
         }
@@ -97,11 +99,12 @@ export function Categories() {
     return (
         <div className="container mx-auto px-4 py-8">
             <PageHeader
-                title="Gestão de Categorias"
-                description="Organize suas finanças categorizando suas transações."
+                title={t("categories.title")}
+                description={t("categories.subtitle")}
                 actions={
                     <Button onClick={handleCreate}>
-                        <Plus className="mr-2 h-4 w-4" /> Nova Categoria
+                        <Plus className="mr-2 h-4 w-4" />{" "}
+                        {t("categories.newCategory")}
                     </Button>
                 }
             />

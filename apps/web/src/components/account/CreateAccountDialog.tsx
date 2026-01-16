@@ -1,6 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import * as z from "zod";
 import { Button } from "../../components/ui/Button";
 import { ColorInput } from "../../components/ui/ColorInput";
@@ -40,25 +42,27 @@ interface CreateAccountDialogProps {
     accountToEdit?: Account | null;
 }
 
-const ACCOUNT_TYPES = [
-    { value: "WALLET", label: "Carteira / Dinheiro" },
-    { value: "BANK", label: "Conta Bancária" },
-    { value: "INVESTMENT", label: "Investimento" },
-];
-
-const formSchema = z.object({
-    name: z.string().min(1, "Nome é obrigatório"),
-    type: z.string().min(1, "Tipo é obrigatório"),
-    balance: z.number({ message: "Saldo deve ser um número" }),
-    color: z.string().regex(/^#[0-9A-F]{6}$/i, "Cor inválida"),
-});
-
 export function CreateAccountDialog({
     isOpen,
     onClose,
     onSuccess,
     accountToEdit,
 }: CreateAccountDialogProps) {
+    const { t } = useTranslation();
+
+    const formSchema = z.object({
+        name: z.string().min(1, t("auth.validation.nameRequired")),
+        type: z.string().min(1, t("auth.validation.required")), // assuming generic required or just reuse
+        balance: z.number({ message: t("common.error") }), // Simplification
+        color: z.string().regex(/^#[0-9A-F]{6}$/i, t("common.error")),
+    });
+
+    const accountTypes = [
+        { value: "WALLET", label: t("accounts.types.WALLET") },
+        { value: "BANK", label: t("accounts.types.BANK") },
+        { value: "INVESTMENT", label: t("accounts.types.INVESTMENT") },
+    ];
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -108,7 +112,7 @@ export function CreateAccountDialog({
             onClose();
         } catch (error) {
             console.error("Failed to save account", error);
-            alert("Erro ao salvar conta (API).");
+            toast.error(t("common.error"));
         }
     };
 
@@ -117,10 +121,12 @@ export function CreateAccountDialog({
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>
-                        {accountToEdit ? "Editar Conta" : "Nova Conta"}
+                        {accountToEdit
+                            ? t("accounts.editTitle")
+                            : t("accounts.createTitle")}
                     </DialogTitle>
                     <DialogDescription>
-                        Preencha os dados da conta abaixo.
+                        {t("accounts.createDesc")}
                     </DialogDescription>
                 </DialogHeader>
 
@@ -136,10 +142,14 @@ export function CreateAccountDialog({
                                 name="name"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Nome da Conta</FormLabel>
+                                        <FormLabel>
+                                            {t("accounts.nameLabel")}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="Ex: Minha Carteira"
+                                                placeholder={t(
+                                                    "accounts.namePlaceholder"
+                                                )}
                                                 {...field}
                                             />
                                         </FormControl>
@@ -153,11 +163,13 @@ export function CreateAccountDialog({
                                 name="type"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Tipo</FormLabel>
+                                        <FormLabel>
+                                            {t("accounts.typeLabel")}
+                                        </FormLabel>
                                         <FormControl>
                                             <Select
                                                 value={field.value}
-                                                options={ACCOUNT_TYPES}
+                                                options={accountTypes}
                                                 onChange={field.onChange}
                                             />
                                         </FormControl>
@@ -174,7 +186,9 @@ export function CreateAccountDialog({
                                         field: { onChange, value, ...field },
                                     }) => (
                                         <FormItem>
-                                            <FormLabel>Saldo Atual</FormLabel>
+                                            <FormLabel>
+                                                {t("accounts.currentBalance")}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder="R$ 0,00"
@@ -203,7 +217,9 @@ export function CreateAccountDialog({
                                 name="color"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Cor</FormLabel>
+                                        <FormLabel>
+                                            {t("accounts.colorLabel")}
+                                        </FormLabel>
                                         <FormControl>
                                             <ColorInput
                                                 value={field.value}
@@ -224,17 +240,17 @@ export function CreateAccountDialog({
                                 onClick={onClose}
                                 type="button"
                             >
-                                Cancelar
+                                {t("accounts.cancel")}
                             </Button>
                             <Button
                                 onClick={form.handleSubmit(handleSubmit)}
                                 disabled={form.formState.isSubmitting}
                             >
                                 {form.formState.isSubmitting
-                                    ? "Salvando..."
+                                    ? t("accounts.saving")
                                     : accountToEdit
-                                    ? "Salvar Alterações"
-                                    : "Criar Conta"}
+                                    ? t("accounts.saveChanges")
+                                    : t("accounts.create")}
                             </Button>
                         </DialogFooter>
                     </form>

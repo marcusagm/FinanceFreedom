@@ -1,4 +1,5 @@
 import { AppAlert } from "../ui/AppAlert";
+import { useTranslation, Trans } from "react-i18next";
 import { Loader2 } from "lucide-react";
 import { Button } from "../ui/Button";
 import {
@@ -26,24 +27,30 @@ export function DeleteCategoryDialog({
     categoryName,
     isDeleting,
 }: DeleteCategoryDialogProps) {
+    const { t } = useTranslation();
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Excluir Categoria</DialogTitle>
+                    <DialogTitle>
+                        {t("categories.deleteDialog.title")}
+                    </DialogTitle>
                     <DialogDescription>
-                        Esta ação não pode ser desfeita.
+                        {t("categories.deleteDialog.desc")}
                     </DialogDescription>
                 </DialogHeader>
                 <DialogBody>
-                    <AppAlert variant="destructive" title="Atenção">
-                        A categoria <strong>{categoryName}</strong> será
-                        permanentemente removida.
+                    <AppAlert variant="destructive" title={t("common.error")}>
+                        <Trans
+                            i18nKey="categories.deleteDialog.message"
+                            values={{ name: categoryName }}
+                            components={{ strong: <strong /> }}
+                        />
                     </AppAlert>
                 </DialogBody>
                 <DialogFooter>
                     <Button variant="outline" onClick={onClose}>
-                        Cancelar
+                        {t("common.cancel")}
                     </Button>
                     <Button
                         variant="destructive"
@@ -53,7 +60,9 @@ export function DeleteCategoryDialog({
                         {isDeleting && (
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         )}
-                        Excluir
+                        {isDeleting
+                            ? t("categories.deleteDialog.deleting")
+                            : t("categories.deleteDialog.confirm")}
                     </Button>
                 </DialogFooter>
             </DialogContent>

@@ -1,4 +1,5 @@
 import type { UseFormReturn } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import type { SettingsFormValues } from "../../pages/Settings";
 import type { Category } from "../../services/category.service";
 import {
@@ -28,12 +29,13 @@ export function GeneralSettingsCard({
     form,
     categories,
 }: GeneralSettingsCardProps) {
+    const { t } = useTranslation();
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Parâmetros Gerais</CardTitle>
+                <CardTitle>{t("settings.general.title")}</CardTitle>
                 <CardDescription>
-                    Defina os padrões de comportamento do sistema.
+                    {t("settings.general.description")}
                 </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-6">
@@ -43,7 +45,9 @@ export function GeneralSettingsCard({
                         name="closingDay"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Dia Padrão de Fechamento</FormLabel>
+                                <FormLabel>
+                                    {t("settings.general.closingDay")}
+                                </FormLabel>
                                 <FormControl>
                                     <Input
                                         type="number"
@@ -57,7 +61,7 @@ export function GeneralSettingsCard({
                                     />
                                 </FormControl>
                                 <p className="text-sm text-muted-foreground">
-                                    Para faturas e relatórios.
+                                    {t("settings.general.helperClosing")}
                                 </p>
                                 <FormMessage />
                             </FormItem>
@@ -69,7 +73,9 @@ export function GeneralSettingsCard({
                         name="defaultInterestRate"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Juros Médios Padrão (%)</FormLabel>
+                                <FormLabel>
+                                    {t("settings.general.interestRate")}
+                                </FormLabel>
                                 <FormControl>
                                     <Input
                                         type="number"
@@ -82,7 +88,7 @@ export function GeneralSettingsCard({
                                     />
                                 </FormControl>
                                 <p className="text-sm text-muted-foreground">
-                                    Para novas dívidas.
+                                    {t("settings.general.helperInterest")}
                                 </p>
                                 <FormMessage />
                             </FormItem>
@@ -94,7 +100,9 @@ export function GeneralSettingsCard({
                         name="extraMonthlyValue"
                         render={({ field: { value, onChange, ...field } }) => (
                             <FormItem>
-                                <FormLabel>Valor Extra Mensal Padrão</FormLabel>
+                                <FormLabel>
+                                    {t("settings.general.extraValue")}
+                                </FormLabel>
                                 <FormControl>
                                     <Input
                                         currency
@@ -107,7 +115,7 @@ export function GeneralSettingsCard({
                                     />
                                 </FormControl>
                                 <p className="text-sm text-muted-foreground">
-                                    Para estratégias de dívidas.
+                                    {t("settings.general.helperExtra")}
                                 </p>
                                 <FormMessage />
                             </FormItem>
@@ -120,7 +128,7 @@ export function GeneralSettingsCard({
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>
-                                    Limite de Projeção (Meses)
+                                    {t("settings.general.projectionLimit")}
                                 </FormLabel>
                                 <FormControl>
                                     <Input
@@ -141,7 +149,9 @@ export function GeneralSettingsCard({
                         name="defaultDailyHours"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Horas Diárias Padrão</FormLabel>
+                                <FormLabel>
+                                    {t("settings.general.dailyHours")}
+                                </FormLabel>
                                 <FormControl>
                                     <Input
                                         type="number"
@@ -162,7 +172,7 @@ export function GeneralSettingsCard({
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>
-                                    Número Padrão de Recorrências
+                                    {t("settings.general.recurrence")}
                                 </FormLabel>
                                 <FormControl>
                                     <Input
@@ -184,7 +194,7 @@ export function GeneralSettingsCard({
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>
-                                    Categoria Padrão p/ Recebimentos
+                                    {t("settings.general.incomeCategory")}
                                 </FormLabel>
                                 <FormControl>
                                     <Select
@@ -194,7 +204,9 @@ export function GeneralSettingsCard({
                                             value: c.name,
                                             label: c.name,
                                         }))}
-                                        placeholder="Selecione"
+                                        placeholder={t(
+                                            "settings.general.selectPlaceholder"
+                                        )}
                                     />
                                 </FormControl>
                                 <FormMessage />
@@ -219,7 +231,7 @@ export function GeneralSettingsCard({
                                 />
                             </FormControl>
                             <FormLabel className="font-normal text-base">
-                                Trabalhar nos Fins de Semana
+                                {t("settings.general.weekends")}
                             </FormLabel>
                         </FormItem>
                     )}

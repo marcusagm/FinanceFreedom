@@ -1,6 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import * as z from "zod";
 import { api } from "../../lib/api";
 import { type WorkUnit, createWorkUnit } from "../../services/income.service";
@@ -30,24 +32,31 @@ interface CreateWorkUnitDialogProps {
     itemToEdit?: WorkUnit | null;
 }
 
-const formSchema = z.object({
-    name: z.string().min(1, "Nome é obrigatório"),
-    defaultPrice: z.number().min(0.01, "Preço deve ser maior que zero"),
-    estimatedTime: z.number().min(1, "Tempo inválido"),
-    taxRate: z
-        .number()
-        .min(0, "Mínimo 0%")
-        .max(100, "Máximo 100%")
-        .optional()
-        .default(0),
-});
-
 export function CreateWorkUnitDialog({
     isOpen,
     onClose,
     onSuccess,
     itemToEdit,
 }: CreateWorkUnitDialogProps) {
+    const { t } = useTranslation();
+
+    const formSchema = z.object({
+        name: z
+            .string()
+            .min(1, t("income.workUnitDialog.validation.nameRequired")),
+        defaultPrice: z
+            .number()
+            .min(0.01, t("income.workUnitDialog.validation.pricePositive")),
+        estimatedTime: z
+            .number()
+            .min(1, t("income.workUnitDialog.validation.timeInvalid")),
+        taxRate: z
+            .number()
+            .min(0, t("income.workUnitDialog.validation.taxMin"))
+            .max(100, t("income.workUnitDialog.validation.taxMax"))
+            .optional()
+            .default(0),
+    });
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -89,7 +98,7 @@ export function CreateWorkUnitDialog({
             onClose();
         } catch (error) {
             console.error(error);
-            alert("Erro ao salvar. Tente novamente.");
+            toast.error(t("common.error") || "Error saving.");
         }
     };
 
@@ -99,8 +108,8 @@ export function CreateWorkUnitDialog({
                 <DialogHeader>
                     <DialogTitle>
                         {itemToEdit
-                            ? "Editar Serviço / Job"
-                            : "Novo Serviço / Job"}
+                            ? t("income.workUnitDialog.titleEdit")
+                            : t("income.workUnitDialog.titleNew")}
                     </DialogTitle>
                 </DialogHeader>
 
@@ -115,10 +124,16 @@ export function CreateWorkUnitDialog({
                                 name="name"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Nome do Serviço</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                "income.workUnitDialog.nameLabel"
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="Ex: Logo Design"
+                                                placeholder={t(
+                                                    "income.workUnitDialog.namePlaceholder"
+                                                )}
                                                 {...field}
                                             />
                                         </FormControl>
@@ -134,7 +149,11 @@ export function CreateWorkUnitDialog({
                                     field: { onChange, value, ...field },
                                 }) => (
                                     <FormItem>
-                                        <FormLabel>Preço Base (R$)</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                "income.workUnitDialog.priceLabel"
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="0,00"
@@ -159,7 +178,9 @@ export function CreateWorkUnitDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Tempo Estimado (Horas)
+                                            {t(
+                                                "income.workUnitDialog.timeLabel"
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -184,7 +205,11 @@ export function CreateWorkUnitDialog({
                                 name="taxRate"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Imposto (%)</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                "income.workUnitDialog.taxLabel"
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type="number"
@@ -211,15 +236,15 @@ export function CreateWorkUnitDialog({
                                 variant="outline"
                                 onClick={onClose}
                             >
-                                Cancelar
+                                {t("common.cancel")}
                             </Button>
                             <Button
                                 type="submit"
                                 disabled={form.formState.isSubmitting}
                             >
                                 {form.formState.isSubmitting
-                                    ? "Salvando..."
-                                    : "Salvar"}
+                                    ? t("common.saving")
+                                    : t("common.save")}
                             </Button>
                         </DialogFooter>
                     </form>

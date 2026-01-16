@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { CreateIncomeSourceDialog } from "../components/income/CreateIncomeSourceDialog";
 import { CreateWorkUnitDialog } from "../components/income/CreateWorkUnitDialog";
 import { DeleteIncomeDialog } from "../components/income/DeleteIncomeDialog";
@@ -6,7 +7,12 @@ import { IncomeSourceCard } from "../components/income/IncomeSourceCard";
 import { WorkUnitCard } from "../components/income/WorkUnitCard";
 import { Button } from "../components/ui/Button";
 import { PageHeader } from "../components/ui/PageHeader";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/Tabs";
+import {
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger,
+} from "../components/ui/Tabs";
 import {
     type IncomeSource,
     type WorkUnit,
@@ -17,6 +23,7 @@ import {
 } from "../services/income.service";
 
 export default function IncomePage() {
+    const { t } = useTranslation();
     const [activeTab, setActiveTab] = useState("sources");
     const [sources, setSources] = useState<IncomeSource[]>([]);
     const [workUnits, setWorkUnits] = useState<WorkUnit[]>([]);
@@ -86,7 +93,7 @@ export default function IncomePage() {
             setItemToDelete(null);
         } catch (error) {
             console.error("Failed to delete item", error);
-            alert("Erro ao excluir item.");
+            alert(t("common.error"));
         } finally {
             setIsDeleting(false);
         }
@@ -105,19 +112,29 @@ export default function IncomePage() {
     return (
         <div className="container mx-auto p-6 space-y-8">
             <PageHeader
-                title="Renda"
-                description="Gerencie suas fontes de renda fixa e catálogo de serviços."
+                title={t("income.title")}
+                description={t("income.subtitle")}
                 actions={
                     <Button onClick={handleCreateClick}>
-                        {activeTab === "sources" ? "+ Nova Fonte" : "+ Novo Serviço"}
+                        {activeTab === "sources"
+                            ? t("income.newSource")
+                            : t("income.newWorkUnit")}
                     </Button>
                 }
             />
 
-            <Tabs defaultValue="sources" value={activeTab} onValueChange={setActiveTab}>
+            <Tabs
+                defaultValue="sources"
+                value={activeTab}
+                onValueChange={setActiveTab}
+            >
                 <TabsList>
-                    <TabsTrigger value="sources">Fontes Fixas</TabsTrigger>
-                    <TabsTrigger value="workUnits">Catálogo de Serviços</TabsTrigger>
+                    <TabsTrigger value="sources">
+                        {t("income.tabs.sources")}
+                    </TabsTrigger>
+                    <TabsTrigger value="workUnits">
+                        {t("income.tabs.workUnits")}
+                    </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="sources">
@@ -133,8 +150,7 @@ export default function IncomePage() {
                     </div>
                     {sources.length === 0 && (
                         <div className="text-center py-10 text-muted-foreground border rounded-lg bg-card/50">
-                            Nenhuma fonte de renda cadastrada. Adicione seu salário ou renda
-                            recorrente!
+                            {t("income.emptySources")}
                         </div>
                     )}
                 </TabsContent>
@@ -152,7 +168,7 @@ export default function IncomePage() {
                     </div>
                     {workUnits.length === 0 && (
                         <div className="text-center py-10 text-muted-foreground border rounded-lg bg-card/50">
-                            Nenhum serviço cadastrado. Liste seus serviços de freelance aqui!
+                            {t("income.emptyWorkUnits")}
                         </div>
                     )}
                 </TabsContent>

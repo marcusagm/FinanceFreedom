@@ -1,3 +1,4 @@
+import { useTranslation, Trans } from "react-i18next";
 import { AppAlert } from "../ui/AppAlert";
 import { Button } from "../ui/Button";
 import {
@@ -25,20 +26,28 @@ export function DeleteInvestmentDialog({
     accountName,
     isDeleting,
 }: DeleteInvestmentDialogProps) {
+    const { t } = useTranslation();
+
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Excluir Carteira</DialogTitle>
+                    <DialogTitle>{t("investments.delete.title")}</DialogTitle>
                     <DialogDescription>
-                        Esta ação não pode ser desfeita.
+                        {t("investments.delete.description")}
                     </DialogDescription>
                 </DialogHeader>
 
                 <DialogBody>
-                    <AppAlert variant="destructive" title="Atenção">
-                        A carteira <strong>{accountName}</strong> será
-                        permanentemente removida.
+                    <AppAlert
+                        variant="destructive"
+                        title={t("common.attention")}
+                    >
+                        <Trans
+                            i18nKey="investments.delete.message"
+                            values={{ name: accountName }}
+                            components={{ strong: <strong /> }}
+                        />
                     </AppAlert>
                 </DialogBody>
 
@@ -48,14 +57,16 @@ export function DeleteInvestmentDialog({
                         onClick={onClose}
                         disabled={isDeleting}
                     >
-                        Cancelar
+                        {t("common.cancel")}
                     </Button>
                     <Button
                         variant="destructive"
                         onClick={onConfirm}
                         disabled={isDeleting}
                     >
-                        {isDeleting ? "Excluindo..." : "Sim, excluir carteira"}
+                        {isDeleting
+                            ? t("investments.delete.deleting")
+                            : t("investments.delete.confirm")}
                     </Button>
                 </DialogFooter>
             </DialogContent>

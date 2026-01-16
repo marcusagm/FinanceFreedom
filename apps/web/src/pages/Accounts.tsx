@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { AccountCard } from "../components/account/AccountCard";
 import { CreateAccountDialog } from "../components/account/CreateAccountDialog";
 import { DeleteAccountDialog } from "../components/account/DeleteAccountDialog";
@@ -15,11 +16,14 @@ interface Account {
 }
 
 export function Accounts() {
+    const { t } = useTranslation();
     const [accounts, setAccounts] = useState<Account[]>([]);
     const [isCreateOpen, setIsCreateOpen] = useState(false);
 
     const [editingAccount, setEditingAccount] = useState<Account | null>(null);
-    const [deletingAccount, setDeletingAccount] = useState<Account | null>(null);
+    const [deletingAccount, setDeletingAccount] = useState<Account | null>(
+        null
+    );
     const [isDeleting, setIsDeleting] = useState(false);
 
     const fetchAccounts = async () => {
@@ -49,7 +53,7 @@ export function Accounts() {
             setDeletingAccount(null);
         } catch (error) {
             console.error("Failed to delete account", error);
-            alert("Erro ao excluir conta. Tente novamente.");
+            alert(t("accounts.deleteError"));
         } finally {
             setIsDeleting(false);
         }
@@ -67,9 +71,13 @@ export function Accounts() {
     return (
         <div className="container mx-auto p-4 max-w-7xl">
             <PageHeader
-                title="Contas"
-                description="Gerencie seus saldos e fontes de receita."
-                actions={<Button onClick={handleCreate}>+ Nova Conta</Button>}
+                title={t("accounts.title")}
+                description={t("accounts.subtitle")}
+                actions={
+                    <Button onClick={handleCreate}>
+                        + {t("accounts.newAccount")}
+                    </Button>
+                }
             />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -89,7 +97,7 @@ export function Accounts() {
                 {accounts.length === 0 && (
                     <div className="col-span-full text-center py-12">
                         <p className="text-muted-foreground">
-                            Nenhuma conta encontrada. Crie sua primeira conta!
+                            {t("accounts.empty")}
                         </p>
                     </div>
                 )}

@@ -1,5 +1,7 @@
+import { format } from "date-fns";
 import { Edit2, Split, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useHourlyRate } from "../../hooks/useHourlyRate";
 import type { Transaction } from "../../types";
 import { TimeCostBadge } from "../simulators/TimeCostBadge";
@@ -28,6 +30,7 @@ export function TransactionList({
     onDelete,
     onTransactionUpdated,
 }: TransactionListProps) {
+    const { t } = useTranslation();
     const { hourlyRate } = useHourlyRate();
     const [splitDialogTransaction, setSplitDialogTransaction] =
         useState<Transaction | null>(null);
@@ -37,13 +40,19 @@ export function TransactionList({
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Data</TableHead>
-                        <TableHead>Descrição</TableHead>
-                        <TableHead>Categoria</TableHead>
-                        <TableHead>Conta</TableHead>
-                        <TableHead className="text-right">Valor</TableHead>
+                        <TableHead>{t("transactions.table.date")}</TableHead>
+                        <TableHead>
+                            {t("transactions.table.description")}
+                        </TableHead>
+                        <TableHead>
+                            {t("transactions.table.category")}
+                        </TableHead>
+                        <TableHead>{t("transactions.table.account")}</TableHead>
+                        <TableHead className="text-right">
+                            {t("transactions.table.amount")}
+                        </TableHead>
                         <TableHead className="w-32 text-center">
-                            Ações
+                            {t("transactions.table.actions")}
                         </TableHead>
                     </TableRow>
                 </TableHeader>
@@ -51,16 +60,14 @@ export function TransactionList({
                     {transactions.map((transaction) => (
                         <TableRow key={transaction.id}>
                             <TableCell className="text-left">
-                                {(() => {
-                                    if (!transaction.date) return "-";
-                                    const dateStr = transaction.date.toString();
-                                    const datePart = dateStr.includes("T")
-                                        ? dateStr.split("T")[0]
-                                        : dateStr;
-                                    const [year, month, day] =
-                                        datePart.split("-");
-                                    return `${day}/${month}/${year}`;
-                                })()}
+                                <TableCell className="text-left">
+                                    {transaction.date
+                                        ? format(
+                                              new Date(transaction.date),
+                                              "dd/MM/yyyy"
+                                          )
+                                        : "-"}
+                                </TableCell>
                             </TableCell>
                             <TableCell className="text-left">
                                 {transaction.description}
@@ -108,7 +115,7 @@ export function TransactionList({
                                             )
                                         }
                                         className="h-8 w-8 text-blue-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/20"
-                                        title="Dividir Transação"
+                                        title={t("transactions.split.title")}
                                     >
                                         <Split className="w-4 h-4" />
                                     </Button>
@@ -117,7 +124,8 @@ export function TransactionList({
                                         size="icon"
                                         onClick={() => onEdit(transaction)}
                                         className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                                        title="Editar"
+                                        className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                                        title={t("common.edit")}
                                     >
                                         <Edit2 className="w-4 h-4" />
                                     </Button>
@@ -126,7 +134,8 @@ export function TransactionList({
                                         size="icon"
                                         onClick={() => onDelete(transaction.id)}
                                         className="h-8 w-8 text-rose-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20"
-                                        title="Excluir"
+                                        className="h-8 w-8 text-rose-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20"
+                                        title={t("common.delete")}
                                     >
                                         <Trash2 className="w-4 h-4" />
                                     </Button>
@@ -140,7 +149,7 @@ export function TransactionList({
                                 colSpan={6}
                                 className="h-24 text-center text-muted-foreground"
                             >
-                                Nenhuma transação encontrada.
+                                {t("common.noData")}
                             </TableCell>
                         </TableRow>
                     )}

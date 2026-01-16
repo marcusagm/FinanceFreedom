@@ -2,7 +2,14 @@ import { Edit, Trash2 } from "lucide-react";
 import type React from "react";
 import { AppAlert } from "../ui/AppAlert";
 import { Button } from "../ui/Button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/Table";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "../ui/Table";
 
 export interface ImapConfig {
     id: string;
@@ -20,7 +27,11 @@ interface ImapConfigListProps {
     onDelete: (id: string) => void;
 }
 
-export const ImapConfigList: React.FC<ImapConfigListProps> = ({ configs, onEdit, onDelete }) => {
+export const ImapConfigList: React.FC<ImapConfigListProps> = ({
+    configs,
+    onEdit,
+    onDelete,
+}) => {
     if (configs.length === 0) {
         return (
             <AppAlert
@@ -45,24 +56,32 @@ export const ImapConfigList: React.FC<ImapConfigListProps> = ({ configs, onEdit,
                 <TableBody>
                     {configs.map((config) => (
                         <TableRow key={config.id}>
-                            <TableCell className="font-medium">{config.email}</TableCell>
+                            <TableCell className="font-medium">
+                                {config.email}
+                            </TableCell>
                             <TableCell>{config.folder || "INBOX"}</TableCell>
                             <TableCell>
                                 <div className="text-xs space-y-1">
                                     {config.sender && (
                                         <div className="flex gap-1">
-                                            <span className="text-muted-foreground">From:</span>
+                                            <span className="text-muted-foreground">
+                                                From:
+                                            </span>
                                             <span>{config.sender}</span>
                                         </div>
                                     )}
                                     {config.subject && (
                                         <div className="flex gap-1">
-                                            <span className="text-muted-foreground">Subject:</span>
+                                            <span className="text-muted-foreground">
+                                                Subject:
+                                            </span>
                                             <span>{config.subject}</span>
                                         </div>
                                     )}
                                     {!config.sender && !config.subject && (
-                                        <span className="text-muted-foreground italic">None</span>
+                                        <span className="text-muted-foreground italic">
+                                            None
+                                        </span>
                                     )}
                                 </div>
                             </TableCell>

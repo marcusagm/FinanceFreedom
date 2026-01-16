@@ -1,4 +1,5 @@
 import { Moon, Sun, Laptop, Check } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useTheme } from "../providers/ThemeProvider";
 import { Button } from "../ui/Button";
 import {
@@ -14,6 +15,7 @@ import { cn } from "../../lib/utils";
 import { themes } from "../../registry/themes";
 
 export function ThemeCustomizer() {
+    const { t } = useTranslation();
     const {
         theme,
         setTheme,
@@ -36,15 +38,14 @@ export function ThemeCustomizer() {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Aparência</CardTitle>
+                <CardTitle>{t("settings.themeSettings.title")}</CardTitle>
                 <CardDescription>
-                    Personalize a aparência do Finance Freedom. Use o modo
-                    escuro para descanso visual.
+                    {t("settings.themeSettings.description")}
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
                 <div className="space-y-2">
-                    <Label>Tema</Label>
+                    <Label>{t("settings.themeSettings.mode.label")}</Label>
                     <div className="grid grid-cols-3 gap-2 max-w-md">
                         <Button
                             variant="outline"
@@ -57,7 +58,9 @@ export function ThemeCustomizer() {
                             type="button"
                         >
                             <Sun className="h-4 w-4" />
-                            <span>Claro</span>
+                            <span>
+                                {t("settings.themeSettings.mode.light")}
+                            </span>
                         </Button>
                         <Button
                             variant="outline"
@@ -70,7 +73,7 @@ export function ThemeCustomizer() {
                             type="button"
                         >
                             <Moon className="h-4 w-4" />
-                            <span>Escuro</span>
+                            <span>{t("settings.themeSettings.mode.dark")}</span>
                         </Button>
                         <Button
                             variant="outline"
@@ -83,13 +86,15 @@ export function ThemeCustomizer() {
                             type="button"
                         >
                             <Laptop className="h-4 w-4" />
-                            <span>Sistema</span>
+                            <span>
+                                {t("settings.themeSettings.mode.system")}
+                            </span>
                         </Button>
                     </div>
                 </div>
 
                 <div className="space-y-2">
-                    <Label>Cor de Destaque</Label>
+                    <Label>{t("settings.themeSettings.primaryColor")}</Label>
                     <div className="flex flex-wrap gap-2">
                         {formattedThemes.map((t) => (
                             <button
@@ -113,7 +118,7 @@ export function ThemeCustomizer() {
                 </div>
 
                 <div className="space-y-2">
-                    <Label>Arredondamento (Radius)</Label>
+                    <Label>{t("settings.themeSettings.radius")}</Label>
                     <div className="flex flex-wrap gap-2">
                         {radii.map((r) => (
                             <Button
@@ -136,10 +141,12 @@ export function ThemeCustomizer() {
                 <div className="relative flex items-center justify-between space-x-2 border rounded-lg p-4">
                     <div className="space-y-0.5">
                         <Label className="text-base">
-                            Modo Privacidade (Padrão)
+                            {t("settings.themeSettings.privacyMode.label")}
                         </Label>
                         <p className="text-sm text-muted-foreground">
-                            Iniciar com valores ocultos por padrão.
+                            {t(
+                                "settings.themeSettings.privacyMode.description"
+                            )}
                         </p>
                     </div>
                     <Switch

@@ -1,15 +1,652 @@
 {
+    "common": {
+        "appName": "Finance Freedom",
+        "saving": "Salvando...",
+        "save": "Salvar",
+        "saveChanges": "Salvar Alterações",
+        "updating": "Atualizando...",
+        "tryAgain": "Tentar Novamente",
+        "noData": "Nenhum dado disponível.",
+        "refresh": "Atualizar",
+        "loading": "Carregando...",
+        "loadMore": "Carregar Mais",
+        "unknownError": "Erro desconhecido",
+        "days": {
+            "sun": "Dom",
+            "mon": "Seg",
+            "tue": "Ter",
+            "wed": "Qua",
+            "thu": "Qui",
+            "fri": "Sex",
+            "sat": "Sáb"
+        },
+        "edit": "Editar",
+        "delete": "Excluir",
+        "error": "Erro",
+        "success": "Sucesso",
+        "close": "Fechar",
+        "cancel": "Cancelar",
+        "ok": "OK",
+        "noCategory": "Sem categoria",
+        "attention": "Atenção"
+    },
+    "profile": {
+        "title": "Meu Perfil",
+        "subtitle": "Gerencie suas informações de conta e segurança.",
+        "personalInfoTitle": "Informações Pessoais",
+        "personalInfoDesc": "Atualize seu nome e e-mail.",
+        "changePasswordTitle": "Alterar Senha",
+        "changePasswordDesc": "Mantenha sua conta segura.",
+        "currentPassword": "Senha Atual",
+        "confirmNewPassword": "Confirmar Nova Senha",
+        "updatePasswordButton": "Atualizar Senha",
+        "updateSuccess": "Perfil atualizado com sucesso!",
+        "updateError": "Erro ao atualizar perfil",
+        "passwordSuccess": "Senha alterada com sucesso!",
+        "passwordError": "Erro ao alterar senha"
+    },
+    "dashboard": {
+        "title": "Dashboard",
+        "loadError": "Falha ao carregar dados do painel",
+        "sync": {
+            "loading": "Sincronizando contas...",
+            "successTitle": "Sincronização Concluída",
+            "successDesc": "Foram importadas {{count}} novas transações.",
+            "errorTitle": "Erro na Sincronização",
+            "errorDesc": "Falha ao conectar com o servidor de e-mail.",
+            "syncing": "Sincronizando...",
+            "button": "Sincronizar"
+        },
+        "quickActions": {
+            "newTransaction": "Nova Transação",
+            "newDebt": "Nova Dívida"
+        },
+        "actionFeed": {
+            "title": "Ações Recomendadas",
+            "critical": "Crítico"
+        },
+        "balanceChart": {
+            "title": "Evolução do Saldo & Fluxo de Caixa",
+            "monthly": "Mensal",
+            "annual": "Anual",
+            "income": "Receita",
+            "expense": "Despesa",
+            "balance": "Saldo"
+        },
+        "budget": {
+            "title": "Orçamento Mensal",
+            "empty": "Nenhum orçamento definido.",
+            "configure": "Configurar categorias",
+            "distribution": "Distribuição de Gastos",
+            "manage": "Gerenciar",
+            "noSpending": "Sem gastos registrados",
+            "addTransaction": "Adicione transações para ver o gráfico"
+        },
+        "expenseSummary": {
+            "title": "Despesas (Mês)"
+        },
+        "incomeSummary": {
+            "title": "Receitas (Mês)"
+        },
+        "healthScore": {
+            "title": "Saúde Financeira",
+            "maxScore": "Score Máximo: {{max}}",
+            "status": {
+                "attention": "Necessita Atenção",
+                "excellent": "Excelente",
+                "good": "Bom",
+                "regular": "Regular"
+            },
+            "recalculate": "Recalcular"
+        },
+        "incomeDistribution": {
+            "title": "Distribuição de Receitas",
+            "empty": "Sem receitas registradas",
+            "hint": "Adicione transações de entrada para ver o gráfico.",
+            "createTransaction": "Criar Transação"
+        },
+        "recentTransactions": {
+            "title": "Transações Recentes",
+            "viewAll": "Ver todas",
+            "empty": "Nenhuma transação recente."
+        },
+        "upcomingInstallments": {
+            "title": "Próximas Parcelas",
+            "viewAll": "Ver todas",
+            "empty": "Nenhuma parcela futura encontrada.",
+            "installment": "Parcela {{number}}"
+        },
+        "wealth": {
+            "title": "Patrimônio Líquido (Net Worth)",
+            "invested": "Investido",
+            "balance": "Saldo Contas",
+            "debts": "Dívidas"
+        }
+    },
+    "accounts": {
+        "title": "Contas",
+        "subtitle": "Gerencie seus saldos e fontes de receita.",
+        "newAccount": "Nova Conta",
+        "empty": "Nenhuma conta encontrada. Crie sua primeira conta!",
+        "deleteError": "Erro ao excluir conta. Tente novamente.",
+        "editTitle": "Editar Conta",
+        "deleteTitle": "Excluir Conta",
+        "currentBalance": "Saldo Atual",
+        "createTitle": "Nova Conta",
+        "createDesc": "Preencha os dados da conta abaixo.",
+        "nameLabel": "Nome da Conta",
+        "namePlaceholder": "Ex: Minha Carteira",
+        "typeLabel": "Tipo",
+        "colorLabel": "Cor",
+        "cancel": "Cancelar",
+        "saving": "Salvando...",
+        "saveChanges": "Salvar Alterações",
+        "create": "Criar Conta",
+        "deleteDialog": {
+            "title": "Excluir Conta",
+            "desc": "Esta ação não pode ser desfeita.",
+            "message": "A conta <strong>{{name}}</strong> será permanentemente removida.",
+            "confirm": "Sim, excluir conta",
+            "deleting": "Excluindo..."
+        },
+        "types": {
+            "WALLET": "Carteira / Dinheiro",
+            "BANK": "Conta Bancária",
+            "INVESTMENT": "Investimento"
+        }
+    },
+    "categories": {
+        "title": "Gestão de Categorias",
+        "subtitle": "Organize suas finanças categorizando suas transações.",
+        "newCategory": "Nova Categoria",
+        "loadError": "Erro ao carregar dados",
+        "deleteSuccess": "Categoria removida!",
+        "deleteError": "Erro ao remover categoria",
+        "editTitle": "Editar Categoria",
+        "createTitle": "Nova Categoria",
+        "configureDesc": "Configure o nome e a cor da sua categoria.",
+        "nameLabel": "Nome",
+        "namePlaceholder": "Ex: Alimentação",
+        "colorLabel": "Cor",
+        "budgetLabel": "Limite de Orçamento (Mensal)",
+        "revenueGoalLabel": "Meta de Receita (Mensal)",
+        "monthlyLimit": "Limite Mensal",
+        "noLimit": "Sem limite definido",
+        "typeExpense": "Despesa",
+        "typeIncome": "Receita",
+        "tabs": {
+            "expenses": "Despesas",
+            "incomes": "Receitas"
+        },
+        "emptyGroup": "Nenhuma categoria encontrada neste grupo.",
+        "deleteDialog": {
+            "title": "Excluir Categoria",
+            "desc": "Esta ação não pode ser desfeita.",
+            "message": "A categoria <strong>{{name}}</strong> será permanentemente removida.",
+            "confirm": "Sim, excluir categoria",
+            "deleting": "Excluindo..."
+        }
+    },
+    "transactions": {
+        "title": "Transações",
+        "subtitle": "Gerencie suas receitas e despesas.",
+        "newTransaction": "Nova Transação",
+        "deleteError": "Erro ao excluir transação.",
+        "loading": "Carregando transações...",
+        "filters": {
+            "searchPlaceholder": "Buscar por descrição...",
+            "dateStart": "Início",
+            "dateEnd": "Fim",
+            "clear": "Limpar Filtros",
+            "allAccounts": "Todas as Contas",
+            "allCategories": "Todas as Categorias",
+            "accountPlaceholder": "Conta",
+            "categoryPlaceholder": "Categoria"
+        },
+        "table": {
+            "date": "Data",
+            "description": "Descrição",
+            "category": "Categoria",
+            "account": "Conta",
+            "amount": "Valor",
+            "actions": "Ações"
+        },
+        "split": {
+            "title": "Dividir Transação",
+            "description": "Divida o valor total ({{amount}}) em várias transações menores.",
+            "remaining": "Restante para alocar",
+            "addSplit": "Adicionar Divisão",
+            "confirm": "Confirmar Divisão",
+            "splitting": "Dividindo...",
+            "success": "Transação dividida com sucesso!",
+            "error": "Erro ao dividir transação.",
+            "validation": {
+                "amountPositive": "Valor deve ser maior que 0",
+                "descRequired": "Descrição é obrigatória",
+                "minSplits": "Deve haver pelo menos 2 divisões",
+                "subtotalMismatch": "A soma das divisões ({{total}}) deve ser igual ao valor original ({{original}})"
+            }
+        },
+        "editTitle": "Editar Transação",
+        "createTitle": "Nova Transação",
+        "details": "Preencha os detalhes da transação abaixo.",
+        "descLabel": "Descrição",
+        "descPlaceholder": "Ex: Mercado, Salário",
+        "dateLabel": "Data",
+        "selectDate": "Selecione a data",
+        "categoryOptional": "Categoria (Opcional)",
+        "selectCategory": "Selecione uma categoria",
+        "recurrence": {
+            "label": "Repetir mensalmente",
+            "count": "Número de vezes"
+        },
+        "deleteTitle": "Excluir Transação",
+        "deleteDesc": "Esta ação não pode ser desfeita.",
+        "deleteMessage": "A transação <strong>{{name}}</strong> será permanentemente removida.",
+        "deleteConfirm": "Sim, excluir",
+        "deleting": "Excluindo..."
+    },
+    "income": {
+        "title": "Renda",
+        "subtitle": "Gerencie suas fontes de renda fixa e catálogo de serviços.",
+        "newSource": "+ Nova Fonte",
+        "newWorkUnit": "+ Novo Serviço",
+        "tabs": {
+            "sources": "Fontes Fixas",
+            "workUnits": "Catálogo de Serviços"
+        },
+        "emptySources": "Nenhuma fonte de renda cadastrada.",
+        "emptyWorkUnits": "Nenhum serviço cadastrado no catálogo.",
+        "receivesOn": "Recebe no dia {{day}}",
+        "estimatedTime": "Tempo Estimado: {{time}}h",
+        "deleteDialog": {
+            "title": "Excluir {{type}}",
+            "desc": "Esta ação não pode ser desfeita.",
+            "attention": "Atenção",
+            "messageSource": "A fonte de renda <strong>{{name}}</strong> será permanentemente removida.",
+            "messageWorkUnit": "O serviço <strong>{{name}}</strong> será permanentemente removido.",
+            "confirm": "Sim, excluir",
+            "deleting": "Excluindo...",
+            "typeSource": "Fonte de Renda",
+            "typeWorkUnit": "Serviço"
+        },
+        "distributeDialog": {
+            "title": "Distribuir \"{{name}}\"",
+            "desc": "Defina como distribuir as horas para esta unidade de trabalho.",
+            "hoursPerDay": "Horas/Dia",
+            "skipWeekends": "Pular Finais de Semana",
+            "distribute": "Distribuir"
+        },
+        "calendar": {
+            "statusTooltip": "Clique para alterar status (Plano -> Feito -> Pago)",
+            "distributeTooltip": "Distribuir (Dividir em vários dias)",
+            "removeTooltip": "Remover",
+            "netLabel": "Líquido",
+            "grossLabel": "Bruto",
+            "taxLabel": "Taxa"
+        },
+        "emptySources": "Nenhuma fonte de renda cadastrada. Adicione seu salário ou renda recorrente!",
+        "emptyWorkUnits": "Nenhum serviço cadastrado. Liste seus serviços de freelance aqui!",
+        "workUnitDialog": {
+            "titleNew": "Novo Serviço / Job",
+            "titleEdit": "Editar Serviço / Job",
+            "nameLabel": "Nome do Serviço",
+            "namePlaceholder": "Ex: Logo Design",
+            "priceLabel": "Preço Base (R$)",
+            "timeLabel": "Tempo Estimado (Horas)",
+            "taxLabel": "Imposto (%)",
+            "validation": {
+                "nameRequired": "Nome é obrigatório",
+                "pricePositive": "Preço deve ser maior que zero",
+                "timeInvalid": "Tempo inválido",
+                "taxMin": "Mínimo 0%",
+                "taxMax": "Máximo 100%"
+            }
+        },
+        "sourceDialog": {
+            "titleNew": "Nova Fonte de Renda",
+            "titleEdit": "Editar Fonte de Renda",
+            "desc": "Preencha os dados abaixo para salvar a fonte de renda.",
+            "nameLabel": "Nome (ex: Salário)",
+            "namePlaceholder": "Nome da fonte",
+            "amountLabel": "Valor (R$)",
+            "payDayLabel": "Dia do Pagamento",
+            "categoryLabel": "Categoria de Renda (Opcional)",
+            "selectCategory": "Selecione uma categoria",
+            "noCategory": "Sem categoria",
+            "validation": {
+                "nameRequired": "Nome é obrigatório",
+                "amountPositive": "Valor deve ser maior que zero",
+                "dayInvalid": "Dia inválido"
+            }
+        }
+    },
+    "simulators": {
+        "delay": {
+            "title": "Validar Custo do Atraso",
+            "description": "Simule quanto custa atrasar o pagamento de",
+            "daysLate": "dias de atraso",
+            "simulate": "Simular",
+            "result": "Isso é {{comparison}}!",
+            "details": "(Juros: {{interest}} + Multa: {{fine}})"
+        },
+        "prepayment": {
+            "title": "Oportunidade de Antecipação",
+            "description": "Economize antecipando parcelas de",
+            "simulate": "Simular",
+            "savings": "Economia de",
+            "explanation": "Ao eliminar juros futuros.",
+            "freedom": "Você 'compra' {{months}} meses de liberdade!"
+        },
+        "timeCost": {
+            "tooltip": "Considerando sua taxa horária de {{rate}}",
+            "label": "{{hours}} de trabalho"
+        }
+    },
+    "debts": {
+        "title": "Dívidas",
+        "subtitle": "Gerencie suas dívidas e escolha a melhor estratégia para quitá-las.",
+        "newDebt": "Nova Dívida",
+        "myDebts": "Minhas Dívidas",
+        "strategies": "Estratégias de Pagamento",
+        "empty": "Nenhuma dívida cadastrada.",
+        "deleteError": "Erro ao excluir dívida.",
+        "updateInstallmentsError": "Falha ao atualizar parcelas.",
+        "viewInstallments": "Ver Parcelas",
+        "simulateDelay": "Simular Custo do Atraso",
+        "simulatePrepayment": "Simular Antecipação",
+        "dueDay": "Vence dia {{day}}",
+        "minimum": "Mínimo:",
+        "totalBalance": "Saldo Devedor"
+    },
+    "investments": {
+        "title": "Carteiras de Investimento",
+        "subtitle": "Gerencie suas contas de investimento e corretoras.",
+        "newAccount": "Nova Carteira",
+        "empty": "Nenhuma conta de investimento cadastrada.",
+        "loadError": "Erro ao carregar contas de investimento.",
+        "deleteSuccess": "Conta excluída com sucesso.",
+        "deleteError": "Erro ao excluir conta.",
+        "expiresIn": "Vence em:",
+        "types": {
+            "FIXED_INCOME": "Renda Fixa",
+            "VARIABLE_INCOME": "Renda Variável",
+            "CRYPTO": "Criptomoedas",
+            "CASH": "Caixa / Saldo",
+            "OTHER": "Outro"
+        },
+        "add": {
+            "titleNew": "Nova Conta de Investimento",
+            "titleEdit": "Editar Conta",
+            "nameLabel": "Nome da Conta",
+            "namePlaceholder": "Ex: NuBank Caixinha",
+            "typeLabel": "Tipo",
+            "selectType": "Selecione o tipo",
+            "balanceLabel": "Saldo Atual",
+            "profitabilityLabel": "Rentabilidade (%)",
+            "profitabilityTypeLabel": "Tipo de Rent.",
+            "maturityLabel": "Vencimento (Opcional)",
+            "descriptionLabel": "Descrição (Opcional)",
+            "types": {
+                "CDI": "% do CDI",
+                "IPCA": "IPCA +",
+                "PRE": "Prefixado (a.a.)",
+                "DY": "Dividend Yield",
+                "OTHER": "Outro"
+            },
+            "saveSuccess": "Conta criada com sucesso!",
+            "updateSuccess": "Conta atualizada com sucesso!",
+            "error": "Erro ao salvar conta."
+        },
+        "delete": {
+            "title": "Excluir Carteira",
+            "description": "Esta ação não pode ser desfeita.",
+            "message": "A carteira <strong>{{name}}</strong> será permanentemente removida.",
+            "confirm": "Sim, excluir carteira",
+            "deleting": "Excluindo..."
+        }
+    },
+    "fixedExpenses": {
+        "title": "Despesas Fixas",
+        "subtitle": "Gerencie gastos recorrentes (Aluguel, Internet, Assinaturas).",
+        "newFixedExpense": "Nova Despesa Fixa",
+        "loadError": "Erro ao carregar dados",
+        "deleteSuccess": "Despesa fixa removida!",
+        "deleteError": "Erro ao remover despesa fixa"
+    },
+    "incomeProjection": {
+        "workUnitsTitle": "Unidades de Trabalho",
+        "dragInstructions": "Arraste para o calendário para projetar.",
+        "expensesLabel": "Despesas:",
+        "incomeLabel": "Entradas:",
+        "balanceLabel": "Saldo:"
+    },
+    "imap": {
+        "list": {
+            "title": "Configuração IMAP",
+            "selectScope": "Selecionar Conta",
+            "selectAccountPlaceholder": "Selecione uma conta",
+            "syncAll": "Sincronizar Tudo",
+            "addConfig": "Adicionar Configuração",
+            "loading": "Carregando configurações...",
+            "deleteConfirm": "Tem certeza que deseja excluir esta configuração?",
+            "deleteSuccess": "Configuração excluída",
+            "deleteError": "Falha ao excluir",
+            "saveSuccess": "Configuração salva com sucesso",
+            "saveError": "Falha ao salvar",
+            "testSuccess": "Conexão bem sucedida!",
+            "testFailed": "Conexão falhou",
+            "syncComplete": "Sincronização Completa",
+            "syncedCount": "Sincronizado {{count}} transações!",
+            "syncFailed": "Falha na sincronização"
+        }
+    },
+    "import": {
+        "title": "Importação Inteligente",
+        "configureImap": "Configurar IMAP",
+        "selectAccount": "Selecionar Conta",
+        "selectAccountPlaceholder": "Selecione uma conta...",
+        "processing": "Processando arquivo...",
+        "review": {
+            "title": "Revisar Transações",
+            "countFound": "{{count}} novas transações encontradas."
+        },
+        "importing": "Importando...",
+        "confirm": "Confirmar Importação",
+        "success": "Importação bem sucedida!",
+        "error": "Falha ao importar",
+        "selectAccountError": "Por favor, selecione uma conta primeiro",
+        "parseError": "Falha ao processar arquivo"
+    },
+    "savingsGoals": {
+        "title": "Metas de Economia",
+        "subtitle": "Defina e acompanhe seus objetivos financeiros.",
+        "newGoal": "Nova Meta",
+        "empty": "Nenhuma meta cadastrada.",
+        "deleteSuccess": "Meta excluída com sucesso.",
+        "deleteError": "Erro ao excluir meta.",
+        "loadError": "Erro ao carregar metas de economia.",
+        "add": {
+            "titleNew": "Nova Meta de Economia",
+            "titleEdit": "Editar Meta",
+            "nameLabel": "Nome da Meta",
+            "namePlaceholder": "Ex: Viagem para Japão",
+            "targetAmount": "Valor Alvo",
+            "currentAmount": "Valor Atual (Guardado)",
+            "deadline": "Prazo (Opcional)",
+            "saveSuccess": "Meta criada com sucesso!",
+            "updateSuccess": "Meta atualizada com sucesso!",
+            "saveError": "Erro ao salvar meta."
+        },
+        "delete": {
+            "title": "Excluir Meta",
+            "description": "Esta ação não pode ser desfeita.",
+            "message": "A meta <strong>{{name}}</strong> será permanentemente removida.",
+            "confirm": "Sim, excluir meta",
+            "deleting": "Excluindo..."
+        },
+        "deadlineFormatted": "Sem prazo"
+    },
+    "sidebar": {
+        "general": {
+            "label": "Geral",
+            "dashboard": "Dashboard",
+            "transactions": "Transações",
+            "accounts": "Contas"
+        },
+        "expenses": {
+            "label": "Despesas",
+            "debts": "Dívidas",
+            "fixed": "Despesas Fixas"
+        },
+        "income": {
+            "label": "Faturamento",
+            "income": "Renda",
+            "investments": "Investimentos"
+        },
+        "planning": {
+            "label": "Planejamento",
+            "categories": "Categorias",
+            "goals": "Metas",
+            "projection": "Projeção"
+        },
+        "system": {
+            "label": "Sistema",
+            "import": "Importações",
+            "settings": "Configurações"
+        },
+        "toggleObfuscation": {
+            "show": "Mostrar valores",
+            "hide": "Ocultar valores"
+        },
+        "logout": "Sair"
+    },
+    "mobileNav": {
+        "home": "Início",
+        "transactions": "Transações",
+        "income": "Renda",
+        "debts": "Dívidas",
+        "menu": "Menu"
+    },
+    "auth": {
+        "login": {
+            "title": "Entrar",
+            "emailLabel": "E-mail",
+            "emailPlaceholder": "nome@exemplo.com",
+            "passwordLabel": "Senha",
+            "forgotPassword": "Esqueceu a senha?",
+            "signIn": "Entrar",
+            "signingIn": "Entrando...",
+            "noAccount": "Não tem uma conta?",
+            "registerLink": "Cadastre-se agora",
+            "invalidCredentials": "Credenciais inválidas. Tente novamente."
+        },
+        "register": {
+            "title": "Criar Conta",
+            "subtitle": "Junte-se ao Finance Freedom para começar a gerenciar suas finanças.",
+            "nameLabel": "Nome Completo",
+            "confirmPasswordLabel": "Confirmar Senha",
+            "creating": "Criando conta...",
+            "button": "Criar Conta",
+            "alreadyHaveAccount": "Já tem uma conta?",
+            "success": "Conta criada com sucesso!",
+            "error": "Registro falhou. Tente novamente."
+        },
+        "forgotPassword": {
+            "title": "Esqueceu a Senha?",
+            "subtitle": "Digite seu e-mail e enviaremos um link para redefinir sua senha.",
+            "success": "Link de recuperação enviado",
+            "error": "Ocorreu um erro. Tente novamente.",
+            "checkEmailTitle": "Verifique seu e-mail",
+            "checkEmailDesc": "Se existe uma conta para",
+            "checkEmailSuffix": ", enviamos um link de redefinição de senha.",
+            "checkSpam": "(Verifique sua caixa de entrada e também a pasta de spam)",
+            "backToLogin": "Voltar para o Login",
+            "sending": "Enviando...",
+            "sendButton": "Enviar Link"
+        },
+        "resetPassword": {
+            "title": "Redefinir Senha",
+            "subtitle": "Crie uma nova senha para sua conta.",
+            "newPassword": "Nova Senha",
+            "resetting": "Redefinindo...",
+            "button": "Redefinir Senha",
+            "invalidToken": "Token inválido ou ausente.",
+            "success": "Senha redefinida com sucesso!",
+            "error": "Ocorreu um erro ao redefinir sua senha.",
+            "invalidLinkTitle": "Link Inválido",
+            "invalidLinkDesc": "O token de redefinição de senha está faltando.",
+            "requestNewLink": "Solicitar novo link"
+        },
+        "validation": {
+            "emailRequired": "Por favor, insira um e-mail válido",
+            "passwordRequired": "Senha é obrigatória",
+            "nameMinLength": "Nome deve ter pelo menos 2 caracteres",
+            "nameRequired": "Nome é obrigatório",
+            "emailInvalid": "E-mail inválido",
+            "currentPasswordRequired": "Senha atual é obrigatória",
+            "passwordMinLength": "Senha deve ter pelo menos 6 caracteres",
+            "passwordsMismatch": "Senhas não conferem"
+        }
+    },
     "settings": {
         "title": "Configurações do Sistema",
-        "description": "Ajuste os parâmetros globais do Finance Freedom.",
-        "general": "Configurações Gerais",
+        "general": {
+            "title": "Configurações Gerais",
+            "description": "Ajuste os parâmetros globais do Finance Freedom.",
+            "closingDay": "Dia de Fechamento",
+            "helperClosing": "Define o dia padrão para fechamento do mês.",
+            "interestRate": "Taxa de Juros Padrão (% a.m.)",
+            "helperInterest": "Usado para simulações de dívidas sem taxa definida.",
+            "extraValue": "Valor Extra Mensal",
+            "helperExtra": "Valor adicional para amortização em simulações.",
+            "projectionLimit": "Limite de Projeção (Meses)",
+            "dailyHours": "Horas de Trabalho Padrão/Dia",
+            "recurrence": "Recorrência Padrão (Meses)",
+            "incomeCategory": "Categoria de Renda Padrão",
+            "selectPlaceholder": "Selecione uma categoria",
+            "weekends": "Considerar finais de semana como dias úteis"
+        },
         "theme": "Aparência",
         "preferences": "Outras Preferências",
-        "preferences_desc": "Funcionalidades de internacionalização e localização.",
-        "language": "Idioma e Localização",
-        "language_desc": "Selecione o idioma de preferência do sistema.",
+        "preferences_desc": "Configurações locais do navegador.",
+        "language": "Idioma / Região",
+        "language_desc": "Selecione o idioma da interface.",
         "save": "Salvar Configurações",
-        "success": "Configurações salvas com sucesso!",
-        "error": "Erro ao salvar configurações"
+        "loadError": "Erro ao carregar dados",
+        "saveSuccess": "Configurações salvas com sucesso!",
+        "saveError": "Erro ao salvar configurações",
+        "themeSettings": {
+            "title": "Aparência",
+            "description": "Personalize a aparência do Finance Freedom. Use o modo escuro para descanso visual.",
+            "mode": {
+                "label": "Tema",
+                "light": "Claro",
+                "dark": "Escuro",
+                "system": "Sistema"
+            },
+            "primaryColor": "Cor de Destaque",
+            "radius": "Arredondamento (Radius)",
+            "privacyMode": {
+                "label": "Modo Privacidade (Padrão)",
+                "description": "Iniciar com valores ocultos por padrão."
+            }
+        },
+        "generalParams": {
+            "title": "Parâmetros Gerais",
+            "description": "Defina os padrões de comportamento do sistema.",
+            "closingDay": "Dia Padrão de Fechamento",
+            "interestRate": "Juros Médios Padrão (%)",
+            "extraValue": "Valor Extra Mensal Padrão",
+            "projectionLimit": "Limite de Projeção (Meses)",
+            "dailyHours": "Horas Diárias Padrão",
+            "recurrence": "Número Padrão de Recorrências",
+            "incomeCategory": "Categoria Padrão p/ Recebimentos",
+            "weekends": "Trabalhar nos Fins de Semana",
+            "helperClosing": "Para faturas e relatórios.",
+            "helperInterest": "Para novas dívidas.",
+            "helperExtra": "Para estratégias de dívidas.",
+            "selectPlaceholder": "Selecione"
+        }
     }
 }

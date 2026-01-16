@@ -1,4 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { DeleteTransactionDialog } from "../components/transactions/DeleteTransactionDialog";
@@ -13,6 +14,7 @@ import { type Category, categoryService } from "../services/category.service";
 import type { Account, Transaction } from "../types";
 
 export function Transactions() {
+    const { t } = useTranslation();
     const queryClient = useQueryClient();
     const [accounts, setAccounts] = useState<Account[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
@@ -83,7 +85,7 @@ export function Transactions() {
             setTransactionToDelete(null);
         } catch (error) {
             console.error("Failed to delete transaction", error);
-            alert("Erro ao excluir transação.");
+            alert(t("transactions.deleteError"));
         } finally {
             setIsDeleting(false);
         }
@@ -97,12 +99,12 @@ export function Transactions() {
     return (
         <div className="container mx-auto px-4 py-8">
             <PageHeader
-                title="Transações"
-                description="Gerencie suas receitas e despesas."
+                title={t("transactions.title")}
+                description={t("transactions.subtitle")}
                 actions={
                     <Button onClick={() => setIsNewTransactionOpen(true)}>
                         <Plus className="w-4 h-4 mr-2" />
-                        Nova Transação
+                        {t("transactions.newTransaction")}
                     </Button>
                 }
             />
@@ -115,7 +117,7 @@ export function Transactions() {
             />
 
             {isLoading ? (
-                <div className="text-center py-8">Carregando...</div>
+                <div className="text-center py-8">{t("common.loading")}</div>
             ) : (
                 <div className="space-y-4">
                     <div className="bg-card rounded-xl border shadow">
@@ -134,8 +136,8 @@ export function Transactions() {
                                 disabled={isFetchingNextPage}
                             >
                                 {isFetchingNextPage
-                                    ? "Carregando..."
-                                    : "Carregar Mais"}
+                                    ? t("common.loading")
+                                    : t("common.loadMore")}
                             </Button>
                         </div>
                     )}

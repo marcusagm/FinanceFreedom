@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { z } from "zod";
 import { Alert, AlertDescription } from "../components/ui/Alert";
@@ -18,13 +19,21 @@ import { Label } from "../components/ui/Label";
 import { api } from "../lib/api";
 import { notify } from "../lib/notification";
 
-const forgotPasswordSchema = z.object({
-    email: z.string().email("Please enter a valid email address"),
-});
+const createForgotPasswordSchema = (t: any) =>
+    z.object({
+        email: z.string().email(t("auth.validation.emailRequired")),
+    });
 
-type ForgotPasswordForm = z.infer<typeof forgotPasswordSchema>;
+type ForgotPasswordForm = z.infer<
+    ReturnType<typeof createForgotPasswordSchema>
+>;
 
 export function ForgotPassword() {
+    const { t } = useTranslation();
+    const forgotPasswordSchema = useMemo(
+        () => createForgotPasswordSchema(t),
+        [t]
+    );
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [submitError, setSubmitError] = useState("");
 
@@ -42,10 +51,10 @@ export function ForgotPassword() {
         try {
             await api.post("/auth/forgot-password", { email: data.email });
             setIsSubmitted(true);
-            notify.success("Recovery link sent");
+            notify.success(t("auth.forgotPassword.success"));
         } catch (err: any) {
             console.error("Forgot password failed", err);
-            setSubmitError("An error occurred. Please try again.");
+            setSubmitError(t("auth.forgotPassword.error"));
         }
     };
 
@@ -55,22 +64,24 @@ export function ForgotPassword() {
                 <Card className="w-full max-w-md">
                     <CardHeader className="text-center">
                         <CardTitle className="text-2xl">
-                            Check your email
+                            {t("auth.forgotPassword.checkEmailTitle")}
                         </CardTitle>
                         <CardDescription>
-                            If an account exists for{" "}
-                            <strong>{getValues("email")}</strong>, we have sent
-                            a password reset link.
+                            {t("auth.forgotPassword.checkEmailDesc")}{" "}
+                            <strong>{getValues("email")}</strong>
+                            {t("auth.forgotPassword.checkEmailSuffix")}
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="text-center space-y-4">
                         <p className="text-sm text-muted-foreground">
-                            (Check your inbox and also the spam folder)
+                            {t("auth.forgotPassword.checkSpam")}
                         </p>
                     </CardContent>
                     <CardFooter className="flex justify-center">
                         <Link to="/login">
-                            <Button variant="outline">Back to Login</Button>
+                            <Button variant="outline">
+                                {t("auth.forgotPassword.backToLogin")}
+                            </Button>
                         </Link>
                     </CardFooter>
                 </Card>
@@ -82,10 +93,11 @@ export function ForgotPassword() {
         <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-primary/10 via-background to-muted p-4">
             <Card className="w-full max-w-md shadow-lg border-primary/10">
                 <CardHeader className="text-center">
-                    <CardTitle className="text-2xl">Forgot Password?</CardTitle>
+                    <CardTitle className="text-2xl">
+                        {t("auth.forgotPassword.title")}
+                    </CardTitle>
                     <CardDescription>
-                        Enter your email and we'll send you a link to reset your
-                        password.
+                        {t("auth.forgotPassword.subtitle")}
                     </CardDescription>
                 </CardHeader>
                 <form onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -98,11 +110,13 @@ export function ForgotPassword() {
                             </Alert>
                         )}
                         <div className="space-y-2">
-                            <Label htmlFor="email">Email</Label>
+                            <Label htmlFor="email">
+                                {t("auth.login.emailLabel")}
+                            </Label>
                             <Input
                                 id="email"
                                 type="email"
-                                placeholder="name@example.com"
+                                placeholder={t("auth.login.emailPlaceholder")}
                                 {...register("email")}
                             />
                             {errors.email && (
@@ -118,14 +132,16 @@ export function ForgotPassword() {
                             className="w-full"
                             disabled={isSubmitting}
                         >
-                            {isSubmitting ? "Sending..." : "Send Link"}
+                            {isSubmitting
+                                ? t("auth.forgotPassword.sending")
+                                : t("auth.forgotPassword.sendButton")}
                         </Button>
                         <div className="text-center text-sm">
                             <Link
                                 to="/login"
                                 className="text-primary hover:underline"
                             >
-                                Back to Login
+                                {t("auth.forgotPassword.backToLogin")}
                             </Link>
                         </div>
                     </CardFooter>

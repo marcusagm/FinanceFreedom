@@ -1,4 +1,5 @@
 import { AppAlert } from "../../components/ui/AppAlert";
+import { useTranslation, Trans } from "react-i18next";
 import { Button } from "../../components/ui/Button";
 import {
     Dialog,
@@ -25,20 +26,27 @@ export function DeleteAccountDialog({
     accountName,
     isDeleting,
 }: DeleteAccountDialogProps) {
+    const { t } = useTranslation();
+
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Excluir Conta</DialogTitle>
+                    <DialogTitle>
+                        {t("accounts.deleteDialog.title")}
+                    </DialogTitle>
                     <DialogDescription>
-                        Esta ação não pode ser desfeita.
+                        {t("accounts.deleteDialog.desc")}
                     </DialogDescription>
                 </DialogHeader>
 
                 <DialogBody>
-                    <AppAlert variant="destructive" title="Atenção">
-                        A conta <strong>{accountName}</strong> será
-                        permanentemente removida.
+                    <AppAlert variant="destructive" title={t("common.error")}>
+                        <Trans
+                            i18nKey="accounts.deleteDialog.message"
+                            values={{ name: accountName }}
+                            components={{ strong: <strong /> }}
+                        />
                     </AppAlert>
                 </DialogBody>
 
@@ -48,14 +56,16 @@ export function DeleteAccountDialog({
                         onClick={onClose}
                         disabled={isDeleting}
                     >
-                        Cancelar
+                        {t("common.cancel")}
                     </Button>
                     <Button
                         variant="destructive"
                         onClick={onConfirm}
                         disabled={isDeleting}
                     >
-                        {isDeleting ? "Excluindo..." : "Sim, excluir conta"}
+                        {isDeleting
+                            ? t("accounts.deleteDialog.deleting")
+                            : t("accounts.deleteDialog.confirm")}
                     </Button>
                 </DialogFooter>
             </DialogContent>

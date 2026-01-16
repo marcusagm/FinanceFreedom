@@ -1,4 +1,5 @@
 import { ArrowDownRight, ArrowUpRight, TrendingUp } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/Card";
 import { MoneyDisplay } from "../ui/MoneyDisplay";
 
@@ -15,11 +16,12 @@ export function WealthWidget({
     totalDebt,
     totalBalance,
 }: WealthWidgetProps) {
+    const { t } = useTranslation();
     return (
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
-                    Patrimônio Líquido (Net Worth)
+                    {t("dashboard.wealth.title")}
                 </CardTitle>
                 <TrendingUp className="h-4 w-4 text-emerald-500" />
             </CardHeader>
@@ -29,21 +31,27 @@ export function WealthWidget({
                 </div>
                 <div className="grid grid-cols-3 gap-2 mt-4 text-xs">
                     <div>
-                        <p className="text-muted-foreground">Investido</p>
+                        <p className="text-muted-foreground">
+                            {t("dashboard.wealth.invested")}
+                        </p>
                         <div className="font-medium text-emerald-600 flex items-center">
                             <ArrowUpRight className="h-3 w-3 mr-1" />
                             <MoneyDisplay value={totalInvested} />
                         </div>
                     </div>
                     <div>
-                        <p className="text-muted-foreground">Saldo Contas</p>
+                        <p className="text-muted-foreground">
+                            {t("dashboard.wealth.balance")}
+                        </p>
                         <div className="font-medium text-blue-500 flex items-center">
                             <ArrowUpRight className="h-3 w-3 mr-1" />
                             <MoneyDisplay value={totalBalance} />
                         </div>
                     </div>
                     <div>
-                        <p className="text-muted-foreground">Dívidas</p>
+                        <p className="text-muted-foreground">
+                            {t("dashboard.wealth.debts")}
+                        </p>
                         <div className="font-medium text-red-500 flex items-center">
                             <ArrowDownRight className="h-3 w-3 mr-1" />
                             <MoneyDisplay value={totalDebt} />

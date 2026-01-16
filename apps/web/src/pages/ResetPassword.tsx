@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { z } from "zod";
 import { Alert, AlertDescription } from "../components/ui/Alert";
@@ -18,21 +19,27 @@ import { Label } from "../components/ui/Label";
 import { api } from "../lib/api";
 import { notify } from "../lib/notification";
 
-const resetPasswordSchema = z
-    .object({
-        newPassword: z
-            .string()
-            .min(6, "Password must be at least 6 characters"),
-        confirmPassword: z.string(),
-    })
-    .refine((data) => data.newPassword === data.confirmPassword, {
-        message: "Passwords do not match",
-        path: ["confirmPassword"],
-    });
+const createResetPasswordSchema = (t: any) =>
+    z
+        .object({
+            newPassword: z
+                .string()
+                .min(6, t("auth.validation.passwordMinLength")),
+            confirmPassword: z.string(),
+        })
+        .refine((data) => data.newPassword === data.confirmPassword, {
+            message: t("auth.validation.passwordsMismatch"),
+            path: ["confirmPassword"],
+        });
 
-type ResetPasswordForm = z.infer<typeof resetPasswordSchema>;
+type ResetPasswordForm = z.infer<ReturnType<typeof createResetPasswordSchema>>;
 
 export function ResetPassword() {
+    const { t } = useTranslation();
+    const resetPasswordSchema = useMemo(
+        () => createResetPasswordSchema(t),
+        [t]
+    );
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const token = searchParams.get("token");
@@ -48,7 +55,7 @@ export function ResetPassword() {
 
     const onSubmit = async (data: ResetPasswordForm) => {
         if (!token) {
-            setSubmitError("Invalid or missing token.");
+            setSubmitError(t("auth.resetPassword.invalidToken"));
             return;
         }
 
@@ -58,13 +65,12 @@ export function ResetPassword() {
                 token,
                 newPassword: data.newPassword,
             });
-            notify.success("Password reset successfully!");
+            notify.success(t("auth.resetPassword.success"));
             navigate("/login");
         } catch (err: any) {
             console.error("Reset password failed", err);
             setSubmitError(
-                err.response?.data?.message ||
-                    "An error occurred while resetting your password."
+                err.response?.data?.message || t("auth.resetPassword.error")
             );
         }
     };
@@ -75,15 +81,17 @@ export function ResetPassword() {
                 <Card className="w-full max-w-md shadow-lg border-primary/10">
                     <CardHeader className="text-center">
                         <CardTitle className="text-destructive">
-                            Invalid Link
+                            {t("auth.resetPassword.invalidLinkTitle")}
                         </CardTitle>
                         <CardDescription>
-                            The password reset token is missing.
+                            {t("auth.resetPassword.invalidLinkDesc")}
                         </CardDescription>
                     </CardHeader>
                     <CardFooter className="flex justify-center">
                         <Link to="/forgot-password">
-                            <Button variant="outline">Request new link</Button>
+                            <Button variant="outline">
+                                {t("auth.resetPassword.requestNewLink")}
+                            </Button>
                         </Link>
                     </CardFooter>
                 </Card>
@@ -95,9 +103,11 @@ export function ResetPassword() {
         <div className="flex items-center justify-center min-h-screen bg-background p-4">
             <Card className="w-full max-w-md">
                 <CardHeader className="text-center">
-                    <CardTitle className="text-2xl">Reset Password</CardTitle>
+                    <CardTitle className="text-2xl">
+                        {t("auth.resetPassword.title")}
+                    </CardTitle>
                     <CardDescription>
-                        Create a new password for your account.
+                        {t("auth.resetPassword.subtitle")}
                     </CardDescription>
                 </CardHeader>
                 <form onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -110,7 +120,9 @@ export function ResetPassword() {
                             </Alert>
                         )}
                         <div className="space-y-2">
-                            <Label htmlFor="newPassword">New Password</Label>
+                            <Label htmlFor="newPassword">
+                                {t("auth.resetPassword.newPassword")}
+                            </Label>
                             <Input
                                 id="newPassword"
                                 type="password"
@@ -125,7 +137,7 @@ export function ResetPassword() {
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="confirmPassword">
-                                Confirm Password
+                                {t("auth.register.confirmPasswordLabel")}
                             </Label>
                             <Input
                                 id="confirmPassword"
@@ -146,14 +158,16 @@ export function ResetPassword() {
                             className="w-full"
                             disabled={isSubmitting}
                         >
-                            {isSubmitting ? "Resetting..." : "Reset Password"}
+                            {isSubmitting
+                                ? t("auth.resetPassword.resetting")
+                                : t("auth.resetPassword.button")}
                         </Button>
                         <div className="text-center text-sm">
                             <Link
                                 to="/login"
                                 className="text-primary hover:underline"
                             >
-                                Back to Login
+                                {t("auth.forgotPassword.backToLogin")}
                             </Link>
                         </div>
                     </CardFooter>

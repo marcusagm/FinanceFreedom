@@ -2,6 +2,7 @@ import type {
     BudgetStatus,
     IncomeStatus,
 } from "../../services/analytics.service";
+import { useTranslation } from "react-i18next";
 import type { Category } from "../../services/category.service";
 import { CategoryCard } from "./CategoryCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/Tabs";
@@ -21,6 +22,7 @@ export function CategoryList({
     onEdit,
     onDelete,
 }: CategoryListProps) {
+    const { t } = useTranslation();
     const expenses = categories.filter((c) => !c.type || c.type === "EXPENSE");
     const incomes = categories.filter((c) => c.type === "INCOME");
 
@@ -28,7 +30,7 @@ export function CategoryList({
         if (items.length === 0) {
             return (
                 <div className="text-center py-12 text-muted-foreground border rounded-lg bg-card">
-                    Nenhuma categoria encontrada neste grupo.
+                    {t("categories.emptyGroup")}
                 </div>
             );
         }
@@ -77,8 +79,12 @@ export function CategoryList({
     return (
         <Tabs defaultValue="expenses" className="w-full">
             <TabsList className="mb-4">
-                <TabsTrigger value="expenses">Despesas</TabsTrigger>
-                <TabsTrigger value="incomes">Receitas</TabsTrigger>
+                <TabsTrigger value="expenses">
+                    {t("categories.tabs.expenses")}
+                </TabsTrigger>
+                <TabsTrigger value="incomes">
+                    {t("categories.tabs.incomes")}
+                </TabsTrigger>
             </TabsList>
             <TabsContent value="expenses">{renderGrid(expenses)}</TabsContent>
             <TabsContent value="incomes">

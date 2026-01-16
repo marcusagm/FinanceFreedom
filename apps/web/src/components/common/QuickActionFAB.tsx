@@ -1,5 +1,6 @@
 import { CreditCard, Plus, Wallet } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { api } from "../../lib/api";
 import type { Account } from "../../types";
 import { DebtForm } from "../debt/DebtForm";
@@ -17,6 +18,7 @@ import {
 } from "../ui/DropdownMenu";
 
 export function QuickActionFAB() {
+    const { t } = useTranslation();
     const [isTransactionOpen, setIsTransactionOpen] = useState(false);
     const [isDebtOpen, setIsDebtOpen] = useState(false);
     const [accounts, setAccounts] = useState<Account[]>([]);
@@ -49,11 +51,13 @@ export function QuickActionFAB() {
                             onClick={() => setIsTransactionOpen(true)}
                         >
                             <Wallet className="mr-2 h-4 w-4" />
-                            <span>Nova Transação</span>
+                            <span>
+                                {t("dashboard.quickActions.newTransaction")}
+                            </span>
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => setIsDebtOpen(true)}>
                             <CreditCard className="mr-2 h-4 w-4" />
-                            <span>Nova Dívida</span>
+                            <span>{t("dashboard.quickActions.newDebt")}</span>
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

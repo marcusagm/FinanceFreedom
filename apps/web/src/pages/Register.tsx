@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { Alert, AlertDescription } from "../components/ui/Alert";
@@ -19,21 +20,24 @@ import { useAuth } from "../contexts/AuthContext";
 import { api } from "../lib/api";
 import { notify } from "../lib/notification";
 
-const registerSchema = z
-    .object({
-        name: z.string().min(2, "Name must be at least 2 characters"),
-        email: z.string().email("Please enter a valid email"),
-        password: z.string().min(6, "Password must be at least 6 characters"),
-        confirmPassword: z.string(),
-    })
-    .refine((data) => data.password === data.confirmPassword, {
-        message: "Passwords do not match",
-        path: ["confirmPassword"],
-    });
+const createRegisterSchema = (t: any) =>
+    z
+        .object({
+            name: z.string().min(2, t("auth.validation.nameMinLength")),
+            email: z.string().email(t("auth.validation.emailRequired")),
+            password: z.string().min(6, t("auth.validation.passwordMinLength")),
+            confirmPassword: z.string(),
+        })
+        .refine((data) => data.password === data.confirmPassword, {
+            message: t("auth.validation.passwordsMismatch"),
+            path: ["confirmPassword"],
+        });
 
-type RegisterForm = z.infer<typeof registerSchema>;
+type RegisterForm = z.infer<ReturnType<typeof createRegisterSchema>>;
 
 export function Register() {
+    const { t } = useTranslation();
+    const registerSchema = useMemo(() => createRegisterSchema(t), [t]);
     const [authError, setAuthError] = useState("");
     const { login } = useAuth();
     const navigate = useNavigate();
@@ -56,7 +60,7 @@ export function Register() {
                 password: data.password,
             });
 
-            notify.success("Account created successfully!");
+            notify.success(t("auth.register.success"));
 
             // Auto-login
             const loginRes = await api.post("/auth/login", {
@@ -75,8 +79,7 @@ export function Register() {
         } catch (err: any) {
             console.error("Registration failed", err);
             const message =
-                err.response?.data?.message ||
-                "Registration failed. Please try again.";
+                err.response?.data?.message || t("auth.register.error");
             setAuthError(Array.isArray(message) ? message.join(", ") : message);
             delete api.defaults.headers.common["Authorization"];
         }
@@ -86,9 +89,11 @@ export function Register() {
         <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-primary/10 via-background to-muted p-4">
             <Card className="w-full max-w-md shadow-lg border-primary/10">
                 <CardHeader className="text-center">
-                    <CardTitle className="text-2xl">Create Account</CardTitle>
+                    <CardTitle className="text-2xl">
+                        {t("auth.register.title")}
+                    </CardTitle>
                     <CardDescription>
-                        Join Finance Freedom to start managing your finances.
+                        {t("auth.register.subtitle")}
                     </CardDescription>
                 </CardHeader>
                 <form onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -99,7 +104,9 @@ export function Register() {
                             </Alert>
                         )}
                         <div className="space-y-2">
-                            <Label htmlFor="name">Full Name</Label>
+                            <Label htmlFor="name">
+                                {t("auth.register.nameLabel")}
+                            </Label>
                             <Input
                                 id="name"
                                 type="text"
@@ -114,7 +121,9 @@ export function Register() {
                             )}
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="email">Email</Label>
+                            <Label htmlFor="email">
+                                {t("auth.login.emailLabel")}
+                            </Label>
                             <Input
                                 id="email"
                                 type="email"
@@ -129,7 +138,9 @@ export function Register() {
                             )}
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="password">Password</Label>
+                            <Label htmlFor="password">
+                                {t("auth.login.passwordLabel")}
+                            </Label>
                             <Input
                                 id="password"
                                 type="password"
@@ -144,7 +155,7 @@ export function Register() {
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="confirmPassword">
-                                Confirm Password
+                                {t("auth.register.confirmPasswordLabel")}
                             </Label>
                             <Input
                                 id="confirmPassword"
@@ -166,16 +177,16 @@ export function Register() {
                             disabled={isSubmitting}
                         >
                             {isSubmitting
-                                ? "Creating account..."
-                                : "Create Account"}
+                                ? t("auth.register.creating")
+                                : t("auth.register.button")}
                         </Button>
                         <div className="text-center text-sm">
-                            Already have an account?{" "}
+                            {t("auth.register.alreadyHaveAccount")}{" "}
                             <Link
                                 to="/login"
                                 className="text-primary hover:underline"
                             >
-                                Sign In
+                                {t("auth.login.signIn")}
                             </Link>
                         </div>
                     </CardFooter>

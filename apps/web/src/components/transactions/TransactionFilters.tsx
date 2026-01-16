@@ -1,5 +1,6 @@
 import { format } from "date-fns";
 import { X } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import type { Category } from "../../services/category.service";
 import type { Account } from "../../types";
 import { Button } from "../ui/Button";
@@ -28,6 +29,8 @@ export function TransactionFilters({
     accounts,
     categories,
 }: TransactionFiltersProps) {
+    const { t } = useTranslation();
+
     const handleChange = (key: keyof FilterState, value: string) => {
         onChange({ ...filters, [key]: value });
     };
@@ -47,7 +50,7 @@ export function TransactionFilters({
             {/* Search - Grows to fill available space */}
             <div className="w-full md:flex-1 min-w-50">
                 <Input
-                    placeholder="Buscar por descrição..."
+                    placeholder={t("transactions.filters.searchPlaceholder")}
                     value={filters.search}
                     onChange={(e) => handleChange("search", e.target.value)}
                     className="w-full"
@@ -61,13 +64,18 @@ export function TransactionFilters({
                         value={filters.accountId}
                         onChange={(value) => handleChange("accountId", value)}
                         options={[
-                            { value: "all", label: "Todas as Contas" },
+                            {
+                                value: "all",
+                                label: t("transactions.filters.allAccounts"),
+                            },
                             ...accounts.map((acc) => ({
                                 value: acc.id,
                                 label: acc.name,
                             })),
                         ]}
-                        placeholder="Conta"
+                        placeholder={t(
+                            "transactions.filters.accountPlaceholder"
+                        )}
                     />
                 </div>
                 <div className="w-full md:w-45">
@@ -75,7 +83,10 @@ export function TransactionFilters({
                         value={filters.category}
                         onChange={(value) => handleChange("category", value)}
                         options={[
-                            { value: "all", label: "Todas as Categorias" },
+                            {
+                                value: "all",
+                                label: t("transactions.filters.allCategories"),
+                            },
                             ...categories
                                 .sort((a, b) => {
                                     if (a.type === b.type)
@@ -92,7 +103,9 @@ export function TransactionFilters({
                                             : `${cat.name}`,
                                 })),
                         ]}
-                        placeholder="Categoria"
+                        placeholder={t(
+                            "transactions.filters.categoryPlaceholder"
+                        )}
                     />
                 </div>
             </div>
@@ -112,7 +125,7 @@ export function TransactionFilters({
                         )
                     }
                     className="w-full md:w-37.5"
-                    placeholder="Início"
+                    placeholder={t("transactions.filters.dateStart")}
                 />
                 <span className="text-muted-foreground">-</span>
                 <DatePicker
@@ -128,7 +141,7 @@ export function TransactionFilters({
                         )
                     }
                     className="w-full md:w-37.5"
-                    placeholder="Fim"
+                    placeholder={t("transactions.filters.dateEnd")}
                 />
             </div>
 
@@ -139,11 +152,13 @@ export function TransactionFilters({
                     onClick={handleClear}
                     className="text-muted-foreground hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 h-10 w-10 p-0"
                     size="icon"
-                    title="Limpar Filtros"
+                    title={t("transactions.filters.clear")}
                     data-testid="clear-filters-button"
                 >
                     <X className="w-5 h-5" />
-                    <span className="sr-only">Limpar Filtros</span>
+                    <span className="sr-only">
+                        {t("transactions.filters.clear")}
+                    </span>
                 </Button>
             </div>
         </div>

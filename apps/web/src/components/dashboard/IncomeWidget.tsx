@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import {
     Cell,
@@ -17,6 +18,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/Card";
 import { MoneyDisplay } from "../ui/MoneyDisplay";
 
 export function IncomeWidget() {
+    const { t } = useTranslation();
     const [data, setData] = useState<IncomeStatus[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -39,7 +41,9 @@ export function IncomeWidget() {
         return (
             <Card className="h-full">
                 <CardHeader>
-                    <CardTitle>Distribuição de Receitas</CardTitle>
+                    <CardTitle>
+                        {t("dashboard.incomeDistribution.title")}
+                    </CardTitle>
                 </CardHeader>
                 <CardContent className="h-75 flex items-center justify-center">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
@@ -52,20 +56,22 @@ export function IncomeWidget() {
         return (
             <Card className="h-full">
                 <CardHeader>
-                    <CardTitle>Distribuição de Receitas</CardTitle>
+                    <CardTitle>
+                        {t("dashboard.incomeDistribution.title")}
+                    </CardTitle>
                 </CardHeader>
                 <CardContent className="h-75 flex flex-col items-center justify-center text-muted-foreground bg-gray-50/50 dark:bg-gray-900/20 rounded-lg m-4 border-2 border-dashed">
                     <p className="text-lg font-medium mb-2">
-                        Sem receitas registradas
+                        {t("dashboard.incomeDistribution.empty")}
                     </p>
                     <p className="text-sm text-center max-w-50">
-                        Adicione transações de entrada para ver o gráfico.
+                        {t("dashboard.incomeDistribution.hint")}
                     </p>
                     <Link
                         to="/transactions"
                         className="mt-4 text-primary hover:underline text-sm"
                     >
-                        Criar Transação
+                        {t("dashboard.incomeDistribution.createTransaction")}
                     </Link>
                 </CardContent>
             </Card>
@@ -83,7 +89,7 @@ export function IncomeWidget() {
     return (
         <Card className="h-full">
             <CardHeader className="pb-2">
-                <CardTitle>Distribuição de Receitas</CardTitle>
+                <CardTitle>{t("dashboard.incomeDistribution.title")}</CardTitle>
             </CardHeader>
             <CardContent>
                 <div style={{ width: "100%", height: 250 }}>

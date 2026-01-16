@@ -1,4 +1,5 @@
 import { Pencil, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import type { WorkUnit } from "../../services/income.service";
 import { AppCard } from "../ui/AppCard";
 import { Button } from "../ui/Button";
@@ -11,6 +12,7 @@ interface WorkUnitCardProps {
 }
 
 export function WorkUnitCard({ unit, onEdit, onDelete }: WorkUnitCardProps) {
+    const { t } = useTranslation();
     const actions = (
         <>
             <Button
@@ -20,7 +22,7 @@ export function WorkUnitCard({ unit, onEdit, onDelete }: WorkUnitCardProps) {
                     e.stopPropagation();
                     onEdit(unit);
                 }}
-                title="Editar"
+                title={t("common.edit")}
             >
                 <Pencil className="w-4 h-4" />
             </Button>
@@ -31,7 +33,7 @@ export function WorkUnitCard({ unit, onEdit, onDelete }: WorkUnitCardProps) {
                     e.stopPropagation();
                     onDelete(unit);
                 }}
-                title="Excluir"
+                title={t("common.delete")}
                 className="text-destructive hover:text-destructive hover:bg-destructive/10"
             >
                 <Trash2 className="w-4 h-4" />
@@ -44,7 +46,7 @@ export function WorkUnitCard({ unit, onEdit, onDelete }: WorkUnitCardProps) {
             title={unit.name}
             color="#3b82f6" // blue-500
             actions={actions}
-            footer={`Tempo Estimado: ${unit.estimatedTime}h`}
+            footer={t("income.estimatedTime", { time: unit.estimatedTime })}
         >
             <div className="text-2xl font-bold tracking-tight text-blue-600 dark:text-blue-400">
                 <MoneyDisplay value={unit.defaultPrice} />

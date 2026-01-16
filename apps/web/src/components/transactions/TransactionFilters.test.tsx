@@ -19,7 +19,11 @@ vi.mock("../ui/DatePicker", () => ({
             placeholder={placeholder}
             value={date ? date.toISOString().split("T")[0] : ""}
             onChange={(e) =>
-                setDate(e.target.value ? new Date(e.target.value + "T00:00:00") : undefined)
+                setDate(
+                    e.target.value
+                        ? new Date(e.target.value + "T00:00:00")
+                        : undefined
+                )
             }
         />
     ),
@@ -45,7 +49,10 @@ vi.mock("../ui/Select", () => ({
 
 describe("TransactionFilters", () => {
     const mockAccounts = [{ id: "acc1", name: "Wallet" }];
-    const mockCategories = ["Food", "Transport"];
+    const mockCategories: any[] = [
+        { id: "1", name: "Food", type: "EXPENSE" },
+        { id: "2", name: "Transport", type: "EXPENSE" },
+    ];
     const defaultFilters = {
         search: "",
         accountId: "all",
@@ -62,10 +69,12 @@ describe("TransactionFilters", () => {
                 onChange={mockOnChange}
                 accounts={mockAccounts}
                 categories={mockCategories}
-            />,
+            />
         );
 
-        expect(screen.getByPlaceholderText("Buscar por descrição...")).toBeInTheDocument();
+        expect(
+            screen.getByPlaceholderText("Buscar por descrição...")
+        ).toBeInTheDocument();
         expect(screen.getByLabelText("Conta")).toBeInTheDocument();
         expect(screen.getByLabelText("Categoria")).toBeInTheDocument();
         expect(screen.getByPlaceholderText("Início")).toBeInTheDocument();
@@ -79,10 +88,12 @@ describe("TransactionFilters", () => {
                 onChange={mockOnChange}
                 accounts={mockAccounts}
                 categories={mockCategories}
-            />,
+            />
         );
 
-        const searchInput = screen.getByPlaceholderText("Buscar por descrição...");
+        const searchInput = screen.getByPlaceholderText(
+            "Buscar por descrição..."
+        );
         fireEvent.change(searchInput, { target: { value: "Lunch" } });
 
         expect(mockOnChange).toHaveBeenCalledWith({
@@ -98,7 +109,7 @@ describe("TransactionFilters", () => {
                 onChange={mockOnChange}
                 accounts={mockAccounts}
                 categories={mockCategories}
-            />,
+            />
         );
 
         const accountSelect = screen.getByLabelText("Conta");
@@ -117,7 +128,7 @@ describe("TransactionFilters", () => {
                 onChange={mockOnChange}
                 accounts={mockAccounts}
                 categories={mockCategories}
-            />,
+            />
         );
 
         const startDateInput = screen.getByPlaceholderText("Início");
@@ -144,7 +155,7 @@ describe("TransactionFilters", () => {
                 onChange={mockOnChange}
                 accounts={mockAccounts}
                 categories={mockCategories}
-            />,
+            />
         );
 
         const clearButton = screen.getByTestId("clear-filters-button");

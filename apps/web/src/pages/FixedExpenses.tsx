@@ -1,5 +1,6 @@
 import { Loader2, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { DeleteFixedExpenseDialog } from "../components/fixed-expense/DeleteFixedExpenseDialog";
 import { FixedExpenseDialog } from "../components/fixed-expense/FixedExpenseDialog";
@@ -8,10 +9,14 @@ import { Button } from "../components/ui/Button";
 import { PageHeader } from "../components/ui/PageHeader";
 import { api } from "../lib/api";
 import { type Category, categoryService } from "../services/category.service";
-import { type FixedExpense, fixedExpenseService } from "../services/fixed-expense.service";
+import {
+    type FixedExpense,
+    fixedExpenseService,
+} from "../services/fixed-expense.service";
 import type { Account } from "../types";
 
 export function FixedExpenses() {
+    const { t } = useTranslation();
     const [expenses, setExpenses] = useState<FixedExpense[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [accounts, setAccounts] = useState<Account[]>([]);
@@ -19,11 +24,15 @@ export function FixedExpenses() {
 
     // Dialog State
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [editingExpense, setEditingExpense] = useState<FixedExpense | null>(null);
+    const [editingExpense, setEditingExpense] = useState<FixedExpense | null>(
+        null
+    );
 
     // Delete State
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-    const [expenseToDelete, setExpenseToDelete] = useState<FixedExpense | null>(null);
+    const [expenseToDelete, setExpenseToDelete] = useState<FixedExpense | null>(
+        null
+    );
     const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
@@ -33,17 +42,18 @@ export function FixedExpenses() {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const [expensesData, categoriesData, accountsRes] = await Promise.all([
-                fixedExpenseService.getAll(),
-                categoryService.getAll(),
-                api.get("/accounts"),
-            ]);
+            const [expensesData, categoriesData, accountsRes] =
+                await Promise.all([
+                    fixedExpenseService.getAll(),
+                    categoryService.getAll(),
+                    api.get("/accounts"),
+                ]);
             setExpenses(expensesData);
             setCategories(categoriesData);
             setAccounts(accountsRes.data);
         } catch (error) {
             console.error("Failed to fetch data", error);
-            toast.error("Erro ao carregar dados");
+            toast.error(t("fixedExpenses.loadError"));
         } finally {
             setLoading(false);
         }
@@ -69,13 +79,13 @@ export function FixedExpenses() {
         setIsDeleting(true);
         try {
             await fixedExpenseService.delete(expenseToDelete.id);
-            toast.success("Despesa fixa removida!");
+            toast.success(t("fixedExpenses.deleteSuccess"));
             await fetchData();
             setIsDeleteDialogOpen(false);
             setExpenseToDelete(null);
         } catch (error) {
             console.error("Failed to delete expense", error);
-            toast.error("Erro ao remover despesa fixa");
+            toast.error(t("fixedExpenses.deleteError"));
         } finally {
             setIsDeleting(false);
         }
@@ -84,11 +94,12 @@ export function FixedExpenses() {
     return (
         <div className="container mx-auto px-4 py-8">
             <PageHeader
-                title="Despesas Fixas"
-                description="Gerencie gastos recorrentes (Aluguel, Internet, Assinaturas)."
+                title={t("fixedExpenses.title")}
+                description={t("fixedExpenses.subtitle")}
                 actions={
                     <Button onClick={handleCreate}>
-                        <Plus className="mr-2 h-4 w-4" /> Nova Despesa Fixa
+                        <Plus className="mr-2 h-4 w-4" />{" "}
+                        {t("fixedExpenses.newFixedExpense")}
                     </Button>
                 }
             />

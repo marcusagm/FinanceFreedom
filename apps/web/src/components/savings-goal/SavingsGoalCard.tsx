@@ -1,5 +1,6 @@
 import { Award, Calendar, Target } from "lucide-react";
 import { Pencil, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { AppCard } from "../ui/AppCard";
 import { Button } from "../ui/Button";
 import { MoneyDisplay } from "../ui/MoneyDisplay";
@@ -31,6 +32,7 @@ export function SavingsGoalCard({
     onEdit,
     onDelete,
 }: SavingsGoalCardProps) {
+    const { t } = useTranslation();
     const current = Number(goal.currentAmount);
     const target = Number(goal.targetAmount);
     const progress = getProgress(current, target);
@@ -38,7 +40,7 @@ export function SavingsGoalCard({
     // Formatting deadline if exists
     const formattedDeadline = goal.deadline
         ? new Date(goal.deadline).toLocaleDateString()
-        : "Sem prazo";
+        : t("savingsGoals.deadlineFormatted");
 
     const actions = (
         <>
@@ -50,7 +52,7 @@ export function SavingsGoalCard({
                         e.stopPropagation();
                         onEdit(goal);
                     }}
-                    title="Editar"
+                    title={t("common.edit")}
                 >
                     <Pencil className="h-4 w-4" />
                 </Button>
@@ -63,7 +65,7 @@ export function SavingsGoalCard({
                         e.stopPropagation();
                         onDelete(goal.id);
                     }}
-                    title="Excluir"
+                    title={t("common.delete")}
                     className="text-red-500 hover:text-red-600 hover:bg-red-50"
                 >
                     <Trash2 className="h-4 w-4" />

@@ -1,6 +1,7 @@
 import { TrendingUp } from "lucide-react";
 import type React from "react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
     type PrepaymentSavingsResponse,
     calculatePrepaymentSavings,
@@ -24,8 +25,11 @@ export const PrepaymentOpportunity: React.FC<PrepaymentOpportunityProps> = ({
     minimumPayment,
     initialAmount = 500,
 }) => {
+    const { t } = useTranslation();
     const [amount, setAmount] = useState(initialAmount);
-    const [result, setResult] = useState<PrepaymentSavingsResponse | null>(null);
+    const [result, setResult] = useState<PrepaymentSavingsResponse | null>(
+        null
+    );
     const [loading, setLoading] = useState(false);
 
     const handleSimulate = async () => {
@@ -35,7 +39,7 @@ export const PrepaymentOpportunity: React.FC<PrepaymentOpportunityProps> = ({
                 balance,
                 interestRate,
                 minimumPayment,
-                amount,
+                amount
             );
             setResult(data);
         } catch (error) {
@@ -53,10 +57,11 @@ export const PrepaymentOpportunity: React.FC<PrepaymentOpportunityProps> = ({
                 </div>
                 <div>
                     <h3 className="font-bold text-sm text-gray-900 dark:text-gray-100">
-                        Oportunidade de Antecipação
+                        {t("simulators.prepayment.title")}
                     </h3>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                        Economize antecipando parcelas de <strong>{debtName}</strong>.
+                        {t("simulators.prepayment.description")}{" "}
+                        <strong>{debtName}</strong>.
                     </p>
                 </div>
             </div>
@@ -75,24 +80,34 @@ export const PrepaymentOpportunity: React.FC<PrepaymentOpportunityProps> = ({
                     />
                 </div>
 
-                <Button size="sm" variant="primary" onClick={handleSimulate} disabled={loading}>
-                    {loading ? "..." : "Simular"}
+                <Button
+                    size="sm"
+                    variant="primary"
+                    onClick={handleSimulate}
+                    disabled={loading}
+                >
+                    {loading ? "..." : t("simulators.prepayment.simulate")}
                 </Button>
             </div>
 
             {result && (
-                <AppAlert variant="success" className="animate-in fade-in slide-in-from-top-2">
+                <AppAlert
+                    variant="success"
+                    className="animate-in fade-in slide-in-from-top-2"
+                >
                     <div className="text-lg font-bold">
-                        Economia de{" "}
+                        {t("simulators.prepayment.savings")}{" "}
                         {result.interestSaved.toLocaleString("pt-BR", {
                             style: "currency",
                             currency: "BRL",
                         })}
                     </div>
                     <div className="text-xs opacity-90 mt-1">
-                        Ao eliminar juros futuros.
+                        {t("simulators.prepayment.explanation")}
                         {result.monthsSaved > 0 &&
-                            ` Você "compra" ${result.monthsSaved} meses de liberdade!`}
+                            ` ${t("simulators.prepayment.freedom", {
+                                months: result.monthsSaved,
+                            })}`}
                     </div>
                 </AppAlert>
             )}

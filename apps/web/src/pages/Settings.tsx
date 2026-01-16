@@ -69,7 +69,7 @@ export function Settings() {
             setCategories(categoriesData);
         } catch (error) {
             console.error("Failed to load settings or categories", error);
-            toast.error("Erro ao carregar dados");
+            toast.error(t("settings.loadError"));
         } finally {
             setLoading(false);
         }
@@ -85,10 +85,10 @@ export function Settings() {
             ) as Record<string, string>;
 
             await systemConfigService.setMany(cleanValues);
-            toast.success("Configurações salvas com sucesso!");
+            toast.success(t("settings.saveSuccess"));
         } catch (error) {
             console.error("Failed to save settings", error);
-            toast.error("Erro ao salvar configurações");
+            toast.error(t("settings.saveError"));
         }
     };
 

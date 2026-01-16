@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import {
     Cell,
@@ -17,6 +18,7 @@ import { ChartTooltip } from "../ui/ChartTooltip";
 import { MoneyDisplay } from "../ui/MoneyDisplay";
 
 export function BudgetWidget() {
+    const { t } = useTranslation();
     const [budgets, setBudgets] = useState<BudgetStatus[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -39,7 +41,7 @@ export function BudgetWidget() {
         return (
             <Card>
                 <CardHeader>
-                    <CardTitle>Orçamento Mensal</CardTitle>
+                    <CardTitle>{t("dashboard.budget.title")}</CardTitle>
                 </CardHeader>
                 <CardContent className="h-75 flex items-center justify-center">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
@@ -52,16 +54,16 @@ export function BudgetWidget() {
         return (
             <Card>
                 <CardHeader>
-                    <CardTitle>Orçamento Mensal</CardTitle>
+                    <CardTitle>{t("dashboard.budget.title")}</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="text-center text-muted-foreground text-sm">
-                        Nenhum orçamento definido.
+                        {t("dashboard.budget.empty")}
                         <Link
                             to="/categories"
                             className="block mt-2 text-primary hover:underline"
                         >
-                            Configurar categorias
+                            {t("dashboard.budget.configure")}
                         </Link>
                     </div>
                 </CardContent>
@@ -86,13 +88,13 @@ export function BudgetWidget() {
         <Card className="h-full">
             <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
                 <CardTitle className="text-base font-semibold">
-                    Distribuição de Gastos
+                    {t("dashboard.budget.distribution")}
                 </CardTitle>
                 <Link
                     to="/categories"
                     className="text-xs text-muted-foreground hover:underline"
                 >
-                    Gerenciar
+                    {t("dashboard.budget.manage")}
                 </Link>
             </CardHeader>
             <CardContent className="flex flex-col items-center justify-center pt-0">
@@ -139,9 +141,9 @@ export function BudgetWidget() {
                         </ResponsiveContainer>
                     ) : (
                         <div className="flex bg-muted/20 flex-col items-center justify-center h-full text-center text-sm text-muted-foreground rounded-lg">
-                            <p>Sem gastos registrados</p>
+                            <p>{t("dashboard.budget.noSpending")}</p>
                             <p className="text-xs opacity-70 mt-1">
-                                Adicione transações para ver o gráfico
+                                {t("dashboard.budget.addTransaction")}
                             </p>
                         </div>
                     )}

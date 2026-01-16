@@ -36,19 +36,26 @@ export function Select({
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
-            if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+            if (
+                containerRef.current &&
+                !containerRef.current.contains(event.target as Node)
+            ) {
                 setIsOpen(false);
             }
         }
         document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
+        return () =>
+            document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
     const currentLabel = options.find((o) => o.value === value)?.label || value;
 
     return (
         <div
-            className={cn("flex flex-col items-start gap-1.5 w-full", className)}
+            className={cn(
+                "flex flex-col items-start gap-1.5 w-full",
+                className
+            )}
             ref={containerRef}
         >
             {label && (
@@ -77,7 +84,7 @@ export function Select({
                                 className={cn(
                                     "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 px-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground",
                                     value === option.value &&
-                                        "bg-accent text-accent-foreground font-medium",
+                                        "bg-accent text-accent-foreground font-medium"
                                 )}
                                 onClick={() => {
                                     onChange(option.value);
@@ -86,7 +93,9 @@ export function Select({
                             >
                                 <div className="flex items-center justify-between w-full">
                                     {option.label}
-                                    {value === option.value && <Check className="w-4 h-4" />}
+                                    {value === option.value && (
+                                        <Check className="w-4 h-4" />
+                                    )}
                                 </div>
                             </button>
                         ))}

@@ -1,4 +1,7 @@
+import { format } from "date-fns";
+import { enUS, ptBR } from "date-fns/locale";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
     Bar,
     CartesianGrid,
@@ -35,7 +38,9 @@ export function BalanceChartWidget({
     annualData,
     isObfuscated,
 }: BalanceChartWidgetProps) {
+    const { t, i18n } = useTranslation();
     const [viewMode, setViewMode] = useState<"monthly" | "annual">("monthly");
+    const locale = i18n.language === "en" ? enUS : ptBR;
 
     const currentData = viewMode === "monthly" ? dailyData : annualData;
 
@@ -62,7 +67,7 @@ export function BalanceChartWidget({
         <Card className="h-full flex flex-col">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-base font-medium">
-                    Evolução do Saldo & Fluxo de Caixa
+                    {t("dashboard.balanceChart.title")}
                 </CardTitle>
                 <Tabs
                     defaultValue="monthly"
@@ -74,10 +79,10 @@ export function BalanceChartWidget({
                 >
                     <TabsList className="grid w-full grid-cols-2">
                         <TabsTrigger value="monthly" className="text-sm">
-                            Mensal
+                            {t("dashboard.balanceChart.monthly")}
                         </TabsTrigger>
                         <TabsTrigger value="annual" className="text-sm">
-                            Anual
+                            {t("dashboard.balanceChart.annual")}
                         </TabsTrigger>
                     </TabsList>
                 </Tabs>
@@ -127,22 +132,13 @@ export function BalanceChartWidget({
                                     } else {
                                         // Annual: Show Month/Year stub or just Month
                                         // value is "YYYY-MM"
-                                        const [_, month] = value.split("-");
-                                        const months = [
-                                            "Jan",
-                                            "Fev",
-                                            "Mar",
-                                            "Abr",
-                                            "Mai",
-                                            "Jun",
-                                            "Jul",
-                                            "Ago",
-                                            "Set",
-                                            "Out",
-                                            "Nov",
-                                            "Dez",
-                                        ];
-                                        return months[parseInt(month) - 1];
+                                        const [year, month] = value.split("-");
+                                        const date = new Date(
+                                            parseInt(year),
+                                            parseInt(month) - 1,
+                                            1
+                                        );
+                                        return format(date, "MMM", { locale });
                                     }
                                 }}
                             />
@@ -172,9 +168,15 @@ export function BalanceChartWidget({
                                             <MoneyDisplay
                                                 value={Math.abs(value)}
                                                 className={
-                                                    name === "Despesa"
+                                                    name ===
+                                                    t(
+                                                        "dashboard.balanceChart.expense"
+                                                    )
                                                         ? "text-red-500"
-                                                        : name === "Receita"
+                                                        : name ===
+                                                          t(
+                                                              "dashboard.balanceChart.income"
+                                                          )
                                                         ? "text-emerald-500"
                                                         : "text-blue-500"
                                                 }
@@ -186,7 +188,7 @@ export function BalanceChartWidget({
                             <ReferenceLine y={0} stroke="#666" />
 
                             <Bar
-                                name="Receita"
+                                name={t("dashboard.balanceChart.income")}
                                 dataKey="income"
                                 barSize={8}
                                 radius={[4, 4, 0, 0]}
@@ -202,7 +204,7 @@ export function BalanceChartWidget({
 
                             {/* Expense Bar (Down) */}
                             <Bar
-                                name="Despesa"
+                                name={t("dashboard.balanceChart.expense")}
                                 dataKey="expense"
                                 barSize={8}
                                 radius={[0, 0, 4, 4]}
@@ -217,7 +219,7 @@ export function BalanceChartWidget({
                             </Bar>
 
                             <Line
-                                name="Saldo"
+                                name={t("dashboard.balanceChart.balance")}
                                 type="monotone"
                                 dataKey="balance"
                                 stroke="#2563eb"

@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { Button } from "../components/ui/Button";
 import {
@@ -18,29 +19,37 @@ import { useAuth } from "../contexts/AuthContext";
 import { api } from "../lib/api";
 import { notify } from "../lib/notification";
 
-const profileSchema = z.object({
-    name: z.string().min(2, "Name is required"),
-    email: z.string().email("Invalid email address"),
-});
-
-const passwordSchema = z
-    .object({
-        currentPassword: z.string().min(1, "Current password is required"),
-        newPassword: z
-            .string()
-            .min(6, "New password must be at least 6 characters"),
-        confirmNewPassword: z.string(),
-    })
-    .refine((data) => data.newPassword === data.confirmNewPassword, {
-        message: "Passwords do not match",
-        path: ["confirmNewPassword"],
+const createProfileSchema = (t: any) =>
+    z.object({
+        name: z.string().min(2, t("auth.validation.nameRequired")),
+        email: z.string().email(t("auth.validation.emailInvalid")),
     });
 
-type ProfileForm = z.infer<typeof profileSchema>;
-type PasswordForm = z.infer<typeof passwordSchema>;
+const createPasswordSchema = (t: any) =>
+    z
+        .object({
+            currentPassword: z
+                .string()
+                .min(1, t("auth.validation.currentPasswordRequired")),
+            newPassword: z
+                .string()
+                .min(6, t("auth.validation.passwordMinLength")),
+            confirmNewPassword: z.string(),
+        })
+        .refine((data) => data.newPassword === data.confirmNewPassword, {
+            message: t("auth.validation.passwordsMismatch"),
+            path: ["confirmNewPassword"],
+        });
+
+type ProfileForm = z.infer<ReturnType<typeof createProfileSchema>>;
+type PasswordForm = z.infer<ReturnType<typeof createPasswordSchema>>;
 
 export function Profile() {
+    const { t } = useTranslation();
     const { user, login } = useAuth();
+
+    const profileSchema = createProfileSchema(t);
+    const passwordSchema = createPasswordSchema(t);
 
     // Form for Profile
     const {
@@ -82,12 +91,12 @@ export function Profile() {
                 login(token, updatedUser);
             }
 
-            notify.success("Profile updated successfully!");
+            notify.success(t("profile.updateSuccess"));
         } catch (error: any) {
             console.error("Profile update failed", error);
             notify.error(
-                "Error updating profile",
-                error.response?.data?.message || "Unknown error"
+                t("profile.updateError"),
+                error.response?.data?.message || t("common.unknownError")
             );
         }
     };
@@ -98,13 +107,13 @@ export function Profile() {
                 currentPassword: data.currentPassword,
                 newPassword: data.newPassword,
             });
-            notify.success("Password changed successfully!");
+            notify.success(t("profile.passwordSuccess"));
             resetPasswordForm();
         } catch (error: any) {
             console.error("Password change failed", error);
             notify.error(
-                "Error changing password",
-                error.response?.data?.message || "Unknown error"
+                t("profile.passwordError"),
+                error.response?.data?.message || t("common.unknownError")
             );
         }
     };
@@ -112,16 +121,16 @@ export function Profile() {
     return (
         <div className="space-y-6 container mx-auto p-4 max-w-4xl">
             <PageHeader
-                title="My Profile"
-                description="Manage your account information and security."
+                title={t("profile.title")}
+                description={t("profile.subtitle")}
             />
 
             <div className="grid gap-6 md:grid-cols-2">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Personal Information</CardTitle>
+                        <CardTitle>{t("profile.personalInfoTitle")}</CardTitle>
                         <CardDescription>
-                            Update your name and email.
+                            {t("profile.personalInfoDesc")}
                         </CardDescription>
                     </CardHeader>
                     <form
@@ -130,7 +139,9 @@ export function Profile() {
                     >
                         <CardContent className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="name">Name</Label>
+                                <Label htmlFor="name">
+                                    {t("auth.register.nameLabel")}
+                                </Label>
                                 <Input
                                     id="name"
                                     data-testid="profile-name-input"
@@ -143,7 +154,9 @@ export function Profile() {
                                 )}
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="email">Email</Label>
+                                <Label htmlFor="email">
+                                    {t("auth.login.emailLabel")}
+                                </Label>
                                 <Input
                                     id="email"
                                     type="email"
@@ -163,8 +176,8 @@ export function Profile() {
                                 disabled={isProfileSubmitting}
                             >
                                 {isProfileSubmitting
-                                    ? "Saving..."
-                                    : "Save Changes"}
+                                    ? t("common.saving")
+                                    : t("common.saveChanges")}
                             </Button>
                         </CardFooter>
                     </form>
@@ -172,9 +185,11 @@ export function Profile() {
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>Change Password</CardTitle>
+                        <CardTitle>
+                            {t("profile.changePasswordTitle")}
+                        </CardTitle>
                         <CardDescription>
-                            Keep your account secure.
+                            {t("profile.changePasswordDesc")}
                         </CardDescription>
                     </CardHeader>
                     <form
@@ -184,7 +199,7 @@ export function Profile() {
                         <CardContent className="space-y-4">
                             <div className="space-y-2">
                                 <Label htmlFor="currentPassword">
-                                    Current Password
+                                    {t("profile.currentPassword")}
                                 </Label>
                                 <Input
                                     id="currentPassword"
@@ -200,7 +215,7 @@ export function Profile() {
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="newPassword">
-                                    New Password
+                                    {t("auth.resetPassword.newPassword")}
                                 </Label>
                                 <Input
                                     id="newPassword"
@@ -216,7 +231,7 @@ export function Profile() {
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="confirmNewPassword">
-                                    Confirm New Password
+                                    {t("profile.confirmNewPassword")}
                                 </Label>
                                 <Input
                                     id="confirmNewPassword"
@@ -240,8 +255,8 @@ export function Profile() {
                                 disabled={isPasswordSubmitting}
                             >
                                 {isPasswordSubmitting
-                                    ? "Updating..."
-                                    : "Update Password"}
+                                    ? t("common.updating")
+                                    : t("profile.updatePasswordButton")}
                             </Button>
                         </CardFooter>
                     </form>

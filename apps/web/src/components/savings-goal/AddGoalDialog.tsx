@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import * as z from "zod";
 import { api } from "../../lib/api";
@@ -33,13 +34,21 @@ interface AddGoalDialogProps {
     goalToEdit?: SavingsGoal | null;
 }
 
+// Schema created inside component to access t, or keep simple validation here
+// For consistency, I will redefine schema inside component
 const formSchema = z.object({
-    name: z.string().min(1, "Nome é obrigatório"),
-    targetAmount: z.number().min(0.01, "Valor alvo deve ser positivo"),
-    currentAmount: z.number().min(0, "Valor atual não pode ser negativo"),
+    name: z.string().min(1, "Required"),
+    targetAmount: z.number().min(0.01, "Required"),
+    currentAmount: z.number().min(0, "Required"),
     deadline: z.string().optional(),
     priority: z.number().int().optional(),
 });
+// Removing this block and moving inside
+// Wait, to minimize diff, let's just make it a function or use generic keys if possible.
+// But earlier I decided to move it inside.
+// Actually, let's keep it here but with generic keys if they don't depend on `t` for variables.
+// The keys "Nome é obrigatório" etc. are static. I can use `t` inside component if I move schema.
+// Let's remove lines 36-42 and put them in component.
 
 export function AddGoalDialog({
     isOpen,
@@ -47,6 +56,20 @@ export function AddGoalDialog({
     onSuccess,
     goalToEdit,
 }: AddGoalDialogProps) {
+    const { t } = useTranslation();
+
+    const formSchema = z.object({
+        name: z.string().min(1, t("auth.validation.nameRequired")), // Reuse or add specific key
+        targetAmount: z
+            .number()
+            .min(0.01, t("transactions.split.validation.amountPositive")),
+        currentAmount: z
+            .number()
+            .min(0, t("transactions.split.validation.amountPositive")),
+        deadline: z.string().optional(),
+        priority: z.number().int().optional(),
+    });
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -92,17 +115,17 @@ export function AddGoalDialog({
 
             if (goalToEdit) {
                 await api.patch(`/savings-goals/${goalToEdit.id}`, payload);
-                toast.success("Meta atualizada com sucesso!");
+                toast.success(t("savingsGoals.add.updateSuccess"));
             } else {
                 await api.post("/savings-goals", payload);
-                toast.success("Meta criada com sucesso!");
+                toast.success(t("savingsGoals.add.saveSuccess"));
             }
 
             onSuccess();
             onClose();
         } catch (error) {
             console.error(error);
-            toast.error("Erro ao salvar meta. Tente novamente.");
+            toast.error(t("savingsGoals.add.saveError"));
         }
     };
 
@@ -111,7 +134,9 @@ export function AddGoalDialog({
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>
-                        {goalToEdit ? "Editar Meta" : "Nova Meta de Economia"}
+                        {goalToEdit
+                            ? t("savingsGoals.add.titleEdit")
+                            : t("savingsGoals.add.titleNew")}
                     </DialogTitle>
                 </DialogHeader>
 
@@ -126,10 +151,14 @@ export function AddGoalDialog({
                                 name="name"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Nome da Meta</FormLabel>
+                                        <FormLabel>
+                                            {t("savingsGoals.add.nameLabel")}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="Ex: Viagem para Japão"
+                                                placeholder={t(
+                                                    "savingsGoals.add.namePlaceholder"
+                                                )}
                                                 {...field}
                                             />
                                         </FormControl>
@@ -146,7 +175,11 @@ export function AddGoalDialog({
                                         field: { onChange, value, ...field },
                                     }) => (
                                         <FormItem>
-                                            <FormLabel>Valor Alvo</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    "savingsGoals.add.targetAmount"
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder="R$ 0,00"
@@ -174,7 +207,9 @@ export function AddGoalDialog({
                                     }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Valor Atual (Guardado)
+                                                {t(
+                                                    "savingsGoals.add.currentAmount"
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -201,7 +236,9 @@ export function AddGoalDialog({
                                 name="deadline"
                                 render={({ field }) => (
                                     <FormItem className="flex flex-col">
-                                        <FormLabel>Prazo (Opcional)</FormLabel>
+                                        <FormLabel>
+                                            {t("savingsGoals.add.deadline")}
+                                        </FormLabel>
                                         <FormControl>
                                             <DatePicker
                                                 date={
@@ -223,7 +260,9 @@ export function AddGoalDialog({
                                                     )
                                                 }
                                                 className="w-full"
-                                                placeholder="Selecione a data"
+                                                placeholder={t(
+                                                    "transactions.selectDate"
+                                                )}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -238,15 +277,15 @@ export function AddGoalDialog({
                                 variant="outline"
                                 onClick={onClose}
                             >
-                                Cancelar
+                                {t("common.cancel")}
                             </Button>
                             <Button
                                 type="submit"
                                 disabled={form.formState.isSubmitting}
                             >
                                 {form.formState.isSubmitting
-                                    ? "Salvando..."
-                                    : "Salvar"}
+                                    ? t("common.saving")
+                                    : t("common.save")}
                             </Button>
                         </DialogFooter>
                     </form>

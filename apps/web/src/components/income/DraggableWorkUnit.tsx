@@ -1,7 +1,7 @@
 import { useDraggable } from "@dnd-kit/core";
+import { useTranslation } from "react-i18next";
 import { Badge } from "../ui/Badge";
 import { Card } from "../ui/Card";
-
 import { MoneyDisplay } from "../ui/MoneyDisplay";
 
 interface WorkUnit {
@@ -17,6 +17,7 @@ interface DraggableWorkUnitProps {
 }
 
 export function DraggableWorkUnit({ workUnit }: DraggableWorkUnitProps) {
+    const { t } = useTranslation();
     const { attributes, listeners, setNodeRef, transform } = useDraggable({
         id: `work-unit-${workUnit.id}`,
         data: {

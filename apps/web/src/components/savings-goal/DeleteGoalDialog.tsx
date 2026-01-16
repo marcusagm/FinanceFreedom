@@ -1,3 +1,4 @@
+import { useTranslation, Trans } from "react-i18next";
 import { AppAlert } from "../ui/AppAlert";
 import { Button } from "../ui/Button";
 import {
@@ -25,20 +26,28 @@ export function DeleteGoalDialog({
     goalName,
     isDeleting,
 }: DeleteGoalDialogProps) {
+    const { t } = useTranslation();
+
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Excluir Meta</DialogTitle>
+                    <DialogTitle>{t("savingsGoals.delete.title")}</DialogTitle>
                     <DialogDescription>
-                        Esta ação não pode ser desfeita.
+                        {t("savingsGoals.delete.description")}
                     </DialogDescription>
                 </DialogHeader>
 
                 <DialogBody>
-                    <AppAlert variant="destructive" title="Atenção">
-                        A meta <strong>{goalName}</strong> será permanentemente
-                        removida.
+                    <AppAlert
+                        variant="destructive"
+                        title={t("common.attention")}
+                    >
+                        <Trans
+                            i18nKey="savingsGoals.delete.message"
+                            values={{ name: goalName }}
+                            components={{ strong: <strong /> }}
+                        />
                     </AppAlert>
                 </DialogBody>
 
@@ -48,14 +57,16 @@ export function DeleteGoalDialog({
                         onClick={onClose}
                         disabled={isDeleting}
                     >
-                        Cancelar
+                        {t("common.cancel")}
                     </Button>
                     <Button
                         variant="destructive"
                         onClick={onConfirm}
                         disabled={isDeleting}
                     >
-                        {isDeleting ? "Excluindo..." : "Sim, excluir meta"}
+                        {isDeleting
+                            ? t("savingsGoals.delete.deleting")
+                            : t("savingsGoals.delete.confirm")}
                     </Button>
                 </DialogFooter>
             </DialogContent>
