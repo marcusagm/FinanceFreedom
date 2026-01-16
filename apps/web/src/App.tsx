@@ -27,9 +27,9 @@ import { Settings } from "./pages/Settings";
 
 function App() {
     return (
-        <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-            <PrivacyProvider>
-                <AuthProvider>
+        <AuthProvider>
+            <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+                <PrivacyProvider>
                     <BrowserRouter>
                         <Toaster />
                         <Routes>
@@ -120,9 +120,9 @@ function App() {
                             </Route>
                         </Routes>
                     </BrowserRouter>
-                </AuthProvider>
-            </PrivacyProvider>
-        </ThemeProvider>
+                </PrivacyProvider>
+            </ThemeProvider>
+        </AuthProvider>
     );
 }
 

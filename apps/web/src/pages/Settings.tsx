@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
 import { GeneralSettingsCard } from "../components/settings/GeneralSettingsCard";
+import { ThemeCustomizer } from "../components/settings/ThemeCustomizer";
 import { Button } from "../components/ui/Button";
 import {
     Card,
@@ -109,23 +110,17 @@ export function Settings() {
                             categories={categories}
                         />
 
+                        <ThemeCustomizer />
+
                         <Card className="opacity-70 pointer-events-none">
                             <CardHeader>
-                                <CardTitle>Preferências (Em Breve)</CardTitle>
+                                <CardTitle>Outras Preferências</CardTitle>
                                 <CardDescription>
-                                    Funcionalidades previstas para próximas
-                                    atualizações.
+                                    Funcionalidades de internacionalização em
+                                    breve.
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <div className="p-4 border rounded-md">
-                                    <h4 className="font-semibold text-muted-foreground">
-                                        Aparência (Design System)
-                                    </h4>
-                                    <p className="text-sm text-muted-foreground">
-                                        Customização de temas e cores.
-                                    </p>
-                                </div>
                                 <div className="p-4 border rounded-md">
                                     <h4 className="font-semibold text-muted-foreground">
                                         Idioma e Localização

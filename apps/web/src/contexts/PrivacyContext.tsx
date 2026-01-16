@@ -8,15 +8,18 @@ interface PrivacyContextType {
 
 const PrivacyContext = createContext<PrivacyContextType | undefined>(undefined);
 
-export function PrivacyProvider({ children }: { children: React.ReactNode }) {
-    const [isObfuscated, setIsObfuscated] = useState(() => {
-        const stored = localStorage.getItem("privacy_mode");
-        return stored === "true";
-    });
+import { useTheme } from "../components/providers/ThemeProvider";
+import { useAuth } from "./AuthContext";
 
+export function PrivacyProvider({ children }: { children: React.ReactNode }) {
+    const { privacyMode } = useTheme();
+    const { isAuthenticated } = useAuth();
+    const [isObfuscated, setIsObfuscated] = useState(privacyMode);
+
+    // Sync with default setting from ThemeProvider and reset on Auth change
     useEffect(() => {
-        localStorage.setItem("privacy_mode", String(isObfuscated));
-    }, [isObfuscated]);
+        setIsObfuscated(privacyMode);
+    }, [privacyMode, isAuthenticated]);
 
     const toggleObfuscation = () => {
         setIsObfuscated((prev) => !prev);

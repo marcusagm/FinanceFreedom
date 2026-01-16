@@ -122,7 +122,7 @@ export function BalanceChartWidget({
                                     if (!value) return "";
                                     if (viewMode === "monthly") {
                                         // value is "YYYY-MM-DD"
-                                        const [month, day] = value.split("-");
+                                        const [, month, day] = value.split("-");
                                         return `${day}/${month}`;
                                     } else {
                                         // Annual: Show Month/Year stub or just Month

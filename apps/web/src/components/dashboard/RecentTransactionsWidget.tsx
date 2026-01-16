@@ -110,7 +110,7 @@ export function RecentTransactionsWidget() {
                                                 ? dateStr.split("T")[0]
                                                 : dateStr;
 
-                                            const [month, day] =
+                                            const [, month, day] =
                                                 datePart.split("-");
                                             return `${day}/${month}`;
                                         })()}{" "}
