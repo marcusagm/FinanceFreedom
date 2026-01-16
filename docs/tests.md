@@ -26,16 +26,16 @@ Listagem de arquivos identificados sem cobertura de testes ou com cobertura zero
 
 -   [ ] `src/modules/auth/auth.controller.ts`
 -   [ ] `src/modules/auth/auth.module.ts`
--   [ ] `src/modules/auth/guards/jwt-auth.guard.ts`
--   [ ] `src/modules/auth/guards/local-auth.guard.ts`
--   [ ] `src/modules/auth/strategies/jwt.strategy.ts`
--   [ ] `src/modules/auth/strategies/local.strategy.ts`
+-   [x] `src/modules/auth/guards/jwt-auth.guard.ts`
+-   [x] `src/modules/auth/guards/local-auth.guard.ts`
+-   [x] `src/modules/auth/strategies/jwt.strategy.ts`
+-   [x] `src/modules/auth/strategies/local.strategy.ts`
 
 **Category**
 
 -   [ ] `src/modules/category/category.controller.ts`
 -   [ ] `src/modules/category/category.module.ts`
--   [ ] `src/modules/category/category.service.ts`
+-   [x] `src/modules/category/category.service.ts`
 
 **Dashboard**
 
@@ -49,13 +49,13 @@ Listagem de arquivos identificados sem cobertura de testes ou com cobertura zero
 
 **Fixed Expense**
 
--   [ ] `src/modules/fixed-expense/fixed-expense.controller.ts`
+-   [x] `src/modules/fixed-expense/fixed-expense.controller.ts`
 -   [ ] `src/modules/fixed-expense/fixed-expense.module.ts`
 
 **Import**
 
 -   [ ] `src/modules/import/import.module.ts`
--   [ ] `src/modules/import/import.processor.ts`
+-   [x] `src/modules/import/import.processor.ts`
 
 **Income**
 
@@ -75,12 +75,12 @@ Listagem de arquivos identificados sem cobertura de testes ou com cobertura zero
 
 **Simulator**
 
--   [ ] `src/modules/simulator/simulator.controller.ts`
+-   [x] `src/modules/simulator/simulator.controller.ts`
 -   [ ] `src/modules/simulator/simulator.module.ts`
 
 **System Config**
 
--   [ ] `src/modules/system-config/system-config.controller.ts`
+-   [x] `src/modules/system-config/system-config.controller.ts`
 -   [ ] `src/modules/system-config/system-config.module.ts`
 
 **Transaction**

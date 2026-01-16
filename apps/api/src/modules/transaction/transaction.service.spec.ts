@@ -154,7 +154,7 @@ describe("TransactionService", () => {
 
             expect(mockTransactionClient["debt"].update).toHaveBeenCalledWith({
                 where: { id: "debt-1" },
-                data: { totalAmount: 450 }, // 500 - 50
+                data: { totalAmount: 450, installmentsPaid: 0 },
             });
         });
     });

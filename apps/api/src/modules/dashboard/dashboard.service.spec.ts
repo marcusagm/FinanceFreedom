@@ -22,6 +22,12 @@ describe("DashboardService", () => {
                         transaction: {
                             findMany: jest.fn().mockResolvedValue([]),
                         },
+                        investmentAccount: {
+                            findMany: jest.fn().mockResolvedValue([]),
+                        },
+                        debt: {
+                            findMany: jest.fn().mockResolvedValue([]),
+                        },
                     },
                 },
                 {
@@ -64,8 +70,8 @@ describe("DashboardService", () => {
                     // If searching for monthly aggregation (first call in getSummary)
                     if (args.where.date.lte) {
                         return Promise.resolve([
-                            { type: "INCOME", amount: 50 },
-                            { type: "EXPENSE", amount: 20 },
+                            { type: "INCOME", amount: 50, date: new Date() },
+                            { type: "EXPENSE", amount: 20, date: new Date() },
                         ]);
                     }
                     // If searching for chart data (second call in getSummary)
@@ -84,8 +90,8 @@ describe("DashboardService", () => {
                 (args) => {
                     if (args.where.date.lte) {
                         return Promise.resolve([
-                            { type: "INCOME", amount: 50 },
-                            { type: "EXPENSE", amount: 20 },
+                            { type: "INCOME", amount: 50, date: new Date() },
+                            { type: "EXPENSE", amount: 20, date: new Date() },
                         ]);
                     }
                     return Promise.resolve([]);
@@ -113,8 +119,8 @@ describe("DashboardService", () => {
                 (args) => {
                     if (args.where.date.lte) {
                         return Promise.resolve([
-                            { type: "INCOME", amount: 50 },
-                            { type: "EXPENSE", amount: 20 },
+                            { type: "INCOME", amount: 50, date: new Date() },
+                            { type: "EXPENSE", amount: 20, date: new Date() },
                         ]);
                     }
                     return Promise.resolve([]);
@@ -137,8 +143,8 @@ describe("DashboardService", () => {
                 (args) => {
                     if (args.where.date.lte) {
                         return Promise.resolve([
-                            { type: "INCOME", amount: 20 },
-                            { type: "EXPENSE", amount: 50 },
+                            { type: "INCOME", amount: 20, date: new Date() },
+                            { type: "EXPENSE", amount: 50, date: new Date() },
                         ]);
                     }
                     return Promise.resolve([]);

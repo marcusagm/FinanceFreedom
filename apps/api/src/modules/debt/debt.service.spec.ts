@@ -1,17 +1,17 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { DebtService } from "./debt.service";
 import { PrismaService } from "../../prisma/prisma.service";
-import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
+// import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
 
 const mockPrismaService = {
     debt: {
-        create: vi.fn(),
-        findMany: vi.fn(),
-        findUnique: vi.fn(),
-        findFirst: vi.fn(),
-        findFirstOrThrow: vi.fn(),
-        update: vi.fn(),
-        delete: vi.fn(),
+        create: jest.fn(),
+        findMany: jest.fn(),
+        findUnique: jest.fn(),
+        findFirst: jest.fn(),
+        findFirstOrThrow: jest.fn(),
+        update: jest.fn(),
+        delete: jest.fn(),
     },
 };
 
@@ -25,7 +25,7 @@ describe("DebtService", () => {
     });
 
     afterEach(() => {
-        vi.clearAllMocks();
+        jest.clearAllMocks();
     });
 
     it("should be defined", () => {

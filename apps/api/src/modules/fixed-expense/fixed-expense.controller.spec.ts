@@ -1,11 +1,12 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { InvestmentAccountController } from "./investment-account.controller";
-import { InvestmentAccountService } from "./investment-account.service";
-import { CreateInvestmentAccountDto } from "./dto/create-investment-account.dto";
+import { FixedExpenseController } from "./fixed-expense.controller";
+import { FixedExpenseService } from "./fixed-expense.service";
+import { CreateFixedExpenseDto } from "./dto/create-fixed-expense.dto";
+import { UpdateFixedExpenseDto } from "./dto/update-fixed-expense.dto";
 
-describe("InvestmentAccountController", () => {
-    let controller: InvestmentAccountController;
-    let service: InvestmentAccountService;
+describe("FixedExpenseController", () => {
+    let controller: FixedExpenseController;
+    let service: FixedExpenseService;
 
     const mockService = {
         create: jest.fn(),
@@ -19,18 +20,14 @@ describe("InvestmentAccountController", () => {
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
-            controllers: [InvestmentAccountController],
+            controllers: [FixedExpenseController],
             providers: [
-                { provide: InvestmentAccountService, useValue: mockService },
+                { provide: FixedExpenseService, useValue: mockService },
             ],
         }).compile();
 
-        controller = module.get<InvestmentAccountController>(
-            InvestmentAccountController
-        );
-        service = module.get<InvestmentAccountService>(
-            InvestmentAccountService
-        );
+        controller = module.get<FixedExpenseController>(FixedExpenseController);
+        service = module.get<FixedExpenseService>(FixedExpenseService);
     });
 
     it("should be defined", () => {
@@ -38,11 +35,11 @@ describe("InvestmentAccountController", () => {
     });
 
     describe("create", () => {
-        it("should create an investment account", async () => {
-            const dto: CreateInvestmentAccountDto = {
-                name: "Invest",
-                type: "BROKERAGE",
-                balance: 1000,
+        it("should create a fixed expense", async () => {
+            const dto: CreateFixedExpenseDto = {
+                description: "Rent",
+                amount: 1000,
+                dueDay: 5,
             };
             const result = { id: "1", ...dto };
             mockService.create.mockResolvedValue(result);
@@ -56,8 +53,8 @@ describe("InvestmentAccountController", () => {
     });
 
     describe("findAll", () => {
-        it("should return array of accounts", async () => {
-            const result = [{ id: "1", name: "Invest" }];
+        it("should return an array of fixed expenses", async () => {
+            const result = [{ id: "1", description: "Rent" }];
             mockService.findAll.mockResolvedValue(result);
 
             expect(await controller.findAll(req)).toBe(result);
@@ -66,8 +63,8 @@ describe("InvestmentAccountController", () => {
     });
 
     describe("findOne", () => {
-        it("should return an account", async () => {
-            const result = { id: "1", name: "Invest" };
+        it("should return a single fixed expense", async () => {
+            const result = { id: "1", description: "Rent" };
             mockService.findOne.mockResolvedValue(result);
 
             expect(await controller.findOne(req, "1")).toBe(result);
@@ -79,9 +76,9 @@ describe("InvestmentAccountController", () => {
     });
 
     describe("update", () => {
-        it("should update an account", async () => {
-            const dto = { name: "Updated" };
-            const result = { id: "1", name: "Updated" };
+        it("should update a fixed expense", async () => {
+            const dto: UpdateFixedExpenseDto = { amount: 1200 };
+            const result = { id: "1", description: "Rent", amount: 1200 };
             mockService.update.mockResolvedValue(result);
 
             expect(await controller.update(req, "1", dto)).toBe(result);
@@ -94,8 +91,8 @@ describe("InvestmentAccountController", () => {
     });
 
     describe("remove", () => {
-        it("should remove an account", async () => {
-            const result = { id: "1", name: "Invest" };
+        it("should remove a fixed expense", async () => {
+            const result = { id: "1", description: "Rent" };
             mockService.remove.mockResolvedValue(result);
 
             expect(await controller.remove(req, "1")).toBe(result);
