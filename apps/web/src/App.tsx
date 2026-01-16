@@ -54,6 +54,10 @@ function App() {
                                                     element={<Dashboard />}
                                                 />
                                                 <Route
+                                                    path="/dashboard"
+                                                    element={<Dashboard />}
+                                                />
+                                                <Route
                                                     path="/accounts"
                                                     element={<Accounts />}
                                                 />

@@ -1,4 +1,5 @@
 import { Test, TestingModule } from "@nestjs/testing";
+import { vi, describe, it, expect, beforeEach } from "vitest";
 import { TransactionController } from "./transaction.controller";
 import { TransactionService } from "./transaction.service";
 
@@ -13,11 +14,12 @@ describe("TransactionController", () => {
                 {
                     provide: TransactionService,
                     useValue: {
-                        create: jest.fn(),
-                        findAll: jest.fn(),
-                        findOne: jest.fn(),
-                        update: jest.fn(),
-                        remove: jest.fn(),
+                        create: vi.fn(),
+                        findAll: vi.fn(),
+                        findOne: vi.fn(),
+                        update: vi.fn(),
+                        remove: vi.fn(),
+                        split: vi.fn(),
                     },
                 },
             ],
@@ -41,9 +43,10 @@ describe("TransactionController", () => {
     });
 
     it("should call service.findAll", async () => {
-        await controller.findAll(mockRequest);
+        const query: any = {};
+        await controller.findAll(mockRequest, query);
         // eslint-disable-next-line @typescript-eslint/unbound-method
-        expect(service.findAll).toHaveBeenCalledWith("1");
+        expect(service.findAll).toHaveBeenCalledWith("1", query);
     });
 
     it("should call service.findOne", async () => {
@@ -63,5 +66,12 @@ describe("TransactionController", () => {
         await controller.remove(mockRequest, "1");
         // eslint-disable-next-line @typescript-eslint/unbound-method
         expect(service.remove).toHaveBeenCalledWith("1", "1");
+    });
+
+    it("should call service.split", async () => {
+        const dto: any = { splits: [] };
+        await controller.split(mockRequest, "1", dto);
+        // eslint-disable-next-line @typescript-eslint/unbound-method
+        expect(service.split).toHaveBeenCalledWith("1", "1", dto);
     });
 });

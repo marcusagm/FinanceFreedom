@@ -7,15 +7,21 @@ import {
     Patch,
     Delete,
     Request,
+    Query,
+    Inject,
 } from "@nestjs/common";
 import { TransactionService } from "./transaction.service";
 import { CreateTransactionDto } from "./dto/create-transaction.dto";
 import { UpdateTransactionDto } from "./dto/update-transaction.dto";
 import { SplitTransactionDto } from "./dto/split-transaction.dto";
+import { GetTransactionsDto } from "./dto/get-transactions.dto";
 
 @Controller("transactions")
 export class TransactionController {
-    constructor(private readonly transactionService: TransactionService) {}
+    constructor(
+        @Inject(TransactionService)
+        private readonly transactionService: TransactionService
+    ) {}
 
     @Post()
     create(
@@ -29,8 +35,8 @@ export class TransactionController {
     }
 
     @Get()
-    findAll(@Request() req: any) {
-        return this.transactionService.findAll(req.user.userId);
+    findAll(@Request() req: any, @Query() query: GetTransactionsDto) {
+        return this.transactionService.findAll(req.user.userId, query);
     }
 
     @Get(":id")

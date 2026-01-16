@@ -46,8 +46,8 @@ export function HealthScoreWidget() {
                 <CardHeader>
                     <CardTitle>Saúde Financeira</CardTitle>
                 </CardHeader>
-                <CardContent>
-                    <div className="h-32 bg-muted animate-pulse rounded" />
+                <CardContent className="h-75 flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
                 </CardContent>
             </Card>
         );
@@ -97,6 +97,7 @@ export function HealthScoreWidget() {
                     size="icon"
                     onClick={handleRecalculate}
                     disabled={recalculating}
+                    title="Recalcular"
                 >
                     <RefreshCw
                         className={`h-4 w-4 ${
@@ -106,7 +107,7 @@ export function HealthScoreWidget() {
                 </Button>
             </CardHeader>
             <CardContent className="flex flex-col items-center justify-center relative pt-0">
-                <div className="w-full -mt-2" style={{ height: 192 }}>
+                <div style={{ width: "100%", height: 190 }}>
                     <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                             <Pie

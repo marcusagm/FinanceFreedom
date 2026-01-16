@@ -92,6 +92,7 @@ describe("AddGoalDialog", () => {
             deadline: "2025-01-01",
             priority: 1,
             userId: "user1",
+            status: "IN_PROGRESS",
             createdAt: new Date(),
             updatedAt: new Date(),
         };

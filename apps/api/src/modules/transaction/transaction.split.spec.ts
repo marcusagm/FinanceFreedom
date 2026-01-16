@@ -1,4 +1,5 @@
 import { Test, TestingModule } from "@nestjs/testing";
+import { vi, describe, it, expect, beforeEach } from "vitest";
 import { TransactionService } from "./transaction.service";
 import { PrismaService } from "../../prisma/prisma.service";
 import { CreateTransactionDto } from "./dto/create-transaction.dto";
@@ -7,30 +8,30 @@ import { BadRequestException } from "@nestjs/common";
 
 const mockTransactionClient = {
     transaction: {
-        create: jest.fn(),
-        findMany: jest.fn(),
-        findUnique: jest.fn(),
-        findFirst: jest.fn(),
-        update: jest.fn(),
-        delete: jest.fn(),
+        create: vi.fn(),
+        findMany: vi.fn(),
+        findUnique: vi.fn(),
+        findFirst: vi.fn(),
+        update: vi.fn(),
+        delete: vi.fn(),
     },
     account: {
-        findUnique: jest.fn(),
-        findFirst: jest.fn(),
-        update: jest.fn(),
+        findUnique: vi.fn(),
+        findFirst: vi.fn(),
+        update: vi.fn(),
     },
     debt: {
-        findUnique: jest.fn(),
-        findFirst: jest.fn(),
-        update: jest.fn(),
+        findUnique: vi.fn(),
+        findFirst: vi.fn(),
+        update: vi.fn(),
     },
 };
 
 const mockPrismaService = {
-    $transaction: jest.fn((callback) => callback(mockTransactionClient)),
+    $transaction: vi.fn((callback) => callback(mockTransactionClient)),
     transaction: {
-        findMany: jest.fn(),
-        findUnique: jest.fn(),
+        findMany: vi.fn(),
+        findUnique: vi.fn(),
     },
 };
 
@@ -49,8 +50,8 @@ describe("TransactionService - Advanced Features", () => {
         service = module.get<TransactionService>(TransactionService);
         prisma = module.get<PrismaService>(PrismaService);
 
-        jest.resetAllMocks();
-        (prisma.$transaction as jest.Mock).mockImplementation((callback) =>
+        vi.resetAllMocks();
+        (prisma.$transaction as any).mockImplementation((callback: any) =>
             callback(mockTransactionClient)
         );
     });
@@ -125,9 +126,7 @@ describe("TransactionService - Advanced Features", () => {
 
             await service.split("user-1", "tx-original", splitDto);
 
-            // 1. Check validation passed (implied if no error)
-
-            // 2. Check creation of new transactions
+            // 1. Check creation of new transactions
             expect(
                 mockTransactionClient.transaction.create
             ).toHaveBeenCalledTimes(2);
@@ -148,7 +147,7 @@ describe("TransactionService - Advanced Features", () => {
                 }),
             });
 
-            // 3. Check deletion of original
+            // 2. Check deletion of original
             expect(
                 mockTransactionClient.transaction.delete
             ).toHaveBeenCalledWith({

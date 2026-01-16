@@ -86,8 +86,8 @@ export function IncomeWidget() {
                 <CardTitle>Distribuição de Receitas</CardTitle>
             </CardHeader>
             <CardContent>
-                <div style={{ width: "100%", height: 300 }}>
-                    <ResponsiveContainer>
+                <div style={{ width: "100%", height: 250 }}>
+                    <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                             <Pie
                                 data={pieData}
@@ -102,6 +102,7 @@ export function IncomeWidget() {
                                     <Cell
                                         key={`cell-${index}`}
                                         fill={entry.color}
+                                        stroke="none"
                                     />
                                 ))}
                             </Pie>

@@ -1,5 +1,6 @@
 import {
     Injectable,
+    Inject,
     NotFoundException,
     BadRequestException,
 } from "@nestjs/common";
@@ -8,11 +9,14 @@ import { PrismaService } from "../../prisma/prisma.service";
 import { CreateTransactionDto } from "./dto/create-transaction.dto";
 import { UpdateTransactionDto } from "./dto/update-transaction.dto";
 import { SplitTransactionDto } from "./dto/split-transaction.dto";
+import { GetTransactionsDto } from "./dto/get-transactions.dto";
 import { addMonths } from "date-fns";
 
 @Injectable()
 export class TransactionService {
-    constructor(private readonly prisma: PrismaService) {}
+    constructor(
+        @Inject(PrismaService) private readonly prisma: PrismaService
+    ) {}
 
     create(userId: string, createTransactionDto: CreateTransactionDto) {
         const {
@@ -108,12 +112,65 @@ export class TransactionService {
         );
     }
 
-    findAll(userId: string) {
-        return this.prisma.transaction.findMany({
-            where: { userId },
-            orderBy: { date: "desc" },
-            include: { account: true },
-        });
+    async findAll(userId: string, query: GetTransactionsDto) {
+        const {
+            page = 1,
+            limit = 50,
+            search,
+            accountId,
+            categoryId,
+            startDate,
+            endDate,
+        } = query;
+        const skip = (page - 1) * limit;
+
+        const where: Prisma.TransactionWhereInput = {
+            userId,
+        };
+
+        if (search) {
+            where.description = { contains: search };
+        }
+
+        if (accountId && accountId !== "all") {
+            where.accountId = accountId;
+        }
+
+        if (categoryId && categoryId !== "all") {
+            where.categoryId = categoryId;
+        }
+
+        if (startDate && endDate) {
+            where.date = {
+                gte: new Date(startDate),
+                lte: new Date(endDate),
+            };
+        } else if (startDate) {
+            where.date = { gte: new Date(startDate) };
+        } else if (endDate) {
+            where.date = { lte: new Date(endDate) };
+        }
+
+        const [data, total] = await Promise.all([
+            this.prisma.transaction.findMany({
+                where,
+                take: limit,
+                skip,
+                orderBy: { date: "desc" },
+                include: { account: true },
+            }),
+            this.prisma.transaction.count({ where }),
+        ]);
+
+        return {
+            data,
+            meta: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit),
+            },
+        };
     }
 
     findOne(userId: string, id: string) {

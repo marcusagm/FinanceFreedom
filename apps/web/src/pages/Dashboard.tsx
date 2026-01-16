@@ -87,8 +87,8 @@ export default function Dashboard() {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-screen">
-                <div className="text-lg">Carregando dashboard...</div>
+            <div className="flex flex-col items-center justify-center min-h-screen">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
             </div>
         );
     }
@@ -121,7 +121,7 @@ export default function Dashboard() {
                 title="Dashboard"
                 actions={
                     <div className="flex gap-2">
-                        <Button
+                        {/* <Button
                             variant="outline"
                             size="sm"
                             onClick={() =>
@@ -157,7 +157,7 @@ export default function Dashboard() {
                             onClick={() => notify.loading("Loading")}
                         >
                             Loading
-                        </Button>
+                        </Button> */}
                         <Button
                             variant="outline"
                             size="sm"

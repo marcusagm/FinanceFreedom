@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { DeleteTransactionDialog } from "../components/transactions/DeleteTransactionDialog";
@@ -6,16 +7,16 @@ import { TransactionFilters } from "../components/transactions/TransactionFilter
 import { TransactionList } from "../components/transactions/TransactionList";
 import { Button } from "../components/ui/Button";
 import { PageHeader } from "../components/ui/PageHeader";
+import { useTransactions } from "../hooks/useTransactions";
 import { api } from "../lib/api";
 import { type Category, categoryService } from "../services/category.service";
 import type { Account, Transaction } from "../types";
 
 export function Transactions() {
-    const [transactions, setTransactions] = useState<Transaction[]>([]);
+    const queryClient = useQueryClient();
     const [accounts, setAccounts] = useState<Account[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [isNewTransactionOpen, setIsNewTransactionOpen] = useState(false);
-    const [loading, setLoading] = useState(true);
 
     const [editingTransaction, setEditingTransaction] =
         useState<Transaction | null>(null);
@@ -25,29 +26,6 @@ export function Transactions() {
         useState<Transaction | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
 
-    const fetchData = async () => {
-        setLoading(true);
-        try {
-            const [transactionsRes, accountsRes, categoriesRes] =
-                await Promise.all([
-                    api.get("/transactions"),
-                    api.get("/accounts"),
-                    categoryService.getAll(),
-                ]);
-            setTransactions(transactionsRes.data);
-            setAccounts(accountsRes.data);
-            setCategories(categoriesRes);
-        } catch (error) {
-            console.error("Failed to fetch data", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchData();
-    }, []);
-
     const [filters, setFilters] = useState({
         search: "",
         accountId: "all",
@@ -56,42 +34,31 @@ export function Transactions() {
         endDate: "",
     });
 
-    // Derived categories are no longer needed for the dropdowns, but might be useful for filters if we want to include categories that are in transactions but deleted from system?
-    // For now, let's use the fetched categories for selection.
+    const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
+        useTransactions(filters);
 
-    const filteredTransactions = transactions.filter((t) => {
-        // Search
-        if (
-            filters.search &&
-            !t.description.toLowerCase().includes(filters.search.toLowerCase())
-        ) {
-            return false;
-        }
+    const transactions = data?.pages.flatMap((page) => page.data) || [];
 
-        // Account
-        if (filters.accountId !== "all" && t.accountId !== filters.accountId) {
-            return false;
+    const fetchAuxData = async () => {
+        try {
+            const [accountsRes, categoriesRes] = await Promise.all([
+                api.get("/accounts"),
+                categoryService.getAll(),
+            ]);
+            setAccounts(accountsRes.data);
+            setCategories(categoriesRes);
+        } catch (error) {
+            console.error("Failed to fetch auxiliary data", error);
         }
+    };
 
-        // Category
-        if (filters.category !== "all" && t.category !== filters.category) {
-            return false;
-        }
+    useEffect(() => {
+        fetchAuxData();
+    }, []);
 
-        // Date Range
-        if (filters.startDate) {
-            const txDate = new Date(t.date).setHours(0, 0, 0, 0);
-            const startDate = new Date(filters.startDate).setHours(0, 0, 0, 0);
-            if (txDate < startDate) return false;
-        }
-        if (filters.endDate) {
-            const txDate = new Date(t.date).setHours(0, 0, 0, 0);
-            const endDate = new Date(filters.endDate).setHours(0, 0, 0, 0);
-            if (txDate > endDate) return false;
-        }
-
-        return true;
-    });
+    const handleTransactionUpdated = () => {
+        queryClient.invalidateQueries({ queryKey: ["transactions"] });
+    };
 
     const handleEdit = (transaction: Transaction) => {
         setEditingTransaction(transaction);
@@ -111,7 +78,7 @@ export function Transactions() {
         try {
             setIsDeleting(true);
             await api.delete(`/transactions/${transactionToDelete.id}`);
-            await fetchData();
+            handleTransactionUpdated();
             setIsDeleteOpen(false);
             setTransactionToDelete(null);
         } catch (error) {
@@ -147,23 +114,38 @@ export function Transactions() {
                 categories={categories}
             />
 
-            {loading ? (
+            {isLoading ? (
                 <div className="text-center py-8">Carregando...</div>
             ) : (
-                <div className="bg-card rounded-xl border shadow">
-                    <TransactionList
-                        transactions={filteredTransactions}
-                        onEdit={handleEdit}
-                        onDelete={handleDelete}
-                        onTransactionUpdated={fetchData}
-                    />
+                <div className="space-y-4">
+                    <div className="bg-card rounded-xl border shadow">
+                        <TransactionList
+                            transactions={transactions}
+                            onEdit={handleEdit}
+                            onDelete={handleDelete}
+                            onTransactionUpdated={handleTransactionUpdated}
+                        />
+                    </div>
+                    {hasNextPage && (
+                        <div className="flex justify-center py-4">
+                            <Button
+                                variant="outline"
+                                onClick={() => fetchNextPage()}
+                                disabled={isFetchingNextPage}
+                            >
+                                {isFetchingNextPage
+                                    ? "Carregando..."
+                                    : "Carregar Mais"}
+                            </Button>
+                        </div>
+                    )}
                 </div>
             )}
 
             <NewTransactionDialog
                 isOpen={isNewTransactionOpen}
                 onClose={handleCloseDialog}
-                onSuccess={fetchData}
+                onSuccess={handleTransactionUpdated}
                 accounts={accounts}
                 categories={categories}
                 initialData={editingTransaction}

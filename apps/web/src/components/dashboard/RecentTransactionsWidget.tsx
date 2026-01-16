@@ -1,5 +1,3 @@
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
 import { ArrowRightLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -25,12 +23,25 @@ export function RecentTransactionsWidget() {
     useEffect(() => {
         const fetchTransactions = async () => {
             try {
-                // Fetch transactions, assuming backend returns them sorted by date DESC
-                const response = await api.get<Transaction[]>("/transactions");
-                // Take top 5
-                setTransactions(response.data.slice(0, 5));
+                const response = await api.get<any>("/transactions");
+
+                let transactionList: Transaction[] = [];
+
+                if (Array.isArray(response.data)) {
+                    transactionList = response.data;
+                } else if (response.data && Array.isArray(response.data.data)) {
+                    transactionList = response.data.data;
+                } else {
+                    console.error(
+                        "Invalid transactions data format:",
+                        response.data
+                    );
+                }
+
+                setTransactions(transactionList.slice(0, 5));
             } catch (error) {
                 console.error("Failed to load transactions", error);
+                setTransactions([]);
             } finally {
                 setLoading(false);
             }
@@ -99,7 +110,7 @@ export function RecentTransactionsWidget() {
                                                 ? dateStr.split("T")[0]
                                                 : dateStr;
 
-                                            const [year, month, day] =
+                                            const [month, day] =
                                                 datePart.split("-");
                                             return `${day}/${month}`;
                                         })()}{" "}

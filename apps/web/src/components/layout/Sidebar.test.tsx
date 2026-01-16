@@ -53,14 +53,14 @@ describe("Sidebar Component", () => {
         renderSidebar();
         expect(screen.getByText("FinanceFreedom")).toBeInTheDocument();
         expect(screen.getByText("test@example.com")).toBeInTheDocument();
-        expect(screen.getByText("Free Plan")).toBeInTheDocument();
     });
 
     it("renders all navigation groups", () => {
         renderSidebar();
         expect(screen.getByText("Geral")).toBeInTheDocument();
+        expect(screen.getByText("Despesas")).toBeInTheDocument();
+        expect(screen.getByText("Faturamento")).toBeInTheDocument();
         expect(screen.getByText("Planejamento")).toBeInTheDocument();
-        expect(screen.getByText("Gestão")).toBeInTheDocument();
         expect(screen.getByText("Sistema")).toBeInTheDocument();
     });
 
@@ -68,8 +68,15 @@ describe("Sidebar Component", () => {
         renderSidebar();
         expect(screen.getByText("Dashboard")).toBeInTheDocument();
         expect(screen.getByText("Transações")).toBeInTheDocument();
-        expect(screen.getByText("Renda")).toBeInTheDocument();
+        expect(screen.getByText("Contas")).toBeInTheDocument();
         expect(screen.getByText("Dívidas")).toBeInTheDocument();
+        expect(screen.getByText("Despesas Fixas")).toBeInTheDocument();
+        expect(screen.getByText("Renda")).toBeInTheDocument();
+        expect(screen.getByText("Investimentos")).toBeInTheDocument();
+        expect(screen.getByText("Categorias")).toBeInTheDocument();
+        expect(screen.getByText("Metas")).toBeInTheDocument();
+        expect(screen.getByText("Projeção")).toBeInTheDocument();
+        expect(screen.getByText("Importações")).toBeInTheDocument();
         expect(screen.getByText("Configurações")).toBeInTheDocument();
     });
 

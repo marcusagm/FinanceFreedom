@@ -1,38 +1,38 @@
 import { Test, TestingModule } from "@nestjs/testing";
+import { vi, describe, it, expect, beforeEach } from "vitest";
 import { TransactionService } from "./transaction.service";
 import { PrismaService } from "../../prisma/prisma.service";
 import { CreateTransactionDto } from "./dto/create-transaction.dto";
 
 const mockTransactionClient = {
     transaction: {
-        create: jest.fn(),
-        findMany: jest.fn(),
-        findFirst: jest.fn(),
-        update: jest.fn(),
-        delete: jest.fn(),
+        create: vi.fn(),
+        findMany: vi.fn(),
+        findFirst: vi.fn(),
+        update: vi.fn(),
+        delete: vi.fn(),
     },
     account: {
-        findFirst: jest.fn(),
-        update: jest.fn(),
+        findFirst: vi.fn(),
+        update: vi.fn(),
     },
     debt: {
-        findUnique: jest.fn(), // debt service might use findUnique?
-        // Service code: prisma.debt.findFirst (in create)
-        // Wait, line 74: `prisma.debt.findFirst`
-        findFirst: jest.fn(),
-        update: jest.fn(),
+        findUnique: vi.fn(),
+        findFirst: vi.fn(),
+        update: vi.fn(),
     },
 };
 
 const mockPrismaService = {
-    $transaction: jest.fn((callback) => callback(mockTransactionClient)),
+    $transaction: vi.fn((callback) => callback(mockTransactionClient)),
     transaction: {
-        findMany: jest.fn(),
-        findFirst: jest.fn(),
+        findMany: vi.fn(),
+        findFirst: vi.fn(),
+        count: vi.fn(),
     },
     debt: {
-        findUnique: jest.fn(),
-        update: jest.fn(),
+        findUnique: vi.fn(),
+        update: vi.fn(),
     },
 };
 
@@ -51,8 +51,8 @@ describe("TransactionService", () => {
         service = module.get<TransactionService>(TransactionService);
         prisma = module.get<PrismaService>(PrismaService);
 
-        jest.resetAllMocks();
-        (prisma.$transaction as jest.Mock).mockImplementation((callback) =>
+        vi.resetAllMocks();
+        (prisma.$transaction as any).mockImplementation((callback: any) =>
             callback(mockTransactionClient)
         );
     });
@@ -80,12 +80,7 @@ describe("TransactionService", () => {
             const result = await service.create("user-1", dto);
 
             expect(result).toEqual(expectedTransaction);
-
-            // Verify transaction creation
             expect(mockTransactionClient.transaction.create).toHaveBeenCalled();
-
-            // Verify balance update logic
-            // Initial 50 + 100 Income = 150
             expect(mockTransactionClient.account.update).toHaveBeenCalledWith({
                 where: { id: "acc-1" },
                 data: { balance: 150 },
@@ -113,12 +108,12 @@ describe("TransactionService", () => {
 
             await service.create("user-1", dto);
 
-            // Initial 100 - 50 Expense = 50
             expect(mockTransactionClient.account.update).toHaveBeenCalledWith({
                 where: { id: "acc-1" },
                 data: { balance: 50 },
             });
         });
+
         it("should create a transaction and update debt balance (Expense with Debt)", async () => {
             const dto: CreateTransactionDto = {
                 accountId: "acc-1",
@@ -141,8 +136,8 @@ describe("TransactionService", () => {
             );
             // Mock debt find
             mockTransactionClient["debt"] = {
-                findFirst: jest.fn().mockResolvedValue(mockDebt),
-                update: jest.fn(),
+                findFirst: vi.fn().mockResolvedValue(mockDebt),
+                update: vi.fn(),
             };
 
             await service.create("user-1", dto);
@@ -162,28 +157,54 @@ describe("TransactionService", () => {
     describe("findAll", () => {
         it("should return an array of transactions", async () => {
             const result = [{ id: "1" }];
-            (prisma.transaction.findMany as jest.Mock).mockResolvedValue(
-                result
-            );
+            (prisma.transaction.findMany as any).mockResolvedValue(result);
+            (prisma.transaction.count as any).mockResolvedValue(1);
+            const response = await service.findAll("user-1", {});
+            expect(response.data).toBe(result);
+        });
 
-            expect(await service.findAll("user-1")).toBe(result);
+        it("should apply filters correctly", async () => {
+            const result = [{ id: "1" }];
+            (prisma.transaction.findMany as any).mockResolvedValue(result);
+            (prisma.transaction.count as any).mockResolvedValue(1);
+
+            const filters = {
+                search: "test",
+                accountId: "acc-1",
+                categoryId: "cat-1",
+                startDate: "2023-01-01",
+                endDate: "2023-01-31",
+            };
+
+            await service.findAll("user-1", filters);
+
+            expect(prisma.transaction.findMany).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    where: expect.objectContaining({
+                        userId: "user-1",
+                        description: { contains: "test" },
+                        accountId: "acc-1",
+                        categoryId: "cat-1",
+                        date: {
+                            gte: new Date("2023-01-01"),
+                            lte: new Date("2023-01-31"),
+                        },
+                    }),
+                })
+            );
         });
     });
 
     describe("findOne", () => {
         it("should return a single transaction", async () => {
             const result = { id: "1" };
-            (prisma.transaction.findFirst as jest.Mock).mockResolvedValue(
-                result
-            );
-
+            (prisma.transaction.findFirst as any).mockResolvedValue(result);
             expect(await service.findOne("user-1", "1")).toBe(result);
         });
     });
 
     describe("update", () => {
         it("should update a transaction and recalculate balance (Amount change)", async () => {
-            // Setup: Old transaction was Income of 100. New is Income of 200.
             const id = "tx-1";
             const dto = {
                 amount: 200,
@@ -199,22 +220,16 @@ describe("TransactionService", () => {
                 account: { balance: 150 },
             };
 
-            // 1. Get Old
             mockTransactionClient.transaction.findFirst
-                .mockResolvedValueOnce(oldTransaction) // For step 1
-                .mockResolvedValueOnce({ ...oldTransaction, amount: 200 }); // For return? (mock implementation might differ in reality but logic flow matters)
+                .mockResolvedValueOnce(oldTransaction)
+                .mockResolvedValueOnce({ ...oldTransaction, amount: 200 });
 
-            // 2. Revert logic: Old Income 100 -> Revert means Balance - 100 = 50.
-            // 3. New logic: New Income 200 -> Balance 50 + 200 = 250.
-
-            // For findTargetAccount (Step 5)
             mockTransactionClient.account.findFirst.mockResolvedValue({
                 id: "acc-1",
                 balance: 50,
-            }); // Balance after revert
+            });
 
-            // Update call needs mockTransactionClient methods mocked
-            mockTransactionClient.transaction.update = jest.fn();
+            mockTransactionClient.transaction.update = vi.fn();
 
             await service.update("user-1", id, dto);
 
@@ -244,7 +259,7 @@ describe("TransactionService", () => {
                 amount: 100,
                 type: "INCOME",
                 accountId: "acc-1",
-                account: { balance: 150 }, // When fetched, balance includes the transaction effect
+                account: { balance: 150 },
             };
 
             mockTransactionClient.transaction.findFirst.mockResolvedValue(
@@ -252,12 +267,6 @@ describe("TransactionService", () => {
             );
 
             await service.remove("user-1", id);
-
-            // Logic in service:
-            // balanceChange = 100 (Income)
-            // newBalance = 150 - 100 = 50
-
-            // newBalance = 150 - 100 = 50
 
             expect(mockTransactionClient.account.update).toHaveBeenCalledWith({
                 where: { id: "acc-1" },

@@ -1,9 +1,12 @@
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import * as z from "zod";
 import { api } from "../../lib/api";
+import { Button } from "../ui/Button";
+import { DatePicker } from "../ui/DatePicker";
 import {
     Dialog,
     DialogBody,
@@ -12,10 +15,6 @@ import {
     DialogTitle,
     DialogFooter,
 } from "../ui/Dialog";
-import { Button } from "../ui/Button";
-import { DatePicker } from "../ui/DatePicker";
-import { Input } from "../ui/Input";
-import { Select } from "../ui/Select";
 import {
     Form,
     FormControl,
@@ -24,8 +23,9 @@ import {
     FormLabel,
     FormMessage,
 } from "../ui/Form";
+import { Input } from "../ui/Input";
+import { Select } from "../ui/Select";
 import type { InvestmentAccount } from "./InvestmentAccountCard";
-import { toast } from "sonner";
 
 interface AddInvestmentDialogProps {
     isOpen: boolean;
@@ -245,7 +245,7 @@ export function AddInvestmentDialog({
                                                     onChange={(e) =>
                                                         onChange(
                                                             e.target.value
-                                                                ? parseFloat(
+                                                                ? Number.parseFloat(
                                                                       e.target
                                                                           .value
                                                                   )

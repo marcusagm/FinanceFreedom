@@ -58,28 +58,9 @@ export function Sidebar({ className }: SidebarProps) {
             ],
         },
         {
-            label: "Planejamento",
+            label: "Despesas",
             items: [
-                { icon: DollarSign, label: "Renda", href: "/income" },
-                {
-                    icon: BarChart3,
-                    label: "Projeção",
-                    href: "/income/projection",
-                },
                 { icon: CreditCard, label: "Dívidas", href: "/debts" },
-                {
-                    icon: TrendingUp,
-                    label: "Investimentos",
-                    href: "/investments",
-                },
-                { icon: Target, label: "Metas", href: "/goals" },
-            ],
-        },
-        {
-            label: "Gestão",
-            items: [
-                { icon: FileInput, label: "Importar", href: "/import" },
-                { icon: Tag, label: "Categorias", href: "/categories" },
                 {
                     icon: Layers,
                     label: "Despesas Fixas",
@@ -88,8 +69,32 @@ export function Sidebar({ className }: SidebarProps) {
             ],
         },
         {
+            label: "Faturamento",
+            items: [
+                { icon: DollarSign, label: "Renda", href: "/income" },
+                {
+                    icon: TrendingUp,
+                    label: "Investimentos",
+                    href: "/investments",
+                },
+            ],
+        },
+        {
+            label: "Planejamento",
+            items: [
+                { icon: Tag, label: "Categorias", href: "/categories" },
+                { icon: Target, label: "Metas", href: "/goals" },
+                {
+                    icon: BarChart3,
+                    label: "Projeção",
+                    href: "/income/projection",
+                },
+            ],
+        },
+        {
             label: "Sistema",
             items: [
+                { icon: FileInput, label: "Importações", href: "/import" },
                 { icon: Settings, label: "Configurações", href: "/settings" },
             ],
         },
@@ -218,9 +223,6 @@ export function Sidebar({ className }: SidebarProps) {
                             <div className="flex-1 overflow-hidden">
                                 <p className="text-sm font-medium truncate">
                                     {user?.email}
-                                </p>
-                                <p className="text-xs text-muted-foreground truncate">
-                                    Free Plan
                                 </p>
                             </div>
                         )}
