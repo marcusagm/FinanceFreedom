@@ -1,0 +1,15 @@
+{
+    "settings": {
+        "title": "System Settings",
+        "description": "Adjust Finance Freedom global parameters.",
+        "general": "General Settings",
+        "theme": "Appearance",
+        "preferences": "Other Preferences",
+        "preferences_desc": "Internationalization and localization features.",
+        "language": "Language & Region",
+        "language_desc": "Select your preferred system language.",
+        "save": "Save Settings",
+        "success": "Settings saved successfully!",
+        "error": "Error saving settings"
+    }
+}

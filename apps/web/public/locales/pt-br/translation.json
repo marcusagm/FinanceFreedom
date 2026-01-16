@@ -1,0 +1,15 @@
+{
+    "settings": {
+        "title": "Configurações do Sistema",
+        "description": "Ajuste os parâmetros globais do Finance Freedom.",
+        "general": "Configurações Gerais",
+        "theme": "Aparência",
+        "preferences": "Outras Preferências",
+        "preferences_desc": "Funcionalidades de internacionalização e localização.",
+        "language": "Idioma e Localização",
+        "language_desc": "Selecione o idioma de preferência do sistema.",
+        "save": "Salvar Configurações",
+        "success": "Configurações salvas com sucesso!",
+        "error": "Erro ao salvar configurações"
+    }
+}

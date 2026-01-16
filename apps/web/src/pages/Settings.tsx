@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import * as z from "zod";
 import { GeneralSettingsCard } from "../components/settings/GeneralSettingsCard";
@@ -15,7 +16,9 @@ import {
     CardTitle,
 } from "../components/ui/Card";
 import { Form } from "../components/ui/Form";
+import { Label } from "../components/ui/Label";
 import { PageHeader } from "../components/ui/PageHeader";
+import { Select } from "../components/ui/Select";
 import { type Category, categoryService } from "../services/category.service";
 import { systemConfigService } from "../services/system-config.service";
 
@@ -33,6 +36,7 @@ const settingsSchema = z.object({
 export type SettingsFormValues = z.infer<typeof settingsSchema>;
 
 export function Settings() {
+    const { t, i18n } = useTranslation();
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -91,8 +95,8 @@ export function Settings() {
     return (
         <div className="container mx-auto px-4 py-8">
             <PageHeader
-                title="Configurações do Sistema"
-                description="Ajuste os parâmetros globais do Finance Freedom."
+                title={t("settings.title")}
+                description={t("settings.description")}
             />
 
             {loading ? (
@@ -112,22 +116,39 @@ export function Settings() {
 
                         <ThemeCustomizer />
 
-                        <Card className="opacity-70 pointer-events-none">
+                        <Card>
                             <CardHeader>
-                                <CardTitle>Outras Preferências</CardTitle>
+                                <CardTitle>
+                                    {t("settings.preferences")}
+                                </CardTitle>
                                 <CardDescription>
-                                    Funcionalidades de internacionalização em
-                                    breve.
+                                    {t("settings.preferences_desc")}
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <div className="p-4 border rounded-md">
-                                    <h4 className="font-semibold text-muted-foreground">
-                                        Idioma e Localização
-                                    </h4>
-                                    <p className="text-sm text-muted-foreground">
-                                        Suporte a múltiplos idiomas e moedas.
-                                    </p>
+                                <div className="space-y-2">
+                                    <Label>{t("settings.language")}</Label>
+                                    <div className="flex flex-col gap-1">
+                                        <p className="text-sm text-muted-foreground">
+                                            {t("settings.language_desc")}
+                                        </p>
+                                        <Select
+                                            value={i18n.language}
+                                            onChange={(value) =>
+                                                i18n.changeLanguage(value)
+                                            }
+                                            options={[
+                                                {
+                                                    value: "pt-br",
+                                                    label: "Português (BR)",
+                                                },
+                                                {
+                                                    value: "en",
+                                                    label: "English (US)",
+                                                },
+                                            ]}
+                                        />
+                                    </div>
                                 </div>
                             </CardContent>
                         </Card>
@@ -140,7 +161,7 @@ export function Settings() {
                                 {form.formState.isSubmitting && (
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                 )}
-                                Salvar Configurações
+                                {t("settings.save")}
                             </Button>
                         </div>
                     </form>
