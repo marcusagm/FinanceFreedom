@@ -14,18 +14,18 @@ Listagem de arquivos identificados sem cobertura de testes ou com cobertura zero
 
 **Account**
 
--   [ ] `src/modules/account/account.module.ts`
+-   [x] `src/modules/account/account.module.ts`
 
 **Analytics**
 
--   [ ] `src/modules/analytics/analytics.controller.ts`
--   [ ] `src/modules/analytics/analytics.module.ts`
--   [ ] `src/modules/analytics/budget.service.ts`
+-   [x] `src/modules/analytics/analytics.controller.ts`
+-   [x] `src/modules/analytics/analytics.module.ts`
+-   [x] `src/modules/analytics/budget.service.ts`
 
 **Auth**
 
--   [ ] `src/modules/auth/auth.controller.ts`
--   [ ] `src/modules/auth/auth.module.ts`
+-   [x] `src/modules/auth/auth.controller.ts`
+-   [x] `src/modules/auth/auth.module.ts`
 -   [x] `src/modules/auth/guards/jwt-auth.guard.ts`
 -   [x] `src/modules/auth/guards/local-auth.guard.ts`
 -   [x] `src/modules/auth/strategies/jwt.strategy.ts`
@@ -33,37 +33,37 @@ Listagem de arquivos identificados sem cobertura de testes ou com cobertura zero
 
 **Category**
 
--   [ ] `src/modules/category/category.controller.ts`
--   [ ] `src/modules/category/category.module.ts`
+-   [x] `src/modules/category/category.controller.ts`
+-   [x] `src/modules/category/category.module.ts`
 -   [x] `src/modules/category/category.service.ts`
 
 **Dashboard**
 
--   [ ] `src/modules/dashboard/dashboard.controller.ts`
--   [ ] `src/modules/dashboard/dashboard.module.ts`
+-   [x] `src/modules/dashboard/dashboard.controller.ts`
+-   [x] `src/modules/dashboard/dashboard.module.ts`
 
 **Debt**
 
--   [ ] `src/modules/debt/debt.controller.ts`
--   [ ] `src/modules/debt/debt.module.ts`
+-   [x] `src/modules/debt/debt.controller.ts`
+-   [x] `src/modules/debt/debt.module.ts`
 
 **Fixed Expense**
 
 -   [x] `src/modules/fixed-expense/fixed-expense.controller.ts`
--   [ ] `src/modules/fixed-expense/fixed-expense.module.ts`
+-   [x] `src/modules/fixed-expense/fixed-expense.module.ts`
 
 **Import**
 
--   [ ] `src/modules/import/import.module.ts`
+-   [x] `src/modules/import/import.module.ts`
 -   [x] `src/modules/import/import.processor.ts`
 
 **Income**
 
--   [ ] `src/modules/income/income.module.ts`
+-   [x] `src/modules/income/income.module.ts`
 
 **Investment**
 
--   [ ] `src/modules/investment-account/investment-account.module.ts`
+-   [x] `src/modules/investment-account/investment-account.module.ts`
 
 **Mail**
 
@@ -71,7 +71,7 @@ Listagem de arquivos identificados sem cobertura de testes ou com cobertura zero
 
 **Savings Goal**
 
--   [ ] `src/modules/savings-goal/savings-goal.module.ts`
+-   [x] `src/modules/savings-goal/savings-goal.module.ts`
 
 **Simulator**
 
