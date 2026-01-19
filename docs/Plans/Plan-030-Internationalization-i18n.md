@@ -34,11 +34,11 @@
     - [x] ImapConfigPage & ImapConfigForm
     - [x] Auth Pages (Login, Register, Forgot/Reset Password)
     - [x] `ImportPage.tsx`
-    - [x] `Settings.tsx` (Completar internacionalização)
-    - [x] `InvestmentAccounts.tsx` (Verificar Dialogs)
-    - [x] `Profile.tsx` (Verificar)
-    - [x] `Accounts.tsx` (Verificar)
-    - [x] `Categories.tsx` (Verificar)
+    - [x] `Settings.tsx`
+    - [x] `InvestmentAccounts.tsx`
+    - [x] `Profile.tsx`
+    - [x] `Accounts.tsx`
+    - [x] `Categories.tsx`
 
 ### C. Localização de Dados (L10n)
 
