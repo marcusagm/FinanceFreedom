@@ -41,7 +41,10 @@ export function DeleteAccountDialog({
                 </DialogHeader>
 
                 <DialogBody>
-                    <AppAlert variant="destructive" title={t("common.error")}>
+                    <AppAlert
+                        variant="destructive"
+                        title={t("common.attention")}
+                    >
                         <Trans
                             i18nKey="accounts.deleteDialog.message"
                             values={{ name: accountName }}

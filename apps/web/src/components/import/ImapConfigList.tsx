@@ -1,5 +1,6 @@
 import { Edit, Trash2 } from "lucide-react";
 import type React from "react";
+import { useTranslation } from "react-i18next";
 import { AppAlert } from "../ui/AppAlert";
 import { Button } from "../ui/Button";
 import {
@@ -32,12 +33,14 @@ export const ImapConfigList: React.FC<ImapConfigListProps> = ({
     onEdit,
     onDelete,
 }) => {
+    const { t } = useTranslation();
+
     if (configs.length === 0) {
         return (
             <AppAlert
                 variant="default"
-                title="No Configuration"
-                description="No IMAP configurations found for this account. Add one to start syncing."
+                title={t("imap.list.noConfigTitle")}
+                description={t("imap.list.noConfigDesc")}
             />
         );
     }
@@ -47,10 +50,12 @@ export const ImapConfigList: React.FC<ImapConfigListProps> = ({
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Email</TableHead>
-                        <TableHead>Folder</TableHead>
-                        <TableHead>Filters</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
+                        <TableHead>{t("imap.list.headers.email")}</TableHead>
+                        <TableHead>{t("imap.list.headers.folder")}</TableHead>
+                        <TableHead>{t("imap.list.headers.filters")}</TableHead>
+                        <TableHead className="text-right">
+                            {t("imap.list.headers.actions")}
+                        </TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -65,7 +70,7 @@ export const ImapConfigList: React.FC<ImapConfigListProps> = ({
                                     {config.sender && (
                                         <div className="flex gap-1">
                                             <span className="text-muted-foreground">
-                                                From:
+                                                {t("imap.list.from")}
                                             </span>
                                             <span>{config.sender}</span>
                                         </div>
@@ -73,14 +78,14 @@ export const ImapConfigList: React.FC<ImapConfigListProps> = ({
                                     {config.subject && (
                                         <div className="flex gap-1">
                                             <span className="text-muted-foreground">
-                                                Subject:
+                                                {t("imap.list.subject")}
                                             </span>
                                             <span>{config.subject}</span>
                                         </div>
                                     )}
                                     {!config.sender && !config.subject && (
                                         <span className="text-muted-foreground italic">
-                                            None
+                                            {t("imap.list.none")}
                                         </span>
                                     )}
                                 </div>
@@ -90,7 +95,7 @@ export const ImapConfigList: React.FC<ImapConfigListProps> = ({
                                     <Button
                                         variant="ghost"
                                         size="icon"
-                                        aria-label="Edit"
+                                        aria-label={t("common.edit")}
                                         onClick={() => onEdit(config)}
                                     >
                                         <Edit className="w-4 h-4" />
@@ -98,7 +103,7 @@ export const ImapConfigList: React.FC<ImapConfigListProps> = ({
                                     <Button
                                         variant="ghost"
                                         size="icon"
-                                        aria-label="Delete"
+                                        aria-label={t("common.delete")}
                                         onClick={() => onDelete(config.id)}
                                         className="text-rose-500 hover:text-rose-600 hover:bg-rose-50"
                                     >

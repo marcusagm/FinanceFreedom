@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation, Trans } from "react-i18next";
 import * as z from "zod";
 import { api } from "../../lib/api";
 import type { Account } from "../../types";
@@ -26,6 +27,7 @@ import {
 import { Input } from "../ui/Input";
 import { Select } from "../ui/Select";
 import type { Debt } from "./DebtForm";
+import { toast } from "sonner"; // Assuming sonner
 
 interface DebtPaymentDialogProps {
     isOpen: boolean;
@@ -34,23 +36,30 @@ interface DebtPaymentDialogProps {
     debt: Debt;
 }
 
-const formSchema = z.object({
-    amount: z
-        .number({ message: "Valor deve ser um número" })
-        .min(0.01, "Valor deve ser maior que 0"),
-    date: z.string().min(1, "Data é obrigatória"),
-    accountId: z.string().min(1, "Conta é obrigatória"),
-    paysInstallment: z.boolean().default(false).optional(),
-});
-
 export function DebtPaymentDialog({
     isOpen,
     onClose,
     onSuccess,
     debt,
 }: DebtPaymentDialogProps) {
+    const { t } = useTranslation();
     const [accounts, setAccounts] = useState<Account[]>([]);
     const [loadingAccounts, setLoadingAccounts] = useState(false);
+
+    const formSchema = z.object({
+        amount: z
+            .number({
+                message: t("debts.paymentDialog.validation.amountNumber"),
+            })
+            .min(0.01, t("debts.paymentDialog.validation.amountPositive")),
+        date: z
+            .string()
+            .min(1, t("debts.paymentDialog.validation.dateRequired")),
+        accountId: z
+            .string()
+            .min(1, t("debts.paymentDialog.validation.accountRequired")),
+        paysInstallment: z.boolean().default(false).optional(),
+    });
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -102,7 +111,7 @@ export function DebtPaymentDialog({
         try {
             // Create expense transaction
             await api.post("/transactions", {
-                description: `Pagamento Dívida: ${debt.name}`,
+                description: `Pagamento Dívida: ${debt.name}`, // Keeping this one hardcoded or generic for now, potentially could be localized too but usually transaction descriptions are stored as string
                 amount: values.amount,
                 type: "EXPENSE",
                 date: values.date,
@@ -112,11 +121,12 @@ export function DebtPaymentDialog({
                 paysInstallment: values.paysInstallment,
             });
 
+            toast.success(t("debts.paymentDialog.success"));
             onSuccess();
             onClose();
         } catch (error) {
             console.error("Failed to register payment", error);
-            alert("Erro ao registrar pagamento.");
+            toast.error(t("debts.paymentDialog.error"));
         }
     };
 
@@ -129,9 +139,13 @@ export function DebtPaymentDialog({
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Registrar Pagamento de Dívida</DialogTitle>
+                    <DialogTitle>{t("debts.paymentDialog.title")}</DialogTitle>
                     <DialogDescription>
-                        Pagamento para: <strong>{debt.name}</strong>
+                        <Trans
+                            i18nKey="debts.paymentDialog.subtitle"
+                            values={{ name: debt.name }}
+                            components={{ strong: <strong /> }}
+                        />
                     </DialogDescription>
                 </DialogHeader>
 
@@ -150,7 +164,9 @@ export function DebtPaymentDialog({
                                     }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Valor do Pagamento
+                                                {t(
+                                                    "debts.paymentDialog.amountLabel",
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -161,7 +177,7 @@ export function DebtPaymentDialog({
                                                     onValueChange={(values) => {
                                                         onChange(
                                                             values.floatValue ||
-                                                                0
+                                                                0,
                                                         );
                                                     }}
                                                     {...field}
@@ -177,7 +193,11 @@ export function DebtPaymentDialog({
                                     name="date"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Data</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    "debts.paymentDialog.dateLabel",
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input type="date" {...field} />
                                             </FormControl>
@@ -192,7 +212,9 @@ export function DebtPaymentDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Conta de Origem
+                                                {t(
+                                                    "debts.paymentDialog.sourceAccountLabel",
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Select
@@ -201,8 +223,12 @@ export function DebtPaymentDialog({
                                                     onChange={field.onChange}
                                                     placeholder={
                                                         loadingAccounts
-                                                            ? "Carregando contas..."
-                                                            : "Selecione uma conta"
+                                                            ? t(
+                                                                  "debts.paymentDialog.loadingAccounts",
+                                                              )
+                                                            : t(
+                                                                  "debts.paymentDialog.selectAccount",
+                                                              )
                                                     }
                                                     disabled={loadingAccounts}
                                                 />
@@ -231,8 +257,9 @@ export function DebtPaymentDialog({
                                                     </FormControl>
                                                     <div className="space-y-1 leading-none">
                                                         <FormLabel>
-                                                            Este pagamento quita
-                                                            uma parcela?
+                                                            {t(
+                                                                "debts.paymentDialog.paysInstallmentLabel",
+                                                            )}
                                                         </FormLabel>
                                                     </div>
                                                 </FormItem>
@@ -244,15 +271,15 @@ export function DebtPaymentDialog({
 
                         <DialogFooter>
                             <Button variant="outline" onClick={onClose}>
-                                Cancelar
+                                {t("common.cancel")}
                             </Button>
                             <Button
                                 onClick={form.handleSubmit(handleSubmit)}
                                 disabled={form.formState.isSubmitting}
                             >
                                 {form.formState.isSubmitting
-                                    ? "Registrando..."
-                                    : "Confirmar Pagamento"}
+                                    ? t("debts.paymentDialog.registering")
+                                    : t("debts.paymentDialog.confirm")}
                             </Button>
                         </DialogFooter>
                     </form>

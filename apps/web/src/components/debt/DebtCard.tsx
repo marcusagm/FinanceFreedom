@@ -151,7 +151,7 @@ export function DebtCard({
                             </span>
                         )}
                         <span className="text-xs font-mono text-red-500 bg-red-100 dark:bg-red-950/30 px-2 py-0.5 rounded-full">
-                            {interestRate}% a.m.
+                            {t("debts.interestRate", { rate: interestRate })}
                         </span>
                     </div>
                 }

@@ -1,5 +1,8 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+// @vitest-environment jsdom
+import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { render } from "../utils/test-utils";
+import "@testing-library/jest-dom/vitest";
 import { api } from "../lib/api";
 import { categoryService } from "../services/category.service";
 import { fixedExpenseService } from "../services/fixed-expense.service";
@@ -13,6 +16,10 @@ vi.mock("sonner", () => ({
         success: vi.fn(),
         error: vi.fn(),
     },
+}));
+vi.mock("../contexts/PrivacyContext", () => ({
+    usePrivacy: () => ({ isObfuscated: false, toggleObfuscation: vi.fn() }),
+    PrivacyProvider: ({ children }: { children: React.ReactNode }) => children,
 }));
 
 describe("FixedExpenses Page", () => {
@@ -37,7 +44,7 @@ describe("FixedExpenses Page", () => {
 
         render(<FixedExpenses />);
 
-        expect(screen.getByText("Despesas Fixas")).toBeInTheDocument();
+        expect(screen.getByText("fixedExpenses.title")).toBeInTheDocument();
         await waitFor(() => {
             expect(screen.getByText("Rent")).toBeInTheDocument();
         });
@@ -50,12 +57,15 @@ describe("FixedExpenses Page", () => {
 
         render(<FixedExpenses />);
 
-        await waitFor(() => expect(fixedExpenseService.getAll).toHaveBeenCalled());
+        await waitFor(() =>
+            expect(fixedExpenseService.getAll).toHaveBeenCalled(),
+        );
 
-        fireEvent.click(screen.getByText("Nova Despesa Fixa"));
+        fireEvent.click(screen.getByText("fixedExpenses.newFixedExpense"));
 
         await waitFor(() => {
             // Check for dialog content
+            // Dialog returns keys now
             expect(screen.getByRole("dialog")).toBeInTheDocument();
         });
     });

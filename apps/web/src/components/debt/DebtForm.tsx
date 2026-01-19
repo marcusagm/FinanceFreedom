@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import * as z from "zod";
 import { api } from "../../lib/api";
 import { Button } from "../ui/Button";
@@ -24,17 +25,7 @@ import {
     FormMessage,
 } from "../ui/Form";
 import { Input } from "../ui/Input";
-
-const formSchema = z.object({
-    name: z.string().min(1, "Name is required"),
-    totalAmount: z.number({ message: "Value must be a number" }).min(0),
-    interestRate: z.number().min(0, "Interest cannot be negative"),
-    minimumPayment: z.number().min(0, "Minimum payment cannot be negative"),
-    dueDate: z.number().min(1).max(31, "Day must be between 1 and 31"),
-    installmentsTotal: z.number().optional(),
-    installmentsPaid: z.number().default(0),
-    firstInstallmentDate: z.string().optional(), // Using string for date input
-});
+import { toast } from "sonner"; // Assuming sonner is used as in other components
 
 export interface Debt {
     id: string;
@@ -61,6 +52,25 @@ export function DebtForm({
     onSuccess,
     debtToEdit,
 }: DebtFormProps) {
+    const { t } = useTranslation();
+
+    const formSchema = z.object({
+        name: z.string().min(1, t("debts.form.validation.nameRequired")),
+        totalAmount: z
+            .number({ message: t("debts.form.validation.amountNumber") })
+            .min(0),
+        interestRate: z
+            .number()
+            .min(0, t("debts.form.validation.interestPositive")),
+        minimumPayment: z
+            .number()
+            .min(0, t("debts.form.validation.paymentPositive")),
+        dueDate: z.number().min(1).max(31, t("debts.form.validation.dayRange")),
+        installmentsTotal: z.number().optional(),
+        installmentsPaid: z.number().default(0),
+        firstInstallmentDate: z.string().optional(), // Using string for date input
+    });
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -85,11 +95,11 @@ export function DebtForm({
             if (Math.abs(calculatedPayment - minimumPayment) > 0.05) {
                 form.setValue(
                     "minimumPayment",
-                    Number.parseFloat(calculatedPayment.toFixed(2))
+                    Number.parseFloat(calculatedPayment.toFixed(2)),
                 );
             }
         }
-    }, [totalAmount, installmentsTotal, form]);
+    }, [totalAmount, installmentsTotal, form, minimumPayment]);
 
     useEffect(() => {
         if (isOpen) {
@@ -97,13 +107,13 @@ export function DebtForm({
                 form.reset({
                     name: debtToEdit.name,
                     totalAmount: Number.parseFloat(
-                        String(debtToEdit.totalAmount)
+                        String(debtToEdit.totalAmount),
                     ),
                     interestRate: Number.parseFloat(
-                        String(debtToEdit.interestRate)
+                        String(debtToEdit.interestRate),
                     ),
                     minimumPayment: Number.parseFloat(
-                        String(debtToEdit.minimumPayment)
+                        String(debtToEdit.minimumPayment),
                     ),
                     dueDate: debtToEdit.dueDate,
                     installmentsTotal: debtToEdit.installmentsTotal,
@@ -134,11 +144,13 @@ export function DebtForm({
             } else {
                 await api.post("/debts", values);
             }
+            toast.success(t("debts.form.saveSuccess"));
             onSuccess();
             onClose();
         } catch (error) {
             console.error("Failed to save debt", error);
             // alert("Error saving debt."); // Ideally use toast
+            toast.error(t("debts.form.saveError"));
         }
     };
 
@@ -147,10 +159,12 @@ export function DebtForm({
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>
-                        {debtToEdit ? "Edit Debt" : "New Debt"}
+                        {debtToEdit
+                            ? t("debts.form.titleEdit")
+                            : t("debts.form.titleNew")}
                     </DialogTitle>
                     <DialogDescription className="sr-only">
-                        Fill in the details to save the debt.
+                        {t("debts.form.subtitle")}
                     </DialogDescription>
                 </DialogHeader>
 
@@ -165,10 +179,14 @@ export function DebtForm({
                                 name="name"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Debt Name</FormLabel>
+                                        <FormLabel>
+                                            {t("debts.form.nameLabel")}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="Ex: Credit Card"
+                                                placeholder={t(
+                                                    "debts.form.namePlaceholder",
+                                                )}
                                                 {...field}
                                             />
                                         </FormControl>
@@ -185,10 +203,14 @@ export function DebtForm({
                                         field: { onChange, value, ...field },
                                     }) => (
                                         <FormItem>
-                                            <FormLabel>Total Balance</FormLabel>
+                                            <FormLabel>
+                                                {t("debts.form.totalLabel")}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    placeholder="$ 0.00"
+                                                    placeholder={t(
+                                                        "common.currencyPlaceholder",
+                                                    )}
                                                     currency
                                                     value={value}
                                                     onValueChange={(values) => {
@@ -200,7 +222,7 @@ export function DebtForm({
                                                         // Calc Payment: Total / Inst
                                                         const installs =
                                                             form.getValues(
-                                                                "installmentsTotal"
+                                                                "installmentsTotal",
                                                             );
                                                         if (
                                                             installs &&
@@ -211,22 +233,24 @@ export function DebtForm({
                                                                     (
                                                                         newTotal /
                                                                         installs
-                                                                    ).toFixed(2)
+                                                                    ).toFixed(
+                                                                        2,
+                                                                    ),
                                                                 );
                                                             // Loop prevention
                                                             const currentPayment =
                                                                 form.getValues(
-                                                                    "minimumPayment"
+                                                                    "minimumPayment",
                                                                 );
                                                             if (
                                                                 Math.abs(
                                                                     newPayment -
-                                                                        currentPayment
+                                                                        currentPayment,
                                                                 ) > 0.05
                                                             ) {
                                                                 form.setValue(
                                                                     "minimumPayment",
-                                                                    newPayment
+                                                                    newPayment,
                                                                 );
                                                             }
                                                         }
@@ -245,19 +269,21 @@ export function DebtForm({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Monthly Interest (%)
+                                                {t("debts.form.interestLabel")}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type="number"
                                                     step="0.01"
-                                                    placeholder="0.00%"
+                                                    placeholder={t(
+                                                        "common.percentPlaceholder",
+                                                    )}
                                                     {...field}
                                                     onChange={(e) =>
                                                         field.onChange(
                                                             Number(
-                                                                e.target.value
-                                                            )
+                                                                e.target.value,
+                                                            ),
                                                         )
                                                     }
                                                 />
@@ -277,7 +303,9 @@ export function DebtForm({
                                     }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Installment Value (Min Payment)
+                                                {t(
+                                                    "debts.form.minPaymentLabel",
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -293,7 +321,7 @@ export function DebtForm({
                                                         // Calc Total: Payment * Inst
                                                         const installs =
                                                             form.getValues(
-                                                                "installmentsTotal"
+                                                                "installmentsTotal",
                                                             );
                                                         if (
                                                             installs &&
@@ -304,22 +332,24 @@ export function DebtForm({
                                                                     (
                                                                         newPayment *
                                                                         installs
-                                                                    ).toFixed(2)
+                                                                    ).toFixed(
+                                                                        2,
+                                                                    ),
                                                                 );
                                                             // Loop prevention
                                                             const currentTotal =
                                                                 form.getValues(
-                                                                    "totalAmount"
+                                                                    "totalAmount",
                                                                 );
                                                             if (
                                                                 Math.abs(
                                                                     newTotal -
-                                                                        currentTotal
+                                                                        currentTotal,
                                                                 ) > 0.05
                                                             ) {
                                                                 form.setValue(
                                                                     "totalAmount",
-                                                                    newTotal
+                                                                    newTotal,
                                                                 );
                                                             }
                                                         }
@@ -337,7 +367,9 @@ export function DebtForm({
                                     name="dueDate"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Due Day</FormLabel>
+                                            <FormLabel>
+                                                {t("debts.form.dueDayLabel")}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type="number"
@@ -347,8 +379,8 @@ export function DebtForm({
                                                     onChange={(e) =>
                                                         field.onChange(
                                                             Number(
-                                                                e.target.value
-                                                            )
+                                                                e.target.value,
+                                                            ),
                                                         )
                                                     }
                                                 />
@@ -368,12 +400,16 @@ export function DebtForm({
                                     }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Total Installments
+                                                {t(
+                                                    "debts.form.installmentsTotalLabel",
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type="number"
-                                                    placeholder="e.g. 12"
+                                                    placeholder={t(
+                                                        "common.numberExample",
+                                                    )}
                                                     value={value || ""}
                                                     onChange={(e) => {
                                                         const val =
@@ -389,11 +425,11 @@ export function DebtForm({
                                                         ) {
                                                             const currentTotal =
                                                                 form.getValues(
-                                                                    "totalAmount"
+                                                                    "totalAmount",
                                                                 );
                                                             const currentPayment =
                                                                 form.getValues(
-                                                                    "minimumPayment"
+                                                                    "minimumPayment",
                                                                 );
 
                                                             // Prioritize mapping: If Total > 0, calc Payment.
@@ -406,18 +442,18 @@ export function DebtForm({
                                                                             currentTotal /
                                                                             newInstalls
                                                                         ).toFixed(
-                                                                            2
-                                                                        )
+                                                                            2,
+                                                                        ),
                                                                     );
                                                                 if (
                                                                     Math.abs(
                                                                         newPayment -
-                                                                            currentPayment
+                                                                            currentPayment,
                                                                     ) > 0.05
                                                                 ) {
                                                                     form.setValue(
                                                                         "minimumPayment",
-                                                                        newPayment
+                                                                        newPayment,
                                                                     );
                                                                 }
                                                             } else if (
@@ -430,18 +466,18 @@ export function DebtForm({
                                                                             currentPayment *
                                                                             newInstalls
                                                                         ).toFixed(
-                                                                            2
-                                                                        )
+                                                                            2,
+                                                                        ),
                                                                     );
                                                                 if (
                                                                     Math.abs(
                                                                         newTotal -
-                                                                            currentTotal
+                                                                            currentTotal,
                                                                     ) > 0.05
                                                                 ) {
                                                                     form.setValue(
                                                                         "totalAmount",
-                                                                        newTotal
+                                                                        newTotal,
                                                                     );
                                                                 }
                                                             }
@@ -461,18 +497,22 @@ export function DebtForm({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Paid Installments
+                                                {t(
+                                                    "debts.form.installmentsPaidLabel",
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type="number"
-                                                    placeholder="e.g. 0"
+                                                    placeholder={t(
+                                                        "common.zeroPlaceholder",
+                                                    )}
                                                     {...field}
                                                     onChange={(e) =>
                                                         field.onChange(
                                                             Number(
-                                                                e.target.value
-                                                            )
+                                                                e.target.value,
+                                                            ),
                                                         )
                                                     }
                                                 />
@@ -490,14 +530,14 @@ export function DebtForm({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                First Installment Date
+                                                {t("debts.form.firstDateLabel")}
                                             </FormLabel>
                                             <FormControl>
                                                 <DatePicker
                                                     date={
                                                         field.value
                                                             ? new Date(
-                                                                  field.value
+                                                                  field.value,
                                                               )
                                                             : undefined
                                                     }
@@ -506,13 +546,15 @@ export function DebtForm({
                                                             date
                                                                 ? format(
                                                                       date,
-                                                                      "yyyy-MM-dd"
+                                                                      "yyyy-MM-dd",
                                                                   )
-                                                                : undefined
+                                                                : undefined,
                                                         )
                                                     }
                                                     className="w-full"
-                                                    placeholder="Selecione a data"
+                                                    placeholder={t(
+                                                        "common.selectDate",
+                                                    )}
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -528,15 +570,15 @@ export function DebtForm({
                                 variant="outline"
                                 onClick={onClose}
                             >
-                                Cancel
+                                {t("common.cancel")}
                             </Button>
                             <Button
                                 type="submit"
                                 disabled={form.formState.isSubmitting}
                             >
                                 {form.formState.isSubmitting
-                                    ? "Saving..."
-                                    : "Save"}
+                                    ? t("common.saving")
+                                    : t("common.save")}
                             </Button>
                         </DialogFooter>
                     </form>

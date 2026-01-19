@@ -1,4 +1,7 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+// @vitest-environment jsdom
+import "@testing-library/jest-dom/vitest";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { type ImapConfig, ImapConfigList } from "./ImapConfigList";
 
@@ -7,66 +10,88 @@ const mockConfigs: ImapConfig[] = [
         id: "1",
         host: "imap.test.com",
         port: 993,
-        secure: true,
+        // secure: true, // properties changed in ImapConfig interface? Checks verify
         email: "test@test.com",
         folder: "INBOX",
-        accountId: "acc1",
-        hasPassword: true,
+        // accountId: "acc1",
+        // hasPassword: true,
     },
     {
         id: "2",
         host: "imap.other.com",
         port: 993,
-        secure: true,
+        // secure: true,
         email: "other@test.com",
         folder: "Bills",
         sender: "bills@vendor.com",
-        accountId: "acc1",
-        hasPassword: true,
+        // accountId: "acc1",
+        // hasPassword: true,
     },
 ];
 
 describe("ImapConfigList", () => {
     it("should render configurations", () => {
-        render(<ImapConfigList configs={mockConfigs} onEdit={() => {}} onDelete={() => {}} />);
+        render(
+            <ImapConfigList
+                configs={mockConfigs}
+                onEdit={() => {}}
+                onDelete={() => {}}
+            />,
+        );
 
         expect(screen.getByText("test@test.com")).toBeInTheDocument();
         expect(screen.getByText("other@test.com")).toBeInTheDocument();
         expect(screen.getByText("INBOX")).toBeInTheDocument();
         expect(screen.getByText("Bills")).toBeInTheDocument();
-        expect(screen.getByText("From:")).toBeInTheDocument();
+        expect(screen.getByText("imap.list.from")).toBeInTheDocument();
         expect(screen.getByText("bills@vendor.com")).toBeInTheDocument();
     });
 
-    it("should call onEdit when edit button is clicked", () => {
+    it("should call onEdit when edit button is clicked", async () => {
         const onEdit = vi.fn();
-        render(<ImapConfigList configs={mockConfigs} onEdit={onEdit} onDelete={() => {}} />);
+        const user = userEvent.setup();
+        render(
+            <ImapConfigList
+                configs={mockConfigs}
+                onEdit={onEdit}
+                onDelete={() => {}}
+            />,
+        );
 
-        const editButtons = screen.getAllByRole("button", { name: /edit/i }); // Assuming title="Edit" or aria-label="Edit"
-        // Since we didn't add aria-labels, we might need to rely on the icon or add them.
-        // Let's check the component source or add test-ids.
-        // Actually, let's use the className or svg.
-        // Better: Select by testId if available.
-        // Fallback: Select all buttons and pick the first one (excluding Delete).
-
-        // Let's interact with the first row's edit button
-        fireEvent.click(editButtons[0]);
+        const editButtons = screen.getAllByRole("button", {
+            name: "common.edit",
+        });
+        await user.click(editButtons[0]);
         expect(onEdit).toHaveBeenCalledWith(mockConfigs[0]);
     });
 
-    it("should call onDelete when delete button is clicked", () => {
+    it("should call onDelete when delete button is clicked", async () => {
         const onDelete = vi.fn();
-        render(<ImapConfigList configs={mockConfigs} onEdit={() => {}} onDelete={onDelete} />);
+        const user = userEvent.setup();
+        render(
+            <ImapConfigList
+                configs={mockConfigs}
+                onEdit={() => {}}
+                onDelete={onDelete}
+            />,
+        );
 
         const deleteButtons = screen.getAllByRole("button", {
-            name: /delete/i,
+            name: "common.delete",
         });
-        fireEvent.click(deleteButtons[0]);
+        await user.click(deleteButtons[0]);
         expect(onDelete).toHaveBeenCalledWith("1");
     });
 
     it("should verify empty state", () => {
-        render(<ImapConfigList configs={[]} onEdit={() => {}} onDelete={() => {}} />);
-        expect(screen.getByText(/no imap configurations found/i)).toBeInTheDocument();
+        render(
+            <ImapConfigList
+                configs={[]}
+                onEdit={() => {}}
+                onDelete={() => {}}
+            />,
+        );
+        expect(screen.getByText("imap.list.noConfigTitle")).toBeInTheDocument();
+        expect(screen.getByText("imap.list.noConfigDesc")).toBeInTheDocument();
     });
 });

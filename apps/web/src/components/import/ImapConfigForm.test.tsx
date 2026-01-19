@@ -1,3 +1,5 @@
+// @vitest-environment jsdom
+import "@testing-library/jest-dom/vitest";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { ImapConfigForm } from "./ImapConfigForm";
@@ -8,35 +10,55 @@ describe("ImapConfigForm", () => {
     const mockTest = vi.fn();
 
     const fillForm = () => {
-        fireEvent.change(screen.getByLabelText(/host/i), {
+        fireEvent.change(screen.getByLabelText("imap.form.hostLabel"), {
             target: { value: "imap.test.com" },
         });
-        fireEvent.change(screen.getByLabelText(/port/i), {
+        fireEvent.change(screen.getByLabelText("imap.form.portLabel"), {
             target: { value: "993" },
         });
-        fireEvent.change(screen.getByLabelText(/email/i), {
+        fireEvent.change(screen.getByLabelText("imap.form.emailLabel"), {
             target: { value: "test@test.com" },
         });
-        fireEvent.change(screen.getByLabelText(/source folder/i), {
+        fireEvent.change(screen.getByLabelText("imap.form.folderLabel"), {
             target: { value: "INBOX" },
         });
     };
 
     it("should render form fields", () => {
-        render(<ImapConfigForm isOpen={true} onClose={mockClose} onSubmit={mockSubmit} />);
+        render(
+            <ImapConfigForm
+                isOpen={true}
+                onClose={mockClose}
+                onSubmit={mockSubmit}
+            />,
+        );
 
-        expect(screen.getByLabelText(/host/i)).toBeInTheDocument();
-        expect(screen.getByLabelText(/port/i)).toBeInTheDocument();
-        expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
-        expect(screen.getByLabelText(/source folder/i)).toBeInTheDocument();
+        expect(
+            screen.getByLabelText("imap.form.hostLabel"),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByLabelText("imap.form.portLabel"),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByLabelText("imap.form.emailLabel"),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByLabelText("imap.form.folderLabel"),
+        ).toBeInTheDocument();
     });
 
     it("should call onSubmit with data", async () => {
-        render(<ImapConfigForm isOpen={true} onClose={mockClose} onSubmit={mockSubmit} />);
+        render(
+            <ImapConfigForm
+                isOpen={true}
+                onClose={mockClose}
+                onSubmit={mockSubmit}
+            />,
+        );
 
         fillForm();
 
-        const submitBtn = screen.getByText(/save configuration/i);
+        const submitBtn = screen.getByText("imap.form.saveButton");
         fireEvent.click(submitBtn);
 
         await waitFor(
@@ -67,7 +89,7 @@ describe("ImapConfigForm", () => {
 
         fillForm();
 
-        const testBtn = screen.getByText(/test connection/i);
+        const testBtn = screen.getByText("imap.form.testButton");
         fireEvent.click(testBtn);
 
         await waitFor(() => {
@@ -89,7 +111,7 @@ describe("ImapConfigForm", () => {
 
         fillForm();
 
-        const testBtn = screen.getByText(/test connection/i);
+        const testBtn = screen.getByText("imap.form.testButton");
         fireEvent.click(testBtn);
 
         await waitFor(() => {

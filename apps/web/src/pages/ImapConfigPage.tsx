@@ -92,13 +92,13 @@ export const ImapConfigPage: React.FC = () => {
             showFeedback(
                 t("common.success"),
                 t("imap.list.deleteSuccess"),
-                "success"
+                "success",
             );
         } catch (error: any) {
             showFeedback(
                 t("common.error"),
                 error.response?.data?.message || t("imap.list.deleteError"),
-                "error"
+                "error",
             );
         }
     };
@@ -114,14 +114,14 @@ export const ImapConfigPage: React.FC = () => {
             showFeedback(
                 t("common.success"),
                 t("imap.list.saveSuccess"),
-                "success"
+                "success",
             );
             loadConfigs();
         } catch (error: any) {
             showFeedback(
-                "Error",
-                error.response?.data?.message || "Failed to save",
-                "error"
+                t("common.error"),
+                error.response?.data?.message || t("imap.list.saveError"),
+                "error",
             );
         } finally {
             setIsSaving(false);
@@ -129,7 +129,7 @@ export const ImapConfigPage: React.FC = () => {
     };
 
     const handleTest = async (
-        data: any
+        data: any,
     ): Promise<{ success: boolean; message?: string }> => {
         setIsTesting(true);
         try {
@@ -149,7 +149,8 @@ export const ImapConfigPage: React.FC = () => {
         } catch (error: any) {
             return {
                 success: false,
-                message: error.response?.data?.message || "Test failed",
+                message:
+                    error.response?.data?.message || t("imap.list.testFailed"),
             };
         } finally {
             setIsTesting(false);
@@ -165,13 +166,13 @@ export const ImapConfigPage: React.FC = () => {
             showFeedback(
                 t("imap.list.syncComplete"),
                 t("imap.list.syncedCount", { count: res.data.imported }),
-                "success"
+                "success",
             );
         } catch (error: any) {
             showFeedback(
                 t("common.error"),
                 error.response?.data?.message || t("imap.list.syncFailed"),
-                "error"
+                "error",
             );
         } finally {
             setIsSyncing(false);
@@ -181,7 +182,7 @@ export const ImapConfigPage: React.FC = () => {
     const showFeedback = (
         title: string,
         message: string,
-        type: "success" | "error"
+        type: "success" | "error",
     ) => {
         setFeedbackModal({ isOpen: true, title, message, type });
     };
@@ -210,7 +211,7 @@ export const ImapConfigPage: React.FC = () => {
                             onChange={setSelectedAccount}
                             options={accountOptions}
                             placeholder={t(
-                                "imap.list.selectAccountPlaceholder"
+                                "imap.list.selectAccountPlaceholder",
                             )}
                         />
                     </div>

@@ -1,5 +1,6 @@
 import { AppAlert } from "../ui/AppAlert";
 import { Button } from "../ui/Button";
+import { useTranslation, Trans } from "react-i18next";
 import {
     Dialog,
     DialogBody,
@@ -25,20 +26,28 @@ export function DeleteDebtDialog({
     debtName,
     isDeleting,
 }: DeleteDebtDialogProps) {
+    const { t } = useTranslation();
+
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Excluir Dívida</DialogTitle>
+                    <DialogTitle>{t("debts.deleteDialog.title")}</DialogTitle>
                     <DialogDescription>
-                        Esta ação não pode ser desfeita.
+                        {t("debts.deleteDialog.desc")}
                     </DialogDescription>
                 </DialogHeader>
 
                 <DialogBody>
-                    <AppAlert variant="destructive" title="Atenção">
-                        A dívida <strong>{debtName}</strong> será
-                        permanentemente removida.
+                    <AppAlert
+                        variant="destructive"
+                        title={t("debts.deleteDialog.attention")}
+                    >
+                        <Trans
+                            i18nKey="debts.deleteDialog.message"
+                            values={{ name: debtName }}
+                            components={{ strong: <strong /> }}
+                        />
                     </AppAlert>
                 </DialogBody>
 
@@ -48,14 +57,16 @@ export function DeleteDebtDialog({
                         onClick={onClose}
                         disabled={isDeleting}
                     >
-                        Cancelar
+                        {t("common.cancel")}
                     </Button>
                     <Button
                         variant="destructive"
                         onClick={onConfirm}
                         disabled={isDeleting}
                     >
-                        {isDeleting ? "Excluindo..." : "Sim, excluir dívida"}
+                        {isDeleting
+                            ? t("debts.deleteDialog.deleting")
+                            : t("debts.deleteDialog.confirm")}
                     </Button>
                 </DialogFooter>
             </DialogContent>

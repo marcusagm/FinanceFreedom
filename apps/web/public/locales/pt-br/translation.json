@@ -28,7 +28,14 @@
         "cancel": "Cancelar",
         "ok": "OK",
         "noCategory": "Sem categoria",
-        "attention": "Atenção"
+        "attention": "Atenção",
+        "select": "Selecione",
+        "selectDate": "Selecione a data",
+        "dateFormat": "dd/mm/aaaa",
+        "currencyPlaceholder": "R$ 0,00",
+        "percentPlaceholder": "0,00%",
+        "numberExample": "Ex: 12",
+        "zeroPlaceholder": "0"
     },
     "profile": {
         "title": "Meu Perfil",
@@ -357,7 +364,97 @@
         "simulatePrepayment": "Simular Antecipação",
         "dueDay": "Vence dia {{day}}",
         "minimum": "Mínimo:",
-        "totalBalance": "Saldo Devedor"
+        "totalBalance": "Saldo Devedor",
+        "interestRate": "{{rate}}% a.m.",
+        "strategy": {
+            "snowball": "Bola de Neve (Psicológico)",
+            "avalanche": "Avalanche (Matemático)",
+            "extraValueLabel": "Valor Extra Mensal (Opcional)",
+            "estimatedTime": "Tempo Estimado",
+            "years": "anos e",
+            "months": "meses",
+            "totalInterest": "Total em Juros previstos",
+            "extraValueHelp": "Definir um valor extra ajuda a calcular quanto tempo você economizará.",
+            "snowballDesc": "O método <strong>Bola de Neve</strong> foca em pagar as dívidas <strong>menores primeiro</strong>. Embora não seja o mais eficiente matematicamente, ele gera <strong>vitórias rápidas</strong> que motivam você a continuar pagando.",
+            "avalancheDesc": "O método <strong>Avalanche</strong> foca em pagar as dívidas com <strong>maiores juros primeiro</strong>. É o método que <strong>economiza mais dinheiro</strong> a longo prazo, eliminando o custo do dinheiro mais caro.",
+            "loading": "Carregando estratégia...",
+            "focus": "🎯 Foco Atual",
+            "payMax": "Pague o máximo possível nesta dívida!",
+            "payMin": "Pague apenas o mínimo.",
+            "registerPayment": "Registrar Pagamento",
+            "empty": "Nenhuma dívida para exibir nesta estratégia."
+        },
+        "installments": {
+            "title": "Parcelas: {{name}}",
+            "subtitle": "Visualize e gerencie os status das parcelas.",
+            "paid": "pagas",
+            "remaining": "restantes",
+            "table": {
+                "installment": "Parcela",
+                "dueDate": "Vencimento",
+                "status": "Status",
+                "actions": "Ações"
+            },
+            "status": {
+                "paid": "Paga",
+                "pending": "Pendente"
+            },
+            "actions": {
+                "markPending": "Marcar como pendente",
+                "markPaid": "Marcar como paga"
+            }
+        },
+        "paymentDialog": {
+            "title": "Registrar Pagamento de Dívida",
+            "subtitle": "Pagamento para: <strong>{{name}}</strong>",
+            "amountLabel": "Valor do Pagamento",
+            "dateLabel": "Data",
+            "sourceAccountLabel": "Conta de Origem",
+            "loadingAccounts": "Carregando contas...",
+            "selectAccount": "Selecione uma conta",
+            "paysInstallmentLabel": "Este pagamento quita uma parcela?",
+            "confirm": "Confirmar Pagamento",
+            "registering": "Registrando...",
+            "success": "Pagamento registrado com sucesso!",
+            "error": "Erro ao registrar pagamento.",
+            "validation": {
+                "amountNumber": "Valor deve ser um número",
+                "amountPositive": "Valor deve ser maior que 0",
+                "dateRequired": "Data é obrigatória",
+                "accountRequired": "Conta é obrigatória"
+            }
+        },
+        "form": {
+            "titleNew": "Nova Dívida",
+            "titleEdit": "Editar Dívida",
+            "subtitle": "Preencha os detalhes para salvar a dívida.",
+            "nameLabel": "Nome da Dívida",
+            "namePlaceholder": "Ex: Cartão de Crédito",
+            "totalLabel": "Saldo Devedor Total",
+            "interestLabel": "Juros Mensais (%)",
+            "minPaymentLabel": "Valor da Parcela (Mínimo)",
+            "dueDayLabel": "Dia de Vencimento",
+            "installmentsTotalLabel": "Total de Parcelas",
+            "installmentsPaidLabel": "Parcelas Pagas",
+            "firstDateLabel": "Data da Primeira Parcela",
+            "validation": {
+                "nameRequired": "Nome é obrigatório",
+                "amountNumber": "Valor deve ser um número",
+                "interestPositive": "Juros não podem ser negativos",
+                "paymentPositive": "Pagamento mínimo não pode ser negativo",
+                "dayRange": "Dia deve ser entre 1 e 31"
+            },
+            "saveSuccess": "Dívida salva com sucesso!",
+            "saveError": "Erro ao salvar dívida."
+        },
+        "deleteDialog": {
+            "title": "Excluir Dívida",
+            "desc": "Esta ação não pode ser desfeita.",
+            "attention": "Atenção",
+            "message": "A dívida <strong>{{name}}</strong> será permanentemente removida.",
+            "confirm": "Sim, excluir dívida",
+            "deleting": "Excluindo..."
+        }
     },
     "investments": {
         "title": "Carteiras de Investimento",
@@ -412,7 +509,52 @@
         "newFixedExpense": "Nova Despesa Fixa",
         "loadError": "Erro ao carregar dados",
         "deleteSuccess": "Despesa fixa removida!",
-        "deleteError": "Erro ao remover despesa fixa"
+        "deleteError": "Erro ao remover despesa fixa",
+        "list": {
+            "empty": "Nenhuma despesa fixa encontrada. Crie a primeira para começar!",
+            "table": {
+                "description": "Descrição",
+                "category": "Categoria",
+                "account": "Conta",
+                "autoCreate": "Auto-criar",
+                "dueDay": "Dia Venc.",
+                "amount": "Valor",
+                "actions": "Ações"
+            },
+            "yes": "Sim",
+            "no": "Não"
+        },
+        "form": {
+            "titleNew": "Nova Despesa Fixa",
+            "titleEdit": "Editar Despesa Fixa",
+            "subtitle": "Configure os detalhes do pagamento recorrente.",
+            "descriptionLabel": "Descrição",
+            "descriptionPlaceholder": "Ex: Aluguel",
+            "amountLabel": "Valor (R$)",
+            "dueDayLabel": "Dia de Vencimento",
+            "categoryLabel": "Categoria",
+            "accountLabel": "Conta",
+            "autoCreateLabel": "Criar transação automaticamente",
+            "autoCreateDesc": "O sistema irá gerar a despesa no dia do vencimento.",
+            "validation": {
+                "descRequired": "Descrição é obrigatória",
+                "amountRequired": "Valor é obrigatório",
+                "amountPositive": "Valor deve ser maior que 0",
+                "categoryRequired": "Categoria é obrigatória",
+                "accountRequired": "Conta é obrigatória"
+            },
+            "createSuccess": "Despesa fixa criada!",
+            "updateSuccess": "Despesa fixa atualizada!",
+            "saveError": "Erro ao salvar despesa fixa"
+        },
+        "deleteDialog": {
+            "title": "Excluir Despesa Fixa",
+            "desc": "Esta ação não pode ser desfeita.",
+            "attention": "Atenção",
+            "message": "A despesa fixa <strong>{{name}}</strong> será permanentemente removida.",
+            "confirm": "Excluir",
+            "deleting": "Excluindo..."
+        }
     },
     "incomeProjection": {
         "workUnitsTitle": "Unidades de Trabalho",
@@ -438,7 +580,61 @@
             "testFailed": "Conexão falhou",
             "syncComplete": "Sincronização Completa",
             "syncedCount": "Sincronizado {{count}} transações!",
-            "syncFailed": "Falha na sincronização"
+            "syncFailed": "Falha na sincronização",
+            "noConfigTitle": "Nenhuma Configuração",
+            "noConfigDesc": "Nenhuma configuração IMAP encontrada para esta conta. Adicione uma para começar a sincronizar.",
+            "headers": {
+                "email": "E-mail",
+                "folder": "Pasta",
+                "filters": "Filtros",
+                "actions": "Ações"
+            },
+            "from": "De:",
+            "subject": "Assunto:",
+            "none": "Nenhum"
+        },
+        "form": {
+            "titleNew": "Nova Configuração",
+            "titleEdit": "Editar Configuração",
+            "description": "Configure os detalhes da sua conexão IMAP e filtros abaixo.",
+            "success": "Sucesso",
+            "failed": "Falha",
+            "connection": "Conexão",
+            "hostLabel": "Host (IMAP)",
+            "hostPlaceholder": "imap.gmail.com",
+            "portLabel": "Porta",
+            "emailLabel": "E-mail / Usuário",
+            "emailPlaceholder": "usuario@exemplo.com",
+            "passwordLabel": "Senha",
+            "passwordPlaceholder": "Digite a senha",
+            "passwordEditPlaceholder": "********",
+            "sslLabel": "Usar SSL/TLS",
+            "filters": "Filtros e Roteamento",
+            "folderLabel": "Pasta de Origem",
+            "folderPlaceholder": "INBOX",
+            "folderHelp": "A pasta da caixa de correio para verificar e-mails (ex: INBOX, Archive, Contas)",
+            "senderLabel": "Remetente (De)",
+            "senderPlaceholder": "exemplo@banco.com",
+            "subjectLabel": "Assunto Contém",
+            "subjectPlaceholder": "Fatura",
+            "optional": "(Opcional)",
+            "testButton": "Testar Conexão",
+            "testingButton": "Testando...",
+            "saveButton": "Salvar Configuração",
+            "savingButton": "Salvando...",
+            "cancel": "Cancelar",
+            "validation": {
+                "hostRequired": "Host é obrigatório",
+                "portRequired": "Porta é obrigatória",
+                "emailRequired": "E-mail é obrigatório",
+                "folderRequired": "Pasta é obrigatória"
+            }
+        },
+        "syncDialog": {
+            "title": "Sincronizar Contas",
+            "description": "Deseja verificar manualmente a caixa de entrada de todos os e-mails cadastrados em busca de novas transações?",
+            "note": "Isso pode levar alguns segundos.",
+            "confirm": "Confirmar"
         }
     },
     "import": {
@@ -449,7 +645,20 @@
         "processing": "Processando arquivo...",
         "review": {
             "title": "Revisar Transações",
-            "countFound": "{{count}} novas transações encontradas."
+            "countFound": "{{count}} novas transações encontradas.",
+            "unknownAccount": "Desconhecida",
+            "table": {
+                "date": "Data",
+                "account": "Conta",
+                "description": "Descrição",
+                "category": "Categoria",
+                "amount": "Valor"
+            }
+        },
+        "zone": {
+            "dropActive": "Solte o arquivo OFX aqui...",
+            "dragDrop": "Arraste e solte um arquivo OFX aqui",
+            "clickSelect": "ou clique para selecionar o arquivo"
         },
         "importing": "Importando...",
         "confirm": "Confirmar Importação",
@@ -591,6 +800,7 @@
     },
     "settings": {
         "title": "Configurações do Sistema",
+        "description": "Ajuste os parâmetros globais do Finance Freedom.",
         "general": {
             "title": "Configurações Gerais",
             "description": "Ajuste os parâmetros globais do Finance Freedom.",

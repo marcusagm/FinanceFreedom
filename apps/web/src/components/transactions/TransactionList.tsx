@@ -60,14 +60,12 @@ export function TransactionList({
                     {transactions.map((transaction) => (
                         <TableRow key={transaction.id}>
                             <TableCell className="text-left">
-                                <TableCell className="text-left">
-                                    {transaction.date
-                                        ? format(
-                                              new Date(transaction.date),
-                                              "dd/MM/yyyy"
-                                          )
-                                        : "-"}
-                                </TableCell>
+                                {transaction.date
+                                    ? format(
+                                          new Date(transaction.date),
+                                          "dd/MM/yyyy",
+                                      )
+                                    : "-"}
                             </TableCell>
                             <TableCell className="text-left">
                                 {transaction.description}
@@ -92,7 +90,7 @@ export function TransactionList({
                                             : "-"}
                                         <MoneyDisplay
                                             value={Math.abs(
-                                                Number(transaction.amount)
+                                                Number(transaction.amount),
                                             )}
                                         />
                                     </span>
@@ -111,7 +109,7 @@ export function TransactionList({
                                         size="icon"
                                         onClick={() =>
                                             setSplitDialogTransaction(
-                                                transaction
+                                                transaction,
                                             )
                                         }
                                         className="h-8 w-8 text-blue-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/20"
@@ -124,7 +122,6 @@ export function TransactionList({
                                         size="icon"
                                         onClick={() => onEdit(transaction)}
                                         className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                                        className="h-8 w-8 text-muted-foreground hover:text-foreground"
                                         title={t("common.edit")}
                                     >
                                         <Edit2 className="w-4 h-4" />
@@ -133,7 +130,6 @@ export function TransactionList({
                                         variant="ghost"
                                         size="icon"
                                         onClick={() => onDelete(transaction.id)}
-                                        className="h-8 w-8 text-rose-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20"
                                         className="h-8 w-8 text-rose-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20"
                                         title={t("common.delete")}
                                     >

@@ -28,7 +28,14 @@
         "cancel": "Cancel",
         "ok": "OK",
         "noCategory": "No category",
-        "attention": "Attention"
+        "attention": "Attention",
+        "select": "Select",
+        "selectDate": "Select date",
+        "dateFormat": "MM/dd/yyyy",
+        "currencyPlaceholder": "$ 0.00",
+        "percentPlaceholder": "0.00%",
+        "numberExample": "e.g. 12",
+        "zeroPlaceholder": "0"
     },
     "profile": {
         "title": "My Profile",
@@ -357,7 +364,97 @@
         "simulatePrepayment": "Simulate Prepayment",
         "dueDay": "Due day {{day}}",
         "minimum": "Minimum:",
-        "totalBalance": "Total Balance"
+        "totalBalance": "Total Balance",
+        "interestRate": "{{rate}}% / mo",
+        "strategy": {
+            "snowball": "Snowball (Psychological)",
+            "avalanche": "Avalanche (Mathematical)",
+            "extraValueLabel": "Monthly Extra Value (Optional)",
+            "estimatedTime": "Estimated Time",
+            "years": "years and",
+            "months": "months",
+            "totalInterest": "Total Forecasted Interest",
+            "extraValueHelp": "Defining an extra value helps estimate how much time you will save.",
+            "snowballDesc": "The <strong>Snowball</strong> method focuses on paying <strong>smallest debts first</strong>. Although not mathematically most efficient, it generates <strong>quick wins</strong> that motivate you to keep paying.",
+            "avalancheDesc": "The <strong>Avalanche</strong> method focuses on paying debts with the <strong>highest interest first</strong>. It is the method that <strong>saves the most money</strong> in the long run by eliminating the cost of expensive debt.",
+            "loading": "Loading strategy...",
+            "focus": "🎯 Current Focus",
+            "payMax": "Pay as much as possible on this debt!",
+            "payMin": "Pay only the minimum.",
+            "registerPayment": "Register Payment",
+            "empty": "No debts to display in this strategy."
+        },
+        "installments": {
+            "title": "Installments: {{name}}",
+            "subtitle": "View and manage payment statuses.",
+            "paid": "paid",
+            "remaining": "remaining",
+            "table": {
+                "installment": "Installment",
+                "dueDate": "Due Date",
+                "status": "Status",
+                "actions": "Actions"
+            },
+            "status": {
+                "paid": "Paid",
+                "pending": "Pending"
+            },
+            "actions": {
+                "markPending": "Mark as pending",
+                "markPaid": "Mark as paid"
+            }
+        },
+        "paymentDialog": {
+            "title": "Register Debt Payment",
+            "subtitle": "Payment for: <strong>{{name}}</strong>",
+            "amountLabel": "Payment Amount",
+            "dateLabel": "Date",
+            "sourceAccountLabel": "Source Account",
+            "loadingAccounts": "Loading accounts...",
+            "selectAccount": "Select an account",
+            "paysInstallmentLabel": "Does this payment settle an installment?",
+            "confirm": "Confirm Payment",
+            "registering": "Registering...",
+            "success": "Payment registered successfully!",
+            "error": "Error registering payment.",
+            "validation": {
+                "amountNumber": "Amount must be a number",
+                "amountPositive": "Amount must be greater than 0",
+                "dateRequired": "Date is required",
+                "accountRequired": "Account is required"
+            }
+        },
+        "form": {
+            "titleNew": "New Debt",
+            "titleEdit": "Edit Debt",
+            "subtitle": "Fill in the details to save the debt.",
+            "nameLabel": "Debt Name",
+            "namePlaceholder": "Ex: Credit Card",
+            "totalLabel": "Total Balance",
+            "interestLabel": "Monthly Interest (%)",
+            "minPaymentLabel": "Installment Value (Min Payment)",
+            "dueDayLabel": "Due Day",
+            "installmentsTotalLabel": "Total Installments",
+            "installmentsPaidLabel": "Paid Installments",
+            "firstDateLabel": "First Installment Date",
+            "validation": {
+                "nameRequired": "Name is required",
+                "amountNumber": "Amount must be a number",
+                "interestPositive": "Interest cannot be negative",
+                "paymentPositive": "Minimum payment cannot be negative",
+                "dayRange": "Day must be between 1 and 31"
+            },
+            "saveSuccess": "Debt saved successfully!",
+            "saveError": "Error saving debt."
+        },
+        "deleteDialog": {
+            "title": "Delete Debt",
+            "desc": "This action cannot be undone.",
+            "attention": "Attention",
+            "message": "The debt <strong>{{name}}</strong> will be permanently removed.",
+            "confirm": "Yes, delete debt",
+            "deleting": "Deleting..."
+        }
     },
     "investments": {
         "title": "Investment Wallets",
@@ -412,7 +509,52 @@
         "newFixedExpense": "New Fixed Expense",
         "loadError": "Error loading data",
         "deleteSuccess": "Fixed expense removed!",
-        "deleteError": "Error removing fixed expense"
+        "deleteError": "Error removing fixed expense",
+        "list": {
+            "empty": "No fixed expenses found. Create the first one to start!",
+            "table": {
+                "description": "Description",
+                "category": "Category",
+                "account": "Account",
+                "autoCreate": "Auto-create",
+                "dueDay": "Due Day",
+                "amount": "Amount",
+                "actions": "Actions"
+            },
+            "yes": "Yes",
+            "no": "No"
+        },
+        "form": {
+            "titleNew": "New Fixed Expense",
+            "titleEdit": "Edit Fixed Expense",
+            "subtitle": "Configure the details of the recurring payment.",
+            "descriptionLabel": "Description",
+            "descriptionPlaceholder": "Ex: Rent",
+            "amountLabel": "Amount ($)",
+            "dueDayLabel": "Due Day",
+            "categoryLabel": "Category",
+            "accountLabel": "Account",
+            "autoCreateLabel": "Create transaction automatically",
+            "autoCreateDesc": "The system will generate the expense on the due day.",
+            "validation": {
+                "descRequired": "Description is required",
+                "amountRequired": "Amount is required",
+                "amountPositive": "Amount must be greater than 0",
+                "categoryRequired": "Category is required",
+                "accountRequired": "Account is required"
+            },
+            "createSuccess": "Fixed expense created!",
+            "updateSuccess": "Fixed expense updated!",
+            "saveError": "Error saving fixed expense"
+        },
+        "deleteDialog": {
+            "title": "Delete Fixed Expense",
+            "desc": "This action cannot be undone.",
+            "attention": "Attention",
+            "message": "The fixed expense <strong>{{name}}</strong> will be permanently removed.",
+            "confirm": "Delete",
+            "deleting": "Deleting..."
+        }
     },
     "incomeProjection": {
         "workUnitsTitle": "Work Units",
@@ -438,7 +580,61 @@
             "testFailed": "Connection failed",
             "syncComplete": "Sync Complete",
             "syncedCount": "Synced {{count}} transactions!",
-            "syncFailed": "Sync failed"
+            "syncFailed": "Sync failed",
+            "noConfigTitle": "No Configuration",
+            "noConfigDesc": "No IMAP configurations found for this account. Add one to start syncing.",
+            "headers": {
+                "email": "Email",
+                "folder": "Folder",
+                "filters": "Filters",
+                "actions": "Actions"
+            },
+            "from": "From:",
+            "subject": "Subject:",
+            "none": "None"
+        },
+        "form": {
+            "titleNew": "New Configuration",
+            "titleEdit": "Edit Configuration",
+            "description": "Configure your IMAP connection details and filters below.",
+            "success": "Success",
+            "failed": "Failed",
+            "connection": "Connection",
+            "hostLabel": "Host (IMAP)",
+            "hostPlaceholder": "imap.gmail.com",
+            "portLabel": "Port",
+            "emailLabel": "Email / User",
+            "emailPlaceholder": "user@example.com",
+            "passwordLabel": "Password",
+            "passwordPlaceholder": "Enter password",
+            "passwordEditPlaceholder": "********",
+            "sslLabel": "Use SSL/TLS",
+            "filters": "Filters & Routing",
+            "folderLabel": "Source Folder",
+            "folderPlaceholder": "INBOX",
+            "folderHelp": "The mailbox folder to check for emails (e.g. INBOX, Archive, Bills)",
+            "senderLabel": "Sender (From)",
+            "senderPlaceholder": "example@bank.com",
+            "subjectLabel": "Subject Contains",
+            "subjectPlaceholder": "Invoice",
+            "optional": "(Optional)",
+            "testButton": "Test Connection",
+            "testingButton": "Testing...",
+            "saveButton": "Save Configuration",
+            "savingButton": "Saving...",
+            "cancel": "Cancel",
+            "validation": {
+                "hostRequired": "Host is required",
+                "portRequired": "Port is required",
+                "emailRequired": "Email is required",
+                "folderRequired": "Folder is required"
+            }
+        },
+        "syncDialog": {
+            "title": "Sync Accounts",
+            "description": "Do you want to manually check the inbox of all registered emails for new transactions?",
+            "note": "This may take a few seconds.",
+            "confirm": "Confirm"
         }
     },
     "import": {
@@ -449,7 +645,20 @@
         "processing": "Processing file...",
         "review": {
             "title": "Review Transactions",
-            "countFound": "{{count}} new transactions found."
+            "countFound": "{{count}} new transactions found.",
+            "unknownAccount": "Unknown",
+            "table": {
+                "date": "Date",
+                "account": "Account",
+                "description": "Description",
+                "category": "Category",
+                "amount": "Amount"
+            }
+        },
+        "zone": {
+            "dropActive": "Drop the OFX file here...",
+            "dragDrop": "Drag & drop an OFX file here",
+            "clickSelect": "or click to select file"
         },
         "importing": "Importing...",
         "confirm": "Confirm Import",

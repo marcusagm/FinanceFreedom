@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import * as z from "zod";
 import type { Category } from "../../services/category.service";
@@ -41,19 +42,6 @@ interface FixedExpenseDialogProps {
     accounts: Account[];
 }
 
-const formSchema = z.object({
-    description: z.string().min(1, "Descrição é obrigatória"),
-    amount: z
-        .number({ required_error: "Valor é obrigatório" })
-        .min(0.01, "Valor deve ser maior que 0"),
-    dueDay: z.number().min(1).max(31),
-    autoCreate: z.boolean().default(true),
-    categoryId: z.string().min(1, "Categoria é obrigatória"),
-    accountId: z.string().min(1, "Conta é obrigatória"),
-});
-
-type FormValues = z.infer<typeof formSchema>;
-
 export function FixedExpenseDialog({
     isOpen,
     onClose,
@@ -62,6 +50,31 @@ export function FixedExpenseDialog({
     categories,
     accounts,
 }: FixedExpenseDialogProps) {
+    const { t } = useTranslation();
+
+    const formSchema = z.object({
+        description: z
+            .string()
+            .min(1, t("fixedExpenses.form.validation.descRequired")),
+        amount: z
+            .number({
+                required_error: t(
+                    "fixedExpenses.form.validation.amountRequired",
+                ),
+            })
+            .min(0.01, t("fixedExpenses.form.validation.amountPositive")),
+        dueDay: z.number().min(1).max(31),
+        autoCreate: z.boolean().default(true),
+        categoryId: z
+            .string()
+            .min(1, t("fixedExpenses.form.validation.categoryRequired")),
+        accountId: z
+            .string()
+            .min(1, t("fixedExpenses.form.validation.accountRequired")),
+    });
+
+    type FormValues = z.infer<typeof formSchema>;
+
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -108,16 +121,16 @@ export function FixedExpenseDialog({
 
             if (expenseToEdit) {
                 await fixedExpenseService.update(expenseToEdit.id, payload);
-                toast.success("Despesa fixa atualizada!");
+                toast.success(t("fixedExpenses.form.updateSuccess"));
             } else {
                 await fixedExpenseService.create(payload);
-                toast.success("Despesa fixa criada!");
+                toast.success(t("fixedExpenses.form.createSuccess"));
             }
             onSuccess();
             onClose();
         } catch (error) {
             console.error("Failed to save expense", error);
-            toast.error("Erro ao salvar despesa fixa");
+            toast.error(t("fixedExpenses.form.saveError"));
         }
     };
 
@@ -127,11 +140,11 @@ export function FixedExpenseDialog({
                 <DialogHeader>
                     <DialogTitle>
                         {expenseToEdit
-                            ? "Editar Despesa Fixa"
-                            : "Nova Despesa Fixa"}
+                            ? t("fixedExpenses.form.titleEdit")
+                            : t("fixedExpenses.form.titleNew")}
                     </DialogTitle>
                     <DialogDescription>
-                        Configure os detalhes do pagamento recorrente.
+                        {t("fixedExpenses.form.subtitle")}
                     </DialogDescription>
                 </DialogHeader>
 
@@ -146,10 +159,16 @@ export function FixedExpenseDialog({
                                 name="description"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Descrição</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                "fixedExpenses.form.descriptionLabel",
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="Ex: Aluguel"
+                                                placeholder={t(
+                                                    "fixedExpenses.form.descriptionPlaceholder",
+                                                )}
                                                 {...field}
                                             />
                                         </FormControl>
@@ -166,16 +185,22 @@ export function FixedExpenseDialog({
                                         field: { value, onChange, ...field },
                                     }) => (
                                         <FormItem>
-                                            <FormLabel>Valor (R$)</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    "fixedExpenses.form.amountLabel",
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     currency
-                                                    placeholder="0,00"
+                                                    placeholder={t(
+                                                        "common.currencyPlaceholder",
+                                                    )}
                                                     value={value}
                                                     onValueChange={(values) => {
                                                         onChange(
                                                             values.floatValue ||
-                                                                0
+                                                                0,
                                                         );
                                                     }}
                                                     {...field}
@@ -194,7 +219,9 @@ export function FixedExpenseDialog({
                                     }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Dia de Vencimento
+                                                {t(
+                                                    "fixedExpenses.form.dueDayLabel",
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -204,8 +231,8 @@ export function FixedExpenseDialog({
                                                     onChange={(e) =>
                                                         onChange(
                                                             Number.parseInt(
-                                                                e.target.value
-                                                            )
+                                                                e.target.value,
+                                                            ),
                                                         )
                                                     }
                                                     {...field}
@@ -223,7 +250,11 @@ export function FixedExpenseDialog({
                                     name="categoryId"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Categoria</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    "fixedExpenses.form.categoryLabel",
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Select
                                                     value={field.value}
@@ -232,9 +263,11 @@ export function FixedExpenseDialog({
                                                         (c) => ({
                                                             value: c.id,
                                                             label: c.name,
-                                                        })
+                                                        }),
                                                     )}
-                                                    placeholder="Selecione"
+                                                    placeholder={t(
+                                                        "common.select",
+                                                    )}
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -247,7 +280,11 @@ export function FixedExpenseDialog({
                                     name="accountId"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Conta</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    "fixedExpenses.form.accountLabel",
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Select
                                                     value={field.value}
@@ -256,9 +293,11 @@ export function FixedExpenseDialog({
                                                         (a) => ({
                                                             value: a.id,
                                                             label: a.name,
-                                                        })
+                                                        }),
                                                     )}
-                                                    placeholder="Selecione"
+                                                    placeholder={t(
+                                                        "common.select",
+                                                    )}
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -280,11 +319,14 @@ export function FixedExpenseDialog({
                                         </FormControl>
                                         <div className="space-y-1 leading-none">
                                             <FormLabel>
-                                                Criar transação automaticamente
+                                                {t(
+                                                    "fixedExpenses.form.autoCreateLabel",
+                                                )}
                                             </FormLabel>
                                             <p className="text-sm text-muted-foreground">
-                                                O sistema irá gerar a despesa no
-                                                dia do vencimento.
+                                                {t(
+                                                    "fixedExpenses.form.autoCreateDesc",
+                                                )}
                                             </p>
                                         </div>
                                     </FormItem>
@@ -298,7 +340,7 @@ export function FixedExpenseDialog({
                                 variant="outline"
                                 onClick={onClose}
                             >
-                                Cancelar
+                                {t("common.cancel")}
                             </Button>
                             <Button
                                 type="submit"
@@ -307,7 +349,7 @@ export function FixedExpenseDialog({
                                 {form.formState.isSubmitting ? (
                                     <Loader2 className="h-4 w-4 animate-spin" />
                                 ) : (
-                                    "Salvar"
+                                    t("common.save")
                                 )}
                             </Button>
                         </DialogFooter>

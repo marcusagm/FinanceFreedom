@@ -1,4 +1,5 @@
 import { Edit2, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import type { FixedExpense } from "../../services/fixed-expense.service";
 import { Button } from "../ui/Button";
 import { Card, CardContent } from "../ui/Card";
@@ -23,10 +24,12 @@ export function FixedExpenseList({
     onEdit,
     onDelete,
 }: FixedExpenseListProps) {
+    const { t } = useTranslation();
+
     if (expenses.length === 0) {
         return (
             <div className="text-center py-12 text-muted-foreground border rounded-lg bg-card">
-                Nenhuma despesa fixa encontrada. Crie a primeira para começar!
+                {t("fixedExpenses.list.empty")}
             </div>
         );
     }
@@ -37,18 +40,26 @@ export function FixedExpenseList({
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Descrição</TableHead>
-                            <TableHead>Categoria</TableHead>
-                            <TableHead>Conta</TableHead>
-                            <TableHead className="w-24 text-center">
-                                Auto-criar
+                            <TableHead>
+                                {t("fixedExpenses.list.table.description")}
+                            </TableHead>
+                            <TableHead>
+                                {t("fixedExpenses.list.table.category")}
+                            </TableHead>
+                            <TableHead>
+                                {t("fixedExpenses.list.table.account")}
                             </TableHead>
                             <TableHead className="w-24 text-center">
-                                Dia Venc.
+                                {t("fixedExpenses.list.table.autoCreate")}
                             </TableHead>
-                            <TableHead className="text-right">Valor</TableHead>
+                            <TableHead className="w-24 text-center">
+                                {t("fixedExpenses.list.table.dueDay")}
+                            </TableHead>
+                            <TableHead className="text-right">
+                                {t("fixedExpenses.list.table.amount")}
+                            </TableHead>
                             <TableHead className="w-32 text-center">
-                                Ações
+                                {t("fixedExpenses.list.table.actions")}
                             </TableHead>
                         </TableRow>
                     </TableHeader>
@@ -79,7 +90,9 @@ export function FixedExpenseList({
                                     {expense.account?.name || "-"}
                                 </TableCell>
                                 <TableCell className="text-center">
-                                    {expense.autoCreate ? "Sim" : "Não"}
+                                    {expense.autoCreate
+                                        ? t("fixedExpenses.list.yes")
+                                        : t("fixedExpenses.list.no")}
                                 </TableCell>
                                 <TableCell>{expense.dueDay}</TableCell>
                                 <TableCell className="text-right">

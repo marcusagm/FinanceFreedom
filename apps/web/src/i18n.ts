@@ -8,7 +8,7 @@ i18n.use(Backend)
     .use(initReactI18next)
     .init({
         fallbackLng: "pt-br",
-        supportedLngs: ["pt-br", "en"],
+        supportedLngs: ["pt-br", "pt", "en"],
         lowerCaseLng: true,
         debug: import.meta.env.DEV,
 

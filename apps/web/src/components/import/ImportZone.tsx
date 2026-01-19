@@ -2,6 +2,7 @@ import { Upload } from "lucide-react";
 import type React from "react";
 import { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
+import { useTranslation } from "react-i18next";
 
 interface ImportZoneProps {
     onFileSelect: (file: File) => void;
@@ -12,13 +13,14 @@ export const ImportZone: React.FC<ImportZoneProps> = ({
     onFileSelect,
     disabled = false,
 }) => {
+    const { t } = useTranslation();
     const onDrop = useCallback(
         (acceptedFiles: File[]) => {
             if (acceptedFiles.length > 0) {
                 onFileSelect(acceptedFiles[0]);
             }
         },
-        [onFileSelect]
+        [onFileSelect],
     );
 
     const {
@@ -58,8 +60,8 @@ export const ImportZone: React.FC<ImportZoneProps> = ({
             className={`
                 border-2 border-dashed rounded-lg p-10 text-center cursor-pointer transition-colors
                 ${borderColorClass} ${bgColorClass} ${
-                disabled ? "opacity-50 cursor-not-allowed" : ""
-            }
+                    disabled ? "opacity-50 cursor-not-allowed" : ""
+                }
             `}
         >
             <input {...getInputProps()} />
@@ -68,15 +70,15 @@ export const ImportZone: React.FC<ImportZoneProps> = ({
                 <Upload className="w-12 h-12 text-muted-foreground mb-4" />
                 {isDragActive ? (
                     <p className="text-lg text-primary font-medium">
-                        Drop the OFX file here...
+                        {t("import.zone.dropActive")}
                     </p>
                 ) : (
                     <>
                         <p className="text-lg text-foreground font-medium mb-1">
-                            Drag & drop an OFX file here
+                            {t("import.zone.dragDrop")}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                            or click to select file
+                            {t("import.zone.clickSelect")}
                         </p>
                     </>
                 )}

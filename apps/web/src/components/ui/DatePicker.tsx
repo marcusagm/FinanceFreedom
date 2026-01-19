@@ -1,19 +1,13 @@
-import { type ClassValue, clsx } from "clsx";
-import { format, isValid, parse, startOfDay } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { format, isValid, parse } from "date-fns";
+import { ptBR, enUS } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
 import * as React from "react";
-import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { PatternFormat } from "react-number-format";
-import { twMerge } from "tailwind-merge";
-
-import { Button } from "./Button";
-import { Calendar } from "./Calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "./Popover";
-
-function cn(...inputs: ClassValue[]) {
-    return twMerge(clsx(inputs));
-}
+import { cn } from "../../lib/utils";
+import { Button } from "../ui/Button";
+import { Calendar } from "../ui/Calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/Popover";
 
 interface DatePickerProps {
     date: Date | undefined;
@@ -23,114 +17,82 @@ interface DatePickerProps {
     disabled?: boolean;
 }
 
-export const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
-    ({ date, setDate, className, placeholder = "dd/mm/aaaa", disabled }, ref) => {
-        const [inputValue, setInputValue] = useState(date ? format(date, "dd/MM/yyyy") : "");
-        const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+export function DatePicker({
+    date,
+    setDate,
+    className,
+    placeholder,
+    disabled,
+}: DatePickerProps) {
+    const { t, i18n } = useTranslation();
+    const [inputValue, setInputValue] = React.useState("");
 
-        // Track the last valid date timestamp to prevent overwriting input during typing
-        const lastDateRef = useRef<number | undefined>(
-            date ? startOfDay(date).getTime() : undefined,
-        );
+    const locale = React.useMemo(() => {
+        return i18n.language.toLowerCase().includes("pt") ? ptBR : enUS;
+    }, [i18n.language]);
 
-        // Sync input with date prop only when the date effectively changes
-        useEffect(() => {
-            const normalizedTimestamp = date ? startOfDay(date).getTime() : undefined;
+    React.useEffect(() => {
+        if (date && isValid(date)) {
+            setInputValue(format(date, "dd/MM/yyyy"));
+        } else if (!date) {
+            setInputValue("");
+        }
+    }, [date]);
 
-            if (normalizedTimestamp !== lastDateRef.current) {
-                lastDateRef.current = normalizedTimestamp;
-                if (date) {
-                    setInputValue(format(date, "dd/MM/yyyy"));
-                } else {
-                    setInputValue("");
-                }
+    // Handle input change
+    const handleValueChange = (values: any) => {
+        const { formattedValue } = values;
+        setInputValue(formattedValue);
+
+        if (formattedValue.length === 10) {
+            const parsedDate = parse(formattedValue, "dd/MM/yyyy", new Date());
+            if (isValid(parsedDate)) {
+                setDate(parsedDate);
             }
-        }, [date]);
+        } else if (formattedValue === "") {
+            setDate(undefined);
+        }
+    };
 
-        const handleInputChange = (values: {
-            value: string;
-            formattedValue: string;
-        }) => {
-            const value = values.formattedValue;
-            setInputValue(value);
-
-            // Try to parse dd/MM/yyyy
-            if (value.length === 10) {
-                const parsedDate = parse(value, "dd/MM/yyyy", new Date());
-                if (isValid(parsedDate)) {
-                    // Verify if it's actually different to avoid unnecessary updates
-                    // Normalize both to start of day for comparison
-                    const normalizedParsed = startOfDay(parsedDate);
-                    const normalizedCurrent = date ? startOfDay(date) : undefined;
-
-                    if (
-                        !normalizedCurrent ||
-                        normalizedParsed.getTime() !== normalizedCurrent.getTime()
-                    ) {
-                        setDate(normalizedParsed);
-                    }
-                }
-            } else if (value === "" && date) {
-                setDate(undefined);
-            }
-        };
-
-        const handleCalendarSelect = (newDate: Date | undefined) => {
-            if (newDate) {
-                // Normalize newDate to start of day before setting
-                const normalizedNewDate = startOfDay(newDate);
-                setDate(normalizedNewDate);
-
-                // Update local inputs
-                setInputValue(format(normalizedNewDate, "dd/MM/yyyy"));
-                lastDateRef.current = normalizedNewDate.getTime();
-                setIsPopoverOpen(false);
-            } else {
-                setDate(undefined);
-                setInputValue("");
-                lastDateRef.current = undefined;
-            }
-        };
-
-        return (
-            <div className={cn("relative flex items-center w-full", className)}>
-                <PatternFormat
-                    getInputRef={ref} // Forward ref to the actual input
-                    format="##/##/####"
-                    placeholder={placeholder}
-                    mask="_"
-                    value={inputValue}
-                    onValueChange={handleInputChange}
-                    disabled={disabled}
-                    className={cn(
-                        "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-                        "pr-10",
-                    )}
-                />
-                <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
-                    <PopoverTrigger asChild>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="absolute right-0 h-10 w-10 text-muted-foreground hover:text-foreground"
-                            disabled={disabled}
-                        >
-                            <CalendarIcon className="h-4 w-4" />
-                        </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="end">
-                        <Calendar
-                            mode="single"
-                            selected={date}
-                            onSelect={handleCalendarSelect}
-                            initialFocus
-                            locale={ptBR}
-                        />
-                    </PopoverContent>
-                </Popover>
-            </div>
-        );
-    },
-);
-
-DatePicker.displayName = "DatePicker";
+    return (
+        <div className={cn("relative", className)}>
+            <PatternFormat
+                format="##/##/####"
+                mask="_"
+                value={inputValue}
+                onValueChange={handleValueChange}
+                placeholder={placeholder || t("common.dateFormat")}
+                className={cn(
+                    "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+                    "pr-10", // Space for the calendar icon
+                )}
+                disabled={disabled}
+            />
+            <Popover>
+                <PopoverTrigger asChild>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-0 top-0 h-10 w-10 text-muted-foreground hover:text-foreground"
+                        disabled={disabled}
+                        type="button"
+                    >
+                        <CalendarIcon className="h-4 w-4" />
+                    </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 z-50" align="end">
+                    <Calendar
+                        mode="single"
+                        selected={date}
+                        onSelect={(d) => {
+                            setDate(d);
+                            // The useEffect will update the input value
+                        }}
+                        initialFocus
+                        locale={locale}
+                    />
+                </PopoverContent>
+            </Popover>
+        </div>
+    );
+}

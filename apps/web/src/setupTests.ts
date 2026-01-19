@@ -71,14 +71,14 @@ vi.mock("@/components/ui/Dialog", () => ({
             ? React.createElement(
                   "div",
                   { "data-testid": "dialog-root" },
-                  children
+                  children,
               )
             : null,
     DialogContent: ({ children, className }: any) =>
         React.createElement(
             "div",
             { role: "dialog", className, "data-testid": "dialog-content" },
-            children
+            children,
         ),
     DialogHeader: ({ children }: any) =>
         React.createElement("div", null, children),
@@ -101,25 +101,25 @@ vi.mock("@/components/ui/DropdownMenu", () => {
             React.createElement(
                 "div",
                 { "data-testid": "dropdown-root" },
-                children
+                children,
             ),
         DropdownMenuTrigger: ({ children }: any) =>
             React.createElement(
                 "div",
                 { "data-testid": "dropdown-trigger" },
-                children
+                children,
             ),
         DropdownMenuContent: ({ children }: any) =>
             React.createElement(
                 "div",
                 { "data-testid": "dropdown-content" },
-                children
+                children,
             ),
         DropdownMenuItem: ({ children, onClick }: any) =>
             React.createElement(
                 "div",
                 { onClick, "data-testid": "dropdown-item" },
-                children
+                children,
             ),
         DropdownMenuLabel: ({ children }: any) =>
             React.createElement("div", null, children),
@@ -151,4 +151,21 @@ vi.mock("@radix-ui/react-portal", () => ({
         React.createElement(React.Fragment, null, children),
     Root: ({ children }: any) =>
         React.createElement(React.Fragment, null, children),
+}));
+
+// Mock react-i18next
+vi.mock("react-i18next", () => ({
+    useTranslation: () => ({
+        t: (key: string) => key,
+        i18n: {
+            changeLanguage: () => new Promise(() => {}),
+        },
+    }),
+    Trans: ({ i18nKey, children }: any) => {
+        return React.createElement(React.Fragment, null, i18nKey || children);
+    },
+    initReactI18next: {
+        type: "3rdParty",
+        init: () => {},
+    },
 }));

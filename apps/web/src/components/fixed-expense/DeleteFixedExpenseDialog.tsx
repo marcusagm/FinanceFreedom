@@ -1,6 +1,7 @@
 import { AppAlert } from "../ui/AppAlert";
 import { Loader2 } from "lucide-react";
 import { Button } from "../ui/Button";
+import { useTranslation, Trans } from "react-i18next";
 import {
     Dialog,
     DialogBody,
@@ -26,24 +27,38 @@ export function DeleteFixedExpenseDialog({
     description,
     isDeleting,
 }: DeleteFixedExpenseDialogProps) {
+    const { t } = useTranslation();
+
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Excluir Despesa Fixa</DialogTitle>
+                    <DialogTitle>
+                        {t("fixedExpenses.deleteDialog.title")}
+                    </DialogTitle>
                     <DialogDescription>
-                        Esta ação não pode ser desfeita.
+                        {t("fixedExpenses.deleteDialog.desc")}
                     </DialogDescription>
                 </DialogHeader>
                 <DialogBody>
-                    <AppAlert variant="destructive" title="Atenção">
-                        A despesa fixa <strong>{description}</strong> será
-                        permanentemente removida.
+                    <AppAlert
+                        variant="destructive"
+                        title={t("fixedExpenses.deleteDialog.attention")}
+                    >
+                        <Trans
+                            i18nKey="fixedExpenses.deleteDialog.message"
+                            values={{ name: description }}
+                            components={{ strong: <strong /> }}
+                        />
                     </AppAlert>
                 </DialogBody>
                 <DialogFooter>
-                    <Button variant="outline" onClick={onClose}>
-                        Cancelar
+                    <Button
+                        variant="outline"
+                        onClick={onClose}
+                        disabled={isDeleting}
+                    >
+                        {t("common.cancel")}
                     </Button>
                     <Button
                         variant="destructive"
@@ -53,7 +68,9 @@ export function DeleteFixedExpenseDialog({
                         {isDeleting && (
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         )}
-                        Excluir
+                        {isDeleting
+                            ? t("fixedExpenses.deleteDialog.deleting")
+                            : t("fixedExpenses.deleteDialog.confirm")}
                     </Button>
                 </DialogFooter>
             </DialogContent>

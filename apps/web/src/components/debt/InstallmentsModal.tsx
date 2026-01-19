@@ -1,5 +1,6 @@
 import { format } from "date-fns";
 import { CheckCircle2, Circle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import {
@@ -40,6 +41,8 @@ export function InstallmentsModal({
     debtName,
     onUpdatePaid,
 }: InstallmentsModalProps) {
+    const { t } = useTranslation();
+
     const generateInstallments = () => {
         const installments = [];
         let currentDate: Date;
@@ -84,17 +87,22 @@ export function InstallmentsModal({
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
             <DialogContent className="max-w-3xl">
                 <DialogHeader>
-                    <DialogTitle>Parcelas: {debtName}</DialogTitle>
+                    <DialogTitle>
+                        {t("debts.installments.title", { name: debtName })}
+                    </DialogTitle>
                     <DialogDescription className="text-sm text-muted-foreground">
-                        Visualize e gerencie os status das parcelas.
+                        {t("debts.installments.subtitle")}
                     </DialogDescription>
                 </DialogHeader>
 
                 <DialogBody>
                     <div className="flex justify-between items-center text-sm text-muted-foreground mb-4">
-                        <span>{installmentsPaid} pagas</span>
                         <span>
-                            {installmentsTotal - installmentsPaid} restantes
+                            {installmentsPaid} {t("debts.installments.paid")}
+                        </span>
+                        <span>
+                            {installmentsTotal - installmentsPaid}{" "}
+                            {t("debts.installments.remaining")}
                         </span>
                     </div>
 
@@ -103,12 +111,18 @@ export function InstallmentsModal({
                             <TableHeader>
                                 <TableRow>
                                     <TableHead className="w-25">
-                                        Parcela
+                                        {t(
+                                            "debts.installments.table.installment",
+                                        )}
                                     </TableHead>
-                                    <TableHead>Vencimento</TableHead>
-                                    <TableHead>Status</TableHead>
+                                    <TableHead>
+                                        {t("debts.installments.table.dueDate")}
+                                    </TableHead>
+                                    <TableHead>
+                                        {t("debts.installments.table.status")}
+                                    </TableHead>
                                     <TableHead className="text-right">
-                                        Ações
+                                        {t("debts.installments.table.actions")}
                                     </TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -135,8 +149,12 @@ export function InstallmentsModal({
                                                 }
                                             >
                                                 {inst.status === "PAID"
-                                                    ? "Paga"
-                                                    : "Pendente"}
+                                                    ? t(
+                                                          "debts.installments.status.paid",
+                                                      )
+                                                    : t(
+                                                          "debts.installments.status.pending",
+                                                      )}
                                             </Badge>
                                         </TableCell>
                                         <TableCell className="text-right">
@@ -150,19 +168,23 @@ export function InstallmentsModal({
                                                             "PENDING"
                                                         ) {
                                                             onUpdatePaid(
-                                                                inst.number
+                                                                inst.number,
                                                             );
                                                         } else {
                                                             onUpdatePaid(
-                                                                inst.number - 1
+                                                                inst.number - 1,
                                                             );
                                                         }
                                                     }
                                                 }}
                                                 title={
                                                     inst.status === "PAID"
-                                                        ? "Marcar como pendente"
-                                                        : "Marcar como paga"
+                                                        ? t(
+                                                              "debts.installments.actions.markPending",
+                                                          )
+                                                        : t(
+                                                              "debts.installments.actions.markPaid",
+                                                          )
                                                 }
                                             >
                                                 {inst.status === "PAID" ? (

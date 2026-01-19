@@ -10,6 +10,7 @@ import {
 import { AlertCircle, CheckCircle } from "lucide-react";
 import React from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { Button } from "../ui/Button";
 import { Checkbox } from "../ui/Checkbox";
 import {
@@ -39,7 +40,7 @@ interface ImapConfigFormProps {
     onClose: () => void;
     onSubmit: (data: ImapConfigFormData) => void;
     onTest?: (
-        data: ImapConfigFormData
+        data: ImapConfigFormData,
     ) => Promise<{ success: boolean; message?: string }>;
     initialData?: Partial<ImapConfigFormData>;
     isTesting?: boolean;
@@ -55,6 +56,7 @@ export const ImapConfigForm: React.FC<ImapConfigFormProps> = ({
     isTesting,
     isSaving,
 }) => {
+    const { t } = useTranslation();
     const form = useForm<ImapConfigFormData>({
         defaultValues: {
             host: "imap.gmail.com",
@@ -94,7 +96,9 @@ export const ImapConfigForm: React.FC<ImapConfigFormProps> = ({
                     success: result.success,
                     result:
                         result.message ||
-                        (result.success ? "Success" : "Failed"),
+                        (result.success
+                            ? t("imap.form.success")
+                            : t("imap.form.failed")),
                 });
             }
         }
@@ -106,12 +110,11 @@ export const ImapConfigForm: React.FC<ImapConfigFormProps> = ({
                 <DialogHeader>
                     <DialogTitle>
                         {initialData?.id
-                            ? "Edit Configuration"
-                            : "New Configuration"}
+                            ? t("imap.form.titleEdit")
+                            : t("imap.form.titleNew")}
                     </DialogTitle>
                     <DialogDescription>
-                        Configure your IMAP connection details and filters
-                        below.
+                        {t("imap.form.description")}
                     </DialogDescription>
                 </DialogHeader>
 
@@ -142,22 +145,28 @@ export const ImapConfigForm: React.FC<ImapConfigFormProps> = ({
                             {/* Connection Settings */}
                             <div className="space-y-4 border-b pb-4">
                                 <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-                                    Connection
+                                    {t("imap.form.connection")}
                                 </h3>
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <FormField
                                         control={control}
                                         name="host"
-                                        rules={{ required: "Host is required" }}
+                                        rules={{
+                                            required: t(
+                                                "imap.form.validation.hostRequired",
+                                            ),
+                                        }}
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>
-                                                    Host (IMAP)
+                                                    {t("imap.form.hostLabel")}
                                                 </FormLabel>
                                                 <FormControl>
                                                     <Input
-                                                        placeholder="imap.gmail.com"
+                                                        placeholder={t(
+                                                            "imap.form.hostPlaceholder",
+                                                        )}
                                                         {...field}
                                                     />
                                                 </FormControl>
@@ -169,7 +178,11 @@ export const ImapConfigForm: React.FC<ImapConfigFormProps> = ({
                                     <FormField
                                         control={control}
                                         name="port"
-                                        rules={{ required: "Port is required" }}
+                                        rules={{
+                                            required: t(
+                                                "imap.form.validation.portRequired",
+                                            ),
+                                        }}
                                         render={({
                                             field: {
                                                 onChange,
@@ -178,18 +191,22 @@ export const ImapConfigForm: React.FC<ImapConfigFormProps> = ({
                                             },
                                         }) => (
                                             <FormItem>
-                                                <FormLabel>Port</FormLabel>
+                                                <FormLabel>
+                                                    {t("imap.form.portLabel")}
+                                                </FormLabel>
                                                 <FormControl>
                                                     <Input
                                                         type="number"
-                                                        placeholder="993"
+                                                        placeholder={t(
+                                                            "imap.form.portPlaceholder",
+                                                        )}
                                                         value={value || ""}
                                                         onChange={(e) =>
                                                             onChange(
                                                                 Number(
                                                                     e.target
-                                                                        .value
-                                                                )
+                                                                        .value,
+                                                                ),
                                                             )
                                                         }
                                                         {...field}
@@ -206,16 +223,20 @@ export const ImapConfigForm: React.FC<ImapConfigFormProps> = ({
                                         control={control}
                                         name="email"
                                         rules={{
-                                            required: "Email is required",
+                                            required: t(
+                                                "imap.form.validation.emailRequired",
+                                            ),
                                         }}
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>
-                                                    Email / User
+                                                    {t("imap.form.emailLabel")}
                                                 </FormLabel>
                                                 <FormControl>
                                                     <Input
-                                                        placeholder="user@example.com"
+                                                        placeholder={t(
+                                                            "imap.form.emailPlaceholder",
+                                                        )}
                                                         {...field}
                                                     />
                                                 </FormControl>
@@ -229,14 +250,22 @@ export const ImapConfigForm: React.FC<ImapConfigFormProps> = ({
                                         name="password"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>Password</FormLabel>
+                                                <FormLabel>
+                                                    {t(
+                                                        "imap.form.passwordLabel",
+                                                    )}
+                                                </FormLabel>
                                                 <FormControl>
                                                     <Input
                                                         type="password"
                                                         placeholder={
                                                             initialData?.id
-                                                                ? "********"
-                                                                : "Enter password"
+                                                                ? t(
+                                                                      "imap.form.passwordEditPlaceholder",
+                                                                  )
+                                                                : t(
+                                                                      "imap.form.passwordPlaceholder",
+                                                                  )
                                                         }
                                                         {...field}
                                                     />
@@ -262,7 +291,7 @@ export const ImapConfigForm: React.FC<ImapConfigFormProps> = ({
                                             </FormControl>
                                             <div className="space-y-1 leading-none">
                                                 <FormLabel>
-                                                    Use SSL/TLS
+                                                    {t("imap.form.sslLabel")}
                                                 </FormLabel>
                                             </div>
                                         </FormItem>
@@ -273,26 +302,32 @@ export const ImapConfigForm: React.FC<ImapConfigFormProps> = ({
                             {/* Filter Settings */}
                             <div className="space-y-4">
                                 <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-                                    Filters & Routing
+                                    {t("imap.form.filters")}
                                 </h3>
 
                                 <FormField
                                     control={control}
                                     name="folder"
-                                    rules={{ required: "Folder is required" }}
+                                    rules={{
+                                        required: t(
+                                            "imap.form.validation.folderRequired",
+                                        ),
+                                    }}
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Source Folder</FormLabel>
+                                            <FormLabel>
+                                                {t("imap.form.folderLabel")}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    placeholder="INBOX"
+                                                    placeholder={t(
+                                                        "imap.form.folderPlaceholder",
+                                                    )}
                                                     {...field}
                                                 />
                                             </FormControl>
                                             <p className="text-xs text-muted-foreground">
-                                                The mailbox folder to check for
-                                                emails (e.g. INBOX, Archive,
-                                                Bills)
+                                                {t("imap.form.folderHelp")}
                                             </p>
                                             <FormMessage />
                                         </FormItem>
@@ -306,14 +341,18 @@ export const ImapConfigForm: React.FC<ImapConfigFormProps> = ({
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>
-                                                    Sender (From){" "}
+                                                    {t("imap.form.senderLabel")}{" "}
                                                     <span className="text-xs text-muted-foreground">
-                                                        (Optional)
+                                                        {t(
+                                                            "imap.form.optional",
+                                                        )}
                                                     </span>
                                                 </FormLabel>
                                                 <FormControl>
                                                     <Input
-                                                        placeholder="example@bank.com"
+                                                        placeholder={t(
+                                                            "imap.form.senderPlaceholder",
+                                                        )}
                                                         {...field}
                                                     />
                                                 </FormControl>
@@ -328,14 +367,20 @@ export const ImapConfigForm: React.FC<ImapConfigFormProps> = ({
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>
-                                                    Subject Contains{" "}
+                                                    {t(
+                                                        "imap.form.subjectLabel",
+                                                    )}{" "}
                                                     <span className="text-xs text-muted-foreground">
-                                                        (Optional)
+                                                        {t(
+                                                            "imap.form.optional",
+                                                        )}
                                                     </span>
                                                 </FormLabel>
                                                 <FormControl>
                                                     <Input
-                                                        placeholder="Invoice"
+                                                        placeholder={t(
+                                                            "imap.form.subjectPlaceholder",
+                                                        )}
                                                         {...field}
                                                     />
                                                 </FormControl>
@@ -353,7 +398,7 @@ export const ImapConfigForm: React.FC<ImapConfigFormProps> = ({
                                 variant="outline"
                                 onClick={onClose}
                             >
-                                Cancel
+                                {t("imap.form.cancel")}
                             </Button>
                             <Button
                                 type="button"
@@ -361,14 +406,18 @@ export const ImapConfigForm: React.FC<ImapConfigFormProps> = ({
                                 onClick={hookSubmit(handleTestConnection)}
                                 disabled={isTesting}
                             >
-                                {isTesting ? "Testing..." : "Test Connection"}
+                                {isTesting
+                                    ? t("imap.form.testingButton")
+                                    : t("imap.form.testButton")}
                             </Button>
                             <Button
                                 type="submit"
                                 variant="primary"
                                 disabled={isSaving}
                             >
-                                {isSaving ? "Saving..." : "Save Configuration"}
+                                {isSaving
+                                    ? t("imap.form.savingButton")
+                                    : t("imap.form.saveButton")}
                             </Button>
                         </DialogFooter>
                     </form>

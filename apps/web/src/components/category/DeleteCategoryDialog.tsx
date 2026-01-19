@@ -40,7 +40,10 @@ export function DeleteCategoryDialog({
                     </DialogDescription>
                 </DialogHeader>
                 <DialogBody>
-                    <AppAlert variant="destructive" title={t("common.error")}>
+                    <AppAlert
+                        variant="destructive"
+                        title={t("common.attention")}
+                    >
                         <Trans
                             i18nKey="categories.deleteDialog.message"
                             values={{ name: categoryName }}

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import type React from "react";
 import {
     Table,
@@ -18,9 +19,10 @@ export const ImportReviewTable: React.FC<Props> = ({
     transactions,
     accounts,
 }) => {
+    const { t } = useTranslation();
     const getAccountName = (id: string) => {
         const acc = accounts.find((a) => a.id === id);
-        return acc ? acc.name : "Unknown";
+        return acc ? acc.name : t("import.review.unknownAccount");
     };
 
     return (
@@ -28,11 +30,19 @@ export const ImportReviewTable: React.FC<Props> = ({
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Date</TableHead>
-                        <TableHead>Account</TableHead>
-                        <TableHead>Description</TableHead>
-                        <TableHead>Category</TableHead>
-                        <TableHead className="text-right">Amount</TableHead>
+                        <TableHead>{t("import.review.table.date")}</TableHead>
+                        <TableHead>
+                            {t("import.review.table.account")}
+                        </TableHead>
+                        <TableHead>
+                            {t("import.review.table.description")}
+                        </TableHead>
+                        <TableHead>
+                            {t("import.review.table.category")}
+                        </TableHead>
+                        <TableHead className="text-right">
+                            {t("import.review.table.amount")}
+                        </TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -52,7 +62,7 @@ export const ImportReviewTable: React.FC<Props> = ({
                                             : "text-rose-600 dark:text-rose-400"
                                     }
                                 >
-                                    {new Intl.NumberFormat("pt-BR", {
+                                    {new Intl.NumberFormat(undefined, {
                                         style: "currency",
                                         currency: "BRL",
                                     }).format(Math.abs(t.amount))}
