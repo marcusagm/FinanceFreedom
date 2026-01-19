@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../../prisma/prisma.service";
 import { DebtService } from "../debt/debt.service";
+import { I18nService } from "nestjs-i18n";
 
 export interface ActionRecommendation {
     type: "PAY_DEBT" | "INVEST" | "INCOME_GAP";
@@ -15,16 +16,17 @@ export interface ActionRecommendation {
 export class DashboardService {
     constructor(
         private readonly prisma: PrismaService,
-        private readonly debtService: DebtService
+        private readonly debtService: DebtService,
+        private readonly i18n: I18nService,
     ) {}
 
-    async getSummary(userId: string) {
+    async getSummary(userId: string, lang: string) {
         const today = new Date();
         const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
         const endOfMonth = new Date(
             today.getFullYear(),
             today.getMonth() + 1,
-            0
+            0,
         );
 
         // 1. Total Balance (Sum of all accounts)
@@ -33,7 +35,7 @@ export class DashboardService {
         });
         const totalBalance = accounts.reduce(
             (sum, acc) => sum + Number(acc.balance),
-            0
+            0,
         );
 
         // 1b. Total Invested
@@ -42,14 +44,14 @@ export class DashboardService {
         });
         const totalInvested = investments.reduce(
             (sum, inv) => sum + Number(inv.balance),
-            0
+            0,
         );
 
         // 1c. Total Debt
         const allDebts = await this.prisma.debt.findMany({ where: { userId } });
         const totalDebt = allDebts.reduce(
             (sum, d) => sum + Number(d.totalAmount),
-            0
+            0,
         );
 
         const netWorth = totalBalance + totalInvested - totalDebt;
@@ -77,34 +79,54 @@ export class DashboardService {
         const freeCashFlow = income - expenses;
         const recommendations: ActionRecommendation[] = [];
 
+        const formatCurrency = (amount: number) => {
+            return new Intl.NumberFormat(lang, {
+                style: "currency",
+                currency: lang.startsWith("pt") ? "BRL" : "USD",
+            }).format(amount);
+        };
+
         if (freeCashFlow > 0) {
             const { debts } = await this.debtService.getSortedDebts(
                 userId,
                 "SNOWBALL",
-                0
+                0,
             );
             if (debts.length > 0) {
                 const topDebt = debts[0];
                 recommendations.push({
                     type: "PAY_DEBT",
-                    title: `Pagar Dívida: ${topDebt.name}`,
-                    description: `Você tem R$ ${freeCashFlow.toFixed(
-                        2
-                    )} livres. Use para abater sua dívida mais cara (${
-                        topDebt.interestRate
-                    }% a.m).`,
-                    actionLabel: "Pagar Agora",
+                    title: this.i18n.translate("dashboard.payDebtTitle", {
+                        lang,
+                        args: { name: topDebt.name },
+                    }),
+                    description: this.i18n.translate("dashboard.payDebtDesc", {
+                        lang,
+                        args: {
+                            amount: formatCurrency(freeCashFlow),
+                            rate: topDebt.interestRate,
+                        },
+                    }),
+                    actionLabel: this.i18n.translate("dashboard.actions.pay", {
+                        lang,
+                    }),
                     actionLink: `/debts`,
                     priority: "HIGH",
                 });
             } else {
                 recommendations.push({
                     type: "INVEST",
-                    title: "Investir Excedente",
-                    description: `Parabéns! Você tem R$ ${freeCashFlow.toFixed(
-                        2
-                    )} livres e nenhuma dívida. Que tal investir?`,
-                    actionLabel: "Ver Investimentos",
+                    title: this.i18n.translate("dashboard.investTitle", {
+                        lang,
+                    }),
+                    description: this.i18n.translate("dashboard.investDesc", {
+                        lang,
+                        args: { amount: formatCurrency(freeCashFlow) },
+                    }),
+                    actionLabel: this.i18n.translate(
+                        "dashboard.actions.invest",
+                        { lang },
+                    ),
                     actionLink: "/investments",
                     priority: "MEDIUM",
                 });
@@ -112,11 +134,15 @@ export class DashboardService {
         } else if (freeCashFlow < 0) {
             recommendations.push({
                 type: "INCOME_GAP",
-                title: "Faltam Recursos",
-                description: `Você está R$ ${Math.abs(freeCashFlow).toFixed(
-                    2
-                )} negativo neste mês. Considere fazer uma renda extra.`,
-                actionLabel: "Ver Oportunidades",
+                title: this.i18n.translate("dashboard.gapTitle", { lang }),
+                description: this.i18n.translate("dashboard.gapDesc", {
+                    lang,
+                    args: { amount: formatCurrency(Math.abs(freeCashFlow)) },
+                }),
+                actionLabel: this.i18n.translate(
+                    "dashboard.actions.opportunity",
+                    { lang },
+                ),
                 actionLink: "/income/opportunities",
                 priority: "CRITICAL",
             });
@@ -196,7 +222,7 @@ export class DashboardService {
                 orderBy: {
                     date: "asc",
                 },
-            }
+            },
         );
 
         const annualMap = new Map<
@@ -206,7 +232,7 @@ export class DashboardService {
         const formatMonth = (date: Date) =>
             `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
                 2,
-                "0"
+                "0",
             )}`;
 
         for (const t of last12MonthsTransactions) {

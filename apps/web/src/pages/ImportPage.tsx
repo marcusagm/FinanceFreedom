@@ -99,7 +99,7 @@ export const ImportPage: React.FC = () => {
 
     const accountOptions = accounts.map((acc) => ({
         value: acc.id,
-        label: `${acc.name} (${acc.type})`,
+        label: `${acc.name} (${t(`accounts.types.${acc.type}`)})`,
     }));
 
     return (

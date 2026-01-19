@@ -231,7 +231,8 @@
                 "amountPositive": "Valor deve ser maior que 0",
                 "descRequired": "Descrição é obrigatória",
                 "minSplits": "Deve haver pelo menos 2 divisões",
-                "subtotalMismatch": "A soma das divisões ({{total}}) deve ser igual ao valor original ({{original}})"
+                "subtotalMismatch": "A soma das divisões ({{total}}) deve ser igual ao valor original ({{original}})",
+                "accountRequired": "Conta é obrigatória"
             }
         },
         "editTitle": "Editar Transação",
@@ -795,7 +796,8 @@
             "emailInvalid": "E-mail inválido",
             "currentPasswordRequired": "Senha atual é obrigatória",
             "passwordMinLength": "Senha deve ter pelo menos 6 caracteres",
-            "passwordsMismatch": "Senhas não conferem"
+            "passwordsMismatch": "Senhas não conferem",
+            "dateRequired": "Data é obrigatória"
         }
     },
     "settings": {

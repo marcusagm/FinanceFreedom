@@ -231,7 +231,8 @@
                 "amountPositive": "Amount must be greater than 0",
                 "descRequired": "Description is required",
                 "minSplits": "Must have at least 2 splits",
-                "subtotalMismatch": "The sum of splits ({{total}}) must equal the original amount ({{original}})"
+                "subtotalMismatch": "The sum of splits ({{total}}) must equal the original amount ({{original}})",
+                "accountRequired": "Account is required"
             }
         },
         "editTitle": "Edit Transaction",
@@ -795,7 +796,8 @@
             "emailInvalid": "Invalid email address",
             "currentPasswordRequired": "Current password is required",
             "passwordMinLength": "Password must be at least 6 characters",
-            "passwordsMismatch": "Passwords do not match"
+            "passwordsMismatch": "Passwords do not match",
+            "dateRequired": "Date is required"
         }
     },
     "settings": {

@@ -1,0 +1,13 @@
+{
+    "payDebtTitle": "Pay Debt: {{name}}",
+    "payDebtDesc": "You have {{amount}} available. Use it to pay off your most expensive debt ({{rate}}% /mo).",
+    "investTitle": "Invest Surplus",
+    "investDesc": "Congratulations! You have {{amount}} available and no debt. How about investing?",
+    "gapTitle": "Resource Gap",
+    "gapDesc": "You are {{amount}} negative this month. Consider finding extra income.",
+    "actions": {
+        "pay": "Pay Now",
+        "invest": "View Investments",
+        "opportunity": "View Opportunities"
+    }
+}

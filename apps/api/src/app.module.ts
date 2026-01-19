@@ -20,11 +20,24 @@ import { CategoryModule } from "./modules/category/category.module";
 import { InvestmentAccountModule } from "./modules/investment-account/investment-account.module";
 import { SavingsGoalModule } from "./modules/savings-goal/savings-goal.module";
 import { AnalyticsModule } from "./modules/analytics/analytics.module";
+import { AcceptLanguageResolver, I18nModule, QueryResolver } from "nestjs-i18n";
+import * as path from "path";
 
 @Module({
     imports: [
         ConfigModule.forRoot({
             isGlobal: true,
+        }),
+        I18nModule.forRoot({
+            fallbackLanguage: "pt-BR",
+            loaderOptions: {
+                path: path.join(__dirname, "/i18n/"),
+                watch: true,
+            },
+            resolvers: [
+                { use: QueryResolver, options: ["lang"] },
+                AcceptLanguageResolver,
+            ],
         }),
         PrismaModule,
         AuthModule,
