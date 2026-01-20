@@ -1,101 +1,83 @@
-# Roadmap do Próximo Ciclo de Implementação (V1.1 -> V2.0 Foundation)
+# Roadmap de Implementação Detalhado (V2.0 Cycle)
 
-Este documento define a ordem de implementação para o novo ciclo de desenvolvimento do **Finance Freedom**. O foco é evoluir a arquitetura "Release Candidate" para uma plataforma de **Inteligência Financeira Proativa**, cobrindo dívidas técnicas, segurança e novos módulos de gestão patrimonial e cartões.
+Este documento redefine a ordem de implementação para o ciclo V2.0, focando em entregas granulares e completas, garantindo que cada plano resulte em uma parte funcional e testada do sistema.
 
-## Priorização Estratégica
-
-A ordem de execução foi definida para priorizar alterações estruturais no Banco de Dados (Schema) e na Fundação do sistema, evitando retrabalho em funcionalidades dependentes.
-
-1.  **Fundação e Core (Critical):** Alterações massivas no Schema (Multi-moeda, Cartões Dedicados, Pessoas, Subcategorias) e Segurança.
-2.  **Automação e Confiabilidade (High):** Categorização automática e Conciliação para garantir dados confiáveis e reduzir trabalho manual.
-3.  **Novos Motores de Produto (Medium):** Gestão de Patrimônio (Wealth), Inflação e Estratégias de Sobrevivência (Dívidas).
-4.  **Camada de Inteligência (Low/Bonus):** O "Assistente" comportamental que atua sobre os dados consolidados.
+> **Status Plan-031:** ✅ Concluído (Foundation Core).
+> **Foco Agora:** Implementação funcional sobre a fundação, dividida em Back-end (Lógica/Dados) e Front-end (Interface/Experiência).
 
 ---
 
-## Ordem de Implementação
+## Fase 2: Gestão de Crédito (Credit Card Manager)
 
-### Fase 1: Fundação, Segurança e Core Evolution
+A gestão de cartões é complexa o suficiente para ser separada em lógica de serviço e interface de usuário.
 
-Esta fase prepara o terreno para todas as outras. Focada em Backend e Migrações de Banco de Dados.
+1.  **[Plan-032] Credit Card - Backend Core**
+    - Serviços de limite, ciclo de fatura (Fechamento/Vencimento) e parcelamento.
+    - Testes unitários e integração de cálculo de faturas.
+2.  **[Plan-033] Credit Card - UI & Experience**
+    - Telas de listagem, detalhe de fatura (Timeline), gestão de pagamentos.
+    - Widgets de cartão.
 
-#### **[Plan-031] Core Evolution & Security**
+## Fase 3: Core UI Adoption (Entidades do Plan-031)
 
-- **Foco:** Reestruturação do Schema e Segurança.
-- **Escopo:**
-    - **Segurança:** Criptografia de senhas IMAP e credenciais sensíveis (AES-256).
-    - **Multi-moeda Core:** Adição de colunas `currency`, `originalAmount`, `exchangeRate` em Transações e Contas. Integração básica com APIs de Câmbio.
-    - **Entidades Estendidas:** Criação de `Person` (Mapas de Pessoas/Contatos), `BudgetHistory` e Suporte a Subcategorias (`parentId`).
-    - **Transaction Workflow:** Adição de status (`PENDING`, `CONFIRMED`) para transações.
+O plano 031 criou a fundação de dados, agora é necessário expor isso na interface.
 
-#### **[Plan-032] Credit Card Manager Full**
+3.  **[Plan-034] Entities UI - Person Management**
+    - Gestão de Contatos/Pessoas.
+    - Vincular transações e dívidas a pessoas (Empréstimos P2P).
+4.  **[Plan-035] Entities UI - Subcategories & Budgets**
+    - Interface de gerenciamento de hierarquia de categorias.
+    - Gestão de orçamentos históricos (BudgetHistory).
+5.  **[Plan-036] Transaction Batch Operations**
+    - Interface para edição em lote (Bulk Actions) de transações (Categorizar, Status, Deletar).
+6.  **[Plan-037] Multi-Currency UI Integration**
+    - Atualizar Dashboard e Listas para exibir valores convertidos (BRL) e originais.
+    - Indicadores de múltiplas moedas nas contas.
 
-- **Foco:** Módulo dedicado para Cartões de Crédito (separando de Contas/Dívidas).
-- **Escopo:**
-    - Nova entidade `CreditCard` com controle de ciclos (Fechamento/Vencimento).
-    - Lógica de gestão de faturas, projeção de parcelas futuras e cálculo de limite disponível.
-    - Modos de pagamento: Vinculado (Débito aut.) vs Independente.
-    - Interface de UI específica para gestão de cartões.
+## Fase 4: Automação e "Zero-Touch"
 
-### Fase 2: Automação e "Zero-Touch" Experience
+7.  **[Plan-038] Auto Categorization - Engine**
+    - Lógica de backend, regex, e aplicação de regras no `create/import`.
+8.  **[Plan-039] Auto Categorization - User Interface**
+    - Tela de gestão de regras.
+    - Feedback loop na edição de transação ("Criar regra para isso?").
+9.  **[Plan-040] Automation Backend (Cron & Sync)**
+    - Setup de Cron Jobs (NestJS Schedule).
+    - Serviço de Sincronização em background (Headless).
+10. **[Plan-041] Notifications System**
+    - Serviço de Notificações, Templates de E-mail (i18n).
+    - Central de Notificações no Frontend (Badges, Listas).
 
-Reduzir o atrito do usuário com a plataforma.
+## Fase 5: Integridade e Conciliação
 
-#### **[Plan-033] Automatic Categorization Engine**
+11. **[Plan-042] Reconciliation - Logic Engine**
+    - Cálculo de discrepâncias e geração de ajustes.
+12. **[Plan-043] Reconciliation - Wizard UI**
+    - Interface passo a passo para auditoria de contas.
 
-- **Foco:** Motor de regras para categorização sem intervenção humana.
-- **Escopo:**
-    - Tabela `CategoryRule` e serviço de `CategorizerService`.
-    - Lógica de aprendizado baseada em regex e histórico do usuário.
-    - Interface de gestão de regras e "Feedback Loop".
+## Fase 6: Gestão Patrimonial (Wealth)
 
-#### **[Plan-034] Automation & Notifications Hub**
+13. **[Plan-044] Inflation Engine**
+    - Serviço de índices econômicos (IPCA/IGP-M) e calculadora de valor real.
+14. **[Plan-045] Wealth Management - Core Logic**
+    - Classes de ativos, targets de alocação e cálculo de rebalanceamento.
+15. **[Plan-046] Wealth Dashboard**
+    - Visualização de portfólio, sugestões de rebalanceamento e poder de compra real.
 
-- **Foco:** Background Jobs e Proatividade.
-- **Escopo:**
-    - Implementação de Cron Jobs (NestJS Schedule) para Sync IMAP automático.
-    - Sistema de Notificações (Lembretes de vencimento, Alertas de sistema).
-    - Refatoração do `Smart Import` para rodar em background.
+## Fase 7: Estratégias Avançadas (Debt & Behavior)
 
-#### **[Plan-035] Reconciliation & Audit Mode**
-
-- **Foco:** Integridade e Confiança nos Dados.
-- **Escopo:**
-    - Entidade `ReconciliationSession`.
-    - Wizard de Auditoria (Saldo Real vs Saldo Sistema).
-    - Geração automática de transações de ajuste e detecção de anomalias.
-
-### Fase 3: Novos Motores de Inteligência Financeira
-
-Transformação de "Planilhão" para "Gestor Patrimonial".
-
-#### **[Plan-036] Wealth Management & Purchasing Power**
-
-- **Foco:** Crescimento Patrimonial e Realidade Econômica.
-- **Escopo:**
-    - Evolução de Investimentos (Classes de Ativos, Rebalanceamento).
-    - Serviço de Inflação (Integração BCB/IPCA) e Calculadora de Poder de Compra Real.
-    - Projeções de Longo Prazo (Independência Financeira).
-
-#### **[Plan-037] Advanced Debt Strategy (Survival Mode)**
-
-- **Foco:** Gestão de Crise e Psicologia Financeira.
-- **Escopo:**
-    - Estratégia "Paz Mental" (Ranking de Stress).
-    - Rastreador de Negociações e Alertas de Prescrição.
-    - Fluxos de "Sobrevivência" (Redirecionamento para Reserva de Emergência).
-
-#### **[Plan-038] Behavioral Assistant (The Guide)**
-
-- **Foco:** Insights proativos e "Nudges".
-- **Escopo:**
-    - Detecção de "Gastos Vampiros" (Assinaturas esquecidas).
-    - Custo de Oportunidade Contextual.
-    - Health Score 2.0 (Resiliência financeira).
+16. **[Plan-047] Debt Strategy - Negotiation & Mental Peace**
+    - Lógica de "Paz Mental", alertas de prescrição e registro de negociações.
+17. **[Plan-048] Survival Mode UI**
+    - Interface focada em crise, logs de negociação e toggle "Modo Sobrevivência".
+18. **[Plan-049] Behavioral Engine**
+    - Detecção de padrões (Gastos Vampiros) e Custo de Oportunidade.
+19. **[Plan-050] Assistant UI & Insights**
+    - Widgets proativos, Health Score 2.0 e Cards de Insight.
 
 ---
 
-## Observações Gerais
+## Critérios Globais para Todos os Planos
 
-- **Testes:** Cada plano deve incluir a criação/atualização de testes unitários e de integração para os novos serviços.
-- **UI/UX:** A implementação de UI deve seguir estritamente o Design System (Temas, Componentes) já estabelecido na V1.0.
+- **QA:** Cobertura de testes unitários > 80% para novos serviços. Testes de Integração para endpoints críticos.
+- **i18n:** Todas as strings de UI e mensagens de erro traduzidas (PT-BR / EN). Formatação (Data/Moeda) dinâmica.
