@@ -1,76 +1,101 @@
-# Ordem de Implementação - Ciclo V1.1 (Premium & Expansion)
+# Roadmap do Próximo Ciclo de Implementação (V1.1 -> V2.0 Foundation)
 
-Com base na auditoria final da V1.0 e nas novas requisições estratégicas, este ciclo foca em **Profissionalização (UI/Auth)** e **Expansão de Escopo (Investimentos/Orçamento)**.
+Este documento define a ordem de implementação para o novo ciclo de desenvolvimento do **Finance Freedom**. O foco é evoluir a arquitetura "Release Candidate" para uma plataforma de **Inteligência Financeira Proativa**, cobrindo dívidas técnicas, segurança e novos módulos de gestão patrimonial e cartões.
 
-## Fases de Implementação
+## Priorização Estratégica
 
-A ordem abaixo prioriza dependências lógicas (ex: Categorias são necessárias para Orçamento; Auth é necessário para perfis).
+A ordem de execução foi definida para priorizar alterações estruturais no Banco de Dados (Schema) e na Fundação do sistema, evitando retrabalho em funcionalidades dependentes.
 
-### Fase 1: Fundação e Segurança (Semana 1)
+1.  **Fundação e Core (Critical):** Alterações massivas no Schema (Multi-moeda, Cartões Dedicados, Pessoas, Subcategorias) e Segurança.
+2.  **Automação e Confiabilidade (High):** Categorização automática e Conciliação para garantir dados confiáveis e reduzir trabalho manual.
+3.  **Novos Motores de Produto (Medium):** Gestão de Patrimônio (Wealth), Inflação e Estratégias de Sobrevivência (Dívidas).
+4.  **Camada de Inteligência (Low/Bonus):** O "Assistente" comportamental que atua sobre os dados consolidados.
 
-**Objetivo:** Preparar a aplicação para o "mundo real" e criar estruturas de dados base.
+---
 
-1.  **[Plan-022] Autenticação & Segurança**
+## Ordem de Implementação
 
-    -   _Feature Relacionada:_ Segurança / Multi-usuário.
-    -   _Justificativa:_ Requisito crítico para deploy e para proteger os novos dados sensíveis (Investimentos).
-    -   _Escopo:_ NextAuth.js, Login Page, Proteção de Rotas.
+### Fase 1: Fundação, Segurança e Core Evolution
 
-2.  **[Plan-023] Configurações, Categorias & Despesas Fixas**
-    -   _Feature Relacionada:_ Gestão de Categorias, Despesas Fixas, Projeções.
-    -   _Justificativa:_ Requisito fundamental para os módulos de Orçamento e para precisão do Fluxo de Caixa previsto.
-    -   _Escopo:_ Página de Settings (Geral), Páginas independentes para Categorias e Despesas Fixas, Integração no motor de Projeção.
+Esta fase prepara o terreno para todas as outras. Focada em Backend e Migrações de Banco de Dados.
 
-### Fase 2: Expansão do Motor Financeiro (Semana 2)
+#### **[Plan-031] Core Evolution & Security**
 
-**Objetivo:** Preencher as lacunas funcionais apontadas (Dívidas, Investimentos).
+- **Foco:** Reestruturação do Schema e Segurança.
+- **Escopo:**
+    - **Segurança:** Criptografia de senhas IMAP e credenciais sensíveis (AES-256).
+    - **Multi-moeda Core:** Adição de colunas `currency`, `originalAmount`, `exchangeRate` em Transações e Contas. Integração básica com APIs de Câmbio.
+    - **Entidades Estendidas:** Criação de `Person` (Mapas de Pessoas/Contatos), `BudgetHistory` e Suporte a Subcategorias (`parentId`).
+    - **Transaction Workflow:** Adição de status (`PENDING`, `CONFIRMED`) para transações.
 
-3.  **[Plan-024] Controle Avançado de Dívidas**
+#### **[Plan-032] Credit Card Manager Full**
 
-    -   _Feature Relacionada:_ Debt Engine.
-    -   _Justificativa:_ O controle atual carece de precisão sobre parcelas.
-    -   _Escopo:_ Controle de parcelas pagas/pendentes, projeção real.
+- **Foco:** Módulo dedicado para Cartões de Crédito (separando de Contas/Dívidas).
+- **Escopo:**
+    - Nova entidade `CreditCard` com controle de ciclos (Fechamento/Vencimento).
+    - Lógica de gestão de faturas, projeção de parcelas futuras e cálculo de limite disponível.
+    - Modos de pagamento: Vinculado (Débito aut.) vs Independente.
+    - Interface de UI específica para gestão de cartões.
 
-4.  **[Plan-025] Módulo de Investimentos & Metas**
-    -   _Feature Relacionada:_ Wealth Management (Novo).
-    -   _Justificativa:_ Transforma o app de um "gerenciador de dívidas" para um "gerenciador de patrimônio".
-    -   _Escopo:_ Contas de Investimento, Metas de Economia.
+### Fase 2: Automação e "Zero-Touch" Experience
 
-### Fase 3: Inteligência e Gestão (Semana 3)
+Reduzir o atrito do usuário com a plataforma.
 
-**Objetivo:** Transformar dados em insights e controle.
+#### **[Plan-033] Automatic Categorization Engine**
 
-5.  **[Plan-026] Orçamento & Saúde Financeira**
-    -   _Feature Relacionada:_ Financial Health / Budgeting.
-    -   _Justificativa:_ O usuário precisa definir limites e saber sua nota geral.
-    -   _Escopo:_ Orçamento por Categoria, Health Score Engine (0-1000), Gráfico de Velocímetro.
+- **Foco:** Motor de regras para categorização sem intervenção humana.
+- **Escopo:**
+    - Tabela `CategoryRule` e serviço de `CategorizerService`.
+    - Lógica de aprendizado baseada em regex e histórico do usuário.
+    - Interface de gestão de regras e "Feedback Loop".
 
-### Fase 4: Experiência Premium & Performance (Semana 4)
+#### **[Plan-034] Automation & Notifications Hub**
 
-**Objetivo:** "Wow Factor", consistência de layout e escalabilidade.
+- **Foco:** Background Jobs e Proatividade.
+- **Escopo:**
+    - Implementação de Cron Jobs (NestJS Schedule) para Sync IMAP automático.
+    - Sistema de Notificações (Lembretes de vencimento, Alertas de sistema).
+    - Refatoração do `Smart Import` para rodar em background.
 
-6.  **[Plan-027] UI Premium & Layout 2.0 (Legibilidade e UX)**
+#### **[Plan-035] Reconciliation & Audit Mode**
 
-    -   _Feature Relacionada:_ Dashboard / UI-UX.
-    -   _Justificativa:_ A interface precisa de coerência visual e hierarquia clara para ser profissional.
-    -   _Escopo:_ Sidebar Navigation, Application Shell, Skeletons, padronização de tipografia e espaçamento em todas as telas.
+- **Foco:** Integridade e Confiança nos Dados.
+- **Escopo:**
+    - Entidade `ReconciliationSession`.
+    - Wizard de Auditoria (Saldo Real vs Saldo Sistema).
+    - Geração automática de transações de ajuste e detecção de anomalias.
 
-7.  **[Plan-028] Otimização de Performance (Server-Side)**
-    -   _Feature Relacionada:_ Transaction Manager.
-    -   _Justificativa:_ Garantir escalabilidade para usuários com milhares de registros sem lentidão.
-    -   _Escopo:_ Server-side Filtering & Pagination em tabelas densas.
+### Fase 3: Novos Motores de Inteligência Financeira
 
-### Fase 5: Refinamento e Localização (Semana 5)
+Transformação de "Planilhão" para "Gestor Patrimonial".
 
-**Objetivo:** Personalização profunda e suporte global.
+#### **[Plan-036] Wealth Management & Purchasing Power**
 
-8.  **[Plan-029] Personalização e Branding Dinâmico**
+- **Foco:** Crescimento Patrimonial e Realidade Econômica.
+- **Escopo:**
+    - Evolução de Investimentos (Classes de Ativos, Rebalanceamento).
+    - Serviço de Inflação (Integração BCB/IPCA) e Calculadora de Poder de Compra Real.
+    - Projeções de Longo Prazo (Independência Financeira).
 
-    -   _Feature Relacionada:_ UI-UX / Personalização.
-    -   _Justificativa:_ Permitir que o usuário adapte a interface ao seu estilo pessoal (Accent colors, arredondamento).
-    -   _Escopo:_ Theme Engine (HSL), Accent Color Picker, salvamento de preferências de estilo no perfil.
+#### **[Plan-037] Advanced Debt Strategy (Survival Mode)**
 
-9.  **[Plan-030] Internacionalização & Localização (i18n)**
-    -   _Feature Relacionada:_ Core Foundation / Global Reach.
-    -   _Justificativa:_ Preparar o app para múltiplos mercados com suporte a idiomas, moedas e formatos de data dinâmicos.
-    -   _Escopo:_ react-i18next, Localização de moedas (BRL/USD/EUR), Extração de strings e formatos regionais.
+- **Foco:** Gestão de Crise e Psicologia Financeira.
+- **Escopo:**
+    - Estratégia "Paz Mental" (Ranking de Stress).
+    - Rastreador de Negociações e Alertas de Prescrição.
+    - Fluxos de "Sobrevivência" (Redirecionamento para Reserva de Emergência).
+
+#### **[Plan-038] Behavioral Assistant (The Guide)**
+
+- **Foco:** Insights proativos e "Nudges".
+- **Escopo:**
+    - Detecção de "Gastos Vampiros" (Assinaturas esquecidas).
+    - Custo de Oportunidade Contextual.
+    - Health Score 2.0 (Resiliência financeira).
+
+---
+
+## Observações Gerais
+
+- **Testes:** Cada plano deve incluir a criação/atualização de testes unitários e de integração para os novos serviços.
+- **UI/UX:** A implementação de UI deve seguir estritamente o Design System (Temas, Componentes) já estabelecido na V1.0.
