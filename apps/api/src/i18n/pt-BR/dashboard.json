@@ -1,10 +1,10 @@
 {
-    "payDebtTitle": "Pagar Dívida: {{name}}",
-    "payDebtDesc": "Você tem {{amount}} livres. Use para abater sua dívida mais cara ({{rate}}% a.m).",
+    "payDebtTitle": "Pagar Dívida: {name}",
+    "payDebtDesc": "Você tem {amount} livres. Use para abater sua dívida mais cara ({rate}% a.m).",
     "investTitle": "Investir Excedente",
-    "investDesc": "Parabéns! Você tem {{amount}} livres e nenhuma dívida. Que tal investir?",
+    "investDesc": "Parabéns! Você tem {amount} livres e nenhuma dívida. Que tal investir?",
     "gapTitle": "Faltam Recursos",
-    "gapDesc": "Você está {{amount}} negativo neste mês. Considere fazer uma renda extra.",
+    "gapDesc": "Você está {amount} negativo neste mês. Considere fazer uma renda extra.",
     "actions": {
         "pay": "Pagar Agora",
         "invest": "Ver Investimentos",

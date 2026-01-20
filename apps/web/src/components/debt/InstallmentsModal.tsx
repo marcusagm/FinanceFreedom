@@ -19,6 +19,7 @@ import {
     TableHeader,
     TableRow,
 } from "../ui/Table";
+import { useLocalization } from "../../contexts/LocalizationContext";
 
 interface InstallmentsModalProps {
     isOpen: boolean;
@@ -42,6 +43,7 @@ export function InstallmentsModal({
     onUpdatePaid,
 }: InstallmentsModalProps) {
     const { t } = useTranslation();
+    const { dateFormat } = useLocalization();
 
     const generateInstallments = () => {
         const installments = [];
@@ -133,7 +135,7 @@ export function InstallmentsModal({
                                             {inst.number}ª
                                         </TableCell>
                                         <TableCell>
-                                            {format(inst.dueDate, "dd/MM/yyyy")}
+                                            {format(inst.dueDate, dateFormat)}
                                         </TableCell>
                                         <TableCell>
                                             <Badge

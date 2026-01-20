@@ -24,6 +24,8 @@ interface TransactionListProps {
     onTransactionUpdated?: () => void;
 }
 
+import { useLocalization } from "../../contexts/LocalizationContext";
+
 export function TransactionList({
     transactions,
     onEdit,
@@ -31,6 +33,7 @@ export function TransactionList({
     onTransactionUpdated,
 }: TransactionListProps) {
     const { t } = useTranslation();
+    const { dateFormat } = useLocalization();
     const { hourlyRate } = useHourlyRate();
     const [splitDialogTransaction, setSplitDialogTransaction] =
         useState<Transaction | null>(null);
@@ -63,7 +66,7 @@ export function TransactionList({
                                 {transaction.date
                                     ? format(
                                           new Date(transaction.date),
-                                          "dd/MM/yyyy",
+                                          dateFormat,
                                       )
                                     : "-"}
                             </TableCell>

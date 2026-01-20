@@ -47,10 +47,14 @@
 - [x] **Moedas:** Implementar suporte dinâmico (Hoje é fixo via `translation.json` keys como `currencyPlaceholder`, precisa evoluir para formatação real via `Intl`).
     - [x] Implementar suporte dinâmico para várias moedas padrão, como `BRL`, `USD`, `EUR`, (gerar lista de moedas mundiais completa) usando `Intl.NumberFormat`. O símbolo deve mudar conforme a preferência do usuário.
 - [x] **Configuração de localização** Adicionar compos de moeda, formato de data e formatação de moeda. Na tela de `Settings`, deve ter opção de selecionar a moeda e o formato de data.
-- [ ] **Atualização de telas:** Atualizar todas as telas para ter suporte ao L10N (Account, Categories, Dashboard, Debts, FixedExpenses, ForgotPassword, ImapConfigPage, ImportPage, IncomeProjection, Login, Profile, Register, ResetPassword, SavingGoals, Settings e Transactions).
+- [x] **Atualização de telas:** Atualizar todas as telas para ter suporte ao L10N (Account, Categories, Dashboard, Debts, FixedExpenses, ForgotPassword, ImapConfigPage, ImportPage, IncomeProjection, Login, Profile, Register, ResetPassword, SavingGoals, Settings e Transactions).
     - [x] `Settings.tsx` (Moeda/Data)
-    - [x] `Dashboard` (BalanceChart, Widgets)
-    - [x] Telas usando `Input` (Transactions, Debts, etc)
+    - [x] `Dashboard` (BalanceChart, Widgets: ActionCard, RecentTransactions, UpcomingInstallments, BudgetWidget)
+    - [x] Transações (`TransactionList`, `SplitTransactionDialog`)
+    - [x] Dívidas (`InstallmentsModal`, `StrategyComparison`)
+    - [x] Investimentos (`InvestmentAccountCard`)
+    - [x] Metas (`SavingsGoalCard`)
+    - [x] Importação (`ImportReviewTable`)
 - [x] **Atualização de componentes:** Atualizar todos os componentes para ter suporte ao L10N (DatePicker, Input, Select, etc).
 
 ### E. API Internacionalization (Backend)

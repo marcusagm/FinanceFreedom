@@ -15,11 +15,15 @@ interface Props {
     accounts: any[]; // Or specific type
 }
 
+import { useLocalization } from "../../contexts/LocalizationContext";
+import { format } from "date-fns";
+
 export const ImportReviewTable: React.FC<Props> = ({
     transactions,
     accounts,
 }) => {
     const { t } = useTranslation();
+    const { dateFormat, formatCurrency } = useLocalization();
     const getAccountName = (id: string) => {
         const acc = accounts.find((a) => a.id === id);
         return acc ? acc.name : t("import.review.unknownAccount");
@@ -46,26 +50,25 @@ export const ImportReviewTable: React.FC<Props> = ({
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {transactions.map((t, index) => (
+                    {transactions.map((tx, index) => (
                         <TableRow key={index}>
                             <TableCell>
-                                {new Date(t.date).toLocaleDateString()}
+                                {format(new Date(tx.date), dateFormat)}
                             </TableCell>
-                            <TableCell>{getAccountName(t.accountId)}</TableCell>
-                            <TableCell>{t.description}</TableCell>
-                            <TableCell>{t.category}</TableCell>
+                            <TableCell>
+                                {getAccountName(tx.accountId)}
+                            </TableCell>
+                            <TableCell>{tx.description}</TableCell>
+                            <TableCell>{tx.category}</TableCell>
                             <TableCell className="text-right font-mono font-medium">
                                 <span
                                     className={
-                                        t.type === "INCOME"
+                                        tx.type === "INCOME"
                                             ? "text-emerald-600 dark:text-emerald-400"
                                             : "text-rose-600 dark:text-rose-400"
                                     }
                                 >
-                                    {new Intl.NumberFormat(undefined, {
-                                        style: "currency",
-                                        currency: "BRL",
-                                    }).format(Math.abs(t.amount))}
+                                    {formatCurrency(Math.abs(tx.amount))}
                                 </span>
                             </TableCell>
                         </TableRow>

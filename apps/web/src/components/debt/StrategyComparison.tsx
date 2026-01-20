@@ -8,6 +8,7 @@ import { Label } from "../ui/Label";
 import { DebtCard } from "./DebtCard";
 import type { Debt } from "./DebtForm";
 import { DebtPaymentDialog } from "./DebtPaymentDialog";
+import { useLocalization } from "../../contexts/LocalizationContext";
 
 type StrategyType = "SNOWBALL" | "AVALANCHE";
 
@@ -21,6 +22,7 @@ export function StrategyComparison({
     onDelete,
 }: StrategyComparisonProps) {
     const { t } = useTranslation();
+    const { formatCurrency } = useLocalization();
     const [activeTab, setActiveTab] = useState<StrategyType>("SNOWBALL");
     const [debts, setDebts] = useState<Debt[]>([]);
     const [loading, setLoading] = useState(false);
@@ -141,10 +143,7 @@ export function StrategyComparison({
                                     {t("debts.strategy.totalInterest")}
                                 </p>
                                 <p className="text-xl font-bold text-red-600">
-                                    {new Intl.NumberFormat("pt-BR", {
-                                        style: "currency",
-                                        currency: "BRL",
-                                    }).format(projection.totalInterest)}
+                                    {formatCurrency(projection.totalInterest)}
                                 </p>
                             </div>
                         </div>

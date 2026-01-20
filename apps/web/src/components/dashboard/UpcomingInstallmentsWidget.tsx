@@ -1,5 +1,4 @@
 import { format } from "date-fns";
-import { enUS, ptBR } from "date-fns/locale";
 import { CalendarClock } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -8,6 +7,7 @@ import { api } from "../../lib/api";
 import { type Installment, generateInstallments } from "../../lib/installments";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/Card";
 import { MoneyDisplay } from "../ui/MoneyDisplay";
+import { useLocalization } from "../../contexts/LocalizationContext";
 
 interface Debt {
     id: string;
@@ -26,7 +26,8 @@ interface UpcomingInstallment extends Installment {
 }
 
 export function UpcomingInstallmentsWidget() {
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
+    const { dateFormat } = useLocalization();
     const [upcoming, setUpcoming] = useState<UpcomingInstallment[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -50,7 +51,7 @@ export function UpcomingInstallmentsWidget() {
 
                     // Filter pending
                     const pending = debtInstallments.filter(
-                        (i) => i.status === "PENDING"
+                        (i) => i.status === "PENDING",
                     );
 
                     // Add metadata
@@ -63,15 +64,13 @@ export function UpcomingInstallmentsWidget() {
                                 debt.totalAmount /
                                 (debt.installmentsTotal! -
                                     debt.installmentsPaid), // This is an approximation if totalAmount decreases. Ideally we'd know original amount.
-                            // Wait, schema has 'originalAmount'. Let's check api. If not available, we use totalAmount (current balance) divided by remaining installments?
-                            // Usually 'totalAmount' is remaining balance. So yes: balance / remaining.
                         });
                     });
                 });
 
                 // Sort by date
                 allUpcoming.sort(
-                    (a, b) => a.dueDate.getTime() - b.dueDate.getTime()
+                    (a, b) => a.dueDate.getTime() - b.dueDate.getTime(),
                 );
 
                 // Take top 5
@@ -136,7 +135,7 @@ export function UpcomingInstallmentsWidget() {
                                     <p className="text-xs text-muted-foreground">
                                         {t(
                                             "dashboard.upcomingInstallments.installment",
-                                            { number: inst.number }
+                                            { number: inst.number },
                                         )}
                                     </p>
                                 </div>
@@ -145,12 +144,7 @@ export function UpcomingInstallmentsWidget() {
                                         <MoneyDisplay value={inst.amount} />
                                     </p>
                                     <p className="text-xs text-muted-foreground">
-                                        {format(inst.dueDate, "dd/MM", {
-                                            locale:
-                                                i18n.language === "en"
-                                                    ? enUS
-                                                    : ptBR,
-                                        })}
+                                        {format(inst.dueDate, dateFormat)}
                                     </p>
                                 </div>
                             </div>

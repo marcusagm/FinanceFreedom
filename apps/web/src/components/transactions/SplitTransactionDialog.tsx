@@ -26,6 +26,7 @@ import {
     FormMessage,
 } from "../ui/Form";
 import { Input } from "../ui/Input";
+import { useLocalization } from "../../contexts/LocalizationContext";
 
 interface SplitTransactionDialogProps {
     isOpen: boolean;
@@ -43,16 +44,16 @@ const createSplitSchema = (t: (key: string) => string) =>
                         .number()
                         .min(
                             0.01,
-                            t("transactions.split.validation.amountPositive")
+                            t("transactions.split.validation.amountPositive"),
                         ),
                     description: z
                         .string()
                         .min(
                             1,
-                            t("transactions.split.validation.descRequired")
+                            t("transactions.split.validation.descRequired"),
                         ),
                     category: z.string().optional(),
-                })
+                }),
             )
             .min(2, t("transactions.split.validation.minSplits")),
     });
@@ -64,6 +65,7 @@ export function SplitTransactionDialog({
     transaction,
 }: SplitTransactionDialogProps) {
     const { t } = useTranslation();
+    const { formatCurrency } = useLocalization();
     const [originalAmount, setOriginalAmount] = useState(0);
 
     const splitSchema = createSplitSchema(t);
@@ -111,7 +113,7 @@ export function SplitTransactionDialog({
 
         const totalSplit = values.splits.reduce(
             (sum, item) => sum + item.amount,
-            0
+            0,
         );
 
         if (Math.abs(totalSplit - originalAmount) > 0.01) {
@@ -149,7 +151,7 @@ export function SplitTransactionDialog({
                     <DialogTitle>{t("transactions.split.title")}</DialogTitle>
                     <DialogDescription>
                         {t("transactions.split.description", {
-                            amount: originalAmount.toFixed(2),
+                            amount: formatCurrency(originalAmount),
                         })}
                     </DialogDescription>
                 </DialogHeader>
@@ -170,11 +172,11 @@ export function SplitTransactionDialog({
                                             remaining === 0
                                                 ? "text-emerald-500"
                                                 : remaining > 0
-                                                ? "text-amber-500"
-                                                : "text-rose-500"
+                                                  ? "text-amber-500"
+                                                  : "text-rose-500"
                                         }
                                     >
-                                        R$ {remaining.toFixed(2)}
+                                        {formatCurrency(remaining)}
                                     </span>
                                 </div>
                             </div>
@@ -195,23 +197,33 @@ export function SplitTransactionDialog({
                                                     <FormItem>
                                                         <FormLabel className="text-xs">
                                                             {t(
-                                                                "transactions.table.amount"
+                                                                "transactions.table.amount",
                                                             )}
                                                         </FormLabel>
                                                         <FormControl>
                                                             <Input
-                                                                type="number"
-                                                                step="0.01"
                                                                 placeholder="0.00"
-                                                                {...inputField}
-                                                                onChange={(e) =>
+                                                                currency
+                                                                value={
+                                                                    inputField.value ||
+                                                                    ""
+                                                                }
+                                                                onValueChange={(
+                                                                    values,
+                                                                ) =>
                                                                     inputField.onChange(
-                                                                        Number.parseFloat(
-                                                                            e
-                                                                                .target
-                                                                                .value
-                                                                        ) || 0
+                                                                        values.floatValue ||
+                                                                            0,
                                                                     )
+                                                                }
+                                                                name={
+                                                                    inputField.name
+                                                                }
+                                                                onBlur={
+                                                                    inputField.onBlur
+                                                                }
+                                                                ref={
+                                                                    inputField.ref
                                                                 }
                                                             />
                                                         </FormControl>
@@ -228,7 +240,7 @@ export function SplitTransactionDialog({
                                                     <FormItem>
                                                         <FormLabel className="text-xs">
                                                             {t(
-                                                                "transactions.table.description"
+                                                                "transactions.table.description",
                                                             )}
                                                         </FormLabel>
                                                         <FormControl>
@@ -250,7 +262,7 @@ export function SplitTransactionDialog({
                                                     <FormItem>
                                                         <FormLabel className="text-xs">
                                                             {t(
-                                                                "transactions.table.category"
+                                                                "transactions.table.category",
                                                             )}
                                                         </FormLabel>
                                                         <FormControl>

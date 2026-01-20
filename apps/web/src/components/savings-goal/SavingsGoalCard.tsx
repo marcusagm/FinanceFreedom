@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 import { AppCard } from "../ui/AppCard";
 import { Button } from "../ui/Button";
 import { MoneyDisplay } from "../ui/MoneyDisplay";
+import { useLocalization } from "../../contexts/LocalizationContext";
+import { format } from "date-fns";
 
 export type SavingsGoal = {
     id: string;
@@ -33,13 +35,14 @@ export function SavingsGoalCard({
     onDelete,
 }: SavingsGoalCardProps) {
     const { t } = useTranslation();
+    const { dateFormat } = useLocalization();
     const current = Number(goal.currentAmount);
     const target = Number(goal.targetAmount);
     const progress = getProgress(current, target);
 
     // Formatting deadline if exists
     const formattedDeadline = goal.deadline
-        ? new Date(goal.deadline).toLocaleDateString()
+        ? format(new Date(goal.deadline), dateFormat)
         : t("savingsGoals.deadlineFormatted");
 
     const actions = (

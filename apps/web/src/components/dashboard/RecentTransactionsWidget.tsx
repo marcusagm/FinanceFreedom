@@ -1,5 +1,4 @@
 import { format } from "date-fns";
-import { enUS, ptBR } from "date-fns/locale";
 import { ArrowRightLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -7,6 +6,7 @@ import { Link } from "react-router-dom";
 import { api } from "../../lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/Card";
 import { MoneyDisplay } from "../ui/MoneyDisplay";
+import { useLocalization } from "../../contexts/LocalizationContext";
 
 interface Transaction {
     id: string;
@@ -20,7 +20,8 @@ interface Transaction {
 }
 
 export function RecentTransactionsWidget() {
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
+    const { dateFormat } = useLocalization();
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -38,7 +39,7 @@ export function RecentTransactionsWidget() {
                 } else {
                     console.error(
                         "Invalid transactions data format:",
-                        response.data
+                        response.data,
                     );
                 }
 
@@ -112,14 +113,9 @@ export function RecentTransactionsWidget() {
                                             const date = new Date(
                                                 parseInt(year),
                                                 parseInt(month) - 1,
-                                                parseInt(day)
+                                                parseInt(day),
                                             );
-                                            return format(date, "dd/MM", {
-                                                locale:
-                                                    i18n.language === "en"
-                                                        ? enUS
-                                                        : ptBR,
-                                            });
+                                            return format(date, dateFormat);
                                         })()}{" "}
                                         • {transaction.account?.name}
                                     </p>

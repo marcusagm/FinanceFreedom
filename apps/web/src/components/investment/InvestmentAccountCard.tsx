@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 import { AppCard } from "../ui/AppCard";
 import { Button } from "../ui/Button";
 import { MoneyDisplay } from "../ui/MoneyDisplay";
+import { useLocalization } from "../../contexts/LocalizationContext";
+import { format } from "date-fns";
 
 export type InvestmentAccount = {
     id: string;
@@ -37,21 +39,13 @@ const getTypeIcon = (type: string) => {
     }
 };
 
-// Removed getTypeLabel from outside and moved inside component to access t
-// Wait, I can't easily remove lines 39-52 with `replace_file_content` if I don't target them.
-// I will target them to remove/replace with empty string, but since I am using multi_replace
-// I need to be careful.
-// Let's just redefine getTypeLabel inside and ignore the outside one, or replace the outside one with nothing?
-// Better to replace the usage inside `InvestmentAccountCard` and remove the function outside if possible.
-// Or just let the outside function be there unused (ts might complain).
-// I will remove the outside function `getTypeLabel`.
-
 export function InvestmentAccountCard({
     account,
     onEdit,
     onDelete,
 }: InvestmentAccountCardProps) {
     const { t } = useTranslation();
+    const { dateFormat } = useLocalization();
 
     const getTypeLabel = (type: string) => {
         switch (type) {
@@ -132,11 +126,10 @@ export function InvestmentAccountCard({
                             <span className="flex items-center gap-1">
                                 <Landmark className="h-3 w-3" />
                                 {t("investments.expiresIn")}{" "}
-                                {new Date(
-                                    account.maturityDate
-                                ).toLocaleDateString(undefined, {
-                                    timeZone: "UTC",
-                                })}
+                                {format(
+                                    new Date(account.maturityDate),
+                                    dateFormat,
+                                )}
                             </span>
                         )}
                     </div>
