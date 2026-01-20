@@ -1,3 +1,4 @@
+import { useLocalization } from "../../contexts/LocalizationContext";
 import { usePrivacy } from "../../contexts/PrivacyContext";
 import { cn } from "../../lib/utils";
 
@@ -7,13 +8,15 @@ interface MoneyDisplayProps {
     className?: string;
 }
 
-export function MoneyDisplay({ value, currency = "BRL", className }: MoneyDisplayProps) {
+export function MoneyDisplay({
+    value,
+    currency,
+    className,
+}: MoneyDisplayProps) {
     const { isObfuscated } = usePrivacy();
+    const { formatCurrency } = useLocalization();
 
-    const formattedValue = new Intl.NumberFormat("pt-BR", {
-        style: "currency",
-        currency: currency,
-    }).format(value);
+    const formattedValue = formatCurrency(value, currency);
 
     if (isObfuscated) {
         return (

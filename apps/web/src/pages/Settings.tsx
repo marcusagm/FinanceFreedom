@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import * as z from "zod";
 import { GeneralSettingsCard } from "../components/settings/GeneralSettingsCard";
 import { ThemeCustomizer } from "../components/settings/ThemeCustomizer";
+import { useLocalization } from "../contexts/LocalizationContext";
 import { Button } from "../components/ui/Button";
 import {
     Card,
@@ -37,6 +38,8 @@ export type SettingsFormValues = z.infer<typeof settingsSchema>;
 
 export function Settings() {
     const { t, i18n } = useTranslation();
+    const { currency, setCurrency, dateFormat, setDateFormat } =
+        useLocalization();
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -80,8 +83,8 @@ export function Settings() {
             // Filter out undefined values
             const cleanValues = Object.fromEntries(
                 Object.entries(values).filter(
-                    ([_, v]) => v !== undefined && v !== null
-                )
+                    ([_, v]) => v !== undefined && v !== null,
+                ),
             ) as Record<string, string>;
 
             await systemConfigService.setMany(cleanValues);
@@ -145,6 +148,60 @@ export function Settings() {
                                                 {
                                                     value: "en",
                                                     label: "English (US)",
+                                                },
+                                            ]}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2 pt-4 border-t">
+                                    <Label>{t("settings.currency")}</Label>
+                                    <div className="flex flex-col gap-1">
+                                        <p className="text-sm text-muted-foreground">
+                                            {t("settings.currency_desc")}
+                                        </p>
+                                        <Select
+                                            value={currency}
+                                            onChange={setCurrency}
+                                            options={[
+                                                {
+                                                    value: "BRL",
+                                                    label: "Real (BRL)",
+                                                },
+                                                {
+                                                    value: "USD",
+                                                    label: "Dollar (USD)",
+                                                },
+                                                {
+                                                    value: "EUR",
+                                                    label: "Euro (EUR)",
+                                                },
+                                            ]}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2 pt-4 border-t">
+                                    <Label>{t("settings.dateFormat")}</Label>
+                                    <div className="flex flex-col gap-1">
+                                        <p className="text-sm text-muted-foreground">
+                                            {t("settings.dateFormat_desc")}
+                                        </p>
+                                        <Select
+                                            value={dateFormat}
+                                            onChange={setDateFormat}
+                                            options={[
+                                                {
+                                                    value: "dd/MM/yyyy",
+                                                    label: "dd/MM/yyyy (31/12/2024)",
+                                                },
+                                                {
+                                                    value: "MM/dd/yyyy",
+                                                    label: "MM/dd/yyyy (12/31/2024)",
+                                                },
+                                                {
+                                                    value: "yyyy-MM-dd",
+                                                    label: "yyyy-MM-dd (2024-12-31)",
                                                 },
                                             ]}
                                         />

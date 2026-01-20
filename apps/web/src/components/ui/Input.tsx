@@ -15,21 +15,32 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
 }
 
 import { useTranslation } from "react-i18next";
+import { useLocalization } from "../../contexts/LocalizationContext";
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
-    ({ className, label, currency, ...props }, ref) => {
+    ({ className, label, currency: isCurrencyInput, ...props }, ref) => {
         const { i18n } = useTranslation();
+        const { currency } = useLocalization();
+
         const inputClass = cn(
             "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
             className,
         );
 
         const isPtBr = i18n.language.toLowerCase().startsWith("pt");
-        const currencyPrefix = isPtBr ? "R$ " : "$ ";
+
+        // Currency Symbol based on User Preference
+        let currencyPrefix = "$ ";
+        if (currency === "BRL") currencyPrefix = "R$ ";
+        else if (currency === "EUR") currencyPrefix = "€ ";
+        else if (currency === "USD") currencyPrefix = "$ ";
+        else currencyPrefix = `${currency} `;
+
+        // Number Format (Separators) based on Language/Region
         const thousandSeparator = isPtBr ? "." : ",";
         const decimalSeparator = isPtBr ? "," : ".";
 
-        const content = currency ? (
+        const content = isCurrencyInput ? (
             <NumericFormat
                 getInputRef={ref}
                 className={inputClass}

@@ -8,6 +8,7 @@ import { cn } from "../../lib/utils";
 import { Button } from "../ui/Button";
 import { Calendar } from "../ui/Calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/Popover";
+import { useLocalization } from "../../contexts/LocalizationContext";
 
 interface DatePickerProps {
     date: Date | undefined;
@@ -25,6 +26,7 @@ export function DatePicker({
     disabled,
 }: DatePickerProps) {
     const { t, i18n } = useTranslation();
+    const { dateFormat } = useLocalization();
     const [inputValue, setInputValue] = React.useState("");
 
     const locale = React.useMemo(() => {
@@ -33,19 +35,21 @@ export function DatePicker({
 
     React.useEffect(() => {
         if (date && isValid(date)) {
-            setInputValue(format(date, "dd/MM/yyyy"));
+            setInputValue(format(date, dateFormat));
         } else if (!date) {
             setInputValue("");
         }
-    }, [date]);
+    }, [date, dateFormat]);
 
     // Handle input change
     const handleValueChange = (values: any) => {
         const { formattedValue } = values;
         setInputValue(formattedValue);
 
-        if (formattedValue.length === 10) {
-            const parsedDate = parse(formattedValue, "dd/MM/yyyy", new Date());
+        const maskLength = dateFormat === "yyyy-MM-dd" ? 10 : 10; // All supported formats are 10 chars for now
+
+        if (formattedValue.length === maskLength) {
+            const parsedDate = parse(formattedValue, dateFormat, new Date());
             if (isValid(parsedDate)) {
                 setDate(parsedDate);
             }
@@ -54,14 +58,20 @@ export function DatePicker({
         }
     };
 
+    // Determine mask based on dateFormat
+    const maskFormat = React.useMemo(() => {
+        if (dateFormat === "yyyy-MM-dd") return "####-##-##";
+        return "##/##/####"; // dd/MM/yyyy or MM/dd/yyyy
+    }, [dateFormat]);
+
     return (
         <div className={cn("relative", className)}>
             <PatternFormat
-                format="##/##/####"
+                format={maskFormat}
                 mask="_"
                 value={inputValue}
                 onValueChange={handleValueChange}
-                placeholder={placeholder || t("common.dateFormat")}
+                placeholder={placeholder || dateFormat.toLowerCase()}
                 className={cn(
                     "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
                     "pr-10", // Space for the calendar icon

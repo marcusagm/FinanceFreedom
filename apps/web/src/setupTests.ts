@@ -64,6 +64,26 @@ vi.mock("@/contexts/PrivacyContext", async (importOriginal) => {
     };
 });
 
+// Mock LocalizationContext globally
+vi.mock("@/contexts/LocalizationContext", async (importOriginal) => {
+    const actual: any = await importOriginal();
+    return {
+        ...actual,
+        useLocalization: () => ({
+            currency: "BRL",
+            setCurrency: vi.fn(),
+            dateFormat: "dd/MM/yyyy",
+            setDateFormat: vi.fn(),
+            formatCurrency: (value: number, currency?: string) => {
+                const c = currency || "BRL";
+                return `${c === "BRL" ? "R$ " : c + " "}${value.toFixed(2)}`;
+            },
+        }),
+        LocalizationProvider: ({ children }: { children: React.ReactNode }) =>
+            children,
+    };
+});
+
 // Mock Dialog globally - Use a simplified version that doesn't use portals
 vi.mock("@/components/ui/Dialog", () => ({
     Dialog: ({ open, children }: any) =>

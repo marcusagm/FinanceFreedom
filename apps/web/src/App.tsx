@@ -24,103 +24,117 @@ import { Profile } from "./pages/Profile";
 import { Register } from "./pages/Register";
 import { ResetPassword } from "./pages/ResetPassword";
 import { Settings } from "./pages/Settings";
+import { LocalizationProvider } from "./contexts/LocalizationContext";
 
 function App() {
     return (
         <AuthProvider>
             <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-                <PrivacyProvider>
-                    <BrowserRouter>
-                        <Toaster />
-                        <Routes>
-                            <Route path="/login" element={<Login />} />
-                            <Route path="/register" element={<Register />} />
-                            <Route
-                                path="/forgot-password"
-                                element={<ForgotPassword />}
-                            />
-                            <Route
-                                path="/reset-password"
-                                element={<ResetPassword />}
-                            />
-                            <Route element={<ProtectedRoute />}>
+                <LocalizationProvider>
+                    <PrivacyProvider>
+                        <BrowserRouter>
+                            <Toaster />
+                            <Routes>
+                                <Route path="/login" element={<Login />} />
                                 <Route
-                                    path="*"
-                                    element={
-                                        <Layout>
-                                            <Routes>
-                                                <Route
-                                                    path="/"
-                                                    element={<Dashboard />}
-                                                />
-                                                <Route
-                                                    path="/dashboard"
-                                                    element={<Dashboard />}
-                                                />
-                                                <Route
-                                                    path="/accounts"
-                                                    element={<Accounts />}
-                                                />
-                                                <Route
-                                                    path="/debts"
-                                                    element={<Debts />}
-                                                />
-                                                <Route
-                                                    path="/income"
-                                                    element={<IncomePage />}
-                                                />
-                                                <Route
-                                                    path="/income/projection"
-                                                    element={
-                                                        <IncomeProjection />
-                                                    }
-                                                />
-                                                <Route
-                                                    path="/transactions"
-                                                    element={<Transactions />}
-                                                />
-                                                <Route
-                                                    path="/investments"
-                                                    element={
-                                                        <InvestmentAccounts />
-                                                    }
-                                                />
-                                                <Route
-                                                    path="/goals"
-                                                    element={<SavingsGoals />}
-                                                />
-                                                <Route
-                                                    path="/import"
-                                                    element={<ImportPage />}
-                                                />
-                                                <Route
-                                                    path="/import/config"
-                                                    element={<ImapConfigPage />}
-                                                />
-                                                <Route
-                                                    path="/categories"
-                                                    element={<Categories />}
-                                                />
-                                                <Route
-                                                    path="/fixed-expenses"
-                                                    element={<FixedExpenses />}
-                                                />
-                                                <Route
-                                                    path="/settings"
-                                                    element={<Settings />}
-                                                />
-                                                <Route
-                                                    path="/profile"
-                                                    element={<Profile />}
-                                                />
-                                            </Routes>
-                                        </Layout>
-                                    }
+                                    path="/register"
+                                    element={<Register />}
                                 />
-                            </Route>
-                        </Routes>
-                    </BrowserRouter>
-                </PrivacyProvider>
+                                <Route
+                                    path="/forgot-password"
+                                    element={<ForgotPassword />}
+                                />
+                                <Route
+                                    path="/reset-password"
+                                    element={<ResetPassword />}
+                                />
+                                <Route element={<ProtectedRoute />}>
+                                    <Route
+                                        path="*"
+                                        element={
+                                            <Layout>
+                                                <Routes>
+                                                    <Route
+                                                        path="/"
+                                                        element={<Dashboard />}
+                                                    />
+                                                    <Route
+                                                        path="/dashboard"
+                                                        element={<Dashboard />}
+                                                    />
+                                                    <Route
+                                                        path="/accounts"
+                                                        element={<Accounts />}
+                                                    />
+                                                    <Route
+                                                        path="/debts"
+                                                        element={<Debts />}
+                                                    />
+                                                    <Route
+                                                        path="/income"
+                                                        element={<IncomePage />}
+                                                    />
+                                                    <Route
+                                                        path="/income/projection"
+                                                        element={
+                                                            <IncomeProjection />
+                                                        }
+                                                    />
+                                                    <Route
+                                                        path="/transactions"
+                                                        element={
+                                                            <Transactions />
+                                                        }
+                                                    />
+                                                    <Route
+                                                        path="/investments"
+                                                        element={
+                                                            <InvestmentAccounts />
+                                                        }
+                                                    />
+                                                    <Route
+                                                        path="/goals"
+                                                        element={
+                                                            <SavingsGoals />
+                                                        }
+                                                    />
+                                                    <Route
+                                                        path="/import"
+                                                        element={<ImportPage />}
+                                                    />
+                                                    <Route
+                                                        path="/import/config"
+                                                        element={
+                                                            <ImapConfigPage />
+                                                        }
+                                                    />
+                                                    <Route
+                                                        path="/categories"
+                                                        element={<Categories />}
+                                                    />
+                                                    <Route
+                                                        path="/fixed-expenses"
+                                                        element={
+                                                            <FixedExpenses />
+                                                        }
+                                                    />
+                                                    <Route
+                                                        path="/settings"
+                                                        element={<Settings />}
+                                                    />
+                                                    <Route
+                                                        path="/profile"
+                                                        element={<Profile />}
+                                                    />
+                                                </Routes>
+                                            </Layout>
+                                        }
+                                    />
+                                </Route>
+                            </Routes>
+                        </BrowserRouter>
+                    </PrivacyProvider>
+                </LocalizationProvider>
             </ThemeProvider>
         </AuthProvider>
     );

@@ -33,12 +33,15 @@ interface BalanceChartWidgetProps {
     isObfuscated: boolean;
 }
 
+import { useLocalization } from "../../contexts/LocalizationContext";
+
 export function BalanceChartWidget({
     dailyData,
     annualData,
     isObfuscated,
 }: BalanceChartWidgetProps) {
     const { t, i18n } = useTranslation();
+    const { currency } = useLocalization();
     const [viewMode, setViewMode] = useState<"monthly" | "annual">("monthly");
     const locale = i18n.language === "en" ? enUS : ptBR;
 
@@ -136,7 +139,7 @@ export function BalanceChartWidget({
                                         const date = new Date(
                                             parseInt(year),
                                             parseInt(month) - 1,
-                                            1
+                                            1,
                                         );
                                         return format(date, "MMM", { locale });
                                     }
@@ -150,12 +153,15 @@ export function BalanceChartWidget({
                                 domain={[domainMin, domainMax]}
                                 tickFormatter={(value) => {
                                     if (isObfuscated) return "••••••";
-                                    return new Intl.NumberFormat("pt-BR", {
-                                        notation: "compact",
-                                        compactDisplay: "short",
-                                        style: "currency",
-                                        currency: "BRL",
-                                    }).format(value);
+                                    return new Intl.NumberFormat(
+                                        i18n.language,
+                                        {
+                                            notation: "compact",
+                                            compactDisplay: "short",
+                                            style: "currency",
+                                            currency: currency,
+                                        },
+                                    ).format(value);
                                 }}
                             />
                             <Tooltip
@@ -163,22 +169,22 @@ export function BalanceChartWidget({
                                     <ChartTooltip
                                         formatter={(
                                             value: number,
-                                            name?: string
+                                            name?: string,
                                         ) => (
                                             <MoneyDisplay
                                                 value={Math.abs(value)}
                                                 className={
                                                     name ===
                                                     t(
-                                                        "dashboard.balanceChart.expense"
+                                                        "dashboard.balanceChart.expense",
                                                     )
                                                         ? "text-red-500"
                                                         : name ===
-                                                          t(
-                                                              "dashboard.balanceChart.income"
-                                                          )
-                                                        ? "text-emerald-500"
-                                                        : "text-blue-500"
+                                                            t(
+                                                                "dashboard.balanceChart.income",
+                                                            )
+                                                          ? "text-emerald-500"
+                                                          : "text-blue-500"
                                                 }
                                             />
                                         )}

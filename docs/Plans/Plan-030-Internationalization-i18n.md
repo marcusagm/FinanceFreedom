@@ -44,11 +44,14 @@
 
 - [x] **Datas:**
     - [x] Implementado `DatePicker` customizado com suporte a input manual (PatternFormat) e seleção por calendário via `date-fns` com locale dinâmico.
-- [ ] **Moedas:** Implementar suporte dinâmico (Hoje é fixo via `translation.json` keys como `currencyPlaceholder`, precisa evoluir para formatação real via `Intl`).
-    - [ ] Implementar suporte dinâmico para várias moedas padrão, como `BRL`, `USD`, `EUR`, (gerar lista de moedas mundiais completa) usando `Intl.NumberFormat`. O símbolo deve mudar conforme a preferência do usuário.
-- [ ] **Configuração de localização** Adicionar compos de moeda, formato de data e formatação de moeda. Na tela de `Settings`, deve ter opção de selecionar a moeda e o formato de data.
+- [x] **Moedas:** Implementar suporte dinâmico (Hoje é fixo via `translation.json` keys como `currencyPlaceholder`, precisa evoluir para formatação real via `Intl`).
+    - [x] Implementar suporte dinâmico para várias moedas padrão, como `BRL`, `USD`, `EUR`, (gerar lista de moedas mundiais completa) usando `Intl.NumberFormat`. O símbolo deve mudar conforme a preferência do usuário.
+- [x] **Configuração de localização** Adicionar compos de moeda, formato de data e formatação de moeda. Na tela de `Settings`, deve ter opção de selecionar a moeda e o formato de data.
 - [ ] **Atualização de telas:** Atualizar todas as telas para ter suporte ao L10N (Account, Categories, Dashboard, Debts, FixedExpenses, ForgotPassword, ImapConfigPage, ImportPage, IncomeProjection, Login, Profile, Register, ResetPassword, SavingGoals, Settings e Transactions).
-- [ ] **Atualização de componentes:** Atualizar todos os componentes para ter suporte ao L10N (DatePicker, Input, Select, etc).
+    - [x] `Settings.tsx` (Moeda/Data)
+    - [x] `Dashboard` (BalanceChart, Widgets)
+    - [x] Telas usando `Input` (Transactions, Debts, etc)
+- [x] **Atualização de componentes:** Atualizar todos os componentes para ter suporte ao L10N (DatePicker, Input, Select, etc).
 
 ### E. API Internacionalization (Backend)
 
@@ -72,15 +75,26 @@
 - [x] **Sanitização de Console:**
     - [x] Adicionadas chaves de validação faltantes (`dateRequired`, `accountRequired`) para limpar warnings no console.
 
+### E. Validação e Teste (Via Browser Agent)
+
+- [x] **Verificação de Idioma:**
+    - [x] Login inicial em Português confirmado.
+    - [x] Troca para Inglês (US) altera sidebar, headers e labels.
+    - [x] Reversão para Português bem sucedida.
+- [x] **Verificação de Moeda:**
+    - [x] Alteração para USD reflete prefixo `$` em Dashboard e Transações.
+    - [x] Reversão para BRL restaura prefixo `R$`.
+- [x] **Verificação de Data:**
+    - [x] Alteração para formato `yyyy-MM-dd` aplicada com sucesso em inputs de data (Nova Transação).
+
 ## 3. Critérios de Aceite
 
-- [ ] Trocar o idioma para Português em Settings e ver todos os textos, placeholders e toasts mudarem.
-- [ ] Alterar a moeda para USD e ver os valores formatados como `$ 1,000.00`.
+- [x] Trocar o idioma para Português em Settings e ver todos os textos, placeholders e toasts mudarem.
+- [x] Alterar a moeda para USD e ver os valores formatados como `$ 1,000.00`.
 - [x] O sistema deve carregar o idioma salvo automaticamente no próximo acesso (via detector de navegador/cookie).
 
 ## 4. Próximos Passos Imediatos
 
-1.  Internacionalizar `ImportPage.tsx`.
-2.  Internacionalizar `Settings.tsx` (descrições e textos restantes).
-3.  Internacionalizar Dialogs de Investimento (`AddInvestmentDialog`, `DeleteInvestmentDialog`).
-4.  Revisão final de `Profile`, `Accounts` e `Categories` para garantir cobertura total.
+1.  Verificar fluxo completo de cadastro em diferentes idiomas.
+2.  Validar formatação de moeda em `IncomeProjection` e tabelas de transação.
+3.  Expandir i18n para mensagens de erro da API (ValidationPipes).
