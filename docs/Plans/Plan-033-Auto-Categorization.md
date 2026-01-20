@@ -44,11 +44,21 @@ Reduzir a fricção de entrada de dados automatizando a escolha de categorias pa
 - [ ] **Feedback Loop:**
     - [ ] Se o usuário edita uma categoria de uma transação, o sistema deve perguntar (Toaster/Modal discreto): _"Deseja criar uma regra para categorizar 'XYZ' sempre como 'ABC'?"_
 
-## 4. Critérios de Verificação
+### 3.5. Qualidade e Internacionalização
+
+- [ ] **Testes:**
+    - [ ] Unitários `CategorizerService`: Mockar base de regras e testar matches exatos, parciais (regex) e case insensitive.
+    - [ ] Integração: Simular importação OFX e verificar se `CategoryRule` foi aplicado.
+    - [ ] Frontend: Testar interação da tabela de regras (CRUD).
+- [ ] **i18n:**
+    - [ ] Traduzir interface de gestão de regras ("Created Rules", "Keyword", "Assigned Category").
+    - [ ] Feedback messages: "Rule created successfully", "Category updated".
 
 - [ ] **Importação:** Importar um OFX contendo "Uber". O sistema deve categorizar automaticamente como "Transporte" (baseada em regra global ou criada).
 - [ ] **Customização:** Usuário cria regra "Amazon" -> "Eletrônicos". Ao inserir despesa "Compra Amazon", a categoria deve vir preenchida.
 - [ ] **Conflito:** Regra do usuário deve ter precedência sobre a regra global.
+- [ ] **QA:** Testes de regressão garantem que a categorização automática não quebrou a criação manual.
+- [ ] **i18n:** Interface de configuração totalmente traduzida em EN/PT.
 
 ## 5. Referências
 

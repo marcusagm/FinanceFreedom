@@ -50,13 +50,24 @@ Implementar um módulo dedicado para gestão de Cartões de Crédito, resolvendo
 
 - [ ] Criar widget `CreditCardsSummary` para o Dashboard principal, mostrando total de faturas abertas e limites disponíveis.
 
-## 4. Critérios de Verificação
+### 3.5. Qualidade e Internacionalização
+
+- [ ] **Testes (TDD):**
+    - [ ] Unitários: `CreditCardService` (cálculo de limites, projeção de faturas).
+    - [ ] Integração: `TransactionService` (criar transação parcelada deve refletir corretamente na fatura futura).
+    - [ ] Componentes: Testar `CreditCardSummary` com diferentes estados de limite (Vazio, Cheio, Estourado).
+- [ ] **i18n & l10n:**
+    - [ ] Atualizar arquivos em `apps/web/public/locales` (pt-br/en).
+    - [ ] Novas chaves: "Closing Day", "Due Day", "Invoice", "Available Limit", "Pay Invoice".
+    - [ ] Formatação de datas de vencimento deve respeitar o locale do usuário.
 
 - [ ] **Ciclo de Fatura:** Uma compra feita APÓS o dia de fechamento deve cair na fatura do mês seguinte automaticamente.
 - [ ] **Parcelamento:** Compra de R$ 1000 em 10x deve reduzir o limite em R$ 1000 imediatamente, mas impactar a fatura em apenas R$ 100/mês.
 - [ ] **Pagamento:** Pagar a fatura deve:
     1.  Reduzir saldo da conta bancária.
     2.  Restaurar o limite disponível do cartão (relativo àquela fatura).
+- [ ] **Cobertura:** Relatório de coverage deve mostrar 100% nas regras de negócio do `CreditCardService`.
+- [ ] **i18n:** Verificar se a mensagem de "Fatura Fechada" aparece traduzida nos dois idiomas.
 
 ## 5. Referências
 

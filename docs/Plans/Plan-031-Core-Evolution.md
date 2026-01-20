@@ -58,12 +58,24 @@ Estabelecer a base arquitetural para a versão 2.0 do Finance Freedom, focando e
 - [ ] Criar `PersonService`:
     - [ ] CRUD simples de contatos.
 
-## 4. Critérios de Verificação
+### 3.5. Qualidade e Internacionalização
+
+- [ ] **Testes (TDD/BDD):**
+    - [ ] Criar testes unitários para `MultiCurrencyService` (Mock de providers) cobrindo cenários de falha e fallback.
+    - [ ] Criar testes unitários para `EncryptionService`.
+    - [ ] Atualizar testes de integração de `TransactionService` para verificar a persistência dos novos campos de moeda.
+    - [ ] Executar `npm run test:cov` e garantir cobertura > 80% nos novos módulos.
+- [ ] **i18n & l10n:**
+    - [ ] Adicionar chaves de tradução em `apps/web/public/locales/en/translation.json` e `pt-br/translation.json`.
+        - [ ] Termos: "Currency", "Exchange Rate", "Pending Transaction", "Confirmed".
+    - [ ] Garantir que formatadores de dinheiro (`Intl.NumberFormat`) usem a moeda da transação (`originalCurrency`), não a do sistema.
 
 - [ ] **Segurança:** Senhas no banco (visualizadas via Prisma Studio) devem estar ilegíveis. Teste de conexão IMAP deve funcionar decriptando a senha corretamente.
 - [ ] **Multi-moeda:** Cadastrar uma conta em "USD". Cadastrar transação de $100. O Dashboard deve exibir o total convertido para BRL (aprox R$ 500-600).
 - [ ] **Hierarquia:** Criar Categoria "Carro" e subcategoria "Gasolina". Transação em "Gasolina" deve aparecer em relatórios de "Carro" compondo o valor total da categoria pai. As somas das subcategorias devem ser iguais ao valor total da categoria pai, a não ser que o usuário tenha definido um valor diferente para a categoria pai ou feito lançamentos na categoria pai.
 - [ ] **Status:** Transação marcada como PENDING não deve descontar do saldo efetivo (apenas projeção) e deve ser visualmente distinta.
+- [ ] **Qualidade:** Todos os novos testes unitários e de integração devem passar (`PASS`).
+- [ ] **i18n:** Alterar idioma do sistema para Inglês e verificar se os novos status e labels de moeda estão traduzidos corretamente.
 
 ## 5. Referências
 

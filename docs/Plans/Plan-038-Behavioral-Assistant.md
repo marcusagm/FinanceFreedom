@@ -39,10 +39,19 @@ Criar a camada de inteligência "Assistente" que analisa os dados gerados por to
 - [ ] Widget de "Dicas do Dia" no Dashboard.
 - [ ] Cards acionáveis: "Detectamos aumento na Netflix. Confirmar novo valor?" -> Botão [Confirmar].
 
-## 4. Critérios de Verificação
+### 3.5. Qualidade e Internacionalização
+
+- [ ] **Testes:**
+    - [ ] Unitários `AssistantService`: Simular dados de transações e verificar se os Insights corretos são gerados.
+    - [ ] Unitários `HealthScoreService`: Validar novas métricas de resiliência.
+- [ ] **i18n:**
+    - [ ] Insights devem ser traduzíveis (usar chaves de tradução no backend ou enviar código para o frontend traduzir).
+    - [ ] Ex: `insight.vampire_spend.title` e não hardcoded string.
 
 - [ ] **Insight de Assinatura:** Simular 2 meses de pagamentos de valor X e o 3º mês valor X+20%. O assistente deve gerar um alerta de "Aumento de custo fixo".
 - [ ] **Health Score:** Zerar a reserva de emergência (saldo) deve derrubar o score drasticamente.
+- [ ] **QA:** Alta cobertura de teste na lógica de detecção de padrões.
+- [ ] **i18n:** Insights gerados aparecem no idioma correto do usuário.
 
 ## 5. Referências
 

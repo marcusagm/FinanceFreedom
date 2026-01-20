@@ -48,10 +48,20 @@ Transformar o sistema de reativo para proativo, implementando tarefas em segundo
 - [ ] Dropdown listando últimas notificações.
 - [ ] Marcar como lida ao clicar.
 
-## 4. Critérios de Verificação
+### 3.5. Qualidade e Internacionalização
+
+- [ ] **Testes:**
+    - [ ] Unitários `NotificationService`: Testar criação e marcação de lida.
+    - [ ] Integração Scheduler: Testar se o Jobservice chama os métodos corretos (spies).
+    - [ ] E2E: Verificar se o sininho exibe o badge vermelho ao receber notificação.
+- [ ] **i18n:**
+    - [ ] Traduzir templates de e-mail e mensagens de notificação no Backend (`i18n` library no NestJS ou chaves enviadas ao front).
+    - [ ] UI: "Notifications", "Mark all as read", "No new notifications".
 
 - [ ] **Background Sync:** Enviar e-mail com anexo OFX. Aguardar a execução do Cron. Verificar se a transação apareceu no sistema sem intervenção manual.
 - [ ] **Alertas:** Alterar data de vencimento de uma dívida para "Hoje". Executar manualmente o job `dailyDigest`. Verificar se a notificação apareceu no frontend.
+- [ ] **QA:** `npm run test` deve passar sem falhas nos novos módulos.
+- [ ] **i18n:** Receber uma notificação de "Vencimento" e verificar se o texto está no idioma selecionado pelo usuário.
 
 ## 5. Referências
 

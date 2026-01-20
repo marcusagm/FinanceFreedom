@@ -39,11 +39,20 @@ Criar um mecanismo formal de auditoria para garantir que o saldo apresentado no 
     3.  **Resultado:** Mostrar "Bateu!" (Verde) ou "Diferença de R$ XX" (Vermelho).
     4.  **Ação:** Botão "Ajustar automaticamente" ou "Investigar mais".
 
-## 4. Critérios de Verificação
+### 3.4. Qualidade e Internacionalização
+
+- [ ] **Testes:**
+    - [ ] Unitários `ReconciliationService`: Cenários de saldo igual, saldo maior e saldo menor.
+    - [ ] Frontend: Testar o Wizard step-by-step.
+- [ ] **i18n:**
+    - [ ] Traduzir Wizard: "Start Reconciliation", "Expected Balance", "Actual Balance", "Discrepancy".
+    - [ ] Tooltips explicativos sobre o que é conciliação.
 
 - [ ] **Cálculo:** Se o sistema diz R$ 100 e eu digo R$ 90, a diferença mostrada deve ser R$ -10.
 - [ ] **Ajuste:** Ao clicar em Ajustar, uma transação de despesa de R$ 10 deve ser criada, e o saldo da conta deve virar R$ 90.
 - [ ] **Histórico:** Deve ser possível ver sessões de auditoria passadas.
+- [ ] **QA:** Cobertura de testes garantida para lógica de cálculo de saldo.
+- [ ] **i18n:** Mensagens de erro e sucesso traduzidas.
 
 ## 5. Referências
 

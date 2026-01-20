@@ -37,10 +37,19 @@ Implementar o "Survival Mode" e estratégias psicológicas de gestão de dívida
 - [ ] Frontend: Criar toggle "Survival Mode".
     - [ ] Quando ativo, o dashboard esconde gráficos de Riqueza e foca 100% em Fluxo de Caixa e Dívidas Críticas.
 
-## 4. Critérios de Verificação
+### 3.5. Qualidade e Internacionalização
+
+- [ ] **Testes:**
+    - [ ] Unitários `MentalPeaceStrategy`: Garantir que a ordenação muda conforme os pesos psicológicos.
+    - [ ] Integração: Criar negociação e verificar vínculo com dívida.
+- [ ] **i18n:**
+    - [ ] Termos: "Mental Peace", "Survival Mode", "Prescription Date", "Negotiation History".
+    - [ ] Explicações contextuais (Tooltips) traduzidas.
 
 - [ ] **Ordenação:** Ao mudar a prioridade de "Paz Mental" de uma dívida pequena para Máxima, ela deve subir para o topo da lista de recomendação de pagamento.
 - [ ] **Histórico:** Registrar uma negociação deve aparecer na timeline da dívida.
+- [ ] **QA:** Todos os testes passando.
+- [ ] **i18n:** Alternar idioma altera os labels do Modo Sobrevivência.
 
 ## 5. Referências
 
