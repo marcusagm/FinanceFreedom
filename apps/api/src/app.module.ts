@@ -25,6 +25,7 @@ import * as path from "path";
 import { CommonModule } from "./common/common.module";
 import { CurrencyModule } from "./modules/currency/currency.module";
 import { PersonModule } from "./modules/person/person.module";
+import { CreditCardModule } from "./modules/credit-card/credit-card.module";
 
 @Module({
     imports: [
@@ -66,6 +67,7 @@ import { PersonModule } from "./modules/person/person.module";
         SavingsGoalModule,
         AnalyticsModule,
         PersonModule,
+        CreditCardModule,
     ],
     controllers: [AppController],
     providers: [

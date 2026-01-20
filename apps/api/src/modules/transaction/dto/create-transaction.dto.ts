@@ -5,6 +5,7 @@ import {
     IsOptional,
     IsString,
     IsEnum,
+    IsBoolean,
 } from "class-validator";
 
 export class CreateTransactionDto {
@@ -60,5 +61,18 @@ export class CreateTransactionDto {
     personId?: string;
 
     @IsOptional()
+    @IsString()
+    creditCardId?: string;
+
+    @IsOptional()
+    @IsNumber()
+    installmentNumber?: number;
+
+    @IsOptional()
+    @IsNumber()
+    totalInstallments?: number;
+
+    @IsOptional()
+    @IsBoolean() // Correcting type
     paysInstallment?: boolean;
 }

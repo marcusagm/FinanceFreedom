@@ -13,38 +13,73 @@ import { GetTransactionsDto } from "./dto/get-transactions.dto";
 import { addMonths } from "date-fns";
 
 import { MultiCurrencyService } from "../currency/services/multi-currency.service";
+import { CreditCardService } from "../credit-card/credit-card.service";
+import { forwardRef } from "@nestjs/common";
 
 @Injectable()
 export class TransactionService {
     constructor(
         @Inject(PrismaService) private readonly prisma: PrismaService,
         private readonly multiCurrencyService: MultiCurrencyService,
+        @Inject(forwardRef(() => CreditCardService))
+        private readonly creditCardService: CreditCardService,
     ) {}
 
     async create(userId: string, createTransactionDto: CreateTransactionDto) {
-        const {
+        let {
             accountId,
             amount,
             type,
             date,
             isRecurring,
             repeatCount,
-            paysInstallment,
+            paysInstallment, // Used locally or logic?
             currency,
             status: inputStatus,
             personId,
+            creditCardId,
+            installmentNumber,
+            totalInstallments: inputTotalInstallments, // distinct name
             ...rest
         } = createTransactionDto;
-        const transactionDate = new Date(date);
-        const iterations = isRecurring ? repeatCount || 12 : 1;
-        const status = inputStatus || "CONFIRMED";
 
-        // 1. Resolve Currency & Rate
+        const transactionDate = new Date(date);
+        let status = inputStatus || "CONFIRMED";
+        let targetAccountId = accountId;
+
+        // 1. Credit Card Logic Setup
+        if (creditCardId) {
+            const card = await this.creditCardService.findOne(
+                userId,
+                creditCardId,
+            );
+            // Override accountId to the Card's hidden account
+            targetAccountId = card.accountId;
+
+            // Check Limit
+            const available =
+                await this.creditCardService.calculateAvailableLimit(
+                    userId,
+                    creditCardId,
+                );
+            if (Number(amount) > available) {
+                throw new BadRequestException("Insufficient credit limit"); // TODO: i18n
+            }
+        }
+
+        const iterations =
+            creditCardId && inputTotalInstallments && inputTotalInstallments > 1
+                ? inputTotalInstallments
+                : isRecurring
+                  ? repeatCount || 12
+                  : 1;
+
+        // 2. Resolve Account & Currency
         const account = await this.prisma.account.findUnique({
-            where: { id: accountId },
+            where: { id: targetAccountId },
         });
         if (!account) {
-            throw new NotFoundException(`Account ${accountId} not found`);
+            throw new NotFoundException(`Account ${targetAccountId} not found`);
         }
 
         const accountCurrency = account.currency || "BRL";
@@ -55,6 +90,8 @@ export class TransactionService {
 
         if (transactionCurrency !== accountCurrency) {
             try {
+                // If it's a Credit Card, usually conversions happen at the card brand rate.
+                // But we simulate it here.
                 exchangeRate = await this.multiCurrencyService.getExchangeRate(
                     transactionCurrency,
                     accountCurrency,
@@ -62,61 +99,118 @@ export class TransactionService {
                 );
                 effectiveAmount = Number(amount) * exchangeRate;
             } catch (error) {
-                // Fallback or fail? Fail for safety.
                 throw new BadRequestException(
                     `Could not convert currency: ${error.message}`,
                 );
             }
         }
 
+        // If installments, divide amount
+        let installmentAmount = effectiveAmount;
+        if (
+            creditCardId &&
+            inputTotalInstallments &&
+            inputTotalInstallments > 1
+        ) {
+            // Logic: Total Purchase is Amount. Each installment is Amount / N.
+            // OR: User entered "Monthly Installment Value"?
+            // Standard: User enters TOTAL purchase.
+            installmentAmount = effectiveAmount / inputTotalInstallments;
+
+            // Fix precision issues?
+            // Better: 100 / 3 = 33.33, 33.33, 33.34.
+            // We'll handle simplistic division for now.
+        }
+
         // Use interactive transaction to ensure atomicity
         return this.prisma.$transaction(
             async (prisma: Prisma.TransactionClient) => {
                 const createdTransactions = [];
+                let remainingAmount = effectiveAmount;
 
                 for (let i = 0; i < iterations; i++) {
                     const currentDate = addMonths(transactionDate, i);
 
-                    // 2. Create the transaction
+                    let currentAmount = installmentAmount;
+
+                    // Specific logic for recurring vs installments
+                    if (isRecurring) {
+                        currentAmount = effectiveAmount; // Recurring repeats the full amount
+                    } else if (
+                        creditCardId &&
+                        inputTotalInstallments &&
+                        inputTotalInstallments > 1
+                    ) {
+                        // Penny adjustment for last installment
+                        if (i === iterations - 1) {
+                            currentAmount = remainingAmount;
+                        } else {
+                            currentAmount = Number(currentAmount.toFixed(2));
+                            remainingAmount -= currentAmount;
+                        }
+                    }
+
+                    // 3. Create the transaction
                     const transaction = await prisma.transaction.create({
                         data: {
                             userId,
-                            accountId,
-                            amount: effectiveAmount,
-                            originalAmount: Number(amount),
+                            accountId: targetAccountId,
+                            amount: currentAmount,
+                            originalAmount: isRecurring
+                                ? Number(amount)
+                                : inputTotalInstallments &&
+                                    inputTotalInstallments > 1
+                                  ? Number(amount) / inputTotalInstallments
+                                  : Number(amount), // Approximation for display
                             originalCurrency: transactionCurrency,
                             exchangeRate: exchangeRate,
                             status,
                             personId,
                             type,
                             date: currentDate,
-                            description: createTransactionDto.description,
+                            description: isRecurring
+                                ? `${createTransactionDto.description} (${i + 1}/${iterations})`
+                                : inputTotalInstallments &&
+                                    inputTotalInstallments > 1
+                                  ? `${createTransactionDto.description} (${i + 1}/${inputTotalInstallments})`
+                                  : createTransactionDto.description,
                             category: createTransactionDto.category,
                             categoryId: createTransactionDto.categoryId,
                             debtId: createTransactionDto.debtId,
+
+                            creditCardId: creditCardId,
+                            installmentNumber:
+                                creditCardId && inputTotalInstallments
+                                    ? i + 1
+                                    : undefined,
+                            totalInstallments:
+                                creditCardId && inputTotalInstallments
+                                    ? inputTotalInstallments
+                                    : undefined,
                         },
                     });
                     createdTransactions.push(transaction);
 
-                    // 3. Update the account balance (If CONFIRMED)
+                    // 4. Update the account balance (If CONFIRMED)
                     if (status === "CONFIRMED") {
                         const balanceChange =
-                            type === "INCOME"
-                                ? effectiveAmount
-                                : -effectiveAmount;
+                            type === "INCOME" ? currentAmount : -currentAmount;
 
                         await prisma.account.update({
-                            where: { id: accountId },
+                            where: { id: targetAccountId },
                             data: { balance: { increment: balanceChange } },
                         });
                     }
 
-                    // 4. Update debt balance if applicable (If CONFIRMED)
+                    // 5. Update debt balance if applicable (If CONFIRMED)
                     if (
                         createTransactionDto.debtId &&
                         type === "EXPENSE" &&
                         status === "CONFIRMED"
                     ) {
+                        // ... (Debt logic unchanged)
+                        // Note: If using credit card, debt payment might reduce debt but increase CC usage.
+                        // Logic below reduces Debt Amount.
                         const debt = await prisma.debt.findFirst({
                             where: { id: createTransactionDto.debtId, userId },
                         });
@@ -124,7 +218,7 @@ export class TransactionService {
                         if (debt) {
                             const newDebtBalance =
                                 Number(debt.totalAmount) -
-                                Number(effectiveAmount);
+                                Number(currentAmount);
 
                             let newPaidCount = debt.installmentsPaid || 0;
                             if (createTransactionDto.paysInstallment) {

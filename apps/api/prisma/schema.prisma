@@ -40,6 +40,7 @@ model User {
   people            Person[]
   budgetHistories   BudgetHistory[]
   importLogs        ImportLog[]
+  creditCards       CreditCard[]
 }
 
 model Account {
@@ -57,6 +58,9 @@ model Account {
   
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  creditCardsAsPayment CreditCard[] @relation("PaymentAccount")
+  creditCardConfig     CreditCard?  @relation("CardAccount")
 }
 
 model Transaction {
@@ -77,6 +81,11 @@ model Transaction {
   projectedIncomes ProjectedIncome[]
   debtId      String?
   debt        Debt?    @relation(fields: [debtId], references: [id])
+
+  creditCardId      String?
+  creditCard        CreditCard? @relation(fields: [creditCardId], references: [id])
+  installmentNumber Int?
+  totalInstallments Int?
   
   originalAmount    Decimal?
   originalCurrency  String?
@@ -340,4 +349,27 @@ model ImportLog {
 
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model CreditCard {
+  id              String   @id @default(uuid())
+  name            String
+  brand           String   // Visa, Mastercard, etc.
+  limit           Decimal
+  closingDay      Int      // 1-31
+  dueDay          Int      // 1-31
+  
+  paymentAccountId String?
+  paymentAccount   Account? @relation("PaymentAccount", fields: [paymentAccountId], references: [id])
+  
+  accountId       String   @unique
+  account         Account  @relation("CardAccount", fields: [accountId], references: [id], onDelete: Cascade)
+
+  transactions    Transaction[]
+
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
