@@ -35,7 +35,11 @@
         "currencyPlaceholder": "$ 0.00",
         "percentPlaceholder": "0.00%",
         "numberExample": "e.g. 12",
-        "zeroPlaceholder": "0"
+        "zeroPlaceholder": "0",
+        "currency": "Currency",
+        "exchangeRate": "Exchange Rate",
+        "status": "Status",
+        "originalAmount": "Original Amount"
     },
     "profile": {
         "title": "My Profile",
@@ -252,7 +256,13 @@
         "deleteDesc": "This action cannot be undone.",
         "deleteMessage": "The transaction <strong>{{name}}</strong> will be permanently removed.",
         "deleteConfirm": "Yes, delete",
-        "deleting": "Deleting..."
+        "deleteConfirm": "Yes, delete",
+        "deleting": "Deleting...",
+        "status": {
+            "pending": "Pending",
+            "confirmed": "Confirmed",
+            "reconciled": "Reconciled"
+        }
     },
     "income": {
         "title": "Income",

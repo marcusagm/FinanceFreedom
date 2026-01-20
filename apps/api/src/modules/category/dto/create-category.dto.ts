@@ -27,4 +27,8 @@ export class CreateCategoryDto {
     @IsNumber()
     @IsOptional()
     budgetLimit?: number;
+
+    @IsString()
+    @IsOptional()
+    parentId?: string;
 }

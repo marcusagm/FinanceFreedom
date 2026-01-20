@@ -35,7 +35,11 @@
         "currencyPlaceholder": "R$ 0,00",
         "percentPlaceholder": "0,00%",
         "numberExample": "Ex: 12",
-        "zeroPlaceholder": "0"
+        "zeroPlaceholder": "0",
+        "currency": "Moeda",
+        "exchangeRate": "Taxa de Câmbio",
+        "status": "Status",
+        "originalAmount": "Valor Original"
     },
     "profile": {
         "title": "Meu Perfil",
@@ -252,7 +256,13 @@
         "deleteDesc": "Esta ação não pode ser desfeita.",
         "deleteMessage": "A transação <strong>{{name}}</strong> será permanentemente removida.",
         "deleteConfirm": "Sim, excluir",
-        "deleting": "Excluindo..."
+        "deleteConfirm": "Sim, excluir",
+        "deleting": "Excluindo...",
+        "status": {
+            "pending": "Pendente",
+            "confirmed": "Confirmado",
+            "reconciled": "Reconciliado"
+        }
     },
     "income": {
         "title": "Renda",

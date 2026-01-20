@@ -37,6 +37,9 @@ model User {
   investmentAccounts InvestmentAccount[]
   savingsGoals     SavingsGoal[]
   dailyHealthScores DailyHealthScore[]
+  people            Person[]
+  budgetHistories   BudgetHistory[]
+  importLogs        ImportLog[]
 }
 
 model Account {
@@ -44,6 +47,7 @@ model Account {
   name      String
   type      String   // e.g., "WALLET", "BANK", "INVESTMENT"
   balance   Decimal  @default(0.0)
+  currency  String   @default("BRL")
   color     String?  // Hex code for UI
   transactions Transaction[]
   emailCredentials EmailCredential[]
@@ -73,6 +77,14 @@ model Transaction {
   projectedIncomes ProjectedIncome[]
   debtId      String?
   debt        Debt?    @relation(fields: [debtId], references: [id])
+  
+  originalAmount    Decimal?
+  originalCurrency  String?
+  exchangeRate      Decimal?
+  status            String   @default("CONFIRMED") // PENDING, CONFIRMED, RECONCILED
+  
+  personId          String?
+  person            Person?  @relation(fields: [personId], references: [id])
 
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -92,6 +104,11 @@ model Category {
   debts        Debt[]
   fixedExpenses FixedExpense[]
   incomeSources IncomeSource[]
+  budgetHistories BudgetHistory[]
+
+  parentId    String?
+  parent      Category?  @relation("ParentChild", fields: [parentId], references: [id])
+  children    Category[] @relation("ParentChild")
   
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -268,4 +285,59 @@ model DailyHealthScore {
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Person {
+  id        String   @id @default(uuid())
+  name      String
+  email     String?
+  phone     String?
+  
+  transactions Transaction[]
+  
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model BudgetHistory {
+  id          String   @id @default(uuid())
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  amount      Decimal
+  month       Int // 1-12
+  year        Int
+  
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ExchangeRateCache {
+  id        String   @id @default(uuid())
+  from      String
+  to        String
+  date      DateTime // YYYY-MM-DD
+  rate      Decimal
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([from, to, date])
+}
+
+model ImportLog {
+  id        String   @id @default(uuid())
+  source    String   // e.g., "IMAP", "UPLOAD"
+  status    String   // "SUCCESS", "FAILED"
+  count     Int      @default(0)
+  details   String?
+  createdAt DateTime @default(now())
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

@@ -22,6 +22,9 @@ import { SavingsGoalModule } from "./modules/savings-goal/savings-goal.module";
 import { AnalyticsModule } from "./modules/analytics/analytics.module";
 import { AcceptLanguageResolver, I18nModule, QueryResolver } from "nestjs-i18n";
 import * as path from "path";
+import { CommonModule } from "./common/common.module";
+import { CurrencyModule } from "./modules/currency/currency.module";
+import { PersonModule } from "./modules/person/person.module";
 
 @Module({
     imports: [
@@ -40,9 +43,11 @@ import * as path from "path";
             ],
         }),
         PrismaModule,
+        CommonModule,
         AuthModule,
         AccountModule,
         TransactionModule,
+        CurrencyModule,
         ImportModule,
         DashboardModule,
         SimulatorModule,
@@ -60,6 +65,7 @@ import * as path from "path";
         InvestmentAccountModule,
         SavingsGoalModule,
         AnalyticsModule,
+        PersonModule,
     ],
     controllers: [AppController],
     providers: [

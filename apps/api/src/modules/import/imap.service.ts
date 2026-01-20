@@ -1,13 +1,16 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { ImapFlow } from "imapflow";
 import { EmailCredential } from "@prisma/client";
+import { EncryptionService } from "../../common/services/encryption.service";
 
 @Injectable()
 export class ImapService {
     private readonly logger = new Logger(ImapService.name);
 
+    constructor(private readonly encryptionService: EncryptionService) {}
+
     async fetchUnseenAttachments(
-        credential: EmailCredential
+        credential: EmailCredential,
     ): Promise<Buffer[]> {
         const client = new ImapFlow({
             host: credential.host,
@@ -15,7 +18,7 @@ export class ImapService {
             secure: credential.secure,
             auth: {
                 user: credential.email,
-                pass: credential.password, // TODO: Decrypt this
+                pass: this.encryptionService.decrypt(credential.password),
             },
             logger: false,
         });
@@ -68,12 +71,12 @@ export class ImapService {
                         ) {
                             const content = await client.download(
                                 seq,
-                                part.part
+                                part.part,
                             );
                             // content is a stream? imapflow download returns { content, meta } where content is stream
                             if (content && content.content) {
                                 const buf = await this.streamToBuffer(
-                                    content.content
+                                    content.content,
                                 );
                                 attachments.push(buf);
                             }

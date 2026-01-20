@@ -48,5 +48,17 @@ export class CreateTransactionDto {
     repeatCount?: number;
 
     @IsOptional()
+    @IsString()
+    currency?: string;
+
+    @IsOptional()
+    @IsString()
+    status?: string;
+
+    @IsOptional()
+    @IsString()
+    personId?: string;
+
+    @IsOptional()
     paysInstallment?: boolean;
 }

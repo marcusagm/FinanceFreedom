@@ -12,13 +12,16 @@ import { SplitTransactionDto } from "./dto/split-transaction.dto";
 import { GetTransactionsDto } from "./dto/get-transactions.dto";
 import { addMonths } from "date-fns";
 
+import { MultiCurrencyService } from "../currency/services/multi-currency.service";
+
 @Injectable()
 export class TransactionService {
     constructor(
-        @Inject(PrismaService) private readonly prisma: PrismaService
+        @Inject(PrismaService) private readonly prisma: PrismaService,
+        private readonly multiCurrencyService: MultiCurrencyService,
     ) {}
 
-    create(userId: string, createTransactionDto: CreateTransactionDto) {
+    async create(userId: string, createTransactionDto: CreateTransactionDto) {
         const {
             accountId,
             amount,
@@ -27,10 +30,44 @@ export class TransactionService {
             isRecurring,
             repeatCount,
             paysInstallment,
+            currency,
+            status: inputStatus,
+            personId,
             ...rest
         } = createTransactionDto;
         const transactionDate = new Date(date);
         const iterations = isRecurring ? repeatCount || 12 : 1;
+        const status = inputStatus || "CONFIRMED";
+
+        // 1. Resolve Currency & Rate
+        const account = await this.prisma.account.findUnique({
+            where: { id: accountId },
+        });
+        if (!account) {
+            throw new NotFoundException(`Account ${accountId} not found`);
+        }
+
+        const accountCurrency = account.currency || "BRL";
+        const transactionCurrency = currency || accountCurrency;
+
+        let effectiveAmount = Number(amount);
+        let exchangeRate = 1;
+
+        if (transactionCurrency !== accountCurrency) {
+            try {
+                exchangeRate = await this.multiCurrencyService.getExchangeRate(
+                    transactionCurrency,
+                    accountCurrency,
+                    transactionDate,
+                );
+                effectiveAmount = Number(amount) * exchangeRate;
+            } catch (error) {
+                // Fallback or fail? Fail for safety.
+                throw new BadRequestException(
+                    `Could not convert currency: ${error.message}`,
+                );
+            }
+        }
 
         // Use interactive transaction to ensure atomicity
         return this.prisma.$transaction(
@@ -39,14 +76,18 @@ export class TransactionService {
 
                 for (let i = 0; i < iterations; i++) {
                     const currentDate = addMonths(transactionDate, i);
-                    // currentDate.setMonth(currentDate.getMonth() + i); - REMOVED
 
-                    // 1. Create the transaction
+                    // 2. Create the transaction
                     const transaction = await prisma.transaction.create({
                         data: {
                             userId,
                             accountId,
-                            amount,
+                            amount: effectiveAmount,
+                            originalAmount: Number(amount),
+                            originalCurrency: transactionCurrency,
+                            exchangeRate: exchangeRate,
+                            status,
+                            personId,
                             type,
                             date: currentDate,
                             description: createTransactionDto.description,
@@ -57,44 +98,39 @@ export class TransactionService {
                     });
                     createdTransactions.push(transaction);
 
-                    // 2. Update the account balance
-                    const account = await prisma.account.findFirst({
-                        where: { id: accountId, userId },
-                    });
+                    // 3. Update the account balance (If CONFIRMED)
+                    if (status === "CONFIRMED") {
+                        const balanceChange =
+                            type === "INCOME"
+                                ? effectiveAmount
+                                : -effectiveAmount;
 
-                    if (!account) {
-                        throw new NotFoundException(
-                            `Account with ID ${accountId} not found`
-                        );
+                        await prisma.account.update({
+                            where: { id: accountId },
+                            data: { balance: { increment: balanceChange } },
+                        });
                     }
 
-                    const balanceChange = type === "INCOME" ? amount : -amount;
-                    const newBalance =
-                        Number(account.balance) + Number(balanceChange);
-
-                    await prisma.account.update({
-                        where: { id: accountId },
-                        data: { balance: newBalance },
-                    });
-
-                    // 3. Update debt balance if applicable
-                    if (createTransactionDto.debtId && type === "EXPENSE") {
+                    // 4. Update debt balance if applicable (If CONFIRMED)
+                    if (
+                        createTransactionDto.debtId &&
+                        type === "EXPENSE" &&
+                        status === "CONFIRMED"
+                    ) {
                         const debt = await prisma.debt.findFirst({
                             where: { id: createTransactionDto.debtId, userId },
                         });
 
                         if (debt) {
                             const newDebtBalance =
-                                Number(debt.totalAmount) - Number(amount);
+                                Number(debt.totalAmount) -
+                                Number(effectiveAmount);
 
-                            // Check if paying an installment
                             let newPaidCount = debt.installmentsPaid || 0;
                             if (createTransactionDto.paysInstallment) {
                                 newPaidCount += 1;
-                                // Optional cap: if (debt.installmentsTotal && newPaidCount > debt.installmentsTotal) newPaidCount = debt.installmentsTotal;
                             }
 
-                            // Ensure debt doesn't go below zero? Or allow it? Allowing for now.
                             await prisma.debt.update({
                                 where: { id: createTransactionDto.debtId },
                                 data: {
@@ -108,7 +144,7 @@ export class TransactionService {
                 }
 
                 return createdTransactions[0]; // Return the first one created
-            }
+            },
         );
     }
 
@@ -121,6 +157,9 @@ export class TransactionService {
             categoryId,
             startDate,
             endDate,
+            currency,
+            status,
+            personId,
         } = query;
         const skip = (page - 1) * limit;
 
@@ -149,6 +188,18 @@ export class TransactionService {
             where.date = { gte: new Date(startDate) };
         } else if (endDate) {
             where.date = { lte: new Date(endDate) };
+        }
+
+        if (currency) {
+            where.originalCurrency = currency;
+        }
+
+        if (status) {
+            where.status = status;
+        }
+
+        if (personId) {
+            where.personId = personId;
         }
 
         const [data, total] = await Promise.all([
@@ -183,7 +234,7 @@ export class TransactionService {
     update(
         userId: string,
         id: string,
-        updateTransactionDto: UpdateTransactionDto
+        updateTransactionDto: UpdateTransactionDto,
     ) {
         const {
             accountId,
@@ -205,7 +256,7 @@ export class TransactionService {
 
                 if (!oldTransaction) {
                     throw new NotFoundException(
-                        `Transaction with ID ${id} not found`
+                        `Transaction with ID ${id} not found`,
                     );
                 }
 
@@ -254,7 +305,7 @@ export class TransactionService {
 
                 if (!targetAccount) {
                     throw new NotFoundException(
-                        `Account with ID ${targetAccountId} not found`
+                        `Account with ID ${targetAccountId} not found`,
                     );
                 }
 
@@ -271,7 +322,7 @@ export class TransactionService {
                 });
 
                 return updatedTransaction;
-            }
+            },
         );
     }
 
@@ -286,7 +337,7 @@ export class TransactionService {
 
                 if (!transaction) {
                     throw new NotFoundException(
-                        `Transaction with ID ${id} not found`
+                        `Transaction with ID ${id} not found`,
                     );
                 }
 
@@ -307,14 +358,14 @@ export class TransactionService {
                 return prisma.transaction.delete({
                     where: { id },
                 });
-            }
+            },
         );
     }
 
     async split(
         userId: string,
         id: string,
-        splitTransactionDto: SplitTransactionDto
+        splitTransactionDto: SplitTransactionDto,
     ) {
         const { splits } = splitTransactionDto;
 
@@ -327,21 +378,21 @@ export class TransactionService {
 
             if (!originalTransaction) {
                 throw new NotFoundException(
-                    `Transaction with ID ${id} not found`
+                    `Transaction with ID ${id} not found`,
                 );
             }
 
             // 2. Validate total amount
             const totalSplitAmount = splits.reduce(
                 (sum, split) => sum + Number(split.amount),
-                0
+                0,
             );
             const originalAmount = Number(originalTransaction.amount);
 
             // Floating point tolerance check
             if (Math.abs(totalSplitAmount - originalAmount) > 0.01) {
                 throw new BadRequestException(
-                    "Sum of splits must equal original transaction amount"
+                    "Sum of splits must equal original transaction amount",
                 );
             }
 

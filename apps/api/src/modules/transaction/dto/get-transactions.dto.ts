@@ -33,4 +33,16 @@ export class GetTransactionsDto {
     @IsOptional()
     @IsString()
     endDate?: string;
+
+    @IsOptional()
+    @IsString()
+    currency?: string;
+
+    @IsOptional()
+    @IsString()
+    status?: string;
+
+    @IsOptional()
+    @IsString()
+    personId?: string;
 }

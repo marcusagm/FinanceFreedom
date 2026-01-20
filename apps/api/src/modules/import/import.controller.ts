@@ -17,6 +17,7 @@ import { TransactionService } from "../transaction/transaction.service";
 import { ImapService } from "./imap.service";
 import { PrismaService } from "../../prisma/prisma.service";
 import { ImportService } from "./import.service";
+import { EncryptionService } from "../../common/services/encryption.service";
 
 @Controller("import")
 export class ImportController {
@@ -26,7 +27,8 @@ export class ImportController {
         private readonly transactionService: TransactionService,
         private readonly imapService: ImapService,
         private readonly prisma: PrismaService,
-        private readonly importService: ImportService
+        private readonly importService: ImportService,
+        private readonly encryptionService: EncryptionService,
     ) {}
 
     @Post("upload")
@@ -34,7 +36,7 @@ export class ImportController {
     async uploadFile(
         @Request() req: any,
         @UploadedFile() file: any,
-        @Body("accountId") accountId: string
+        @Body("accountId") accountId: string,
     ) {
         if (!file) {
             throw new BadRequestException("File is required");
@@ -52,7 +54,7 @@ export class ImportController {
         const uniqueTransactions = await this.smartMerger.filterDuplicates(
             req.user.userId,
             accountId,
-            transactions
+            transactions,
         );
 
         return uniqueTransactions;
@@ -61,7 +63,7 @@ export class ImportController {
     @Post("confirm")
     async confirmImport(
         @Request() req: any,
-        @Body() transactions: CreateTransactionDto[]
+        @Body() transactions: CreateTransactionDto[],
     ) {
         const results = [];
         const errors = [];
@@ -70,7 +72,7 @@ export class ImportController {
             try {
                 const res = await this.transactionService.create(
                     req.user.userId,
-                    t
+                    t,
                 );
                 results.push(res);
             } catch (e) {
@@ -87,7 +89,7 @@ export class ImportController {
     @Get("imap-configs")
     async getImapConfigs(
         @Request() req: any,
-        @Query("accountId") accountId: string
+        @Query("accountId") accountId: string,
     ) {
         if (!accountId) throw new BadRequestException("AccountId required");
 
@@ -134,7 +136,7 @@ export class ImportController {
         };
 
         if (password) {
-            data.password = password; // TODO: Encrypt
+            data.password = this.encryptionService.encrypt(password);
         }
 
         if (id) {
@@ -193,7 +195,7 @@ export class ImportController {
                 where: { id, userId: req.user.userId },
             });
             if (saved) {
-                password = saved.password;
+                password = this.encryptionService.decrypt(saved.password);
             }
         }
 
@@ -223,7 +225,7 @@ export class ImportController {
         if (!accountId) {
             // Sync ALL accounts for this user
             const count = await this.importService.syncAllAccounts(
-                req.user.userId
+                req.user.userId,
             );
             return { imported: count };
         }
