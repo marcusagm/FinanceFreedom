@@ -25,6 +25,35 @@ vi.mock("../../lib/api", () => ({
     },
 }));
 
+// Mock sonner
+vi.mock("sonner", () => ({
+    toast: {
+        success: vi.fn(),
+        error: vi.fn(),
+    },
+}));
+
+// Mock Translations
+vi.mock("react-i18next", () => ({
+    useTranslation: () => ({
+        t: (key: string) => {
+            const translations: Record<string, string> = {
+                "savingsGoals.add.titleNew": "Nova Meta de Economia",
+                "savingsGoals.add.titleEdit": "Editar Meta",
+                "savingsGoals.add.nameLabel": "Nome",
+                "savingsGoals.add.namePlaceholder": "Ex: Viagem para Japão",
+                "savingsGoals.add.targetAmount": "Valor Alvo",
+                "savingsGoals.add.currentAmount": "Valor Atual",
+                "savingsGoals.add.deadline": "Prazo",
+                "common.save": "Salvar",
+                "common.saving": "Salvando...",
+                "common.cancel": "Cancelar",
+            };
+            return translations[key] || key;
+        },
+    }),
+}));
+
 // Mock DatePicker
 vi.mock("../ui/DatePicker", () => ({
     DatePicker: ({ date, setDate, placeholder }: any) => (
@@ -42,7 +71,7 @@ vi.mock("../ui/DatePicker", () => ({
                 setDate(
                     e.target.value
                         ? new Date(e.target.value + "T00:00:00")
-                        : undefined
+                        : undefined,
                 )
             }
         />
@@ -60,7 +89,7 @@ describe("AddGoalDialog", () => {
         render(<AddGoalDialog {...mockProps} />);
         expect(screen.getByText("Nova Meta de Economia")).toBeInTheDocument();
         expect(
-            screen.getByPlaceholderText("Ex: Viagem para Japão")
+            screen.getByPlaceholderText("Ex: Viagem para Japão"),
         ).toBeInTheDocument();
     });
 

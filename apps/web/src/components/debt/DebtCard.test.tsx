@@ -8,13 +8,42 @@ afterEach(() => {
     cleanup();
 });
 
+// Mock LocalizationContext
+vi.mock("../../contexts/LocalizationContext", () => ({
+    useLocalization: () => ({
+        formatCurrency: (val: number) =>
+            `R$ ${val.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`,
+        currency: "BRL",
+        dateFormat: "dd/MM/yyyy",
+    }),
+}));
+
+// Mock Translations
+vi.mock("react-i18next", () => ({
+    useTranslation: () => ({
+        t: (key: string) => {
+            const translations: Record<string, string> = {
+                "debts.card.actions.simulatorDelay": "Simular Custo do Atraso",
+                "debts.card.actions.simulatorPrepay": "Simular Antecipação",
+                "common.edit": "Editar",
+                "common.delete": "Excluir",
+            };
+            return translations[key] || key;
+        },
+    }),
+}));
+
 // Mock children simulators
 vi.mock("../simulators/DebtDelayCard", () => ({
-    DebtDelayCard: () => <div data-testid="delay-simulator">DelaySimulator</div>,
+    DebtDelayCard: () => (
+        <div data-testid="delay-simulator">DelaySimulator</div>
+    ),
 }));
 
 vi.mock("../simulators/PrepaymentOpportunity", () => ({
-    PrepaymentOpportunity: () => <div data-testid="prepayment-simulator">PrepaymentSimulator</div>,
+    PrepaymentOpportunity: () => (
+        <div data-testid="prepayment-simulator">PrepaymentSimulator</div>
+    ),
 }));
 
 vi.mock("../ui/AppCard", () => ({

@@ -6,6 +6,39 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { InstallmentsModal } from "./InstallmentsModal";
 
+// Mock LocalizationContext
+vi.mock("../../contexts/LocalizationContext", () => ({
+    useLocalization: () => ({
+        dateFormat: "dd/MM/yyyy",
+        currency: "BRL",
+        formatCurrency: (val: number) => `R$ ${val.toFixed(2)}`,
+    }),
+}));
+
+// Mock Translations
+vi.mock("react-i18next", () => ({
+    useTranslation: () => ({
+        t: (key: string, options?: any) => {
+            const translations: Record<string, string> = {
+                "debts.installments.title": `Parcelas: ${options?.name}`,
+                "debts.installments.subtitle": "Detalhes das parcelas",
+                "debts.installments.paid": "pagas",
+                "debts.installments.remaining": "restantes",
+                "debts.installments.table.installment": "Parcela",
+                "debts.installments.table.dueDate": "Vencimento",
+                "debts.installments.table.status": "Status",
+                "debts.installments.table.actions": "Ações",
+                "debts.installments.status.paid": "Paga",
+                "debts.installments.status.pending": "Pendente",
+                "debts.installments.actions.markPending":
+                    "Marcar como Pendente",
+                "debts.installments.actions.markPaid": "Marcar como Paga",
+            };
+            return translations[key] || key;
+        },
+    }),
+}));
+
 afterEach(() => {
     cleanup();
 });
@@ -26,7 +59,7 @@ describe("InstallmentsModal", () => {
         render(<InstallmentsModal {...mockProps} />);
 
         expect(
-            screen.getByText("Parcelas: Credit Card Debt")
+            screen.getByText("Parcelas: Credit Card Debt"),
         ).toBeInTheDocument();
 
         // Should show summary

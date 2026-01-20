@@ -25,6 +25,42 @@ vi.mock("../../lib/api", () => ({
     },
 }));
 
+// Mock sonner
+vi.mock("sonner", () => ({
+    toast: {
+        success: vi.fn(),
+        error: vi.fn(),
+    },
+}));
+
+// Mock Translations
+vi.mock("react-i18next", () => ({
+    useTranslation: () => ({
+        t: (key: string) => {
+            const translations: Record<string, string> = {
+                "investments.add.titleNew": "Nova Conta de Investimento",
+                "investments.add.titleEdit": "Editar Conta",
+                "investments.add.nameLabel": "Nome",
+                "investments.add.namePlaceholder": "Ex: NuBank Caixinha",
+                "investments.add.balanceLabel": "Saldo Atual",
+                "investments.add.profitabilityLabel": "Rentabilidade",
+                "investments.add.profitabilityTypeLabel": "Tipo Rentabilidade",
+                "investments.add.maturityLabel": "Vencimento",
+                "investments.add.descriptionLabel": "Descrição",
+                "common.save": "Salvar",
+                "common.saving": "Salvando...",
+                "common.cancel": "Cancelar",
+                "investments.types.FIXED_INCOME": "Renda Fixa",
+                "investments.types.VARIABLE_INCOME": "Renda Variável",
+                "investments.types.CRYPTO": "Cripto",
+                "investments.types.CASH": "Caixa",
+                "investments.types.OTHER": "Outro",
+            };
+            return translations[key] || key;
+        },
+    }),
+}));
+
 // Mock DatePicker
 vi.mock("../ui/DatePicker", () => ({
     DatePicker: ({ date, setDate, placeholder }: any) => (
@@ -42,7 +78,7 @@ vi.mock("../ui/DatePicker", () => ({
                 setDate(
                     e.target.value
                         ? new Date(e.target.value + "T00:00:00")
-                        : undefined
+                        : undefined,
                 )
             }
         />
@@ -59,10 +95,10 @@ describe("AddInvestmentDialog", () => {
     it("renders form fields", () => {
         render(<AddInvestmentDialog {...mockProps} />);
         expect(
-            screen.getByText("Nova Conta de Investimento")
+            screen.getByText("Nova Conta de Investimento"),
         ).toBeInTheDocument();
         expect(
-            screen.getByPlaceholderText("Ex: NuBank Caixinha")
+            screen.getByPlaceholderText("Ex: NuBank Caixinha"),
         ).toBeInTheDocument();
         expect(screen.getByPlaceholderText("R$ 0,00")).toBeInTheDocument();
     });

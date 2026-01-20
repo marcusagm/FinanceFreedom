@@ -6,6 +6,31 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { InvestmentAccountCard } from "./InvestmentAccountCard";
 
+// Mock LocalizationContext
+vi.mock("../../contexts/LocalizationContext", () => ({
+    useLocalization: () => ({
+        dateFormat: "dd/MM/yyyy",
+        currency: "BRL",
+        formatCurrency: (val: number) =>
+            `R$ ${val.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`,
+    }),
+}));
+
+// Mock Translations
+vi.mock("react-i18next", () => ({
+    useTranslation: () => ({
+        t: (key: string) => {
+            const translations: Record<string, string> = {
+                "investments.types.FIXED_INCOME": "Renda Fixa",
+                "common.edit": "Editar",
+                "common.delete": "Excluir",
+                "investments.expiresIn": "Vence em:",
+            };
+            return translations[key] || key;
+        },
+    }),
+}));
+
 afterEach(() => {
     cleanup();
 });

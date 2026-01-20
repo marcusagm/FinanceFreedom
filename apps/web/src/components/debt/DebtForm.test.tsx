@@ -12,6 +12,44 @@ vi.mock("../../lib/api", () => ({
     },
 }));
 
+// Mock sonner
+vi.mock("sonner", () => ({
+    toast: {
+        success: vi.fn(),
+        error: vi.fn(),
+    },
+}));
+
+// Mock Translations
+vi.mock("react-i18next", () => ({
+    useTranslation: () => ({
+        t: (key: string) => {
+            const translations: Record<string, string> = {
+                "debts.form.titleNew": "New Debt",
+                "debts.form.titleEdit": "Edit Debt",
+                "debts.form.subtitle": "Debt Details",
+                "debts.form.nameLabel": "Debt Name",
+                "debts.form.namePlaceholder": "Ex: Credit Card",
+                "debts.form.validation.nameRequired": "Name is required",
+                "debts.form.validation.amountNumber": "Amount must be a number",
+                "common.currencyPlaceholder": "$ 0.00",
+                "debts.form.interestLabel": "Interest Rate",
+                "common.percentPlaceholder": "0.00%",
+                "debts.form.minPaymentLabel": "Minimum Payment",
+                "debts.form.dueDayLabel": "Due Day",
+                "debts.form.installmentsTotalLabel": "Total Installments",
+                "debts.form.installmentsPaidLabel": "Paid Installments",
+                "debts.form.firstDateLabel": "First Installment Date",
+                "common.cancel": "Cancel",
+                "common.save": "Save",
+                "common.saving": "Saving...",
+                "debts.form.totalLabel": "Total Balance",
+            };
+            return translations[key] || key;
+        },
+    }),
+}));
+
 describe("DebtForm", () => {
     const mockOnClose = vi.fn();
     const mockOnSuccess = vi.fn();
@@ -27,7 +65,7 @@ describe("DebtForm", () => {
                 isOpen={true}
                 onClose={mockOnClose}
                 onSuccess={mockOnSuccess}
-            />
+            />,
         );
         expect(screen.getByText("New Debt")).toBeInTheDocument();
         expect(screen.getByText("Debt Name")).toBeInTheDocument();
@@ -40,7 +78,7 @@ describe("DebtForm", () => {
                 isOpen={true}
                 onClose={mockOnClose}
                 onSuccess={mockOnSuccess}
-            />
+            />,
         );
 
         // Log screen to debug if needed, but first ensure we wait for interaction
@@ -61,7 +99,7 @@ describe("DebtForm", () => {
                 isOpen={true}
                 onClose={mockOnClose}
                 onSuccess={mockOnSuccess}
-            />
+            />,
         );
 
         // Fill Name
@@ -100,10 +138,10 @@ describe("DebtForm", () => {
                         interestRate: 5,
                         minimumPayment: 100,
                         dueDate: 15,
-                    })
+                    }),
                 );
             },
-            { timeout: 5000 }
+            { timeout: 5000 },
         );
 
         expect(mockOnSuccess).toHaveBeenCalled();

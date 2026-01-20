@@ -15,6 +15,43 @@ vi.mock("../../lib/api", () => ({
     },
 }));
 
+// Mock LocalizationContext
+vi.mock("../../contexts/LocalizationContext", () => ({
+    useLocalization: () => ({
+        formatCurrency: (val: number) =>
+            `R$ ${val.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`,
+        currency: "BRL",
+        dateFormat: "dd/MM/yyyy",
+    }),
+}));
+
+// Mock Translations
+vi.mock("react-i18next", () => ({
+    useTranslation: () => ({
+        t: (key: string) => {
+            const translations: Record<string, string> = {
+                "debts.strategy.snowball": "❄️ Bola de Neve (Psicológico)",
+                "debts.strategy.avalanche": "🏔️ Avalanche (Matemático)",
+                "debts.strategy.extraValueLabel":
+                    "Valor Extra Mensal (Opcional)",
+                "debts.strategy.registerPayment": "Registrar Pagamento",
+                "debts.strategy.payMax": "Pagar Máximo",
+                "debts.strategy.focus": "FOCO",
+                "debts.strategy.loading": "Carregando...",
+                "debts.strategy.estimatedTime": "Tempo Estimado",
+                "debts.strategy.totalInterest": "Juros Totais",
+                "debts.strategy.extraValueHelp": "Ajuda extra",
+                "debts.strategy.years": "anos",
+                "debts.strategy.months": "meses",
+                "debts.strategy.payMin": "Pagar Mínimo",
+                "debts.strategy.empty": "Nada",
+            };
+            return translations[key] || key;
+        },
+    }),
+    Trans: ({ i18nKey }: any) => <span>{i18nKey}</span>,
+}));
+
 // Mock DebtPaymentDialog to avoid testing it inside StrategyComparison
 vi.mock("./DebtPaymentDialog", () => ({
     DebtPaymentDialog: ({ isOpen, onClose, onSuccess, debt }: any) =>
@@ -67,9 +104,13 @@ describe("StrategyComparison", () => {
                 <StrategyComparison />
             </PrivacyProvider>,
         );
-        expect(screen.getByText("❄️ Bola de Neve (Psicológico)")).toBeInTheDocument();
+        expect(
+            screen.getByText("❄️ Bola de Neve (Psicológico)"),
+        ).toBeInTheDocument();
         await waitFor(() => {
-            expect(api.get).toHaveBeenCalledWith("/debts/strategy?type=SNOWBALL&monthlyExtra=0");
+            expect(api.get).toHaveBeenCalledWith(
+                "/debts/strategy?type=SNOWBALL&monthlyExtra=0",
+            );
         });
     });
 
@@ -84,7 +125,9 @@ describe("StrategyComparison", () => {
         fireEvent.change(input, { target: { value: "500" } });
 
         await waitFor(() => {
-            expect(localStorage.getItem("debt_strategy_extra_value")).toBe("500");
+            expect(localStorage.getItem("debt_strategy_extra_value")).toBe(
+                "500",
+            );
         });
     });
 
@@ -96,7 +139,9 @@ describe("StrategyComparison", () => {
             </PrivacyProvider>,
         );
 
-        const input = screen.getByLabelText("Valor Extra Mensal (Opcional)") as HTMLInputElement;
+        const input = screen.getByLabelText(
+            "Valor Extra Mensal (Opcional)",
+        ) as HTMLInputElement;
         expect(input.value).toBe("R$ 300,00"); // Currency input formatting
     });
 
@@ -131,6 +176,8 @@ describe("StrategyComparison", () => {
 
         // Expect Dialog to open
         expect(screen.getByTestId("payment-dialog")).toBeInTheDocument();
-        expect(screen.getByText("Payment Dialog for Debt 1")).toBeInTheDocument();
+        expect(
+            screen.getByText("Payment Dialog for Debt 1"),
+        ).toBeInTheDocument();
     });
 });
