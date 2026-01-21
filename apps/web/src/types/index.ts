@@ -20,6 +20,8 @@ export interface Transaction {
     installmentNumber?: number;
     isRecurring?: boolean;
     repeatCount?: number;
+    personId?: string;
+    isLoan?: boolean;
     createdAt?: string;
     updatedAt?: string;
 }

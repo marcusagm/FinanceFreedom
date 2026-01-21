@@ -5,11 +5,23 @@ import React from "react";
 import "@testing-library/jest-dom/vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { TransactionFilters } from "./TransactionFilters";
 
-afterEach(() => {
-    cleanup();
-});
+// Mocks must be defined before imports that use them if possible, though Vitest hoists them.
+// Mock LocalizationContext
+vi.mock("../../contexts/LocalizationContext", () => ({
+    useLocalization: () => ({
+        currency: "BRL",
+        dateFormat: "dd/MM/yyyy",
+        formatCurrency: (val: number) => `R$ ${val}`,
+    }),
+}));
+
+vi.mock("react-i18next", () => ({
+    useTranslation: () => ({
+        t: (key: string) => key,
+        i18n: { language: "pt-BR" },
+    }),
+}));
 
 // Mock DatePicker
 vi.mock("../ui/DatePicker", () => ({
@@ -22,7 +34,7 @@ vi.mock("../ui/DatePicker", () => ({
                 setDate(
                     e.target.value
                         ? new Date(e.target.value + "T00:00:00")
-                        : undefined
+                        : undefined,
                 )
             }
         />
@@ -47,6 +59,24 @@ vi.mock("../ui/Select", () => ({
     ),
 }));
 
+// Mock PersonSelect
+vi.mock("../person/PersonSelect", () => ({
+    PersonSelect: ({ value, onChange, placeholder }: any) => (
+        <input
+            data-testid="person-select"
+            placeholder={placeholder}
+            value={value || ""}
+            onChange={(e) => onChange(e.target.value)}
+        />
+    ),
+}));
+
+import { TransactionFilters } from "./TransactionFilters";
+
+afterEach(() => {
+    cleanup();
+});
+
 describe("TransactionFilters", () => {
     const mockAccounts = [{ id: "acc1", name: "Wallet" }];
     const mockCategories: any[] = [
@@ -59,6 +89,7 @@ describe("TransactionFilters", () => {
         category: "all",
         startDate: "",
         endDate: "",
+        personId: "",
     };
     const mockOnChange = vi.fn();
 
@@ -69,16 +100,26 @@ describe("TransactionFilters", () => {
                 onChange={mockOnChange}
                 accounts={mockAccounts}
                 categories={mockCategories}
-            />
+            />,
         );
 
         expect(
-            screen.getByPlaceholderText("Buscar por descrição...")
+            screen.getByPlaceholderText(
+                "transactions.filters.searchPlaceholder",
+            ),
         ).toBeInTheDocument();
-        expect(screen.getByLabelText("Conta")).toBeInTheDocument();
-        expect(screen.getByLabelText("Categoria")).toBeInTheDocument();
-        expect(screen.getByPlaceholderText("Início")).toBeInTheDocument();
-        expect(screen.getByPlaceholderText("Fim")).toBeInTheDocument();
+        expect(
+            screen.getByLabelText("transactions.filters.accountPlaceholder"),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByLabelText("transactions.filters.categoryPlaceholder"),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByPlaceholderText("transactions.filters.dateStart"),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByPlaceholderText("transactions.filters.dateEnd"),
+        ).toBeInTheDocument();
     });
 
     it("calls onChange when search input changes", () => {
@@ -88,11 +129,11 @@ describe("TransactionFilters", () => {
                 onChange={mockOnChange}
                 accounts={mockAccounts}
                 categories={mockCategories}
-            />
+            />,
         );
 
         const searchInput = screen.getByPlaceholderText(
-            "Buscar por descrição..."
+            "transactions.filters.searchPlaceholder",
         );
         fireEvent.change(searchInput, { target: { value: "Lunch" } });
 
@@ -109,10 +150,12 @@ describe("TransactionFilters", () => {
                 onChange={mockOnChange}
                 accounts={mockAccounts}
                 categories={mockCategories}
-            />
+            />,
         );
 
-        const accountSelect = screen.getByLabelText("Conta");
+        const accountSelect = screen.getByLabelText(
+            "transactions.filters.accountPlaceholder",
+        );
         fireEvent.change(accountSelect, { target: { value: "acc1" } });
 
         expect(mockOnChange).toHaveBeenCalledWith({
@@ -128,15 +171,36 @@ describe("TransactionFilters", () => {
                 onChange={mockOnChange}
                 accounts={mockAccounts}
                 categories={mockCategories}
-            />
+            />,
         );
 
-        const startDateInput = screen.getByPlaceholderText("Início");
+        const startDateInput = screen.getByPlaceholderText(
+            "transactions.filters.dateStart",
+        );
         fireEvent.change(startDateInput, { target: { value: "2023-01-01" } });
 
         expect(mockOnChange).toHaveBeenCalledWith({
             ...defaultFilters,
             startDate: "2023-01-01",
+        });
+    });
+
+    it("calls onChange when person is selected", () => {
+        render(
+            <TransactionFilters
+                filters={defaultFilters}
+                onChange={mockOnChange}
+                accounts={mockAccounts}
+                categories={mockCategories}
+            />,
+        );
+
+        const personSelect = screen.getByTestId("person-select");
+        fireEvent.change(personSelect, { target: { value: "p1" } });
+
+        expect(mockOnChange).toHaveBeenCalledWith({
+            ...defaultFilters,
+            personId: "p1",
         });
     });
 
@@ -147,6 +211,7 @@ describe("TransactionFilters", () => {
             category: "Food",
             startDate: "2023-01-01",
             endDate: "2023-01-31",
+            personId: "p1",
         };
 
         render(
@@ -155,12 +220,19 @@ describe("TransactionFilters", () => {
                 onChange={mockOnChange}
                 accounts={mockAccounts}
                 categories={mockCategories}
-            />
+            />,
         );
 
         const clearButton = screen.getByTestId("clear-filters-button");
         fireEvent.click(clearButton);
 
-        expect(mockOnChange).toHaveBeenCalledWith(defaultFilters);
+        expect(mockOnChange).toHaveBeenCalledWith({
+            search: "",
+            accountId: "all",
+            category: "all",
+            startDate: "",
+            endDate: "",
+            personId: "",
+        });
     });
 });

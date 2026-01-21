@@ -94,6 +94,7 @@ model Transaction {
   
   personId          String?
   person            Person?  @relation(fields: [personId], references: [id])
+  isLoan            Boolean  @default(false)
 
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)

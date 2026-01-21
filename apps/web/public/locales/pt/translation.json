@@ -51,6 +51,7 @@
         "namePlaceholder": "Ex: Nubank",
         "savedSuccess": "Salvo com sucesso!"
     },
+
     "profile": {
         "title": "Meu Perfil",
         "subtitle": "Gerencie suas informações de conta e segurança.",
@@ -934,6 +935,43 @@
             "helperInterest": "Para novas dívidas.",
             "helperExtra": "Para estratégias de dívidas.",
             "selectPlaceholder": "Selecione"
+        }
+    },
+    "persons": {
+        "title": "Pessoa",
+        "beneficiary": "Beneficiário",
+        "loanLabel": "Empréstimo",
+        "selectPlaceholder": "Selecione...",
+        "subtitle": "Gerencie pessoas para quem você empresta ou toma emprestado.",
+        "newPerson": "Novo Contato",
+        "empty": "Nenhum contato encontrado.",
+        "deleteSuccess": "Contato excluído com sucesso.",
+        "deleteError": "Erro ao excluir contato.",
+        "list": {
+            "name": "Nome",
+            "email": "E-mail",
+            "phone": "Telefone",
+            "actions": "Ações",
+            "none": "Nenhum"
+        },
+        "form": {
+            "titleNew": "Novo Contato",
+            "titleEdit": "Editar Contato",
+            "nameLabel": "Nome",
+            "namePlaceholder": "Ex: João Silva",
+            "emailLabel": "E-mail (Opcional)",
+            "phoneLabel": "Telefone (Opcional)",
+            "saveSuccess": "Contato salvo com sucesso!",
+            "saveError": "Erro ao salvar contato.",
+            "validation": {
+                "nameRequired": "Nome é obrigatório"
+            }
+        },
+        "deleteDialog": {
+            "title": "Excluir Contato",
+            "desc": "Esta ação não pode ser desfeita.",
+            "message": "O contato <strong>{{name}}</strong> será permanentemente removido.",
+            "confirm": "Excluir"
         }
     }
 }

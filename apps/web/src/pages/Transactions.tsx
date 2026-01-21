@@ -36,6 +36,7 @@ export function Transactions() {
         category: "all",
         startDate: "",
         endDate: "",
+        personId: "",
     });
 
     const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =

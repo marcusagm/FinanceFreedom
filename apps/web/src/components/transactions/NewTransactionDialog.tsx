@@ -8,6 +8,7 @@ import { api } from "../../lib/api";
 import type { Category } from "../../services/category.service";
 import type { Account, Transaction } from "../../types";
 import type { CreditCard } from "../../types/credit-card";
+import { PersonSelect } from "../person/PersonSelect";
 import { Button } from "../ui/Button";
 import { Checkbox } from "../ui/Checkbox";
 import { DatePicker } from "../ui/DatePicker";
@@ -78,6 +79,8 @@ export function NewTransactionDialog({
         isRecurring: z.boolean().optional(),
         repeatCount: z.number().optional(),
         totalInstallments: z.number().optional(),
+        personId: z.string().optional(),
+        isLoan: z.boolean().optional(),
     });
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -93,11 +96,14 @@ export function NewTransactionDialog({
             isRecurring: false,
             repeatCount: 12,
             totalInstallments: 1,
+            personId: "",
+            isLoan: false,
         },
     });
 
     const isRecurring = form.watch("isRecurring");
     const type = form.watch("type");
+    const personId = form.watch("personId");
 
     const filteredCategories = categories.filter((c) => {
         const catType = c.type || "EXPENSE";
@@ -115,6 +121,12 @@ export function NewTransactionDialog({
             }
         }
     }, [type, filteredCategories, form]);
+
+    useEffect(() => {
+        if (!personId && form.getValues("isLoan")) {
+            form.setValue("isLoan", false);
+        }
+    }, [personId, form]);
 
     useEffect(() => {
         if (isOpen) {
@@ -136,6 +148,8 @@ export function NewTransactionDialog({
                     isRecurring: initialData.isRecurring || false,
                     repeatCount: initialData.repeatCount || 12,
                     totalInstallments: initialData.totalInstallments || 1,
+                    personId: initialData.personId || "",
+                    isLoan: initialData.isLoan || false,
                 });
             } else {
                 setActiveTab("account");
@@ -151,6 +165,8 @@ export function NewTransactionDialog({
                     isRecurring: false,
                     repeatCount: 12,
                     totalInstallments: 1,
+                    personId: "",
+                    isLoan: false,
                 });
             }
         }
@@ -204,6 +220,8 @@ export function NewTransactionDialog({
                     activeTab === "account" ? values.isRecurring : false,
                 repeatCount:
                     activeTab === "account" ? values.repeatCount : undefined,
+                personId: values.personId || undefined,
+                isLoan: values.isLoan,
             };
 
             if (initialData) {
@@ -487,67 +505,130 @@ export function NewTransactionDialog({
                                 </div>
                             </div>
 
-                            <FormField
-                                control={form.control}
-                                name="categoryId"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>
-                                            {t("transactions.categoryOptional")}
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Select
-                                                value={field.value || ""}
-                                                options={[
-                                                    {
-                                                        label: t(
-                                                            "common.noCategory",
-                                                        ),
-                                                        value: "",
-                                                    },
-                                                    ...filteredCategories.map(
-                                                        (c) => ({
-                                                            label: c.name,
-                                                            value: c.id,
-                                                        }),
-                                                    ),
-                                                ]}
-                                                onChange={field.onChange}
-                                                placeholder={t(
-                                                    "transactions.selectCategory",
-                                                )}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            {!initialData && activeTab === "account" && (
-                                <div className="space-y-4 rounded-lg border p-4">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
                                     <FormField
                                         control={form.control}
-                                        name="isRecurring"
+                                        name="personId"
                                         render={({ field }) => (
-                                            <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4 shadow-sm">
+                                            <FormItem>
+                                                <FormLabel>
+                                                    {type === "EXPENSE"
+                                                        ? t(
+                                                              "persons.beneficiary",
+                                                          )
+                                                        : t("persons.title")}
+                                                    {t("imap.form.optional")}
+                                                </FormLabel>
                                                 <FormControl>
-                                                    <Checkbox
-                                                        checked={field.value}
-                                                        onCheckedChange={
+                                                    <PersonSelect
+                                                        value={field.value}
+                                                        onChange={
                                                             field.onChange
                                                         }
+                                                        placeholder={t(
+                                                            "persons.selectPlaceholder",
+                                                        )}
                                                     />
                                                 </FormControl>
-                                                <div className="space-y-1 leading-none">
-                                                    <FormLabel className="w-auto cursor-pointer font-normal">
-                                                        {t(
-                                                            "transactions.recurrence.label",
-                                                        )}
-                                                    </FormLabel>
-                                                </div>
+                                                <FormMessage />
                                             </FormItem>
                                         )}
                                     />
+                                    {personId && (
+                                        <FormField
+                                            control={form.control}
+                                            name="isLoan"
+                                            render={({ field }) => (
+                                                <FormItem className="flex flex-row items-center space-x-3 space-y-0">
+                                                    <FormControl>
+                                                        <Checkbox
+                                                            checked={
+                                                                field.value
+                                                            }
+                                                            onCheckedChange={
+                                                                field.onChange
+                                                            }
+                                                            data-testid="is-loan-checkbox"
+                                                        />
+                                                    </FormControl>
+                                                    <FormLabel className="font-normal cursor-pointer">
+                                                        {t("persons.loanLabel")}
+                                                    </FormLabel>
+                                                </FormItem>
+                                            )}
+                                        />
+                                    )}
+                                </div>
+
+                                <FormField
+                                    control={form.control}
+                                    name="categoryId"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                {t(
+                                                    "transactions.categoryOptional",
+                                                )}
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Select
+                                                    value={field.value || ""}
+                                                    options={[
+                                                        {
+                                                            label: t(
+                                                                "common.noCategory",
+                                                            ),
+                                                            value: "",
+                                                        },
+                                                        ...filteredCategories.map(
+                                                            (c) => ({
+                                                                label: c.name,
+                                                                value: c.id,
+                                                            }),
+                                                        ),
+                                                    ]}
+                                                    onChange={field.onChange}
+                                                    placeholder={t(
+                                                        "transactions.selectCategory",
+                                                    )}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+
+                            {!initialData && activeTab === "account" && (
+                                <div className="space-y-4 rounded-lg border p-4">
+                                    <div className="flex flex-col gap-4">
+                                        <FormField
+                                            control={form.control}
+                                            name="isRecurring"
+                                            render={({ field }) => (
+                                                <FormItem className="flex flex-row items-center space-x-3 space-y-0">
+                                                    <FormControl>
+                                                        <Checkbox
+                                                            checked={
+                                                                field.value
+                                                            }
+                                                            onCheckedChange={
+                                                                field.onChange
+                                                            }
+                                                        />
+                                                    </FormControl>
+                                                    <div className="space-y-1 leading-none">
+                                                        <FormLabel className="w-auto cursor-pointer font-normal">
+                                                            {t(
+                                                                "transactions.recurrence.label",
+                                                            )}
+                                                        </FormLabel>
+                                                    </div>
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
 
                                     {isRecurring && (
                                         <FormField

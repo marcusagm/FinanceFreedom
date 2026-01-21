@@ -18,6 +18,7 @@ export interface UseTransactionsProps {
     category?: string;
     startDate?: string;
     endDate?: string;
+    personId?: string;
 }
 
 export function useTransactions(filters: UseTransactionsProps) {
@@ -36,8 +37,10 @@ export function useTransactions(filters: UseTransactionsProps) {
                 // Assuming backend expects categoryId for the filter 'categoryId'
                 params.append("categoryId", filters.category);
             }
-            if (filters.startDate) params.append("startDate", filters.startDate);
+            if (filters.startDate)
+                params.append("startDate", filters.startDate);
             if (filters.endDate) params.append("endDate", filters.endDate);
+            if (filters.personId) params.append("personId", filters.personId);
 
             const { data } = await api.get<TransactionResponse>(
                 `/transactions?${params.toString()}`,

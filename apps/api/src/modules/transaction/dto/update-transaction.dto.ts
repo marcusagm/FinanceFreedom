@@ -4,6 +4,7 @@ import {
     IsNumber,
     IsOptional,
     IsString,
+    IsBoolean,
 } from "class-validator";
 
 export class UpdateTransactionDto {
@@ -37,4 +38,8 @@ export class UpdateTransactionDto {
     @IsOptional()
     @IsNumber()
     repeatCount?: number;
+
+    @IsOptional()
+    @IsBoolean()
+    isLoan?: boolean;
 }

@@ -25,6 +25,7 @@ import { Profile } from "./pages/Profile";
 import { Register } from "./pages/Register";
 import { ResetPassword } from "./pages/ResetPassword";
 import { Settings } from "./pages/Settings";
+import PersonsPage from "./pages/Persons";
 import { LocalizationProvider } from "./contexts/LocalizationContext";
 
 function App() {
@@ -132,6 +133,12 @@ function App() {
                                                     <Route
                                                         path="/profile"
                                                         element={<Profile />}
+                                                    />
+                                                    <Route
+                                                        path="/persons"
+                                                        element={
+                                                            <PersonsPage />
+                                                        }
                                                     />
                                                 </Routes>
                                             </Layout>

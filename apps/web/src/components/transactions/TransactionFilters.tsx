@@ -7,6 +7,7 @@ import { Button } from "../ui/Button";
 import { DatePicker } from "../ui/DatePicker";
 import { Input } from "../ui/Input";
 import { Select } from "../ui/Select";
+import { PersonSelect } from "../person/PersonSelect";
 
 export interface FilterState {
     search: string;
@@ -14,6 +15,7 @@ export interface FilterState {
     category: string;
     startDate: string;
     endDate: string;
+    personId: string;
 }
 
 interface TransactionFiltersProps {
@@ -42,6 +44,7 @@ export function TransactionFilters({
             category: "all",
             startDate: "",
             endDate: "",
+            personId: "",
         });
     };
 
@@ -74,7 +77,7 @@ export function TransactionFilters({
                             })),
                         ]}
                         placeholder={t(
-                            "transactions.filters.accountPlaceholder"
+                            "transactions.filters.accountPlaceholder",
                         )}
                     />
                 </div>
@@ -104,14 +107,14 @@ export function TransactionFilters({
                                 })),
                         ]}
                         placeholder={t(
-                            "transactions.filters.categoryPlaceholder"
+                            "transactions.filters.categoryPlaceholder",
                         )}
                     />
                 </div>
             </div>
 
-            {/* Dates - Grouped */}
-            <div className="flex items-center gap-2 w-full md:w-auto">
+            {/* Dates & Person - Grouped */}
+            <div className="flex items-center gap-2 w-full md:w-auto flex-wrap">
                 <DatePicker
                     date={
                         filters.startDate
@@ -121,13 +124,15 @@ export function TransactionFilters({
                     setDate={(date) =>
                         handleChange(
                             "startDate",
-                            date ? format(date, "yyyy-MM-dd") : ""
+                            date ? format(date, "yyyy-MM-dd") : "",
                         )
                     }
                     className="w-full md:w-37.5"
                     placeholder={t("transactions.filters.dateStart")}
                 />
-                <span className="text-muted-foreground">-</span>
+                <span className="text-muted-foreground hidden md:inline">
+                    -
+                </span>
                 <DatePicker
                     date={
                         filters.endDate
@@ -137,12 +142,20 @@ export function TransactionFilters({
                     setDate={(date) =>
                         handleChange(
                             "endDate",
-                            date ? format(date, "yyyy-MM-dd") : ""
+                            date ? format(date, "yyyy-MM-dd") : "",
                         )
                     }
                     className="w-full md:w-37.5"
                     placeholder={t("transactions.filters.dateEnd")}
                 />
+
+                <div className="w-full md:w-45">
+                    <PersonSelect
+                        value={filters.personId}
+                        onChange={(value) => handleChange("personId", value)}
+                        placeholder={t("persons.title")}
+                    />
+                </div>
             </div>
 
             {/* Clear Filters - Icon Only */}

@@ -75,4 +75,8 @@ export class CreateTransactionDto {
     @IsOptional()
     @IsBoolean() // Correcting type
     paysInstallment?: boolean;
+
+    @IsOptional()
+    @IsBoolean()
+    isLoan?: boolean;
 }

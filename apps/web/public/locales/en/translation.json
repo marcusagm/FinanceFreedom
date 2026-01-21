@@ -52,6 +52,7 @@
         "namePlaceholder": "Ex: Nubank",
         "savedSuccess": "Saved successfully!"
     },
+
     "profile": {
         "title": "My Profile",
         "subtitle": "Manage your account information and security.",
@@ -935,6 +936,44 @@
             "helperInterest": "For new debts.",
             "helperExtra": "For debt strategies.",
             "selectPlaceholder": "Select"
+        }
+    },
+    "persons": {
+        "title": "Person",
+        "beneficiary": "Beneficiary",
+        "loanLabel": "Loan",
+        "selectPlaceholder": "Select Person...",
+        "subtitle": "Manage people you lend or borrow money from.",
+        "newPerson": "New Contact",
+        "empty": "No contacts found.",
+        "deleteSuccess": "Contact deleted successfully.",
+        "deleteError": "Error deleting contact.",
+        "list": {
+            "name": "Name",
+            "email": "Email",
+            "phone": "Phone",
+            "actions": "Actions",
+            "none": "None",
+            "empty": "No contacts found."
+        },
+        "form": {
+            "titleNew": "New Contact",
+            "titleEdit": "Edit Contact",
+            "nameLabel": "Name",
+            "namePlaceholder": "Ex: John Doe",
+            "emailLabel": "Email (Optional)",
+            "phoneLabel": "Phone (Optional)",
+            "saveSuccess": "Contact saved successfully!",
+            "saveError": "Error saving contact.",
+            "validation": {
+                "nameRequired": "Name is required"
+            }
+        },
+        "deleteDialog": {
+            "title": "Delete Contact",
+            "desc": "This action cannot be undone.",
+            "message": "The contact <strong>{{name}}</strong> will be permanently removed.",
+            "confirm": "Delete"
         }
     }
 }

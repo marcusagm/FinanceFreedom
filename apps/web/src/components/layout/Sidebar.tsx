@@ -15,6 +15,7 @@ import {
     TrendingUp,
     TrendingDown,
     User,
+    Users,
     Wallet,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -65,6 +66,11 @@ export function Sidebar({ className }: SidebarProps) {
                     icon: Wallet,
                     label: t("sidebar.general.accounts"),
                     href: "/accounts",
+                },
+                {
+                    icon: Users,
+                    label: t("persons.title"),
+                    href: "/persons",
                 },
             ],
         },

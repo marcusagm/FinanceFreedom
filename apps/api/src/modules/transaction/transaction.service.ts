@@ -40,6 +40,7 @@ export class TransactionService {
             creditCardId,
             installmentNumber,
             totalInstallments: inputTotalInstallments, // distinct name
+            isLoan,
             ...rest
         } = createTransactionDto;
 
@@ -198,6 +199,7 @@ export class TransactionService {
                                 creditCardId && inputTotalInstallments
                                     ? inputTotalInstallments
                                     : undefined,
+                            isLoan: isLoan || false,
                         },
                     });
 
