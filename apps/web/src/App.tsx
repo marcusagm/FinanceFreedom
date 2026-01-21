@@ -8,6 +8,7 @@ import IncomePage from "./pages/Income";
 import IncomeProjection from "./pages/IncomeProjection";
 import InvestmentAccounts from "./pages/InvestmentAccounts";
 import SavingsGoals from "./pages/SavingsGoals";
+import { CreditCards } from "./pages/CreditCards";
 import { Transactions } from "./pages/Transactions";
 import "./App.css";
 import { ProtectedRoute } from "./components/ProtectedRoute";
@@ -69,6 +70,12 @@ function App() {
                                                     <Route
                                                         path="/debts"
                                                         element={<Debts />}
+                                                    />
+                                                    <Route
+                                                        path="/credit-cards"
+                                                        element={
+                                                            <CreditCards />
+                                                        }
                                                     />
                                                     <Route
                                                         path="/income"

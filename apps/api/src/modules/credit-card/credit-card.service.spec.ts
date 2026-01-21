@@ -7,38 +7,29 @@ describe("CreditCardService", () => {
     let service: CreditCardService;
     let prisma: any;
 
+    const mockPrismaService = {
+        creditCard: {
+            create: vi.fn(),
+            findMany: vi.fn(),
+            findFirst: vi.fn(),
+            update: vi.fn(),
+            delete: vi.fn(),
+        },
+        account: {
+            create: vi.fn(),
+        },
+        transaction: {
+            aggregate: vi.fn(),
+            findMany: vi.fn(),
+            create: vi.fn(),
+        },
+        $transaction: vi.fn((cb) => cb(mockPrismaService)),
+    };
+
     beforeEach(async () => {
-        const mockPrismaService = {
-            creditCard: {
-                create: vi.fn(),
-                findMany: vi.fn(),
-                findFirst: vi.fn(),
-                update: vi.fn(),
-                delete: vi.fn(),
-            },
-            account: {
-                create: vi.fn(),
-            },
-            transaction: {
-                aggregate: vi.fn(),
-                findMany: vi.fn(),
-                create: vi.fn(),
-            },
-            $transaction: vi.fn((cb) => cb(mockPrismaService)),
-        };
-
-        const module: TestingModule = await Test.createTestingModule({
-            providers: [
-                CreditCardService,
-                {
-                    provide: PrismaService,
-                    useValue: mockPrismaService,
-                },
-            ],
-        }).compile();
-
-        service = module.get<CreditCardService>(CreditCardService);
-        prisma = module.get<PrismaService>(PrismaService);
+        // Manually instantiate to avoid DI issues in testing environment
+        service = new CreditCardService(mockPrismaService as any);
+        prisma = mockPrismaService;
     });
 
     it("should be defined", () => {
@@ -56,27 +47,31 @@ describe("CreditCardService", () => {
             };
             const userId = "user1";
 
-            prisma.account.create.mockResolvedValue({
+            mockPrismaService.account.create.mockResolvedValue({
                 id: "acc1",
                 balance: 0,
             });
-            prisma.creditCard.create.mockResolvedValue({
+            mockPrismaService.creditCard.create.mockResolvedValue({
                 id: "card1",
                 ...dto,
             });
 
             const result = await service.create(userId, dto);
 
-            expect(prisma.account.create).toHaveBeenCalledWith(
+            expect(mockPrismaService.account.create).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    type: "CREDIT_CARD",
-                    userId,
+                    data: expect.objectContaining({
+                        type: "CREDIT_CARD",
+                        userId,
+                    }),
                 }),
             );
-            expect(prisma.creditCard.create).toHaveBeenCalledWith(
+            expect(mockPrismaService.creditCard.create).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    ...dto,
-                    accountId: "acc1",
+                    data: expect.objectContaining({
+                        ...dto,
+                        accountId: "acc1",
+                    }),
                 }),
             );
         });
@@ -87,7 +82,7 @@ describe("CreditCardService", () => {
             const cardId = "card1";
             const userId = "user1";
 
-            prisma.creditCard.findFirst.mockResolvedValue({
+            mockPrismaService.creditCard.findFirst.mockResolvedValue({
                 id: cardId,
                 limit: 1000,
                 account: { balance: -200 },
@@ -98,6 +93,78 @@ describe("CreditCardService", () => {
                 cardId,
             );
             expect(result).toBe(800);
+        });
+    });
+
+    describe("getInvoice", () => {
+        it("should return invoice data", async () => {
+            const cardId = "card1";
+            const userId = "user1";
+            const month = 1;
+            const year = 2024;
+
+            mockPrismaService.creditCard.findFirst.mockResolvedValue({
+                id: cardId,
+                closingDay: 25,
+                dueDay: 5,
+                account: { id: "acc1" },
+            });
+
+            mockPrismaService.transaction.findMany.mockResolvedValue([
+                {
+                    id: "tx1",
+                    amount: -100,
+                    date: new Date("2024-01-10"),
+                    type: "EXPENSE",
+                },
+            ]);
+
+            const result = await service.getInvoice(
+                userId,
+                cardId,
+                month,
+                year,
+            );
+            expect(result).toBeDefined();
+            expect(result.status).toBeDefined();
+            expect(result.total).toBe(100);
+        });
+    });
+
+    describe("payInvoice", () => {
+        it("should process payment", async () => {
+            const cardId = "card1";
+            const userId = "user1";
+            const accountId = "acc1";
+
+            mockPrismaService.creditCard.findFirst.mockResolvedValue({
+                id: cardId,
+                closingDay: 25,
+                dueDay: 5,
+                account: { id: "cc-acc" },
+                accountId: "cc-acc",
+            });
+
+            // Mock getInvoice indirectly by mocking finding transactions?
+            // Since getInvoice relies on findMany, and we already mocked it for getInvoice test,
+            // we should ensure it returns something positive for payInvoice to work.
+            mockPrismaService.transaction.findMany.mockResolvedValue([
+                { id: "tx1", amount: -100, date: new Date(), type: "EXPENSE" },
+            ]);
+            // amount -100 (EXPENSE) -> total 100.
+
+            mockPrismaService.account.update = vi.fn();
+
+            const result = await service.payInvoice(
+                userId,
+                cardId,
+                1,
+                2024,
+                accountId,
+            );
+
+            expect(result.paid).toBe(true);
+            expect(mockPrismaService.account.update).toHaveBeenCalledTimes(2);
         });
     });
 });

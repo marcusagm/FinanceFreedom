@@ -22,14 +22,18 @@ export function Accounts() {
 
     const [editingAccount, setEditingAccount] = useState<Account | null>(null);
     const [deletingAccount, setDeletingAccount] = useState<Account | null>(
-        null
+        null,
     );
     const [isDeleting, setIsDeleting] = useState(false);
 
     const fetchAccounts = async () => {
         try {
             const response = await api.get("/accounts");
-            setAccounts(response.data);
+            setAccounts(
+                response.data.filter(
+                    (acc: Account) => acc.type !== "CREDIT_CARD",
+                ),
+            );
         } catch (error) {
             console.error("Failed to fetch accounts", error);
         }

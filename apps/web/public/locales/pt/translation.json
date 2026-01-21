@@ -41,7 +41,6 @@
         "status": "Status",
         "originalAmount": "Valor Original",
         "account": "Conta",
-        "creditCard": "Cartão de Crédito",
         "selectAccount": "Selecione uma Conta",
         "pay": "Pagar",
         "name": "Nome",
@@ -284,8 +283,6 @@
             "sources": "Fontes Fixas",
             "workUnits": "Catálogo de Serviços"
         },
-        "emptySources": "Nenhuma fonte de renda cadastrada.",
-        "emptyWorkUnits": "Nenhum serviço cadastrado no catálogo.",
         "receivesOn": "Recebe no dia {{day}}",
         "estimatedTime": "Tempo Estimado: {{time}}h",
         "deleteDialog": {
@@ -314,6 +311,8 @@
             "grossLabel": "Bruto",
             "taxLabel": "Taxa"
         },
+        "emptySources": "Nenhuma fonte de renda cadastrada. Adicione seu salário ou renda recorrente!",
+        "emptyWorkUnits": "Nenhum serviço cadastrado. Liste seus serviços de freelance aqui!",
         "workUnitDialog": {
             "titleNew": "Novo Serviço / Job",
             "titleEdit": "Editar Serviço / Job",
@@ -804,6 +803,7 @@
             "invalidToken": "Token inválido ou ausente.",
             "success": "Senha redefinida com sucesso!",
             "error": "Ocorreu um erro ao redefinir sua senha.",
+            "invalidLinkTitle": "Link Inválido",
             "invalidLinkDesc": "O token de redefinição de senha está faltando.",
             "requestNewLink": "Solicitar novo link"
         },

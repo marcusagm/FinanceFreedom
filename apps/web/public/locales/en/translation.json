@@ -39,7 +39,18 @@
         "currency": "Currency",
         "exchangeRate": "Exchange Rate",
         "status": "Status",
-        "originalAmount": "Original Amount"
+        "originalAmount": "Original Amount",
+        "account": "Account",
+        "creditCard": "Credit Card",
+        "selectAccount": "Select Account",
+        "pay": "Pay",
+        "name": "Name",
+        "period": "Period",
+        "dueDate": "Due Date",
+        "other": "Other",
+        "displayName": "Display Name",
+        "namePlaceholder": "Ex: Nubank",
+        "savedSuccess": "Saved successfully!"
     },
     "profile": {
         "title": "My Profile",
@@ -252,10 +263,10 @@
             "label": "Repeat monthly",
             "count": "Number of times"
         },
+        "installments": "Installments",
         "deleteTitle": "Delete Transaction",
         "deleteDesc": "This action cannot be undone.",
         "deleteMessage": "The transaction <strong>{{name}}</strong> will be permanently removed.",
-        "deleteConfirm": "Yes, delete",
         "deleteConfirm": "Yes, delete",
         "deleting": "Deleting...",
         "status": {
@@ -303,8 +314,6 @@
             "grossLabel": "Gross",
             "taxLabel": "Tax"
         },
-        "emptySources": "No income sources registered. Add your salary or recurring income!",
-        "emptyWorkUnits": "No services registered. List your freelance services here!",
         "workUnitDialog": {
             "titleNew": "New Service / Job",
             "titleEdit": "Edit Service / Job",
@@ -717,6 +726,7 @@
         "expenses": {
             "label": "Expenses",
             "debts": "Debts",
+            "creditCards": "Credit Cards",
             "fixed": "Fixed Expenses"
         },
         "income": {
@@ -794,21 +804,73 @@
             "invalidToken": "Invalid or missing token.",
             "success": "Password reset successfully!",
             "error": "An error occurred while resetting your password.",
-            "invalidLinkTitle": "Invalid Link",
             "invalidLinkDesc": "The password reset token is missing.",
             "requestNewLink": "Request new link"
         },
         "validation": {
-            "emailRequired": "Please enter a valid email",
-            "passwordRequired": "Password is required",
-            "nameMinLength": "Name must be at least 2 characters",
-            "nameRequired": "Name is required",
-            "emailInvalid": "Invalid email address",
-            "currentPasswordRequired": "Current password is required",
-            "passwordMinLength": "Password must be at least 6 characters",
-            "passwordsMismatch": "Passwords do not match",
             "dateRequired": "Date is required"
         }
+    },
+    "creditCard": {
+        "title": "Credit Cards",
+        "description": "Manage your credit cards, invoices, and limits.",
+        "add": "New Card",
+        "addNew": "New Credit Card",
+        "brand": "Brand",
+        "limit": "Limit",
+        "closingDay": "Closing Day",
+        "dueDay": "Due Day",
+        "createSuccess": "Card created successfully!",
+        "createError": "Error creating card",
+        "totalLimit": "Total Limit",
+        "invoiceDetails": "Invoice Details",
+        "payInvoice": "Pay Invoice",
+        "payInvoiceDescription": "Pay full invoice amount: {{value}}",
+        "nearLimit": "Near Limit",
+        "viewInvoices": "View Invoices",
+        "edit": "Edit Card",
+        "deleteSuccess": "Card deleted successfully!",
+        "deleteError": "Error deleting card",
+        "invoiceError": "Error loading invoice details",
+        "deleteDialog": {
+            "title": "Delete Credit Card",
+            "desc": "This action cannot be undone. This will permanently delete the credit card and all associated history.",
+            "attention": "Attention",
+            "message": "Are you sure you want to delete the credit card <strong>{{name}}</strong>?",
+            "confirm": "Delete Card",
+            "deleting": "Deleting..."
+        },
+        "status": {
+            "open": "Open",
+            "closed": "Closed",
+            "paid": "Paid",
+            "overdue": "Overdue"
+        },
+        "usedPercent": "{{value}}% used",
+        "currentInvoice": "Current Invoice",
+
+        "available": "Available",
+        "noTransactions": "No transactions found for this invoice.",
+        "selectBrand": "Select a Brand",
+        "validation": {
+            "nameRequired": "Name is required",
+            "limitRequired": "Limit is required",
+            "limitPositive": "Limit must be greater than 0",
+            "brandRequired": "Brand is required",
+            "dayRequired": "Day is required",
+            "dayRange": "Day must be between 1 and 31"
+        }
+    },
+    "validation": {
+        "emailRequired": "Please enter a valid email",
+        "passwordRequired": "Password is required",
+        "nameMinLength": "Name must be at least 2 characters",
+        "nameRequired": "Name is required",
+        "emailInvalid": "Invalid email address",
+        "currentPasswordRequired": "Current password is required",
+        "passwordMinLength": "Password must be at least 6 characters",
+        "passwordsMismatch": "Passwords do not match",
+        "dateRequired": "Date is required"
     },
     "settings": {
         "title": "System Settings",

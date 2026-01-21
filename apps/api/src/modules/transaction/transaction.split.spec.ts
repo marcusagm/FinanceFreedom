@@ -1,5 +1,4 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { vi, describe, it, expect, beforeEach } from "vitest";
 import { TransactionService } from "./transaction.service";
 import { PrismaService } from "../../prisma/prisma.service";
 import { CreateTransactionDto } from "./dto/create-transaction.dto";
@@ -8,30 +7,30 @@ import { BadRequestException } from "@nestjs/common";
 
 const mockTransactionClient = {
     transaction: {
-        create: vi.fn(),
-        findMany: vi.fn(),
-        findUnique: vi.fn(),
-        findFirst: vi.fn(),
-        update: vi.fn(),
-        delete: vi.fn(),
+        create: jest.fn(),
+        findMany: jest.fn(),
+        findUnique: jest.fn(),
+        findFirst: jest.fn(),
+        update: jest.fn(),
+        delete: jest.fn(),
     },
     account: {
-        findUnique: vi.fn(),
-        findFirst: vi.fn(),
-        update: vi.fn(),
+        findUnique: jest.fn(),
+        findFirst: jest.fn(),
+        update: jest.fn(),
     },
     debt: {
-        findUnique: vi.fn(),
-        findFirst: vi.fn(),
-        update: vi.fn(),
+        findUnique: jest.fn(),
+        findFirst: jest.fn(),
+        update: jest.fn(),
     },
 };
 
 const mockPrismaService = {
-    $transaction: vi.fn((callback) => callback(mockTransactionClient)),
+    $transaction: jest.fn((callback) => callback(mockTransactionClient)),
     transaction: {
-        findMany: vi.fn(),
-        findUnique: vi.fn(),
+        findMany: jest.fn(),
+        findUnique: jest.fn(),
     },
 };
 
@@ -50,9 +49,9 @@ describe("TransactionService - Advanced Features", () => {
         service = module.get<TransactionService>(TransactionService);
         prisma = module.get<PrismaService>(PrismaService);
 
-        vi.resetAllMocks();
-        (prisma.$transaction as any).mockImplementation((callback: any) =>
-            callback(mockTransactionClient)
+        jest.resetAllMocks();
+        (prisma.$transaction as jest.Mock).mockImplementation((callback: any) =>
+            callback(mockTransactionClient),
         );
     });
 
@@ -69,10 +68,12 @@ describe("TransactionService - Advanced Features", () => {
             };
 
             const mockAccount = { id: "acc-1", balance: 1000 };
-            mockTransactionClient.account.findFirst.mockResolvedValue(
-                mockAccount
-            );
-            mockTransactionClient.transaction.create.mockResolvedValue({
+            (
+                mockTransactionClient.account.findFirst as jest.Mock
+            ).mockResolvedValue(mockAccount);
+            (
+                mockTransactionClient.transaction.create as jest.Mock
+            ).mockResolvedValue({
                 id: "tx-1",
                 ...dto,
             });
@@ -81,19 +82,21 @@ describe("TransactionService - Advanced Features", () => {
 
             // Should call create 3 times
             expect(
-                mockTransactionClient.transaction.create
+                mockTransactionClient.transaction.create,
             ).toHaveBeenCalledTimes(3);
 
             // Check dates
-            const calls = mockTransactionClient.transaction.create.mock.calls;
+            const calls = (
+                mockTransactionClient.transaction.create as jest.Mock
+            ).mock.calls;
             expect(
-                new Date(calls[0][0].data.date).toISOString().split("T")[0]
+                new Date(calls[0][0].data.date).toISOString().split("T")[0],
             ).toBe("2023-01-01");
             expect(
-                new Date(calls[1][0].data.date).toISOString().split("T")[0]
+                new Date(calls[1][0].data.date).toISOString().split("T")[0],
             ).toBe("2023-02-01");
             expect(
-                new Date(calls[2][0].data.date).toISOString().split("T")[0]
+                new Date(calls[2][0].data.date).toISOString().split("T")[0],
             ).toBe("2023-03-01");
         });
     });
@@ -117,10 +120,12 @@ describe("TransactionService - Advanced Features", () => {
                 ],
             };
 
-            mockTransactionClient.transaction.findFirst.mockResolvedValue(
-                originalTx
-            );
-            mockTransactionClient.transaction.create.mockResolvedValue({
+            (
+                mockTransactionClient.transaction.findFirst as jest.Mock
+            ).mockResolvedValue(originalTx);
+            (
+                mockTransactionClient.transaction.create as jest.Mock
+            ).mockResolvedValue({
                 id: "new-tx",
             });
 
@@ -128,10 +133,10 @@ describe("TransactionService - Advanced Features", () => {
 
             // 1. Check creation of new transactions
             expect(
-                mockTransactionClient.transaction.create
+                mockTransactionClient.transaction.create,
             ).toHaveBeenCalledTimes(2);
             expect(
-                mockTransactionClient.transaction.create
+                mockTransactionClient.transaction.create,
             ).toHaveBeenCalledWith({
                 data: expect.objectContaining({
                     amount: 40,
@@ -139,7 +144,7 @@ describe("TransactionService - Advanced Features", () => {
                 }),
             });
             expect(
-                mockTransactionClient.transaction.create
+                mockTransactionClient.transaction.create,
             ).toHaveBeenCalledWith({
                 data: expect.objectContaining({
                     amount: 60,
@@ -149,7 +154,7 @@ describe("TransactionService - Advanced Features", () => {
 
             // 2. Check deletion of original
             expect(
-                mockTransactionClient.transaction.delete
+                mockTransactionClient.transaction.delete,
             ).toHaveBeenCalledWith({
                 where: { id: "tx-original" },
             });
@@ -168,12 +173,12 @@ describe("TransactionService - Advanced Features", () => {
                 ],
             };
 
-            mockTransactionClient.transaction.findFirst.mockResolvedValue(
-                originalTx
-            );
+            (
+                mockTransactionClient.transaction.findFirst as jest.Mock
+            ).mockResolvedValue(originalTx);
 
             await expect(
-                service.split("user-1", "tx-original", splitDto)
+                service.split("user-1", "tx-original", splitDto),
             ).rejects.toThrow(BadRequestException);
         });
     });

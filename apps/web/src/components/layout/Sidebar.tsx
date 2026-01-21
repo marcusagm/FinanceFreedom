@@ -13,6 +13,7 @@ import {
     Tag,
     Target,
     TrendingUp,
+    TrendingDown,
     User,
     Wallet,
 } from "lucide-react";
@@ -71,9 +72,14 @@ export function Sidebar({ className }: SidebarProps) {
             label: t("sidebar.expenses.label"),
             items: [
                 {
-                    icon: CreditCard,
+                    icon: TrendingDown,
                     label: t("sidebar.expenses.debts"),
                     href: "/debts",
+                },
+                {
+                    icon: CreditCard,
+                    label: t("sidebar.expenses.creditCards"),
+                    href: "/credit-cards",
                 },
                 {
                     icon: Layers,
@@ -139,7 +145,7 @@ export function Sidebar({ className }: SidebarProps) {
             className={cn(
                 "hidden md:flex flex-col border-r bg-sidebar text-sidebar-foreground transition-all duration-300 ease-in-out h-screen sticky top-0",
                 collapsed ? "w-16" : "w-64",
-                className
+                className,
             )}
         >
             {/* Logo Area */}
@@ -154,7 +160,7 @@ export function Sidebar({ className }: SidebarProps) {
                     size="icon"
                     className={cn(
                         "absolute right-2 text-muted-foreground hover:text-foreground",
-                        collapsed && "static mx-auto"
+                        collapsed && "static mx-auto",
                     )}
                     onClick={toggleSidebar}
                 >
@@ -185,7 +191,7 @@ export function Sidebar({ className }: SidebarProps) {
                                         isActive(item.href)
                                             ? "bg-sidebar-accent text-sidebar-accent-foreground"
                                             : "text-muted-foreground hover:bg-sidebar-accent/50 hover:text-foreground",
-                                        collapsed && "justify-center px-2"
+                                        collapsed && "justify-center px-2",
                                     )}
                                     title={collapsed ? item.label : undefined}
                                 >
@@ -194,7 +200,7 @@ export function Sidebar({ className }: SidebarProps) {
                                             "h-4 w-4 shrink-0",
                                             isActive(item.href)
                                                 ? "text-primary"
-                                                : ""
+                                                : "",
                                         )}
                                     />
                                     {!collapsed && <span>{item.label}</span>}
@@ -213,7 +219,7 @@ export function Sidebar({ className }: SidebarProps) {
                 <div
                     className={cn(
                         "flex items-center gap-1",
-                        collapsed ? "flex-col" : "justify-between"
+                        collapsed ? "flex-col" : "justify-between",
                     )}
                 >
                     <Button
@@ -247,7 +253,7 @@ export function Sidebar({ className }: SidebarProps) {
                 <div
                     className={cn(
                         "flex items-center gap-3 rounded-md bg-sidebar-accent/50 p-2",
-                        collapsed ? "justify-center p-0 bg-transparent" : ""
+                        collapsed ? "justify-center p-0 bg-transparent" : "",
                     )}
                 >
                     <Link

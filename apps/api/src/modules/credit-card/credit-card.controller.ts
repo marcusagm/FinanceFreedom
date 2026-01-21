@@ -25,23 +25,20 @@ export class CreditCardController {
 
     @Post()
     create(@Body() createCreditCardDto: CreateCreditCardDto, @Req() req: any) {
-        // Ensure userId is present. Assuming middleware/guard populates req.user
-        // Fallback or explicit check needed?
-        // Standard NestJS with Guard:
-        const userId = req.user?.id || "mock-user-id"; // TODO: Remove mock
-        return this.creditCardService.create(userId, createCreditCardDto);
+        return this.creditCardService.create(
+            req.user.userId,
+            createCreditCardDto,
+        );
     }
 
     @Get()
     findAll(@Req() req: any) {
-        const userId = req.user?.id || "mock-user-id";
-        return this.creditCardService.findAll(userId);
+        return this.creditCardService.findAll(req.user.userId);
     }
 
     @Get(":id")
     findOne(@Param("id") id: string, @Req() req: any) {
-        const userId = req.user?.id || "mock-user-id";
-        return this.creditCardService.findOne(userId, id);
+        return this.creditCardService.findOne(req.user.userId, id);
     }
 
     @Patch(":id")
@@ -50,14 +47,16 @@ export class CreditCardController {
         @Body() updateCreditCardDto: UpdateCreditCardDto,
         @Req() req: any,
     ) {
-        const userId = req.user?.id || "mock-user-id";
-        return this.creditCardService.update(userId, id, updateCreditCardDto);
+        return this.creditCardService.update(
+            req.user.userId,
+            id,
+            updateCreditCardDto,
+        );
     }
 
     @Delete(":id")
     remove(@Param("id") id: string, @Req() req: any) {
-        const userId = req.user?.id || "mock-user-id";
-        return this.creditCardService.remove(userId, id);
+        return this.creditCardService.remove(req.user.userId, id);
     }
 
     @Get(":id/invoice")
@@ -67,18 +66,34 @@ export class CreditCardController {
         @Query("year") year: number,
         @Req() req: any,
     ) {
-        const userId = req.user?.id || "mock-user-id";
         return this.creditCardService.getInvoice(
-            userId,
+            req.user.userId,
             id,
             Number(month),
             Number(year),
         );
     }
 
+    @Post(":id/invoice/pay")
+    payInvoice(
+        @Req() req: any,
+        @Param("id") id: string,
+        @Body() body: { month: number; year: number; accountId: string },
+    ) {
+        return this.creditCardService.payInvoice(
+            req.user.userId,
+            id,
+            body.month,
+            body.year,
+            body.accountId,
+        );
+    }
+
     @Get(":id/limit")
     getAvailableLimit(@Param("id") id: string, @Req() req: any) {
-        const userId = req.user?.id || "mock-user-id";
-        return this.creditCardService.calculateAvailableLimit(userId, id);
+        return this.creditCardService.calculateAvailableLimit(
+            req.user.userId,
+            id,
+        );
     }
 }

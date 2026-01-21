@@ -12,11 +12,13 @@ import { useTransactions } from "../hooks/useTransactions";
 import { api } from "../lib/api";
 import { type Category, categoryService } from "../services/category.service";
 import type { Account, Transaction } from "../types";
+import type { CreditCard } from "../types/credit-card";
 
 export function Transactions() {
     const { t } = useTranslation();
     const queryClient = useQueryClient();
     const [accounts, setAccounts] = useState<Account[]>([]);
+    const [creditCards, setCreditCards] = useState<CreditCard[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [isNewTransactionOpen, setIsNewTransactionOpen] = useState(false);
 
@@ -43,12 +45,15 @@ export function Transactions() {
 
     const fetchAuxData = async () => {
         try {
-            const [accountsRes, categoriesRes] = await Promise.all([
-                api.get("/accounts"),
-                categoryService.getAll(),
-            ]);
+            const [accountsRes, categoriesRes, creditCardsRes] =
+                await Promise.all([
+                    api.get("/accounts"),
+                    categoryService.getAll(),
+                    api.get("/credit-cards"),
+                ]);
             setAccounts(accountsRes.data);
             setCategories(categoriesRes);
+            setCreditCards(creditCardsRes.data);
         } catch (error) {
             console.error("Failed to fetch auxiliary data", error);
         }
@@ -149,6 +154,7 @@ export function Transactions() {
                 onClose={handleCloseDialog}
                 onSuccess={handleTransactionUpdated}
                 accounts={accounts}
+                creditCards={creditCards}
                 categories={categories}
                 initialData={editingTransaction}
             />

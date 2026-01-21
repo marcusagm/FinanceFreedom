@@ -2,6 +2,7 @@ import {
     IsString,
     IsNotEmpty,
     IsDecimal,
+    IsNumber,
     IsInt,
     Min,
     Max,
@@ -19,9 +20,9 @@ export class CreateCreditCardDto {
     @IsNotEmpty()
     brand: string;
 
-    @IsDecimal()
+    @IsNumber()
     @IsNotEmpty()
-    limit: string | number;
+    limit: number;
 
     @IsInt()
     @Min(1)
@@ -50,8 +51,9 @@ export class UpdateCreditCardDto {
     brand?: string;
 
     @IsOptional()
-    @IsDecimal()
-    limit?: string | number;
+    @IsOptional()
+    @IsNumber()
+    limit?: number;
 
     @IsOptional()
     @IsInt()

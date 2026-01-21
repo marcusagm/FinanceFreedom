@@ -34,14 +34,34 @@ export class CreditCardService {
         });
     }
 
+    private mapCreditCardResponse(card: any) {
+        return {
+            ...card,
+            limit: Number(card.limit),
+            account: card.account
+                ? {
+                      ...card.account,
+                      balance: Number(card.account.balance),
+                  }
+                : null,
+            paymentAccount: card.paymentAccount
+                ? {
+                      ...card.paymentAccount,
+                      balance: Number(card.paymentAccount.balance),
+                  }
+                : null,
+        };
+    }
+
     async findAll(userId: string) {
-        return this.prisma.creditCard.findMany({
+        const cards = await this.prisma.creditCard.findMany({
             where: { userId },
             include: {
                 paymentAccount: true,
                 account: true,
             },
         });
+        return cards.map(this.mapCreditCardResponse);
     }
 
     async findOne(userId: string, id: string) {
@@ -56,7 +76,7 @@ export class CreditCardService {
         if (!card) {
             throw new NotFoundException(`Credit Card with ID ${id} not found`);
         }
-        return card;
+        return this.mapCreditCardResponse(card);
     }
 
     async update(
@@ -77,8 +97,13 @@ export class CreditCardService {
         // Cascading delete might be dangerous if implicit.
         const card = await this.findOne(userId, id);
 
-        return this.prisma.creditCard.delete({
-            where: { id },
+        return this.prisma.$transaction(async (tx) => {
+            await tx.creditCard.delete({
+                where: { id },
+            });
+            await tx.account.delete({
+                where: { id: card.accountId },
+            });
         });
     }
 
@@ -134,14 +159,35 @@ export class CreditCardService {
                     lte: endDate,
                 },
             },
+            include: {
+                categoryRel: true,
+            },
             orderBy: { date: "desc" },
         });
 
         const total = transactions.reduce((acc, t) => {
-            return t.type === "EXPENSE"
-                ? acc + Number(t.amount)
-                : acc - Number(t.amount);
+            // Expenses are negative in DB, effectively adding to the invoice (positive debt)
+            // Income/Payments are positive, effectively reducing the invoice
+            return acc - Number(t.amount);
         }, 0);
+
+        // Due Date is usually X days after closing, or fixed day.
+        // Assuming simple fixed day for now (e.g. Due Day 10 of Next Month if Closing is 25)
+        // If Closing Day > Due Day, Due Date is Next Month.
+        // Logic: Due Date Month is same as Closing Date Month if Due Day > Closing Day (rare).
+        // Usually Due Date is next month.
+
+        let dueMonth = month - 1; // 0-indexed
+        let dueYear = year;
+
+        // If Due Day < Closing Day, it means it's due in the NEXT month relative to the closing month.
+        // Example: Closes 25th Jan. Due 5th Feb.
+        // If we assumed `month` param is the Closing Month (e.g. 1=Jan), then Due Date is in Feb.
+
+        // Re-evaluating: user passed `month`/`year`.
+        // If we treat `month` as the Reference Month for the invoice (usually the due month),
+        // then `dueDate` is simply:
+        const dueDate = new Date(year, month - 1, card.dueDay);
 
         return {
             period: {
@@ -150,7 +196,57 @@ export class CreditCardService {
             },
             status: new Date() > endDate ? "CLOSED" : "OPEN",
             total,
-            transactions,
+            dueDate,
+            transactions: transactions.map((t) => ({
+                ...t,
+                amount: Number(t.amount),
+                category: t.categoryRel,
+            })),
         };
+    }
+
+    async payInvoice(
+        userId: string,
+        cardId: string,
+        month: number,
+        year: number,
+        accountId: string,
+    ) {
+        const card = await this.findOne(userId, cardId);
+
+        // 1. Get invoice total
+        const invoice = await this.getInvoice(userId, cardId, month, year);
+        const amount = invoice.total;
+
+        if (amount <= 0) {
+            throw new Error("Invoice has no amount to pay");
+        }
+
+        // 2. Perform payment transaction (Transfer)
+        // We use prisma transaction to ensure atomicity
+        return this.prisma.$transaction(async (tx) => {
+            // Debit from payment account
+            await tx.account.update({
+                where: { id: accountId },
+                data: { balance: { decrement: amount } },
+            });
+
+            // Credit to credit card account (reducing debt)
+            await tx.account.update({
+                where: { id: card.accountId },
+                data: { balance: { increment: amount } },
+            });
+
+            // Create transaction record (Payment)
+            // We might want to create a formal transaction linked to accounts
+            // For now, simpler approach to satisfy the controller/test requirement
+            // and business logic basics.
+
+            return {
+                paid: true,
+                amount,
+                date: new Date(),
+            };
+        });
     }
 }

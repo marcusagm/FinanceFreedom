@@ -43,7 +43,7 @@ export default function IncomeProjection() {
             activationConstraint: {
                 distance: 8,
             },
-        })
+        }),
     );
 
     useEffect(() => {
@@ -139,7 +139,7 @@ export default function IncomeProjection() {
         return new Date(
             monthStart.getFullYear(),
             monthStart.getMonth(),
-            -startDay + i + 1
+            -startDay + i + 1,
         );
     });
 
@@ -149,7 +149,6 @@ export default function IncomeProjection() {
         const taxRate = Number(curr.workUnit?.taxRate || 0);
         const gross = Number(curr.amount);
         const net = gross * (1 - taxRate / 100);
-        return acc + net;
         return acc + net;
     }, 0);
 
@@ -235,7 +234,7 @@ export default function IncomeProjection() {
                                     size="icon"
                                     onClick={() =>
                                         setCurrentDate(
-                                            subMonths(currentDate, 1)
+                                            subMonths(currentDate, 1),
                                         )
                                     }
                                 >
@@ -253,7 +252,7 @@ export default function IncomeProjection() {
                                     size="icon"
                                     onClick={() =>
                                         setCurrentDate(
-                                            addMonths(currentDate, 1)
+                                            addMonths(currentDate, 1),
                                         )
                                     }
                                 >
@@ -323,7 +322,8 @@ export default function IncomeProjection() {
                             <div className="grid grid-cols-7 auto-rows-fr gap-px bg-border border-x border-b border-border rounded-b-lg overflow-hidden shadow-sm flex-1">
                                 {calendarGrid.map((date) => {
                                     const dateProjections = projections.filter(
-                                        (p) => isSameDay(new Date(p.date), date)
+                                        (p) =>
+                                            isSameDay(new Date(p.date), date),
                                     );
                                     return (
                                         <CalendarDay
@@ -331,7 +331,7 @@ export default function IncomeProjection() {
                                             date={date}
                                             isCurrentMonth={isSameMonth(
                                                 date,
-                                                currentDate
+                                                currentDate,
                                             )}
                                             projections={dateProjections}
                                             onRemove={handleRemoveProjection}

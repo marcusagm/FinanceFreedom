@@ -1,4 +1,4 @@
-import { CreditCard, Plus, Wallet } from "lucide-react";
+import { CreditCard as CreditCardIcon, Plus, Wallet } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../lib/api";
@@ -8,6 +8,8 @@ import {
     categoryService,
     type Category,
 } from "../../services/category.service";
+import { creditCardService } from "../../services/credit-card.service";
+import type { CreditCard } from "../../types/credit-card";
 import { NewTransactionDialog } from "../transactions/NewTransactionDialog";
 import { Button } from "../ui/Button";
 import {
@@ -23,6 +25,7 @@ export function QuickActionFAB() {
     const [isDebtOpen, setIsDebtOpen] = useState(false);
     const [accounts, setAccounts] = useState<Account[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
+    const [creditCards, setCreditCards] = useState<CreditCard[]>([]);
 
     useEffect(() => {
         if (isTransactionOpen) {
@@ -31,6 +34,10 @@ export function QuickActionFAB() {
                 .catch(console.error);
 
             categoryService.getAll().then(setCategories).catch(console.error);
+            creditCardService
+                .getAll()
+                .then(setCreditCards)
+                .catch(console.error);
         }
     }, [isTransactionOpen]);
 
@@ -56,7 +63,7 @@ export function QuickActionFAB() {
                             </span>
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => setIsDebtOpen(true)}>
-                            <CreditCard className="mr-2 h-4 w-4" />
+                            <CreditCardIcon className="mr-2 h-4 w-4" />
                             <span>{t("dashboard.quickActions.newDebt")}</span>
                         </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -71,6 +78,7 @@ export function QuickActionFAB() {
                 }}
                 accounts={accounts}
                 categories={categories}
+                creditCards={creditCards}
             />
 
             <DebtForm

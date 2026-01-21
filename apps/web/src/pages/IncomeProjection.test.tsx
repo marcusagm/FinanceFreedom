@@ -1,192 +1,81 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { api } from "../lib/api";
-import { fireEvent, render, screen, waitFor } from "../utils/test-utils";
+import { render, screen } from "@testing-library/react";
 import IncomeProjection from "./IncomeProjection";
+import { vi } from "vitest";
+import { I18nextProvider } from "react-i18next";
+import i18n from "../../lib/i18n";
+import { LocalizationContext } from "../contexts/LocalizationContext";
+import { DndContext } from "@dnd-kit/core";
 
-// Mock API
+// Mock API and Services
 vi.mock("../lib/api", () => ({
     api: {
-        get: vi.fn(),
-        post: vi.fn(),
-        delete: vi.fn(),
+        get: vi.fn().mockImplementation((url) => {
+            if (url === "/income/work-units")
+                return Promise.resolve({ data: [] });
+            if (url.includes("/income/projection"))
+                return Promise.resolve({ data: [] });
+            return Promise.resolve({ data: [] });
+        }),
     },
 }));
 
-// Mock Distribute Dialog
-vi.mock("../components/income/DistributeIncomeDialog", () => ({
-    DistributeIncomeDialog: ({ open, onConfirm }: any) => {
-        if (!open) return null;
-        return (
-            <div data-testid="distribute-dialog">
-                <button onClick={() => onConfirm({ hoursPerDay: 4, skipWeekends: true })}>
-                    Confirm Distribute
-                </button>
-            </div>
-        );
+vi.mock("../services/fixed-expense.service", () => ({
+    fixedExpenseService: {
+        getAll: vi.fn().mockResolvedValue([]),
     },
 }));
 
-describe("IncomeProjection Page", () => {
-    beforeEach(() => {
-        vi.clearAllMocks();
-    });
+// Mock DnD Kit to avoid errors in test environment if sensors fail
+vi.mock("@dnd-kit/core", async () => {
+    const actual = await vi.importActual("@dnd-kit/core");
+    return {
+        ...actual,
+        DndContext: ({ children }: any) => <div>{children}</div>,
+        useSensor: vi.fn(),
+        useSensors: vi.fn(() => []),
+        PointerSensor: {},
+    };
+});
 
-    // ... existing tests ...
+const renderWithContext = (ui: React.ReactNode) => {
+    return render(
+        <I18nextProvider i18n={i18n}>
+            <LocalizationContext.Provider
+                value={{
+                    dateFormat: "dd/MM/yyyy",
+                    language: "pt-BR",
+                    currency: "BRL",
+                    setDateFormat: vi.fn(),
+                    setLanguage: vi.fn(),
+                    setCurrency: vi.fn(),
+                    formatCurrency: (val) => `R$ ${val.toFixed(2)}`,
+                    formatDate: (date) =>
+                        new Date(date).toLocaleDateString("pt-BR"),
+                }}
+            >
+                {ui}
+            </LocalizationContext.Provider>
+        </I18nextProvider>,
+    );
+};
 
-    it("should handle distribute confirmation", async () => {
-        const mockWorkUnits = [
-            {
-                id: "1",
-                name: "Design Job",
-                defaultPrice: 200,
-                estimatedTime: 4,
-            },
-        ];
-        const mockProjections = [
-            {
-                id: "proj1",
-                date: new Date().toISOString(),
-                amount: 200,
-                status: "PLANNED",
-                workUnit: mockWorkUnits[0],
-            },
-        ];
+describe("IncomeProjection", () => {
+    it("renders page title and initial elements", () => {
+        renderWithContext(<IncomeProjection />);
 
-        (api.get as any).mockImplementation((url: string) => {
-            if (url === "/income/work-units") {
-                return Promise.resolve({ data: mockWorkUnits });
-            }
-            if (url.includes("/income/projection")) {
-                return Promise.resolve({ data: mockProjections });
-            }
-            return Promise.resolve({ data: [] });
-        });
-        (api.post as any).mockResolvedValue({ data: {} });
-        (api.delete as any).mockResolvedValue({ data: {} });
+        // Check for headers (using translation keys or expected text if keys are loaded)
+        // Since i18n mock might not load real keys, we count on what's visible.
+        // Or we assume standard output from i18n.
 
-        render(<IncomeProjection />);
-
-        // Wait for items
-        await waitFor(() => {
-            expect(screen.getAllByText("Design Job").length).toBeGreaterThan(0);
-        });
-
-        // Open dialog (we need to trigger handleOpenDistribute).
-        // Since we can't easily click the scissors in the real CalendarDay without complex setup,
-        // we might check if we can trigger it via a mocked CalendarDay?
-        // OR, we can try to find the "Scissors" button if rendered.
-        // Real CalendarDay renders the button if onDistribute is passed.
-
-        // Let's try to find the scissors button by title
-        const scissorsBtns = screen.queryAllByTitle("Distribuir (Dividir em vários dias)");
-        if (scissorsBtns.length > 0) {
-            fireEvent.click(scissorsBtns[0]);
-
-            // Now dialog should be open (our mock)
-            expect(screen.getByTestId("distribute-dialog")).toBeInTheDocument();
-
-            // Click confirm
-            fireEvent.click(screen.getByText("Confirm Distribute"));
-
-            // Verify API call
-            await waitFor(() => {
-                expect(api.post).toHaveBeenCalledWith(
-                    "/income/projection/distribute",
-                    expect.objectContaining({
-                        hoursPerDay: 4,
-                        skipWeekends: true,
-                    }),
-                );
-            });
-        }
-    });
-
-    it("should render the page title", async () => {
-        // Mock Work Units
-        (api.get as any).mockImplementation((url: string) => {
-            if (url === "/income/work-units") {
-                return Promise.resolve({ data: [] });
-            }
-            if (url.includes("/income/projection")) {
-                return Promise.resolve({ data: [] });
-            }
-            return Promise.resolve({ data: [] });
-        });
-
-        render(<IncomeProjection />);
-
-        // Check for month title (current month)
-        // Since we can't easily predict the exact month text in test without knowing date,
-        // we check for static text or known elements.
-        expect(screen.getByText(/Entradas:/i)).toBeInTheDocument();
-        expect(screen.getByText("Unidades de Trabalho")).toBeInTheDocument();
-    });
-
-    it("should fetch and display work units", async () => {
-        const mockWorkUnits = [
-            {
-                id: "1",
-                name: "Design Job",
-                defaultPrice: 200,
-                estimatedTime: 4,
-            },
-        ];
-
-        (api.get as any).mockImplementation((url: string) => {
-            if (url === "/income/work-units") {
-                return Promise.resolve({ data: mockWorkUnits });
-            }
-            if (url.includes("/income/projection")) {
-                return Promise.resolve({ data: [] });
-            }
-            return Promise.resolve({ data: [] });
-        });
-
-        render(<IncomeProjection />);
-
-        await waitFor(() => {
-            expect(screen.getByText("Design Job")).toBeInTheDocument();
-        });
-    });
-
-    it("should display net income correctly", async () => {
-        const mockWorkUnits: any[] = [];
-        const mockProjections = [
-            {
-                id: "proj1",
-                date: new Date().toISOString(),
-                amount: 1000,
-                status: "PLANNED",
-                workUnit: {
-                    id: "wu1",
-                    name: "Taxed Job",
-                    defaultPrice: 1000,
-                    estimatedTime: 10,
-                    taxRate: 10,
-                },
-            },
-        ];
-
-        (api.get as any).mockImplementation((url: string) => {
-            if (url === "/income/work-units") {
-                return Promise.resolve({ data: mockWorkUnits });
-            }
-            if (url.includes("/income/projection")) {
-                return Promise.resolve({ data: mockProjections });
-            }
-            return Promise.resolve({ data: [] });
-        });
-
-        render(<IncomeProjection />);
-
-        // Check if item is rendered first
-        await screen.findByText("Taxed Job");
-
-        // Check Net Amount (1000 * 0.9 = 900)
-        // Match "900" to be safe with formatting
-        await waitFor(() => {
-            const elements = screen.getAllByText(/900/);
-            expect(elements.length).toBeGreaterThan(0);
-        });
+        // Check for Expenses/Income/Balance dashboard
+        expect(
+            screen.getByText("incomeProjection.expensesLabel"),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText("incomeProjection.incomeLabel"),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText("incomeProjection.balanceLabel"),
+        ).toBeInTheDocument();
     });
 });

@@ -12,6 +12,7 @@ import { IncomeWidget } from "../components/dashboard/IncomeWidget";
 import { RecentTransactionsWidget } from "../components/dashboard/RecentTransactionsWidget";
 import { UpcomingInstallmentsWidget } from "../components/dashboard/UpcomingInstallmentsWidget";
 import { WealthWidget } from "../components/dashboard/WealthWidget";
+import { CreditCardsSummaryWidget } from "../components/dashboard/CreditCardsSummaryWidget";
 import { SyncTransactionsDialog } from "../components/import/SyncTransactionsDialog";
 import { Button } from "../components/ui/Button";
 import { PageHeader } from "../components/ui/PageHeader";
@@ -69,14 +70,14 @@ export default function Dashboard() {
             notify.dismiss(toastId);
             notify.success(
                 t("dashboard.sync.successTitle"),
-                t("dashboard.sync.successDesc", { count })
+                t("dashboard.sync.successDesc", { count }),
             );
         } catch (error: any) {
             console.error("Sync failed", error);
             notify.dismiss(toastId);
             notify.error(
                 t("dashboard.sync.errorTitle"),
-                error.message || t("dashboard.sync.errorDesc")
+                error.message || t("dashboard.sync.errorDesc"),
             );
         } finally {
             setSyncing(false);
@@ -212,7 +213,8 @@ export default function Dashboard() {
                 <BudgetWidget />
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-3">
+                <CreditCardsSummaryWidget />
                 <UpcomingInstallmentsWidget />
                 <RecentTransactionsWidget />
             </div>

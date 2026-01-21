@@ -15,6 +15,11 @@ export interface Transaction {
     account: {
         name: string;
     };
+    creditCardId?: string;
+    totalInstallments?: number;
+    installmentNumber?: number;
+    isRecurring?: boolean;
+    repeatCount?: number;
     createdAt?: string;
     updatedAt?: string;
 }

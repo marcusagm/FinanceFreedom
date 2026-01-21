@@ -47,13 +47,24 @@ export class TransactionService {
         let status = inputStatus || "CONFIRMED";
         let targetAccountId = accountId;
 
+        // 0. Auto-detect Credit Card if only Account ID is provided
+        // This ensures transactions made on the Card Account are treated as Card transactions
+        if (!creditCardId && accountId) {
+            const linkedCard = await this.prisma.creditCard.findUnique({
+                where: { accountId },
+            });
+            if (linkedCard) {
+                creditCardId = linkedCard.id;
+            }
+        }
+
         // 1. Credit Card Logic Setup
         if (creditCardId) {
             const card = await this.creditCardService.findOne(
                 userId,
                 creditCardId,
             );
-            // Override accountId to the Card's hidden account
+            // Override accountId to the Card's hidden account (if not already set matching)
             targetAccountId = card.accountId;
 
             // Check Limit
@@ -164,7 +175,7 @@ export class TransactionService {
                                   : Number(amount), // Approximation for display
                             originalCurrency: transactionCurrency,
                             exchangeRate: exchangeRate,
-                            status,
+                            status: status || "CONFIRMED",
                             personId,
                             type,
                             date: currentDate,
@@ -189,16 +200,23 @@ export class TransactionService {
                                     : undefined,
                         },
                     });
+
                     createdTransactions.push(transaction);
 
                     // 4. Update the account balance (If CONFIRMED)
                     if (status === "CONFIRMED") {
                         const balanceChange =
-                            type === "INCOME" ? currentAmount : -currentAmount;
+                            type === "EXPENSE"
+                                ? -Number(currentAmount)
+                                : Number(currentAmount);
 
                         await prisma.account.update({
                             where: { id: targetAccountId },
-                            data: { balance: { increment: balanceChange } },
+                            data: {
+                                balance: {
+                                    increment: balanceChange,
+                                },
+                            },
                         });
                     }
 
