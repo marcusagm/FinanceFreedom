@@ -1,4 +1,4 @@
-import { Loader2, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader2, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -12,10 +12,14 @@ import {
     type BudgetStatus,
     type IncomeStatus,
 } from "../services/analytics.service";
+import { format } from "date-fns";
+import { ptBR, enUS } from "date-fns/locale";
+import { useLocalization } from "../contexts/LocalizationContext";
 import { type Category, categoryService } from "../services/category.service";
 
 export function Categories() {
     const { t } = useTranslation();
+    const { language } = useLocalization();
     const [categories, setCategories] = useState<Category[]>([]);
     const [budgetData, setBudgetData] = useState<BudgetStatus[]>([]);
     const [incomeData, setIncomeData] = useState<IncomeStatus[]>([]);
@@ -34,21 +38,25 @@ export function Categories() {
     );
     const [isDeleting, setIsDeleting] = useState(false);
 
+    // Date state
+    const [selectedDate, setSelectedDate] = useState(new Date());
+
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [selectedDate]);
 
     const fetchData = async () => {
         setLoading(true);
         try {
+            const dateStr = format(selectedDate, "yyyy-MM-dd");
             const [categoriesData, budgetsData, incomesData] =
                 await Promise.all([
                     categoryService.getAll(),
-                    analyticsService.getBudgets().catch((err) => {
+                    analyticsService.getBudgets(dateStr).catch((err) => {
                         console.error("Failed to fetch budgets", err);
                         return [];
                     }),
-                    analyticsService.getIncomes().catch((err) => {
+                    analyticsService.getIncomes(dateStr).catch((err) => {
                         console.error("Failed to fetch incomes", err);
                         return [];
                     }),
@@ -96,16 +104,85 @@ export function Categories() {
         }
     };
 
+    const handleBudgetChange = async (categoryId: string, amount: number) => {
+        try {
+            await analyticsService.upsertBudget({
+                categoryId,
+                amount,
+                date: format(selectedDate, "yyyy-MM-dd"),
+            });
+
+            setBudgetData((prev) => {
+                const existingIndex = prev.findIndex(
+                    (b) => b.categoryId === categoryId,
+                );
+                if (existingIndex >= 0) {
+                    const newArr = [...prev];
+                    const existing = newArr[existingIndex];
+                    const spent = existing.spent;
+                    newArr[existingIndex] = {
+                        ...existing,
+                        limit: amount,
+                        remaining: amount - spent,
+                        percentage: amount > 0 ? (spent / amount) * 100 : 0,
+                    };
+                    return newArr;
+                }
+                // If not found, we rely on fetchData to add it, or we could look up the category and add it loosely.
+                // For editing (which is the main case), this covers it.
+                return prev;
+            });
+
+            toast.success(t("common.savedSuccess"));
+            // Optimistically update or refetch
+            fetchData();
+        } catch (error) {
+            console.error("Failed to save budget", error);
+            toast.error(t("common.error"));
+        }
+    };
+
+    const handleMonthChange = (offset: number) => {
+        const newDate = new Date(selectedDate);
+        newDate.setMonth(newDate.getMonth() + offset);
+        setSelectedDate(newDate);
+    };
+
     return (
         <div className="container mx-auto px-4 py-8">
             <PageHeader
                 title={t("categories.title")}
                 description={t("categories.subtitle")}
                 actions={
-                    <Button onClick={handleCreate}>
-                        <Plus className="mr-2 h-4 w-4" />{" "}
-                        {t("categories.newCategory")}
-                    </Button>
+                    <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 mr-4 border rounded-md p-1">
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleMonthChange(-1)}
+                                className="h-8 w-8"
+                            >
+                                <ChevronLeft className="h-4 w-4" />
+                            </Button>
+                            <span className="min-w-32 text-center font-medium capitalize text-sm">
+                                {format(selectedDate, "MMMM yyyy", {
+                                    locale: language === "pt-BR" ? ptBR : enUS,
+                                })}
+                            </span>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleMonthChange(1)}
+                                className="h-8 w-8"
+                            >
+                                <ChevronRight className="h-4 w-4" />
+                            </Button>
+                        </div>
+                        <Button onClick={handleCreate}>
+                            <Plus className="mr-2 h-4 w-4" />{" "}
+                            {t("categories.newCategory")}
+                        </Button>
+                    </div>
                 }
             />
 
@@ -123,6 +200,7 @@ export function Categories() {
                         const cat = categories.find((c) => c.id === id);
                         if (cat) handleDeleteClick(cat);
                     }}
+                    onBudgetChange={handleBudgetChange}
                 />
             )}
 

@@ -50,7 +50,15 @@
         "other": "Outro",
         "displayName": "Nome de Exibição",
         "namePlaceholder": "Ex: Nubank",
-        "savedSuccess": "Salvo com sucesso!"
+        "savedSuccess": "Salvo com sucesso!",
+        "actions": "Ações"
+    },
+
+    "budgets": {
+        "totalBudget": "Orçamento Total",
+        "totalSpent": "Total Gasto",
+        "remaining": "Restante em Caixa",
+        "monthlyLimit": "Limite Mensal"
     },
 
     "profile": {
@@ -103,7 +111,11 @@
             "distribution": "Distribuição de Gastos",
             "manage": "Gerenciar",
             "noSpending": "Sem gastos registrados",
-            "addTransaction": "Adicione transações para ver o gráfico"
+            "addTransaction": "Adicione transações para ver o gráfico",
+            "totalBudget": "Orçamento Total",
+            "totalSpent": "Total Gasto",
+            "remaining": "Restante em Caixa",
+            "monthlyLimit": "Limite Mensal"
         },
         "expenseSummary": {
             "title": "Despesas (Mês)"
@@ -208,7 +220,17 @@
             "message": "A categoria <strong>{{name}}</strong> será permanentemente removida.",
             "confirm": "Sim, excluir categoria",
             "deleting": "Excluindo..."
-        }
+        },
+        "totalGoal": "Meta Total",
+        "totalReceived": "Total Recebido",
+        "remaining": "Falta Receber",
+        "actions": "Ações",
+        "clickToEditBudget": "Clique para editar orçamento (enter para salvar)",
+        "parentCategoryLabel": "Categoria Pai",
+        "selectParentPlaceholder": "Selecione uma categoria pai",
+        "receivedOf": "recebido de",
+        "received": "Recebido",
+        "parentBudgetAutomatic": "Soma automática dos filhos"
     },
     "transactions": {
         "title": "Transações",
@@ -952,6 +974,15 @@
             "email": "E-mail",
             "phone": "Telefone",
             "actions": "Ações",
+            "clickToEditBudget": "Clique para editar orçamento (enter para salvar)",
+            "parentCategoryLabel": "Categoria Pai",
+            "selectParentPlaceholder": "Selecione uma categoria pai",
+            "nameLabel": "Nome",
+            "budgetLabel": "Orçamento/Meta",
+            "emptyGroup": "Nenhuma categoria neste grupo",
+            "receivedOf": "recebido de",
+            "received": "Recebido",
+            "parentBudgetAutomatic": "Soma automática dos filhos",
             "none": "Selecione uma pessoa"
         },
         "form": {

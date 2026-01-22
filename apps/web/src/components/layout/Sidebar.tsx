@@ -17,7 +17,6 @@ import {
     User,
     Users,
     Wallet,
-    PieChart,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
@@ -123,13 +122,7 @@ export function Sidebar({ className }: SidebarProps) {
                     label: t("sidebar.planning.goals"),
                     href: "/goals",
                 },
-                {
-                    icon: PieChart,
-                    label: t("sidebar.planning.budgets", {
-                        defaultValue: "Orçamentos",
-                    }),
-                    href: "/budgets",
-                },
+
                 {
                     icon: BarChart3,
                     label: t("sidebar.planning.projection"),

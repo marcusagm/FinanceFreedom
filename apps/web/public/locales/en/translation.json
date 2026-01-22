@@ -50,7 +50,15 @@
         "other": "Other",
         "displayName": "Display Name",
         "namePlaceholder": "Ex: Nubank",
-        "savedSuccess": "Saved successfully!"
+        "savedSuccess": "Saved successfully!",
+        "actions": "Actions"
+    },
+
+    "budgets": {
+        "totalBudget": "Total Budget",
+        "totalSpent": "Total Spent",
+        "remaining": "Remaining",
+        "monthlyLimit": "Monthly Limit"
     },
 
     "profile": {
@@ -103,7 +111,11 @@
             "distribution": "Expense Distribution",
             "manage": "Manage",
             "noSpending": "No spending recorded",
-            "addTransaction": "Add transactions to view the chart"
+            "addTransaction": "Add transactions to view the chart",
+            "totalBudget": "Total Budget",
+            "totalSpent": "Total Spent",
+            "remaining": "Remaining",
+            "monthlyLimit": "Monthly Limit"
         },
         "expenseSummary": {
             "title": "Expenses (Month)"
@@ -208,7 +220,17 @@
             "message": "The category <strong>{{name}}</strong> will be permanently removed.",
             "confirm": "Yes, delete category",
             "deleting": "Deleting..."
-        }
+        },
+        "totalGoal": "Total Goal",
+        "totalReceived": "Total Received",
+        "remaining": "Remaining",
+        "actions": "Actions",
+        "clickToEditBudget": "Click to edit budget (enter to save)",
+        "parentCategoryLabel": "Parent Category",
+        "selectParentPlaceholder": "Select a parent category",
+        "receivedOf": "received of",
+        "received": "Received",
+        "parentBudgetAutomatic": "Automatic sum of children"
     },
     "transactions": {
         "title": "Transactions",
@@ -955,7 +977,17 @@
             "actions": "Actions",
             "none": "Select a person"
         },
-        "form": {
+        "clickToEditBudget": "Click to edit budget (enter to save)",
+        "parentCategoryLabel": "Parent Category",
+        "selectParentPlaceholder": "Select a parent category",
+        "nameLabel": "Name",
+        "budgetLabel": "Budget/Goal",
+        "emptyGroup": "No categories in this group",
+        "receivedOf": "received of",
+        "received": "Received",
+        "parentBudgetAutomatic": "Automatic sum of children"
+    },
+    "form": {
             "titleNew": "New Contact",
             "titleEdit": "Edit Contact",
             "nameLabel": "Name",

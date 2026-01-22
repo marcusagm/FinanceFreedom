@@ -35,8 +35,7 @@ export const analyticsService = {
     upsertBudget: async (data: {
         categoryId: string;
         amount: number;
-        month: number;
-        year: number;
+        date: string; // YYYY-MM-DD
     }) => {
         const response = await api.post("/budgets", data);
         return response.data;
@@ -52,8 +51,10 @@ export const analyticsService = {
         return response.data;
     },
 
-    getIncomes: async (): Promise<IncomeStatus[]> => {
-        const response = await api.get("/analytics/incomes");
+    getIncomes: async (date?: string): Promise<IncomeStatus[]> => {
+        const response = await api.get("/analytics/incomes", {
+            params: { date },
+        });
         return response.data;
     },
 };

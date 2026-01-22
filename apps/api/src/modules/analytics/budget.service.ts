@@ -142,7 +142,7 @@ export class BudgetService {
         });
     }
 
-    async getIncomeDistribution(userId: string) {
+    async getIncomeDistribution(userId: string, targetDate: Date = new Date()) {
         const categories = await this.prisma.category.findMany({
             where: {
                 userId,
@@ -151,8 +151,8 @@ export class BudgetService {
         });
 
         // Also fetch transactions with no category or income matching categories
-        const startDate = startOfMonth(new Date());
-        const endDate = endOfMonth(new Date());
+        const startDate = startOfMonth(targetDate);
+        const endDate = endOfMonth(targetDate);
 
         const incomeStatus = await Promise.all(
             categories.map(async (category) => {

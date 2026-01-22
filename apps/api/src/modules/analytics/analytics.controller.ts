@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Req, UseGuards } from "@nestjs/common";
+import { Controller, Get, Post, Query, Req, UseGuards } from "@nestjs/common";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { BudgetService } from "./budget.service";
 import { HealthScoreService } from "./health-score.service";
@@ -8,7 +8,7 @@ import { HealthScoreService } from "./health-score.service";
 export class AnalyticsController {
     constructor(
         private readonly budgetService: BudgetService,
-        private readonly healthScoreService: HealthScoreService
+        private readonly healthScoreService: HealthScoreService,
     ) {}
 
     @Get("budgets")
@@ -27,7 +27,11 @@ export class AnalyticsController {
     }
 
     @Get("incomes")
-    async getIncomes(@Req() req: any) {
-        return this.budgetService.getIncomeDistribution(req.user.userId);
+    async getIncomes(@Req() req: any, @Query("date") date?: string) {
+        const targetDate = date ? new Date(date) : undefined;
+        return this.budgetService.getIncomeDistribution(
+            req.user.userId,
+            targetDate,
+        );
     }
 }

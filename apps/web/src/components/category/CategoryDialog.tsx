@@ -301,31 +301,54 @@ export function CategoryDialog({
                                 name="budgetLimit"
                                 render={({
                                     field: { value, onChange, ...field },
-                                }) => (
-                                    <FormItem>
-                                        <FormLabel>
-                                            {form.watch("type") === "INCOME"
-                                                ? t(
-                                                      "categories.revenueGoalLabel",
-                                                  )
-                                                : t("categories.budgetLabel")}
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                currency
-                                                placeholder="0,00"
-                                                value={value}
-                                                onValueChange={(values) => {
-                                                    onChange(
-                                                        values.floatValue || 0,
-                                                    );
-                                                }}
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
+                                }) => {
+                                    const isParent =
+                                        categoryToEdit &&
+                                        categories.some(
+                                            (c) =>
+                                                c.parentId ===
+                                                categoryToEdit.id,
+                                        );
+
+                                    return (
+                                        <FormItem>
+                                            <FormLabel>
+                                                {form.watch("type") === "INCOME"
+                                                    ? t(
+                                                          "categories.revenueGoalLabel",
+                                                      )
+                                                    : t(
+                                                          "categories.budgetLabel",
+                                                      )}
+                                                {isParent && (
+                                                    <span className="ml-2 text-xs text-muted-foreground font-normal">
+                                                        (
+                                                        {t(
+                                                            "categories.parentBudgetAutomatic",
+                                                        )}
+                                                        )
+                                                    </span>
+                                                )}
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    currency
+                                                    placeholder="0,00"
+                                                    value={value}
+                                                    onValueChange={(values) => {
+                                                        onChange(
+                                                            values.floatValue ||
+                                                                0,
+                                                        );
+                                                    }}
+                                                    disabled={!!isParent}
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    );
+                                }}
                             />
                         </DialogBody>
 
