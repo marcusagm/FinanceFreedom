@@ -1,14 +1,13 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { ConfigService } from "@nestjs/config";
 import { EncryptionService } from "./encryption.service";
-import { describe, it, expect, beforeEach, vi } from "vitest";
 
 describe("EncryptionService", () => {
     let service: EncryptionService;
 
     beforeEach(() => {
         const mockConfigService = {
-            get: vi
+            get: jest
                 .fn()
                 .mockReturnValue(
                     "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",

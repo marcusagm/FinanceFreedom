@@ -1,7 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { CreditCardService } from "./credit-card.service";
 import { PrismaService } from "../../prisma/prisma.service";
-import { vi, describe, it, expect, beforeEach } from "vitest";
 
 describe("CreditCardService", () => {
     let service: CreditCardService;
@@ -9,21 +8,21 @@ describe("CreditCardService", () => {
 
     const mockPrismaService = {
         creditCard: {
-            create: vi.fn(),
-            findMany: vi.fn(),
-            findFirst: vi.fn(),
-            update: vi.fn(),
-            delete: vi.fn(),
+            create: jest.fn(),
+            findMany: jest.fn(),
+            findFirst: jest.fn(),
+            update: jest.fn(),
+            delete: jest.fn(),
         },
         account: {
-            create: vi.fn(),
+            create: jest.fn(),
         },
         transaction: {
-            aggregate: vi.fn(),
-            findMany: vi.fn(),
-            create: vi.fn(),
+            aggregate: jest.fn(),
+            findMany: jest.fn(),
+            create: jest.fn(),
         },
-        $transaction: vi.fn((cb) => cb(mockPrismaService)),
+        $transaction: jest.fn((cb) => cb(mockPrismaService)),
     };
 
     beforeEach(async () => {
@@ -153,7 +152,7 @@ describe("CreditCardService", () => {
             ]);
             // amount -100 (EXPENSE) -> total 100.
 
-            mockPrismaService.account.update = vi.fn();
+            mockPrismaService.account.update = jest.fn();
 
             const result = await service.payInvoice(
                 userId,

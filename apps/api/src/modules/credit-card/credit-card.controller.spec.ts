@@ -3,20 +3,19 @@ import { CreditCardController } from "./credit-card.controller";
 import { CreditCardService } from "./credit-card.service";
 import { CreateCreditCardDto } from "./dto/credit-card.dto";
 import { UpdateCreditCardDto } from "./dto/credit-card.dto";
-import { vi, describe, it, expect, beforeEach } from "vitest";
 
 describe("CreditCardController", () => {
     let controller: CreditCardController;
     let service: CreditCardService;
 
     const mockService = {
-        create: vi.fn(),
-        findAll: vi.fn(),
-        findOne: vi.fn(),
-        update: vi.fn(),
-        remove: vi.fn(),
-        getInvoice: vi.fn(),
-        payInvoice: vi.fn(),
+        create: jest.fn(),
+        findAll: jest.fn(),
+        findOne: jest.fn(),
+        update: jest.fn(),
+        remove: jest.fn(),
+        getInvoice: jest.fn(),
+        payInvoice: jest.fn(),
     };
 
     beforeEach(async () => {

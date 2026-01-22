@@ -9,6 +9,21 @@ import { BrowserRouter } from "react-router-dom";
 // Mock API
 vi.mock("../lib/api");
 
+// Mock ImapConfigForm
+vi.mock("../components/import/ImapConfigForm", () => ({
+    ImapConfigForm: ({ isOpen, initialData }: any) => {
+        if (!isOpen) return null;
+        return (
+            <div>
+                {initialData ? "imap.form.titleEdit" : "imap.form.titleNew"}
+                {initialData?.email && (
+                    <input readOnly defaultValue={initialData.email} />
+                )}
+            </div>
+        );
+    },
+}));
+
 const mockAccounts = [{ id: "acc1", name: "Bank Account", type: "BANK" }];
 
 const mockConfigs = [
@@ -74,7 +89,12 @@ describe("ImapConfigPage", () => {
             expect(screen.getByText("imap.list.addConfig")).toBeInTheDocument(),
         );
 
-        fireEvent.click(screen.getByText("imap.list.addConfig"));
+        const addBtn = screen
+            .getByText("imap.list.addConfig")
+            .closest("button");
+        await waitFor(() => expect(addBtn).not.toBeDisabled());
+
+        fireEvent.click(addBtn!);
 
         expect(screen.getByText("imap.form.titleNew")).toBeInTheDocument();
     });
@@ -84,6 +104,10 @@ describe("ImapConfigPage", () => {
         await waitFor(() =>
             expect(screen.getByText("user@test.com")).toBeInTheDocument(),
         );
+
+        // Wait for accounts load which enables actions? No, list actions are independent of account selection usually?
+        // Actually loadConfigs depends on selectedAccount.
+        // So we implicitly waited for configs to load (user@test.com present).
 
         const editBtns = screen.getAllByLabelText("common.edit");
         fireEvent.click(editBtns[0]);

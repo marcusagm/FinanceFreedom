@@ -39,6 +39,66 @@ vi.mock("sonner", () => ({
     },
 }));
 
+vi.mock("../ui/Input", async (importOriginal) => {
+    const React = await import("react");
+    return {
+        Input: React.forwardRef((props: any, ref: any) => (
+            <input data-testid="ui-input" ref={ref} {...props} />
+        )),
+    };
+});
+
+vi.mock("../ui/Button", () => ({
+    Button: (props: any) => <button {...props} />,
+}));
+
+vi.mock("../ui/Dialog", () => ({
+    Dialog: ({ children, open }: any) => (open ? <div>{children}</div> : null),
+    DialogContent: ({ children }: any) => <div>{children}</div>,
+    DialogHeader: ({ children }: any) => <div>{children}</div>,
+    DialogTitle: ({ children }: any) => <div>{children}</div>,
+    DialogBody: ({ children }: any) => <div>{children}</div>,
+    DialogFooter: ({ children }: any) => <div>{children}</div>,
+}));
+
+vi.mock("../ui/Form", async () => {
+    const { Controller } = await import("react-hook-form");
+    const React = await import("react");
+    const MockFormContext = React.createContext<any>({});
+
+    return {
+        Form: ({ children }: any) => <>{children}</>,
+        FormControl: ({ children }: any) => <div>{children}</div>,
+        FormItem: ({ children }: any) => <div>{children}</div>,
+        FormLabel: ({ children }: any) => <label>{children}</label>,
+        FormMessage: () => {
+            const { error } = React.useContext(MockFormContext);
+            return error ? <div>{error.message}</div> : null;
+        },
+        FormField: ({ control, name, render }: any) => (
+            <Controller
+                control={control}
+                name={name}
+                render={(props: any) => (
+                    <MockFormContext.Provider
+                        value={{ error: props.fieldState.error }}
+                    >
+                        {render(props)}
+                    </MockFormContext.Provider>
+                )}
+            />
+        ),
+    };
+});
+
+vi.mock("react-number-format", () => ({
+    PatternFormat: ({ customInput: Component, ...props }: any) => {
+        // If customInput is provided, render it with props
+        if (Component) return <Component {...props} />;
+        return <input {...props} />;
+    },
+}));
+
 describe("PersonForm", () => {
     const mockOnOpenChange = vi.fn();
     const mockOnSuccess = vi.fn();
@@ -63,9 +123,7 @@ describe("PersonForm", () => {
         );
 
         expect(screen.getByText("persons.form.titleNew")).toBeInTheDocument();
-        expect(
-            screen.getByLabelText("persons.form.nameLabel"),
-        ).toBeInTheDocument();
+        expect(screen.getByText("persons.form.nameLabel")).toBeInTheDocument();
     });
 
     it("submits the form with valid data (create)", async () => {
@@ -82,11 +140,13 @@ describe("PersonForm", () => {
             </LocalizationProvider>,
         );
 
-        const nameInput = screen.getByLabelText("persons.form.nameLabel");
+        const nameInput = screen.getByPlaceholderText(
+            "persons.form.namePlaceholder",
+        );
         await user.type(nameInput, "John Doe");
 
         const saveButton = screen.getByRole("button", { name: "common.save" });
-        await user.click(saveButton);
+        fireEvent.submit(saveButton.closest("form")!);
 
         await waitFor(() => {
             expect(personService.create).toHaveBeenCalledWith(
@@ -126,12 +186,14 @@ describe("PersonForm", () => {
 
         expect(screen.getByDisplayValue("Jane Doe")).toBeInTheDocument();
 
-        const nameInput = screen.getByLabelText("persons.form.nameLabel");
+        const nameInput = screen.getByPlaceholderText(
+            "persons.form.namePlaceholder",
+        );
         await user.clear(nameInput);
         await user.type(nameInput, "Jane Smith");
 
         const saveButton = screen.getByRole("button", { name: "common.save" });
-        await user.click(saveButton);
+        fireEvent.submit(saveButton.closest("form")!);
 
         await waitFor(() => {
             expect(personService.update).toHaveBeenCalledWith(

@@ -3,7 +3,13 @@
  */
 import React from "react";
 import "@testing-library/jest-dom/vitest";
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+    cleanup,
+    fireEvent,
+    render,
+    screen,
+    waitFor,
+} from "@testing-library/react";
 import { toast } from "sonner";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { api } from "../../lib/api";
@@ -20,12 +26,61 @@ vi.mock("../../lib/api", () => ({
     },
 }));
 
+// Mock Input to avoid formatting issues
+vi.mock("../ui/Input", () => ({
+    Input: React.forwardRef(
+        ({ onValueChange, currency, ...props }: any, ref: any) => (
+            <input
+                ref={ref}
+                {...props}
+                onChange={(e) => {
+                    props.onChange?.(e);
+                    onValueChange?.({ floatValue: Number(e.target.value) });
+                }}
+            />
+        ),
+    ),
+}));
+
+// Mock CategorySelect
+vi.mock("../category/CategorySelect", () => ({
+    CategorySelect: (props: any) => (
+        <select data-testid="category-select" {...props} />
+    ),
+}));
+
+// Mock Lucide icons for reliable finding
+vi.mock("lucide-react", () => ({
+    Plus: () => <span data-testid="plus-icon" />,
+    Trash2: () => <span data-testid="trash-icon" />,
+    X: () => <span data-testid="close-icon" />,
+}));
+
 // Mock sonner toast
 vi.mock("sonner", () => ({
     toast: {
         success: vi.fn(),
         error: vi.fn(),
     },
+}));
+
+// Mock translations
+vi.mock("react-i18next", () => ({
+    useTranslation: () => ({
+        t: (key: string) => {
+            const map: Record<string, string> = {
+                "transactions.split.title": "Dividir Transação",
+                "transactions.split.remaining": "Restante para alocar",
+                "transactions.split.addSplit": "Adicionar Divisão",
+                "transactions.split.confirm": "Confirmar Divisão",
+                "transactions.table.amount": "Valor",
+                "transactions.table.description": "Descr.",
+                "transactions.table.category": "Categoria",
+                "common.description": "Descr.",
+            };
+            return map[key] || key;
+        },
+    }),
 }));
 
 describe("SplitTransactionDialog", () => {
@@ -61,12 +116,14 @@ describe("SplitTransactionDialog", () => {
         expect(descriptionInputs).toHaveLength(2);
 
         // Initial values: 100 split into 50 and 50
-        const amountInputs = screen.getAllByPlaceholderText("0.00") as HTMLInputElement[];
+        const amountInputs = screen.getAllByPlaceholderText(
+            "0.00",
+        ) as HTMLInputElement[];
         expect(amountInputs[0].value).toBe("50");
         expect(amountInputs[1].value).toBe("50");
     });
 
-    it("adds and removes split rows", () => {
+    it("adds and removes split rows", async () => {
         render(<SplitTransactionDialog {...mockProps} />);
 
         // Add split
@@ -74,28 +131,12 @@ describe("SplitTransactionDialog", () => {
         expect(screen.getAllByPlaceholderText("Descr.")).toHaveLength(3);
 
         // Remove split (last one)
-        const deleteButtons = screen
-            .getAllByRole("button")
-            .filter((btn) => btn.querySelector("svg"));
-        // Filter specifically for the trash icon button logic or verify length of delete buttons
-        // Our trash button has Lucide Trash2 inside.
-        // Or we can assume the ones with Trash icon are the delete ones.
-        // Actually, let's just count inputs again.
+        // Find all trash icons
+        const trashIcons = screen.getAllByTestId("trash-icon");
+        // Each icon is inside a button. Click the last icon.
+        fireEvent.click(trashIcons[trashIcons.length - 1]);
 
-        // Note: The "Adicionar Divisão" button also has an icon (Plus), so we need to be careful.
-        // Inspecting component: Delete button has `text-rose-500`.
-
-        // To be safe, test simply that a new row appeared.
-        // Then click one delete button.
-
-        // Let's use test id or specific selector if possible? Component doesn't have test ids.
-        // However, we know there are 3 inputs now.
-
-        // Let's try to find the remove buttons. They are the only icon-only buttons besides close headers?
-        // Actually rendering logic:
-        // fields.map(...)
-
-        // Let's just create a more robust selector if needed, but for now rely on text or placeholders.
+        expect(screen.getAllByPlaceholderText("Descr.")).toHaveLength(2);
     });
 
     it("validates total amount equal to original", async () => {

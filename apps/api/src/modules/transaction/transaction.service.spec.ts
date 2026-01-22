@@ -1,5 +1,4 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { vi, describe, it, expect, beforeEach } from "vitest";
 import { TransactionService } from "./transaction.service";
 import { PrismaService } from "../../prisma/prisma.service";
 import { CreateTransactionDto } from "./dto/create-transaction.dto";
@@ -7,42 +6,48 @@ import { MultiCurrencyService } from "../currency/services/multi-currency.servic
 
 const mockTransactionClient = {
     transaction: {
-        create: vi.fn(),
-        findMany: vi.fn(),
-        findFirst: vi.fn(),
-        update: vi.fn(),
-        delete: vi.fn(),
+        create: jest.fn(),
+        findMany: jest.fn(),
+        findFirst: jest.fn(),
+        update: jest.fn(),
+        delete: jest.fn(),
     },
     account: {
-        findFirst: vi.fn(),
-        update: vi.fn(),
+        findFirst: jest.fn(),
+        update: jest.fn(),
     },
     debt: {
-        findUnique: vi.fn(),
-        findFirst: vi.fn(),
-        update: vi.fn(),
+        findUnique: jest.fn(),
+        findFirst: jest.fn(),
+        update: jest.fn(),
+    },
+    creditCard: {
+        findUnique: jest.fn(),
     },
 };
 
 const mockPrismaService = {
-    $transaction: vi.fn((callback) => callback(mockTransactionClient)),
+    $transaction: jest.fn((callback) => callback(mockTransactionClient)),
     transaction: {
-        findMany: vi.fn(),
-        findFirst: vi.fn(),
-        count: vi.fn(),
+        findMany: jest.fn(),
+        findFirst: jest.fn(),
+        count: jest.fn(),
     },
     account: {
-        findUnique: vi.fn(),
-        update: vi.fn(),
+        findUnique: jest.fn(),
+        update: jest.fn(),
     },
     debt: {
-        findUnique: vi.fn(),
-        update: vi.fn(),
+        findUnique: jest.fn(),
+        update: jest.fn(),
+    },
+    creditCard: {
+        findUnique: jest.fn(),
     },
 };
 
 const mockMultiCurrencyService = {
-    getExchangeRate: vi.fn(),
+    getExchangeRate: jest.fn(),
 };
 
 describe("TransactionService", () => {
@@ -58,7 +63,7 @@ describe("TransactionService", () => {
         prisma = mockPrismaService as any;
         multiCurrencyService = mockMultiCurrencyService as any;
 
-        vi.resetAllMocks();
+        jest.resetAllMocks();
         (prisma.$transaction as any).mockImplementation((callback: any) =>
             callback(mockTransactionClient),
         );
@@ -289,7 +294,7 @@ describe("TransactionService", () => {
                 balance: 50,
             });
 
-            mockTransactionClient.transaction.update = vi.fn();
+            mockTransactionClient.transaction.update = jest.fn();
 
             await service.update("user-1", id, dto);
 

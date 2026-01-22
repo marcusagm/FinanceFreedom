@@ -2,7 +2,6 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { MultiCurrencyService } from "./multi-currency.service";
 import { PrismaService } from "../../../prisma/prisma.service";
 import { AwesomeApiProvider } from "../providers/awesome-api.provider";
-import { describe, it, expect, beforeEach, vi } from "vitest";
 
 describe("MultiCurrencyService", () => {
     let service: MultiCurrencyService;
@@ -11,13 +10,13 @@ describe("MultiCurrencyService", () => {
 
     const mockPrisma = {
         exchangeRateCache: {
-            findUnique: vi.fn(),
-            create: vi.fn(),
+            findUnique: jest.fn(),
+            create: jest.fn(),
         },
     };
 
     const mockProvider = {
-        getRate: vi.fn(),
+        getRate: jest.fn(),
     };
 
     beforeEach(() => {
@@ -27,7 +26,7 @@ describe("MultiCurrencyService", () => {
         );
         prisma = mockPrisma as any;
         provider = mockProvider as any;
-        vi.clearAllMocks();
+        jest.clearAllMocks();
     });
 
     it("should return 1 for same currency", async () => {

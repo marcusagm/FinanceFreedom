@@ -1,7 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { BudgetService } from "./budget.service";
 import { PrismaService } from "../../prisma/prisma.service";
-import { describe, it, expect, beforeEach, vi } from "vitest";
 
 describe("BudgetService", () => {
     let service: BudgetService;
@@ -9,16 +8,16 @@ describe("BudgetService", () => {
 
     const mockPrismaService = {
         category: {
-            findMany: vi.fn(),
+            findMany: jest.fn(),
         },
         transaction: {
-            aggregate: vi.fn(),
+            aggregate: jest.fn(),
         },
         budgetHistory: {
-            findMany: vi.fn(),
-            findFirst: vi.fn(),
-            create: vi.fn(),
-            update: vi.fn(),
+            findMany: jest.fn(),
+            findFirst: jest.fn(),
+            create: jest.fn(),
+            update: jest.fn(),
         },
     };
 
@@ -35,7 +34,7 @@ describe("BudgetService", () => {
 
         service = module.get<BudgetService>(BudgetService);
         prisma = module.get<PrismaService>(PrismaService);
-        vi.clearAllMocks();
+        jest.clearAllMocks();
     });
 
     it("should be defined", () => {

@@ -1,5 +1,4 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { vi, describe, it, expect, beforeEach } from "vitest";
 import { TransactionController } from "./transaction.controller";
 import { TransactionService } from "./transaction.service";
 
@@ -14,12 +13,12 @@ describe("TransactionController", () => {
                 {
                     provide: TransactionService,
                     useValue: {
-                        create: vi.fn(),
-                        findAll: vi.fn(),
-                        findOne: vi.fn(),
-                        update: vi.fn(),
-                        remove: vi.fn(),
-                        split: vi.fn(),
+                        create: jest.fn(),
+                        findAll: jest.fn(),
+                        findOne: jest.fn(),
+                        update: jest.fn(),
+                        remove: jest.fn(),
+                        split: jest.fn(),
                     },
                 },
             ],
