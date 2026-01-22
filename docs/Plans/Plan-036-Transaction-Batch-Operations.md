@@ -12,6 +12,7 @@ Permitir que o usuário realize ações em massa na lista de transações, resol
 
 - `apps/web/src/pages/Transactions.tsx`
 - `apps/web/src/components/TransactionList.tsx`
+- `apps/web/src/components/NewTransactionDialog.tsx`
 - `apps/api/src/modules/transaction/transaction.controller.ts`
 
 ## 3. Passo a Passo de Implementação
@@ -24,9 +25,13 @@ Permitir que o usuário realize ações em massa na lista de transações, resol
 
 ### 3.2. Frontend (Selection Mode)
 
-- [ ] Adicionar Checkbox em cada linha da `TransactionTable`.
+- [ ] Adicionar campo de status em `NewTransactionDialog.tsx` (PENDING, CONFIRMED, CONSOLIDATED).
+- [ ] Adicionar coluna de status em `TransactionList`.
+- [ ] Garantir que o nome das categorias seja exibido corretamente em `TransactionList`, isto é, nome vindo da tabela de categorias, garantindo que quando o nome for atualizado, apareça corretamente em `TransactionList`.
+- [ ] Remover campo `category` da tabela `Transaction`.
+- [ ] Adicionar Checkbox em cada linha da `TransactionList`.
 - [ ] Header Checkbox para "Selecionar Tudo" (da página atual).
-- [ ] **Floating Action Bar:** Aparece quando `selected.length > 0`.
+- [ ] **Floating Action Bar:** Habilita quando `selected.length > 0`.
     - [ ] Botões: "Alterar Categoria", "Marcar Consolidado", "Excluir".
 
 ### 3.3. Qualidade e Internacionalização

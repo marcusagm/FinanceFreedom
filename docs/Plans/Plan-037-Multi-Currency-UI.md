@@ -16,6 +16,9 @@ Integrar o suporte a múltiplas moedas (Backend implementado no Plan-031) na int
 - `apps/web/src/components/Simulators/*`
 - `apps/web/src/components/Dashboard/*`
 - `apps/web/src/components/Transaction/*`
+- `apps/web/src/components/ui/MoneyDisplay.tsx`
+- `apps/web/src/components/ui/Input.tsx`
+- `apps/web/src/pages/Settings.tsx`
 - `apps/web/src/utils/formatters.ts`
 
 ## 3. Passo a Passo de Implementação
@@ -23,6 +26,9 @@ Integrar o suporte a múltiplas moedas (Backend implementado no Plan-031) na int
 ### 3.1. Formatadores
 
 - [ ] Atualizar `formatCurrency(value, currency)` para suportar qualquer ISO Code (não só BRL).
+- [ ] Adicionar na Página `Settings` a opção de formatação de moeda base (separador decimal (vírgula/ponto).
+- [ ] Atualizar MoneyDisplay.tsx para suportar moedas externas e a formatação baseada no locale do usuário.
+- [ ] Atualizar Input.tsx para suportar moedas externas e a formatação baseada no locale do usuário.
 
 ### 3.2. Dashboard Unificado
 

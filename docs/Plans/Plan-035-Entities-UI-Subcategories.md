@@ -20,7 +20,6 @@ Atualizar a interface de categorias para suportar a hierarquia (Subcategorias) d
 
 - [ ] Refatorar lista de categorias para usar `Accordion` ou `Tree View`.
 - [ ] Subcategorias aparecem indentadas dentro da categoria pai.
-- [ ] Drag & Drop para mover subcategoria de um pai para outro.
 
 ### 3.2. Seletor de Categoria
 

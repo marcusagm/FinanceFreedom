@@ -32,7 +32,7 @@ Criar um sistema de notificações centralizado (Backend e Frontend) para alerta
 
 ### 3.3. E-mail
 
-- [ ] Configuração de SMTP em Settings.
+- [ ] Implementar templates customizaveis no sistema para emails, com formatação preparada para não ser identificado como SPAM.
 - [ ] Se configurado SMTP, enviar também por e-mail usando templates (`handlebars` ou similar).
 
 ### 3.4. Qualidade e Internacionalização
