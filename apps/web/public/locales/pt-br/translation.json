@@ -952,7 +952,7 @@
             "email": "E-mail",
             "phone": "Telefone",
             "actions": "Ações",
-            "none": "Nenhum"
+            "none": "Selecione uma pessoa"
         },
         "form": {
             "titleNew": "Novo Contato",

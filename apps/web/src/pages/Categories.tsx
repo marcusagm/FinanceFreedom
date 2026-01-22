@@ -24,13 +24,13 @@ export function Categories() {
     // Dialog states
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [editingCategory, setEditingCategory] = useState<Category | null>(
-        null
+        null,
     );
 
     // Delete states
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(
-        null
+        null,
     );
     const [isDeleting, setIsDeleting] = useState(false);
 
@@ -131,6 +131,7 @@ export function Categories() {
                 onClose={() => setIsDialogOpen(false)}
                 onSuccess={fetchData}
                 categoryToEdit={editingCategory}
+                categories={categories}
             />
 
             <DeleteCategoryDialog

@@ -17,6 +17,7 @@ import {
     User,
     Users,
     Wallet,
+    PieChart,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
@@ -121,6 +122,13 @@ export function Sidebar({ className }: SidebarProps) {
                     icon: Target,
                     label: t("sidebar.planning.goals"),
                     href: "/goals",
+                },
+                {
+                    icon: PieChart,
+                    label: t("sidebar.planning.budgets", {
+                        defaultValue: "Orçamentos",
+                    }),
+                    href: "/budgets",
                 },
                 {
                     icon: BarChart3,
@@ -272,7 +280,7 @@ export function Sidebar({ className }: SidebarProps) {
                         {!collapsed && (
                             <div className="flex-1 overflow-hidden">
                                 <p className="text-sm font-medium truncate">
-                                    {user?.email}
+                                    {user?.name || user?.email}
                                 </p>
                             </div>
                         )}

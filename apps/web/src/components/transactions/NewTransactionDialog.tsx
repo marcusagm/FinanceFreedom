@@ -9,6 +9,7 @@ import type { Category } from "../../services/category.service";
 import type { Account, Transaction } from "../../types";
 import type { CreditCard } from "../../types/credit-card";
 import { PersonSelect } from "../person/PersonSelect";
+import { CategorySelect } from "../category/CategorySelect";
 import { Button } from "../ui/Button";
 import { Checkbox } from "../ui/Checkbox";
 import { DatePicker } from "../ui/DatePicker";
@@ -572,23 +573,11 @@ export function NewTransactionDialog({
                                                 )}
                                             </FormLabel>
                                             <FormControl>
-                                                <Select
-                                                    value={field.value || ""}
-                                                    options={[
-                                                        {
-                                                            label: t(
-                                                                "common.noCategory",
-                                                            ),
-                                                            value: "",
-                                                        },
-                                                        ...filteredCategories.map(
-                                                            (c) => ({
-                                                                label: c.name,
-                                                                value: c.id,
-                                                            }),
-                                                        ),
-                                                    ]}
+                                                <CategorySelect
+                                                    value={field.value}
                                                     onChange={field.onChange}
+                                                    type={type}
+                                                    categories={categories}
                                                     placeholder={t(
                                                         "transactions.selectCategory",
                                                     )}

@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Accounts } from "./pages/Accounts";
+import { Budgets } from "./pages/Budgets";
 import Dashboard from "./pages/Dashboard";
 import Debts from "./pages/Debts";
 import { ImapConfigPage } from "./pages/ImapConfigPage";
@@ -119,6 +120,10 @@ function App() {
                                                     <Route
                                                         path="/categories"
                                                         element={<Categories />}
+                                                    />
+                                                    <Route
+                                                        path="/budgets"
+                                                        element={<Budgets />}
                                                     />
                                                     <Route
                                                         path="/fixed-expenses"

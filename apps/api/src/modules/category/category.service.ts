@@ -8,6 +8,14 @@ export class CategoryService {
     constructor(private prisma: PrismaService) {}
 
     async create(userId: string, dto: CreateCategoryDto) {
+        if (dto.parentId) {
+            const parent = await this.prisma.category.findUnique({
+                where: { id: dto.parentId },
+            });
+            if (!parent || parent.userId !== userId) {
+                throw new NotFoundException("Parent category not found");
+            }
+        }
         return this.prisma.category.create({
             data: {
                 ...dto,
@@ -37,6 +45,19 @@ export class CategoryService {
 
     async update(userId: string, id: string, dto: UpdateCategoryDto) {
         await this.findOne(userId, id);
+
+        if (dto.parentId) {
+            if (dto.parentId === id) {
+                // Prevent self-parenting
+                throw new Error("Category cannot be its own parent");
+            }
+            const parent = await this.prisma.category.findUnique({
+                where: { id: dto.parentId },
+            });
+            if (!parent || parent.userId !== userId) {
+                throw new NotFoundException("Parent category not found");
+            }
+        }
 
         return this.prisma.category.update({
             where: { id },

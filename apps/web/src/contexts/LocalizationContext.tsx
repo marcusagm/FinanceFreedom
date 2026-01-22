@@ -7,6 +7,7 @@ interface LocalizationContextType {
     dateFormat: string;
     setDateFormat: (format: string) => void;
     formatCurrency: (value: number, currencyOverride?: string) => string;
+    language: string;
 }
 
 const LocalizationContext = createContext<LocalizationContextType | undefined>(
@@ -54,6 +55,7 @@ export function LocalizationProvider({
                 dateFormat,
                 setDateFormat,
                 formatCurrency,
+                language: i18n.language,
             }}
         >
             {children}

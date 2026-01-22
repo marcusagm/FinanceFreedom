@@ -32,6 +32,7 @@ import {
 } from "../ui/Form";
 import { Input } from "../ui/Input";
 import { Select } from "../ui/Select";
+import { CategorySelect } from "../category/CategorySelect";
 
 interface FixedExpenseDialogProps {
     isOpen: boolean;
@@ -256,15 +257,10 @@ export function FixedExpenseDialog({
                                                 )}
                                             </FormLabel>
                                             <FormControl>
-                                                <Select
+                                                <CategorySelect
                                                     value={field.value}
                                                     onChange={field.onChange}
-                                                    options={categories.map(
-                                                        (c) => ({
-                                                            value: c.id,
-                                                            label: c.name,
-                                                        }),
-                                                    )}
+                                                    categories={categories}
                                                     placeholder={t(
                                                         "common.select",
                                                     )}

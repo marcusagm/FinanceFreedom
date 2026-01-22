@@ -25,6 +25,17 @@ vi.mock("../person/PersonSelect", () => ({
     ),
 }));
 
+vi.mock("../category/CategorySelect", () => ({
+    CategorySelect: ({ value, onChange, placeholder }: any) => (
+        <input
+            data-testid="category-select"
+            placeholder={placeholder}
+            value={value || ""}
+            onChange={(e) => onChange(e.target.value)}
+        />
+    ),
+}));
+
 // Mock api
 vi.mock("../../lib/api", () => ({
     api: {

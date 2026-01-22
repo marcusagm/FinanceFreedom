@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import * as z from "zod";
 import type { Category } from "../../services/category.service";
 import { categoryService } from "../../services/category.service";
+import { CategorySelect } from "./CategorySelect";
 import { Button } from "../ui/Button";
 import { ColorInput } from "../ui/ColorInput";
 import {
@@ -41,7 +42,8 @@ export function CategoryDialog({
     onClose,
     onSuccess,
     categoryToEdit,
-}: CategoryDialogProps) {
+    categories,
+}: CategoryDialogProps & { categories: Category[] }) {
     const { t } = useTranslation();
 
     const formSchema = z.object({
@@ -49,6 +51,7 @@ export function CategoryDialog({
         color: z.string().min(1, t("common.error")),
         budgetLimit: z.number().min(0, t("common.error")),
         type: z.enum(["EXPENSE", "INCOME"]),
+        parentId: z.string().optional(),
     });
 
     type FormValues = z.infer<typeof formSchema>;
@@ -60,6 +63,7 @@ export function CategoryDialog({
             color: "#3B82F6",
             budgetLimit: 0,
             type: "EXPENSE",
+            parentId: undefined,
         },
     });
 
@@ -73,6 +77,7 @@ export function CategoryDialog({
                     type:
                         (categoryToEdit.type as "EXPENSE" | "INCOME") ||
                         "EXPENSE",
+                    parentId: categoryToEdit.parentId || undefined,
                 });
             } else {
                 form.reset({
@@ -80,6 +85,7 @@ export function CategoryDialog({
                     color: "#3B82F6",
                     budgetLimit: 0,
                     type: "EXPENSE",
+                    parentId: undefined,
                 });
             }
         }
@@ -133,7 +139,7 @@ export function CategoryDialog({
                                         <FormControl>
                                             <Input
                                                 placeholder={t(
-                                                    "categories.namePlaceholder"
+                                                    "categories.namePlaceholder",
                                                 )}
                                                 {...field}
                                             />
@@ -157,20 +163,112 @@ export function CategoryDialog({
                                                 options={[
                                                     {
                                                         label: t(
-                                                            "categories.typeExpense"
+                                                            "categories.typeExpense",
                                                         ),
                                                         value: "EXPENSE",
                                                     },
                                                     {
                                                         label: t(
-                                                            "categories.typeIncome"
+                                                            "categories.typeIncome",
                                                         ),
                                                         value: "INCOME",
                                                     },
                                                 ]}
                                                 onChange={field.onChange}
                                                 placeholder={t(
-                                                    "settings.general.selectPlaceholder"
+                                                    "settings.general.selectPlaceholder",
+                                                )}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="parentId"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            {t(
+                                                "categories.parentCategoryLabel",
+                                                {
+                                                    defaultValue:
+                                                        "Categoria Pai",
+                                                },
+                                            )}
+                                        </FormLabel>
+                                        <FormControl>
+                                            <CategorySelect
+                                                value={field.value || ""}
+                                                categories={categories.filter(
+                                                    (c) => {
+                                                        // Prevent self-reference
+                                                        if (
+                                                            categoryToEdit &&
+                                                            c.id ===
+                                                                categoryToEdit.id
+                                                        )
+                                                            return false;
+
+                                                        // Prevent circular reference (children cannot be parent)
+                                                        if (categoryToEdit) {
+                                                            const isDescendant =
+                                                                (
+                                                                    parentId: string,
+                                                                    targetId: string,
+                                                                ): boolean => {
+                                                                    const children =
+                                                                        categories.filter(
+                                                                            (
+                                                                                cat,
+                                                                            ) =>
+                                                                                cat.parentId ===
+                                                                                parentId,
+                                                                        );
+                                                                    for (const child of children) {
+                                                                        if (
+                                                                            child.id ===
+                                                                            targetId
+                                                                        )
+                                                                            return true;
+                                                                        if (
+                                                                            isDescendant(
+                                                                                child.id,
+                                                                                targetId,
+                                                                            )
+                                                                        )
+                                                                            return true;
+                                                                    }
+                                                                    return false;
+                                                                };
+                                                            // If 'c' is a descendant of categoryToEdit, exclude it
+                                                            // Wait, we want to know if 'c'(candidate parent) is a descendant of 'categoryToEdit'(self).
+                                                            // Yes: Self -> ... -> Candidate. If we make Candidate the parent of Self, we get cycle: Candidate -> Self -> ... -> Candidate.
+                                                            // So we must exclude descendants of Self.
+                                                            if (
+                                                                isDescendant(
+                                                                    categoryToEdit.id,
+                                                                    c.id,
+                                                                )
+                                                            )
+                                                                return false;
+                                                        }
+                                                        return true;
+                                                    },
+                                                )}
+                                                onChange={(val) =>
+                                                    field.onChange(
+                                                        val || undefined,
+                                                    )
+                                                }
+                                                placeholder={t(
+                                                    "categories.selectParentPlaceholder",
+                                                    {
+                                                        defaultValue:
+                                                            "Selecione uma categoria pai",
+                                                    },
                                                 )}
                                             />
                                         </FormControl>
@@ -208,7 +306,7 @@ export function CategoryDialog({
                                         <FormLabel>
                                             {form.watch("type") === "INCOME"
                                                 ? t(
-                                                      "categories.revenueGoalLabel"
+                                                      "categories.revenueGoalLabel",
                                                   )
                                                 : t("categories.budgetLabel")}
                                         </FormLabel>
@@ -219,7 +317,7 @@ export function CategoryDialog({
                                                 value={value}
                                                 onValueChange={(values) => {
                                                     onChange(
-                                                        values.floatValue || 0
+                                                        values.floatValue || 0,
                                                     );
                                                 }}
                                                 {...field}

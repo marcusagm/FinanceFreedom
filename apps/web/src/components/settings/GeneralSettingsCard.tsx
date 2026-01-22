@@ -18,7 +18,8 @@ import {
     FormMessage,
 } from "../ui/Form";
 import { Input } from "../ui/Input";
-import { Select } from "../ui/Select";
+
+import { CategorySelect } from "../category/CategorySelect";
 
 interface GeneralSettingsCardProps {
     form: UseFormReturn<SettingsFormValues>;
@@ -197,15 +198,13 @@ export function GeneralSettingsCard({
                                     {t("settings.general.incomeCategory")}
                                 </FormLabel>
                                 <FormControl>
-                                    <Select
-                                        value={field.value || ""}
+                                    <CategorySelect
+                                        value={field.value}
                                         onChange={field.onChange}
-                                        options={categories.map((c) => ({
-                                            value: c.name,
-                                            label: c.name,
-                                        }))}
+                                        type="INCOME"
+                                        categories={categories}
                                         placeholder={t(
-                                            "settings.general.selectPlaceholder"
+                                            "settings.general.selectPlaceholder",
                                         )}
                                     />
                                 </FormControl>
@@ -225,7 +224,7 @@ export function GeneralSettingsCard({
                                     checked={field.value === "true"}
                                     onCheckedChange={(checked) =>
                                         field.onChange(
-                                            checked ? "true" : "false"
+                                            checked ? "true" : "false",
                                         )
                                     }
                                 />

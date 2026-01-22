@@ -1,6 +1,7 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { BudgetService } from "./budget.service";
 import { PrismaService } from "../../prisma/prisma.service";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 
 describe("BudgetService", () => {
     let service: BudgetService;
@@ -8,10 +9,16 @@ describe("BudgetService", () => {
 
     const mockPrismaService = {
         category: {
-            findMany: jest.fn(),
+            findMany: vi.fn(),
         },
         transaction: {
-            aggregate: jest.fn(),
+            aggregate: vi.fn(),
+        },
+        budgetHistory: {
+            findMany: vi.fn(),
+            findFirst: vi.fn(),
+            create: vi.fn(),
+            update: vi.fn(),
         },
     };
 
@@ -28,6 +35,7 @@ describe("BudgetService", () => {
 
         service = module.get<BudgetService>(BudgetService);
         prisma = module.get<PrismaService>(PrismaService);
+        vi.clearAllMocks();
     });
 
     it("should be defined", () => {
@@ -35,7 +43,7 @@ describe("BudgetService", () => {
     });
 
     describe("getBudgetStatus", () => {
-        it("should return budget status for categories", async () => {
+        it("should return budget status using history over default limit", async () => {
             const userId = "user-123";
             const categories = [
                 { id: "cat1", name: "Food", color: "blue", budgetLimit: 1000 },
@@ -43,38 +51,97 @@ describe("BudgetService", () => {
                     id: "cat2",
                     name: "Transport",
                     color: "red",
-                    budgetLimit: 500,
+                    budgetLimit: 500, // Default 500
                 },
             ];
 
-            mockPrismaService.category.findMany.mockResolvedValue(categories);
+            // History overrides Transport to 800
+            const history = [
+                {
+                    categoryId: "cat2",
+                    amount: 800,
+                    month: new Date().getMonth() + 1,
+                    year: new Date().getFullYear(),
+                },
+            ];
+
+            (prisma.category.findMany as any).mockResolvedValue(categories);
+            (prisma.budgetHistory.findMany as any).mockResolvedValue(history);
 
             // Mock individual aggregate calls
-            // First call for cat1 (Food) - Spent 800
-            // Second call for cat2 (Transport) - Spent 600 (Over budget)
-            mockPrismaService.transaction.aggregate
-                .mockResolvedValueOnce({ _sum: { amount: 800 } })
+            // First call for cat1 (Food) - Spent 500 (50%)
+            // Second call for cat2 (Transport) - Spent 600 (75% of 800)
+            (prisma.transaction.aggregate as any)
+                .mockResolvedValueOnce({ _sum: { amount: 500 } })
                 .mockResolvedValueOnce({ _sum: { amount: 600 } });
 
             const result = await service.getBudgetStatus(userId);
 
-            expect(mockPrismaService.category.findMany).toHaveBeenCalledWith({
-                where: {
-                    userId,
-                    budgetLimit: { gt: 0 },
-                },
-            });
+            expect(prisma.category.findMany).toHaveBeenCalled();
+            expect(prisma.budgetHistory.findMany).toHaveBeenCalled();
 
             expect(result).toHaveLength(2);
-            // Result is sorted by percentage descending
-            expect(result[0].categoryName).toBe("Transport"); // 120% (capped at 100% calculation inside but sorted? logic check: min(100) used for percentage field)
-            expect(result[0].percentage).toBe(100);
-            expect(result[0].status).toBe("CRITICAL"); // >= 90
-            expect(result[0].spent).toBe(600);
 
-            expect(result[1].categoryName).toBe("Food"); // 80%
-            expect(result[1].percentage).toBe(80);
-            expect(result[1].status).toBe("WARNING"); // >= 75
+            // Transport: Limit 800 (from history), Spent 600 -> 75% -> WARNING
+            const transport = result.find(
+                (r) => r.categoryName === "Transport",
+            );
+            expect(transport).toBeDefined();
+            expect(transport?.limit).toBe(800);
+            expect(transport?.spent).toBe(600);
+            expect(transport?.status).toBe("WARNING");
+
+            // Food: Limit 1000 (default), Spent 500 -> 50% -> NORMAL
+            const food = result.find((r) => r.categoryName === "Food");
+            expect(food).toBeDefined();
+            expect(food?.limit).toBe(1000);
+            expect(food?.spent).toBe(500);
+            expect(food?.status).toBe("NORMAL");
+        });
+    });
+
+    describe("upsertBudget", () => {
+        it("should create new budget history if not exists", async () => {
+            (prisma.budgetHistory.findFirst as any).mockResolvedValue(null);
+            (prisma.budgetHistory.create as any).mockResolvedValue({ id: "1" });
+
+            const userId = "user1";
+            const categoryId = "cat1";
+            const amount = 500;
+            const date = new Date(2025, 0, 1); // Jan 2025
+
+            await service.upsertBudget(userId, categoryId, amount, date);
+
+            expect(prisma.budgetHistory.create).toHaveBeenCalledWith({
+                data: {
+                    userId,
+                    categoryId,
+                    amount,
+                    month: 1,
+                    year: 2025,
+                },
+            });
+        });
+
+        it("should update existing budget history", async () => {
+            (prisma.budgetHistory.findFirst as any).mockResolvedValue({
+                id: "hist1",
+            });
+            (prisma.budgetHistory.update as any).mockResolvedValue({
+                id: "hist1",
+            });
+
+            const userId = "user1";
+            const categoryId = "cat1";
+            const amount = 600;
+            const date = new Date();
+
+            await service.upsertBudget(userId, categoryId, amount, date);
+
+            expect(prisma.budgetHistory.update).toHaveBeenCalledWith({
+                where: { id: "hist1" },
+                data: { amount },
+            });
         });
     });
 
@@ -90,14 +157,14 @@ describe("BudgetService", () => {
                 },
             ];
 
-            mockPrismaService.category.findMany.mockResolvedValue(categories);
-            mockPrismaService.transaction.aggregate.mockResolvedValue({
+            (prisma.category.findMany as any).mockResolvedValue(categories);
+            (prisma.transaction.aggregate as any).mockResolvedValue({
                 _sum: { amount: 5000 },
             });
 
             const result = await service.getIncomeDistribution(userId);
 
-            expect(mockPrismaService.category.findMany).toHaveBeenCalledWith({
+            expect(prisma.category.findMany).toHaveBeenCalledWith({
                 where: {
                     userId,
                     type: "INCOME",

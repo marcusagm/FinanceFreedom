@@ -8,6 +8,7 @@ import { DatePicker } from "../ui/DatePicker";
 import { Input } from "../ui/Input";
 import { Select } from "../ui/Select";
 import { PersonSelect } from "../person/PersonSelect";
+import { CategorySelect } from "../category/CategorySelect";
 
 export interface FilterState {
     search: string;
@@ -82,30 +83,17 @@ export function TransactionFilters({
                     />
                 </div>
                 <div className="w-full md:w-45">
-                    <Select
-                        value={filters.category}
-                        onChange={(value) => handleChange("category", value)}
-                        options={[
-                            {
-                                value: "all",
-                                label: t("transactions.filters.allCategories"),
-                            },
-                            ...categories
-                                .sort((a, b) => {
-                                    if (a.type === b.type)
-                                        return a.name.localeCompare(b.name);
-                                    return (a.type || "EXPENSE") === "INCOME"
-                                        ? -1
-                                        : 1;
-                                })
-                                .map((cat) => ({
-                                    value: cat.name,
-                                    label:
-                                        cat.type === "INCOME"
-                                            ? `${cat.name}`
-                                            : `${cat.name}`,
-                                })),
-                        ]}
+                    <CategorySelect
+                        value={
+                            filters.category === "all" ? "" : filters.category
+                        }
+                        onChange={(value) =>
+                            handleChange("category", value || "all")
+                        }
+                        categories={categories}
+                        defaultOptionLabel={t(
+                            "transactions.filters.allCategories",
+                        )}
                         placeholder={t(
                             "transactions.filters.categoryPlaceholder",
                         )}

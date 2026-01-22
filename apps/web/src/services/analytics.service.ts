@@ -27,8 +27,18 @@ export interface HealthScore {
 }
 
 export const analyticsService = {
-    getBudgets: async (): Promise<BudgetStatus[]> => {
-        const response = await api.get("/analytics/budgets");
+    getBudgets: async (date?: string): Promise<BudgetStatus[]> => {
+        const response = await api.get("/budgets", { params: { date } });
+        return response.data;
+    },
+
+    upsertBudget: async (data: {
+        categoryId: string;
+        amount: number;
+        month: number;
+        year: number;
+    }) => {
+        const response = await api.post("/budgets", data);
         return response.data;
     },
 

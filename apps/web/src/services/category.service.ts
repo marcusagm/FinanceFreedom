@@ -7,6 +7,7 @@ export interface Category {
     icon?: string;
     type?: string;
     budgetLimit?: number;
+    parentId?: string;
 }
 
 export const categoryService = {

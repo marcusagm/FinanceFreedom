@@ -22,8 +22,10 @@ export function PersonSelect({
         personService.findAll().then(setPersons).catch(console.error);
     }, []);
 
+    const NO_SELECTION_ID = "__no_selection__";
+
     const options = [
-        { value: "", label: t("persons.list.none") || "None" },
+        { value: NO_SELECTION_ID, label: t("persons.list.none") || "None" },
         ...persons.map((person) => ({
             value: person.id,
             label: person.name,
@@ -32,8 +34,8 @@ export function PersonSelect({
 
     return (
         <Select
-            value={value || ""}
-            onChange={onChange}
+            value={value || NO_SELECTION_ID}
+            onChange={(val) => onChange(val === NO_SELECTION_ID ? "" : val)}
             options={options}
             placeholder={placeholder || t("common.select")}
         />

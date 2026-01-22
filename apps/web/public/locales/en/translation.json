@@ -953,8 +953,7 @@
             "email": "Email",
             "phone": "Phone",
             "actions": "Actions",
-            "none": "None",
-            "empty": "No contacts found."
+            "none": "Select a person"
         },
         "form": {
             "titleNew": "New Contact",

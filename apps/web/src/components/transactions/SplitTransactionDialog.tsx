@@ -8,6 +8,7 @@ import * as z from "zod";
 import { api } from "../../lib/api";
 import type { Transaction } from "../../types";
 import { Button } from "../ui/Button";
+import { CategorySelect } from "../category/CategorySelect";
 import {
     Dialog,
     DialogBody,
@@ -266,9 +267,17 @@ export function SplitTransactionDialog({
                                                             )}
                                                         </FormLabel>
                                                         <FormControl>
-                                                            <Input
-                                                                placeholder="Cat."
-                                                                {...field}
+                                                            <CategorySelect
+                                                                value={
+                                                                    field.value ||
+                                                                    ""
+                                                                }
+                                                                onChange={
+                                                                    field.onChange
+                                                                }
+                                                                placeholder={t(
+                                                                    "transactions.table.category",
+                                                                )}
                                                             />
                                                         </FormControl>
                                                         <FormMessage />

@@ -33,6 +33,7 @@ import {
 } from "../ui/Form";
 import { Input } from "../ui/Input";
 import { Select } from "../ui/Select";
+import { CategorySelect } from "../category/CategorySelect";
 
 interface CreateIncomeSourceDialogProps {
     isOpen: boolean;
@@ -62,8 +63,6 @@ export function CreateIncomeSourceDialog({
             .max(31, t("income.sourceDialog.validation.dayInvalid")),
         categoryId: z.string().optional(),
     });
-    const [categories, setCategories] = useState<Category[]>([]);
-
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -73,10 +72,6 @@ export function CreateIncomeSourceDialog({
             categoryId: "",
         },
     });
-
-    useEffect(() => {
-        categoryService.getAll().then(setCategories);
-    }, []);
 
     useEffect(() => {
         if (isOpen) {
@@ -144,7 +139,7 @@ export function CreateIncomeSourceDialog({
                                         <FormControl>
                                             <Input
                                                 placeholder={t(
-                                                    "income.sourceDialog.namePlaceholder"
+                                                    "income.sourceDialog.namePlaceholder",
                                                 )}
                                                 {...field}
                                             />
@@ -163,7 +158,7 @@ export function CreateIncomeSourceDialog({
                                     <FormItem>
                                         <FormLabel>
                                             {t(
-                                                "income.sourceDialog.amountLabel"
+                                                "income.sourceDialog.amountLabel",
                                             )}
                                         </FormLabel>
                                         <FormControl>
@@ -173,7 +168,7 @@ export function CreateIncomeSourceDialog({
                                                 value={value}
                                                 onValueChange={(values) => {
                                                     onChange(
-                                                        values.floatValue || 0
+                                                        values.floatValue || 0,
                                                     );
                                                 }}
                                                 {...field}
@@ -191,7 +186,7 @@ export function CreateIncomeSourceDialog({
                                     <FormItem>
                                         <FormLabel>
                                             {t(
-                                                "income.sourceDialog.payDayLabel"
+                                                "income.sourceDialog.payDayLabel",
                                             )}
                                         </FormLabel>
                                         <FormControl>
@@ -203,7 +198,7 @@ export function CreateIncomeSourceDialog({
                                                 {...field}
                                                 onChange={(e) =>
                                                     field.onChange(
-                                                        Number(e.target.value)
+                                                        Number(e.target.value),
                                                     )
                                                 }
                                             />
@@ -220,27 +215,16 @@ export function CreateIncomeSourceDialog({
                                     <FormItem>
                                         <FormLabel>
                                             {t(
-                                                "income.sourceDialog.categoryLabel"
+                                                "income.sourceDialog.categoryLabel",
                                             )}
                                         </FormLabel>
                                         <FormControl>
-                                            <Select
+                                            <CategorySelect
                                                 value={field.value || ""}
-                                                options={[
-                                                    {
-                                                        label: t(
-                                                            "income.sourceDialog.noCategory"
-                                                        ),
-                                                        value: "",
-                                                    },
-                                                    ...categories.map((c) => ({
-                                                        label: c.name,
-                                                        value: c.id,
-                                                    })),
-                                                ]}
                                                 onChange={field.onChange}
+                                                type="INCOME"
                                                 placeholder={t(
-                                                    "income.sourceDialog.selectCategory"
+                                                    "income.sourceDialog.selectCategory",
                                                 )}
                                             />
                                         </FormControl>

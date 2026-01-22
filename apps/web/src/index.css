@@ -66,5 +66,6 @@
     body {
         background-color: var(--background);
         color: var(--foreground);
+        overflow: hidden; /* Prevent window scrolling, handle in Layout */
     }
 }
